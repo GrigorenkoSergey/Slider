@@ -1,0 +1,11 @@
+extends ../assets/blocks/template/template.pug
+
+block includes
+    include ../assets/blocks/range-slider/range-slider.pug
+
+block variables
+    - 
+        var titleName = 'SLIDERS'
+block content
+    .range-slider_example 
+        +range-slider()
