@@ -20,28 +20,10 @@ class Model implements IModel, ISubscriber {
     }
 }
 
-interface IModel {
-    event?: EventObserver;
-    min?: number
-    max?: number
-    thumbLeftPos?: number;
-    thumbRightPos?: number;
-    step?: number;
-    ticks?: number[];
-    angle?: number;
-    bifurcation?: boolean;
-    hintAboveThumb?: boolean;
-}
-
-interface ISubscriber {
-    update: (eventType: string, data: any) => void;
-}
-
 class Presenter implements ISubscriber {
     event: EventObserver = new EventObserver();
 
     constructor(model: Model, view: View) {
-
         this.event.addSubscriber("changeView", model);
         model.event.addSubscriber("changeModel", this);
 
@@ -102,7 +84,24 @@ class EventObserver {
     }
 }
 
-// debugger;
+interface IModel {
+    event?: EventObserver;
+    min?: number
+    max?: number
+    thumbLeftPos?: number;
+    thumbRightPos?: number;
+    step?: number;
+    ticks?: number[];
+    angle?: number;
+    bifurcation?: boolean;
+    hintAboveThumb?: boolean;
+}
+
+interface ISubscriber {
+    update: (eventType: string, data: any) => void;
+}
+
+debugger;
 let slider = new Model();
 let view = new View();
 let presenter = new Presenter(slider, view);

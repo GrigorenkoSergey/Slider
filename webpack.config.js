@@ -13,7 +13,6 @@ let entries = { "index": `${PATHS.src}` };
 
 let conf = {
   entry: entries,
-  // devtool: 'inline-source-map',
 
   resolve: {
     extensions: ['.tsx', '.ts', '.js' ],
@@ -129,6 +128,7 @@ module.exports = (env, options) => {
 
   conf.devtool = production
     ? false
-    : "eval-sourcemap";
+    // : "eval-sourcemap";
+    : "inline-source-map";
   return conf;
 }
