@@ -1,24 +1,40 @@
-class Model {
-    constructor(options = {}) {
-        this.event = new EventObserver();
+// class Model implements IModel{
+//     // event: EventObserver;
+//     // min: number = 0;
+//     // max: number = 100;
+//     // thumbLeftPos: number = 0;
+//     // thumbRightPos: number = 0;
+//     // step: number = 10;
+//     // ticks: number[] = [this.min, this.max];
+//     // angle: number = 0;
+//     // bifurcation: boolean = false;
+//     // hintAboveThumb: boolean = false;
 
-        this.min = options.min || 0;
-        this.max = options.max || 100;
-        this.thumbLeftPos = options.thumbLeftPos || 0;
-        this.thumbRightPos = options.thumbRightPos || 0;
-        this.step = options.step || 10;
-        this.ticks = options.ticks || [this.min, this.max];
-        this.angle = options.angle || 0;
-        this.bifurcation = options.bifurcation || false;
-        this.hintAboveThumb = options.hintAboveThumb || false;
-    }
 
-    update(eventType, data) {
-        console.log("updating model");
-        this.event.broadcast("changeModel", this);
-    }
-}
+//     constructor(options: IModel) {
+//         Object.assign(this, options);
+//     }
 
+//     // update(eventType, data) {
+//     //     console.log("updating model");
+//     //     this.event.broadcast("changeModel", this);
+//     // }
+// }
+
+// interface IModel {
+//     // event?: EventObserver;
+//     min?: number 
+//     max?: number 
+//     thumbLeftPos?: number;
+//     thumbRightPos?: number;
+//     step?: number;
+//     ticks?: number[];
+//     angle?: number;
+//     bifurcation?: boolean;
+//     hintAboveThumb?: boolean;
+// }
+
+/*
 class Presenter {
     constructor(model, view) {
         this.event = new EventObserver();
@@ -65,7 +81,6 @@ class View {
         
     }
 }
-
 class EventObserver {
     //every subscriber should have method "update(eventType, data)"
     constructor() {
@@ -95,3 +110,4 @@ let presenter = new Presenter(slider, view);
 slider.update();
 console.log("\n");
 view.someLogic();
+*/

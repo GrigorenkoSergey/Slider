@@ -1,5 +1,4 @@
 const path = require("path");
-const fs = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -10,13 +9,19 @@ const PATHS = {
   dist: path.join(__dirname, "./dist"),
 }
 
-let entries = {"index": `${PATHS.src}`};
+let entries = { "index": `${PATHS.src}` };
 
 let conf = {
   entry: entries,
+  // devtool: 'inline-source-map',
+
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js' ],
+  },
+
   output: {
     path: path.resolve(__dirname, "./dist"),
-    filename: (data) => data.chunk.name == "index" ? "index.js" : "pages/[name]/[name].js", 
+    filename: (data) => data.chunk.name == "index" ? "index.js" : "pages/[name]/[name].js",
     publicPath: "",
   },
 
@@ -37,11 +42,17 @@ let conf = {
       loader: "babel-loader"
     },
     {
+      test: /\.tsx?$/,
+      use: "ts-loader",
+      // use: "awesome-typescript-loader",
+      exclude: /node_modules/
+    },
+    {
       test: /\.css$/,
       use: [
         MiniCssExtractPlugin.loader,
         "css-loader",
-                {
+        {
           loader: 'postcss-loader',
           options: { sourceMap: true, config: { path: 'src/postcss.config.js' } }
         },
@@ -102,7 +113,7 @@ let conf = {
     }),
 
     new MiniCssExtractPlugin({
-      moduleFilename: ({name}) => name === "index" ? "[name].css" : "pages/[name]/[name].css",
+      moduleFilename: ({ name }) => name === "index" ? "[name].css" : "pages/[name]/[name].css",
       chunkFilename: "[id].css",
     }),
 
