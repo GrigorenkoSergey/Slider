@@ -1,0 +1,34 @@
+.slider {
+      width: 100%;
+      height: 6px;
+      border: 1px solid $dark_25;
+      box-sizing: border-box;
+      border-radius: 3px;
+      position: relative;
+      // transform: rotate(90deg);
+
+    &__thumb-left,
+    &__thumb-right {
+      content: "";
+      width: 12px;
+      height: 12px;
+      box-sizing: content-box;
+      background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
+      border: 2px solid white;
+      border-radius: 10px;
+      position: absolute;
+      top: -5px;
+      cursor: pointer;
+    }
+
+    &__thumb_moving {
+      transform: scale(2);
+    }
+
+    &__thumb-left {
+      left: 0;
+    }
+    &__thumb-right {
+      right: 0;
+    }
+  }
