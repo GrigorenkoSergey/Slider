@@ -25,14 +25,26 @@ interface IModel {
     thumbLeftPos?: number;
     thumbRightPos?: number;
     step?: number;
-    ticks?: number[];
+    ticks?: any; //Пока не знаю, как оформить
+    _totalItems?: number;
     angle?: number;
     bifurcation?: boolean;
     hintAboveThumb?: boolean;
 }
 
+interface IViewOptions {
+    div: string;
+    className: string;
+    angle: number;
+    min: number;
+    max: number; 
+    step: number;
+}
+
+
 interface ISubscriber {
     update: (eventType: string, data: any) => void;
 }
 
-export {EventObserver, IModel, ISubscriber};
+
+export {EventObserver, IModel, ISubscriber, IViewOptions};

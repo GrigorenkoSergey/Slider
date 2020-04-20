@@ -1,6 +1,6 @@
-import {EventObserver, IModel, ISubscriber} from "./Helpers";
-import {Model} from "./Model";
-import {View} from "./View";
+import { EventObserver, IModel, ISubscriber } from "./Helpers";
+import { Model } from "./Model";
+import { View } from "./View";
 
 export class Presenter implements ISubscriber {
     event: EventObserver = new EventObserver();
@@ -15,17 +15,18 @@ export class Presenter implements ISubscriber {
 
     update(eventType: string, data: any) {
         if (eventType == "changeModel") {
-            let result = this.translate(data);
-            this.event.broadcast("changeModel", result);
+            // let result = this.translate(data);
+            // this.event.broadcast("changeModel", result);
 
         } else if (eventType == "changeView") {
-            this.event.broadcast("changeView", this);
+            let result = this.translateToModel(data);
+            this.event.broadcast("changeView", result);
         }
     }
 
-    translate(data: any) {
-        console.log("translating data!");
-        return 3;
+    translateToModel(data: any) {
+        data.el = data.el.className.includes("left") ? "Left" : "Right";
+        return data;
     }
 
 }
