@@ -33,18 +33,18 @@ interface IModel {
 }
 
 interface IViewOptions {
-    div: string;
+    selector: string;
     className: string;
     angle: number;
     min: number;
     max: number; 
     step: number;
+    range: boolean;
 }
 
 
 interface ISubscriber {
     update: (eventType: string, data: any) => void;
 }
-
 
 export {EventObserver, IModel, ISubscriber, IViewOptions};

@@ -3,33 +3,65 @@ import { Model } from "./Model";
 import { View } from "./View";
 import { Presenter } from "./Presenter";
 
-// let slider = new Model();
-// let view = new View();
-// let presenter = new Presenter(slider, view);
-// slider.update("hello", null);
-// console.log("\n");
-// view.someLogic();
+class Slider {
+    model: Model;
+    view: View;
+    presenter: Presenter;
 
-// let slider2 = new View(".slider2", "slider", 90);
-// let slider3 = new View(".slider3", "slider", 45);
+    constructor(options: any) {
+        this.model = new Model(options);
+        this.view = new View(options);
+        this.presenter = new Presenter(this.model, this.view);
+    }
 
-let model1 = new Model({
-    ticks: { 1000: 100, 20000: 150 },
+    setLeftThumbPos(value: number) {
+        if (value < this.model.min || value > this.model.max) return;
+        console.log(this.model.thumbLeftPos);
+        this.model.thumbLeftPos = value;
+        this.model._offsetLeft = this.model._findOffset(value);
+
+        this.presenter.update("changeModel",  {
+            "L": { x: this.model.thumbLeftPos, "offset": this.model._offsetLeft},
+            "R": { x: this.model.thumbRightPos, "offset": this.model._offsetRight },
+        });
+    }
+}
+
+let options1 = {
+    ticks: {1000: 100, 20000: 150},
     max: 20000,
     min: 0,
     step: 100,
-});
-
-let slider1 = new View({
-    div: ".slider1",
+    selector: ".slider1",
     className: "slider",
     angle: 0,
+    range: true,
+    thumbLeftPos: 200,
+    thumbRightPos: 8000
+}
+
+let options2 = {
+    max: 1000,
     min: 0,
-    max: 20000,
-    step: 5000,
-});
+    step: 100,
+    selector: ".slider2",
+    className: "slider",
+    angle: 45,
+    range: true,
+}
 
-let presenter1 = new Presenter(model1, slider1);
+let options3 = {
+    max: 1000,
+    min: 0,
+    step: 10,
+    selector: ".slider3",
+    className: "slider",
+    angle: 90,
+    range: false,
+    thumbLeftPos: 500,
+}
 
-console.log(model1);
-// console.log($div);
+let slider1 = new Slider(options1);
+slider1.setLeftThumbPos(0);
+let slider2 = new Slider(options2);
+let slider3 = new Slider(options3);

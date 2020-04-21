@@ -11,12 +11,12 @@ export class Presenter implements ISubscriber {
 
         this.event.addSubscriber("changeModel", view);
         view.event.addSubscriber("changeView", this);
+        model.getThumbsOffset();
     }
 
     update(eventType: string, data: any) {
         if (eventType == "changeModel") {
-            // let result = this.translate(data);
-            // this.event.broadcast("changeModel", result);
+            this.event.broadcast("changeModel", data);
 
         } else if (eventType == "changeView") {
             let result = this.translateToModel(data);
@@ -25,8 +25,7 @@ export class Presenter implements ISubscriber {
     }
 
     translateToModel(data: any) {
-        data.el = data.el.className.includes("left") ? "Left" : "Right";
+        data.el = data.el.className.includes("left") ? "L" : "R";
         return data;
     }
-
 }
