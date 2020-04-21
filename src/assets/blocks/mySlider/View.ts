@@ -4,21 +4,20 @@ import { EventObserver, ISubscriber, IViewOptions } from "./Helpers";
 export class View implements ISubscriber {
     el: HTMLDivElement;
     event: EventObserver = new EventObserver();
-    className: string;
-    angle: number;
+    className: string = "";
+    angle: number = 0;
     step: number = 10;
     min: number = 0;
     max: number = 100;
-    range: boolean;
+    range: boolean = true;
+    selector: string = "";
 
-    //как-то должно взаимодействовать с моделью, может быть через презентер.
     constructor(options: IViewOptions) {
-        let { selector, className, angle, min, max, step, range } = options;
-        Object.assign(this, { className, angle, min, max, step, range });
-
-        this.el = document.querySelector(selector);
-        this.el.className = className;
-        this.step = step ? step : (this.max - this.min) / 100;
+        Object.keys(options).filter(prop => prop in this)
+            .forEach(prop => this[prop] = options[prop]);
+        this.el = document.querySelector(this.selector);
+        this.el.className = this.className;
+        this.step = this.step ? this.step : (this.max - this.min) / 100;
         this.render();
         this.addEventListeners();
     }

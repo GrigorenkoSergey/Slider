@@ -41,7 +41,7 @@ export class Model implements IModel, ISubscriber {
             this._offsetLeft = data.offset;
         }
 
-        this.event.broadcast("changeModel", this._response());
+        // this.event.broadcast("changeModel", this._response());
     }
 
     getThumbsOffset() {

@@ -1,4 +1,4 @@
-import * as $ from "jquery";
+// import * as $ from "jquery";
 import { Model } from "./Model";
 import { View } from "./View";
 import { Presenter } from "./Presenter";
@@ -12,18 +12,6 @@ class Slider {
         this.model = new Model(options);
         this.view = new View(options);
         this.presenter = new Presenter(this.model, this.view);
-    }
-
-    setLeftThumbPos(value: number) {
-        if (value < this.model.min || value > this.model.max) return;
-        console.log(this.model.thumbLeftPos);
-        this.model.thumbLeftPos = value;
-        this.model._offsetLeft = this.model._findOffset(value);
-
-        this.presenter.update("changeModel",  {
-            "L": { x: this.model.thumbLeftPos, "offset": this.model._offsetLeft},
-            "R": { x: this.model.thumbRightPos, "offset": this.model._offsetRight },
-        });
     }
 }
 
@@ -62,6 +50,6 @@ let options3 = {
 }
 
 let slider1 = new Slider(options1);
-slider1.setLeftThumbPos(0);
+// slider1.setLeftThumbPos(0);
 let slider2 = new Slider(options2);
 let slider3 = new Slider(options3);
