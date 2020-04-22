@@ -4,8 +4,8 @@ export class Model implements IModel, ISubscriber {
     event = new EventObserver();
     min = 0;
     max = 100;
-    thumbLeftPos = 0;
-    thumbRightPos = 0;
+    thumbLeftPos = this.min;
+    thumbRightPos = this.max;
     step = 10;
     ticks = { [this.max]: this.max };
     angle = 0;
@@ -21,6 +21,9 @@ export class Model implements IModel, ISubscriber {
     constructor(options: IModel = {}) {
         Object.assign(this, options);
         this.ticks = options.ticks ? options.ticks : { [this.max]: this.max };
+
+        !options.thumbLeftPos && (this.thumbLeftPos = this.min);
+        !options.thumbRightPos && (this.thumbRightPos = this.max);
 
         this._totalItems = Object.values(this.ticks).pop();
         this._ticksRange = Object.keys(this.ticks).map(item => Number(item));
@@ -40,12 +43,30 @@ export class Model implements IModel, ISubscriber {
             this.thumbLeftPos = x;
             this._offsetLeft = data.offset;
         }
-
-        // this.event.broadcast("changeModel", this._response());
     }
 
     getThumbsOffset() {
-        return this.event.broadcast("changeModel", this._response());
+        return this._response();
+    }
+
+    setThumbsPos(thumbLeftPos: number, thumbRightPos: number) {
+        if (thumbRightPos !== undefined && thumbLeftPos > thumbRightPos) {
+            [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
+        }
+
+        if (thumbLeftPos < this.min) return;
+        this.thumbLeftPos = thumbLeftPos;
+        this._offsetLeft = this._takeStepIntoAccount(this._offsetLeft);
+        this._offsetLeft = this._findOffset(thumbLeftPos);
+
+        if (thumbRightPos !== undefined && this.range) {
+            if (thumbRightPos > this.max) return;
+            this.thumbRightPos = thumbRightPos;
+            this._offsetRight = this._takeStepIntoAccount(this._offsetRight);
+            this._offsetRight = this._findOffset(thumbRightPos);
+        }
+
+        this.event.broadcast("changeModel", this._response());
     }
 
     _takeStepIntoAccount(x: number) {

@@ -18,8 +18,6 @@ export class View implements ISubscriber {
         this.el = document.querySelector(this.selector);
         this.el.className = this.className;
         this.step = this.step ? this.step : (this.max - this.min) / 100;
-        this.render();
-        this.addEventListeners();
     }
 
     update(eventType: string, data: any): void {
@@ -34,10 +32,6 @@ export class View implements ISubscriber {
         }
     }
 
-    addEventListeners(): void {
-        this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
-    }
-
     render(): void {
         let [thumbLeft, thumbRight] = new Array(2).fill(1).map(item => document.createElement('div'));
 
@@ -48,6 +42,11 @@ export class View implements ISubscriber {
 
         this.el.append(thumbLeft, thumbRight);
         this.el.style.transform = `rotate(${this.angle}deg)`;
+        this._addEventListeners();
+    }
+
+    _addEventListeners(): void {
+        this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
     }
 }
 
