@@ -3,15 +3,11 @@ import { Model } from "./Model";
 import { View } from "./View";
 
 export class Presenter implements ISubscriber {
-    event: EventObserver = new EventObserver();
-    min: number;
-    max: number;
-    model: Model;
-    view: View;
+    private event: EventObserver = new EventObserver();
+    private model: Model;
+    private view: View;
 
     constructor(model: Model, view: View) {
-        this.min = model.min;
-        this.max = model.max;
         this.model = model;
         this.view = view;
 
@@ -43,18 +39,16 @@ export class Presenter implements ISubscriber {
         let elemDom = <HTMLElement>document.querySelector(selector);
         if (!elemDom) return;
 
-        let { max, min } = this;
         let model = this.model;
         if (fnStart > fnEnd) {
             [fnStart, fnEnd] = [fnEnd, fnStart];
         }
+
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType, data) {
-            //далее учесть this.range, чтобы не пересчитывать постоянно.
-            data = model.getThumbsOffset();
-
-            fnRes(elemDom, (fnEnd - fnStart) * (data.L.offset) + fnStart,
-                (fnEnd - fnStart) * (data.R.offset) + fnStart);
+                data = model.getThumbsOffset();
+                return fnRes(elemDom, (fnEnd - fnStart) * data.L.offset + fnStart,
+                    (fnEnd - fnStart) * data.R.offset + fnStart);
         }
 
         let elemSubscriber = {
@@ -62,6 +56,7 @@ export class Presenter implements ISubscriber {
         }
         this.event.addSubscriber("changeView", elemSubscriber);
         this.event.addSubscriber("changeModel", elemSubscriber);
-    }
 
+        this.model.event.broadcast("changeModel", this.model.getThumbsOffset());
+    }
 }

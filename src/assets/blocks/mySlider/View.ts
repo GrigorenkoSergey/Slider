@@ -1,4 +1,3 @@
-// import * as $ from "jquery";
 import { EventObserver, ISubscriber, IViewOptions } from "./Helpers";
 
 export class View implements ISubscriber {
