@@ -15,7 +15,8 @@ export class View implements ISubscriber {
         Object.keys(options).filter(prop => prop in this)
             .forEach(prop => this[prop] = options[prop]);
         this.el = document.querySelector(this.selector);
-        this.el.className = this.className;
+        // this.el.className = this.className;
+        this.el.classList.add(this.className);
         this.step = this.step ? this.step : (this.max - this.min) / 100;
     }
 
@@ -34,9 +35,9 @@ export class View implements ISubscriber {
     render(): void {
         let [thumbLeft, thumbRight] = new Array(2).fill(1).map(item => document.createElement('div'));
 
-        thumbLeft.className = `${this.el.className}__thumb-left`;
+        thumbLeft.className = `${this.className}__thumb-left`;
         if (this.range) {
-            thumbRight.className = `${this.el.className}__thumb-right`;
+            thumbRight.className = `${this.className}__thumb-right`;
         }
 
         this.el.append(thumbLeft, thumbRight);
@@ -85,7 +86,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     let shiftX = e.clientX - thumbCoords.left;
     let shiftY = e.clientY - thumbCoords.top;
 
-    thumb.classList.add(`${slider.className}__thumb_moving`); //Если строчку написать раньше, то неверно будут определяться координаты
+    thumb.classList.add(`${self.className}__thumb_moving`); //Если строчку написать раньше, то неверно будут определяться координаты
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
 
@@ -121,7 +122,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     }
 
     function onMouseUp(e: MouseEvent): void {
-        thumb.classList.remove(`${slider.className}__thumb_moving`);
+        thumb.classList.remove(`${self.className}__thumb_moving`);
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
     }

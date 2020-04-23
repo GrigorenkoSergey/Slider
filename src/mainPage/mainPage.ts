@@ -1,6 +1,6 @@
 import "./mainPage.scss";
 import "../assets/blocks/range-slider/range-slider";
-import {Slider} from "../assets/blocks/mySlider/mySlider";
+import { Slider } from "../assets/blocks/mySlider/mySlider";
 
 let options1 = {
     ticks: { 1000: 100, 20000: 150 },
@@ -18,7 +18,7 @@ let options1 = {
 let options2 = {
     max: 1000,
     min: 0,
-    step: 100,
+    step: 10,
     selector: ".slider2",
     className: "slider",
     angle: 45,
@@ -51,19 +51,28 @@ slider1.setThumbsPos(100, 10000);
 
 let slider2 = new Slider(options2);
 slider2.setThumbsPos(200, 600);
+slider2.bindWith("span", 0, 20, fnRes2);
 
 let slider3 = new Slider(options3);
-slider3.setThumbsPos(200, 600);
+slider3.setThumbsPos(500, 600);
+slider3.bindWith('.imgSprite', 0, 13, fnRes3);
+
+function fnRes3(elem, resLeft, resRight) {
+    let imgWidth = 918 / 5;
+    let imgHeight = 506 / 3;
+    resLeft = Math.round(resLeft);
+
+    let offsetLeft = imgWidth * (resLeft % 5);
+    let offsetTop = imgHeight * Math.floor(resLeft / 5);
+
+    elem.style.backgroundPositionX = -offsetLeft + "px";
+    elem.style.backgroundPositionY = -offsetTop + "px";
+}
 
 let slider4 = new Slider(options4);
-slider4.bindWith("h2", 0, 40, fnRes4);
+slider4.bindWith("h2", 0, 100, fnRes4);
 slider4.setThumbsPos(50, null);
 
-function fnRes4(elem, resLeft, resRight) {
-    resLeft = Math.round(resLeft);
-    let resStr = "hsl(" + resLeft + ", 100%, 50%)";
-    elem.style.color = resStr;
-}
 
 let pContent = document.querySelector('p').textContent;
 slider1.bindWith('p', 0, document.querySelector('p').textContent.length, fnRes1);
@@ -72,4 +81,13 @@ function fnRes1(elem, resLeft, resRight) {
     resLeft = Math.round(resLeft);
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
+}
+function fnRes2(elem, resLeft, resRight) {
+    elem.style.textShadow = resLeft + "px 19px 7px grey";
+}
+
+function fnRes4(elem, resLeft, resRight) {
+    resLeft = Math.round(resLeft);
+    let resStr = "hsl(" + resLeft + ", 100%, 50%)";
+    elem.style.color = resStr;
 }

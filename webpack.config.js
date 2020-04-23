@@ -119,6 +119,7 @@ let conf = {
     new CopyPlugin([
       { from: `${PATHS.src}/assets/blocks/`, to: `${PATHS.dist}/assets/blocks/` },
       { from: `${PATHS.src}/assets/fonts/`, to: `${PATHS.dist}/assets/fonts/` },
+      { from: `${PATHS.src}/assets/images/`, to: `${PATHS.dist}/assets/images/` },
     ]),
   ],
 };

@@ -1,14 +1,30 @@
 extends ../assets/blocks/template/template.pug
 
 block includes
-    //- include ../assets/blocks/range-slider/range-slider.pug
-    include ../assets/blocks/mySlider/mySlider.pug
-    
 
 block variables
     - 
         var titleName = 'SLIDERS'
 block content
 
-    //- .range-slider_example 
-        +range-slider()
+    .slider-container1
+        .slider1
+        -
+            let i = 65;
+            let arr = new Array(58).fill(1).map(item => i++);
+            let pContent = String.fromCodePoint(...arr);
+
+        p=  pContent 
+
+    .slider-container2
+        span A
+        .slider2
+
+    .slider-container3
+        .imgSprite
+        .slider3
+    .slider-container4
+        .slider4
+        h2 Привет, Пятачок!!
+
+
