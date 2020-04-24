@@ -12,7 +12,8 @@ let options1 = {
     angle: 0,
     range: true,
     thumbLeftPos: 200,
-    thumbRightPos: 8000
+    thumbRightPos: 8000,
+    hintAboveThumb: true
 }
 
 let options2 = {
@@ -23,6 +24,7 @@ let options2 = {
     className: "slider",
     angle: 45,
     range: true,
+    hintAboveThumb: true
 }
 
 let options3 = {
@@ -34,6 +36,7 @@ let options3 = {
     angle: 90,
     range: false,
     thumbLeftPos: 500,
+    hintAboveThumb: true
 }
 
 let options4 = {
@@ -44,20 +47,37 @@ let options4 = {
     className: "slider",
     angle: 0,
     range: false,
+    hintAboveThumb: true
 }
 
 let slider1 = new Slider(options1);
 slider1.setThumbsPos(100, 10000);
+let pContent = document.querySelector('p').textContent;
+slider1.bindWith(document.querySelector('p'), 0, document.querySelector('p').textContent.length, fnRes1);
+
+function fnRes1(elem, leftX, resLeft, rightX, resRight) {
+    resLeft = Math.round(resLeft);
+    resRight = Math.round(resRight);
+    elem.textContent = pContent.slice(resLeft, resRight);
+}
+
 
 let slider2 = new Slider(options2);
 slider2.setThumbsPos(200, 600);
-slider2.bindWith("span", 0, 20, fnRes2);
+slider2.bindWith(document.querySelector("span"), 0, 20, fnRes2);
+
+function fnRes2(elem, leftX, resLeft, rightX, resRight, data) {
+    if (data.el == "L") console.log(leftX);
+    else console.log(rightX);
+    elem.style.textShadow = resLeft + "px 19px 7px grey";
+}
+
 
 let slider3 = new Slider(options3);
 slider3.setThumbsPos(500, 600);
-slider3.bindWith('.imgSprite', 0, 13, fnRes3);
+slider3.bindWith(document.querySelector('.imgSprite'), 0, 13, fnRes3);
 
-function fnRes3(elem, resLeft, resRight) {
+function fnRes3(elem, leftX, resLeft) {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
     resLeft = Math.round(resLeft);
@@ -70,23 +90,10 @@ function fnRes3(elem, resLeft, resRight) {
 }
 
 let slider4 = new Slider(options4);
-slider4.bindWith("h2", 0, 100, fnRes4);
+slider4.bindWith(document.querySelector("h2"), 0, 100, fnRes4);
 slider4.setThumbsPos(50, null);
 
-let pContent = document.querySelector('p').textContent;
-slider1.bindWith('p', 0, document.querySelector('p').textContent.length, fnRes1);
-
-function fnRes1(elem, resLeft, resRight) {
-    resLeft = Math.round(resLeft);
-    resRight = Math.round(resRight);
-    elem.textContent = pContent.slice(resLeft, resRight);
-}
-
-function fnRes2(elem, resLeft, resRight) {
-    elem.style.textShadow = resLeft + "px 19px 7px grey";
-}
-
-function fnRes4(elem, resLeft, resRight) {
+function fnRes4(elem, leftX, resLeft) {
     resLeft = Math.round(resLeft);
     let resStr = "hsl(" + resLeft + ", 100%, 50%)";
     elem.style.color = resStr;

@@ -10,6 +10,8 @@ export class View implements ISubscriber {
     max: number = 100;
     range: boolean = true;
     selector: string = "";
+    hintAboveThumb = false;
+    hintEl: HTMLDivElement;
 
     constructor(options: IViewOptions) {
         let expectant = {};
@@ -19,6 +21,8 @@ export class View implements ISubscriber {
         this._validateOptions(expectant) && Object.assign(this, expectant);
 
         this.el = document.querySelector(this.selector);
+        this.hintEl = document.createElement('div');
+
         this.el.classList.add(this.className);
         this.step = this.step ? this.step : (this.max - this.min) / 100;
     }
@@ -38,12 +42,17 @@ export class View implements ISubscriber {
     render(): void {
         let [thumbLeft, thumbRight] = new Array(2).fill(1).map(item => document.createElement('div'));
 
+        this.hintEl.className = `${this.className}__hint`;
+        this.hintEl.textContent = "HINT!";
+
         thumbLeft.className = `${this.className}__thumb-left`;
+        this.el.append(thumbLeft);
+
         if (this.range) {
             thumbRight.className = `${this.className}__thumb-right`;
+            this.el.append(thumbRight);
         }
 
-        this.el.append(thumbLeft, thumbRight);
         this.el.style.transform = `rotate(${this.angle}deg)`;
         this._addEventListeners();
     }
@@ -71,6 +80,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     //Применим всплытие, this - это элемент DOM, на котором навесили обработчик,
     // e.target - то, на котором сработало событие
 
+    e.preventDefault();
     const thumb = <HTMLElement>e.target;
     if (!thumb.className.includes("thumb")) return;
 
@@ -103,9 +113,18 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     let shiftX = e.clientX - thumbCoords.left;
     let shiftY = e.clientY - thumbCoords.top;
 
+    if (self.hintAboveThumb) {
+        thumb.append(self.hintEl);
+    }
     thumb.classList.add(`${self.className}__thumb_moving`); //Если строчку написать раньше, то неверно будут определяться координаты
 
+
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
+
+    self.event.broadcast("changeView", {
+        el: thumb, 
+        offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
+    });
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -140,6 +159,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
     function onMouseUp(e: MouseEvent): void {
         thumb.classList.remove(`${self.className}__thumb_moving`);
+        self.hintEl.remove();
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
     }

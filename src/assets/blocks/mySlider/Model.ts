@@ -10,7 +10,6 @@ export class Model implements IModel, ISubscriber {
     ticks = { [this.max]: this.max };
     angle = 0;
     range = false;
-    hintAboveThumb = false;
 
     _totalItems = this.max;
     _offsetLeft: number = 0;
@@ -140,7 +139,7 @@ export class Model implements IModel, ISubscriber {
 
                 let fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
                 let fnB = ticksRange[i];
-
+                
                 return (x - fnA) * (b - a) / (fnB - fnA) + a;
             }
         }
@@ -160,7 +159,6 @@ export class Model implements IModel, ISubscriber {
 
         return true;
     }
-
 }
 
 function isIncreasing(arr: number[] | string[]) {

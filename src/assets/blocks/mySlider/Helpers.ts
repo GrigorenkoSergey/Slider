@@ -29,7 +29,6 @@ interface IModel {
     _totalItems?: number;
     angle?: number;
     bifurcation?: boolean;
-    hintAboveThumb?: boolean;
 }
 
 interface IViewOptions {
@@ -40,6 +39,7 @@ interface IViewOptions {
     max: number; 
     step: number;
     range: boolean;
+    hintAboveThumb?: boolean;
 }
 
 

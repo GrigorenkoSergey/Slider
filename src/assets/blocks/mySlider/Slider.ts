@@ -2,7 +2,6 @@ import { EventObserver, ISubscriber } from "./Helpers";
 import { Model } from "./Model";
 import { View } from "./View";
 
-// export class Presenter implements ISubscriber {
 export class Slider implements ISubscriber {
     private event: EventObserver = new EventObserver();
     private model: Model;
@@ -12,6 +11,17 @@ export class Slider implements ISubscriber {
         this.model = new Model(options);
         this.view = new View(options);
         let [model, view] = [this.model, this.view];
+
+        if (this.view.hintAboveThumb) {
+            let hint = this.view.hintEl;
+
+            let fnRes = (elem, leftX, resLeft, rightX, resRight, data) => {
+                let res = data.el == "L" ? leftX : rightX;
+                elem.textContent = "" + Math.round(res);
+            }
+
+            this.bindWith(hint, this.model.min, this.model.max, fnRes);
+        }
 
         this.event.addSubscriber("changeView", model);
         model.event.addSubscriber("changeModel", this);
@@ -31,7 +41,7 @@ export class Slider implements ISubscriber {
             this.event.broadcast("changeView", data);
         }
     }
-    
+
     setThumbsPos(leftPos, rightPos) {
         return this.model.setThumbsPos.call(this.model, leftPos, rightPos);
     }
@@ -44,16 +54,15 @@ export class Slider implements ISubscriber {
         let res = `Option "${optionName}" doesn't exist!`;
 
         if (optionName in this.model) {
-            res =  this.model[optionName];
-        }  else if (optionName in this.view) {
-            res =  this.view[optionName];
+            res = this.model[optionName];
+        } else if (optionName in this.view) {
+            res = this.view[optionName];
         }
         return res;
     }
 
-    bindWith(selector: string, fnStart, fnEnd, fnRes) {
-        let elemDom = <HTMLElement>document.querySelector(selector);
-        if (!elemDom) return;
+    bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes) {
+        //fnRes(elem, data.L.x, resLeft, data.R.x, resRight, data)
 
         let model = this.model;
         if (fnStart > fnEnd) {
@@ -62,9 +71,9 @@ export class Slider implements ISubscriber {
 
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType, data) {
-            data = model.getThumbsOffset();
-            return fnRes(elemDom, (fnEnd - fnStart) * data.L.offset + fnStart,
-                (fnEnd - fnStart) * data.R.offset + fnStart);
+            let dataModel = model.getThumbsOffset();
+            return fnRes(elemDom, dataModel.L.x, (fnEnd - fnStart) * dataModel.L.offset + fnStart,
+                dataModel.R.x, (fnEnd - fnStart) * dataModel.R.offset + fnStart, data);
         }
 
         let elemSubscriber = {
