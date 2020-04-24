@@ -35,8 +35,20 @@ export class Slider implements ISubscriber {
     setThumbsPos(leftPos, rightPos) {
         return this.model.setThumbsPos.call(this.model, leftPos, rightPos);
     }
+
     setOptions(options) {
         return this.model.setOptions.call(this.model, options);
+    }
+
+    getOption(optionName) {
+        let res = `Option "${optionName}" doesn't exist!`;
+
+        if (optionName in this.model) {
+            res =  this.model[optionName];
+        }  else if (optionName in this.view) {
+            res =  this.view[optionName];
+        }
+        return res;
     }
 
     bindWith(selector: string, fnStart, fnEnd, fnRes) {

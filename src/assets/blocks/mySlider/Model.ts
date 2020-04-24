@@ -80,6 +80,7 @@ export class Model implements IModel, ISubscriber {
         obj._offsetRight = this._findOffset.call(obj, thumbRightPos);
 
         Object.assign(this, obj);
+        this.event.broadcast("changeModel", this.getThumbsOffset());
     }
 
     setThumbsPos(thumbLeftPos: number, thumbRightPos: number) {
