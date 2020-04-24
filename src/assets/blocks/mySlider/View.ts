@@ -1,4 +1,4 @@
-import { EventObserver, ISubscriber, IViewOptions } from "./Helpers";
+import { EventObserver, ISubscriber, IViewOptions, isNumeric } from "./Helpers";
 
 export class View implements ISubscriber {
     el: HTMLDivElement;
@@ -12,10 +12,13 @@ export class View implements ISubscriber {
     selector: string = "";
 
     constructor(options: IViewOptions) {
+        let expectant = {};
         Object.keys(options).filter(prop => prop in this)
-            .forEach(prop => this[prop] = options[prop]);
+            .forEach(prop => expectant[prop] = options[prop])
+
+        this._validateOptions(expectant) && Object.assign(this, expectant);
+
         this.el = document.querySelector(this.selector);
-        // this.el.className = this.className;
         this.el.classList.add(this.className);
         this.step = this.step ? this.step : (this.max - this.min) / 100;
     }
@@ -47,6 +50,20 @@ export class View implements ISubscriber {
 
     _addEventListeners(): void {
         this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
+    }
+
+    _validateOptions(expactant) {
+        let { min, max, step, angle } = expactant;
+        if (!isNumeric(min)) throw new Error("min should be a number!");
+        if (!isNumeric(max)) throw new Error("max should be a number");
+        if (!isNumeric(step)) throw new Error("step should be a number!");
+        if (angle && !isNumeric(angle)) throw new Error("angle should be a number!");
+
+        if (max < min) throw new Error("max should be greater then min!");
+        if ((max - min) % step) this.max = min + Math.floor((max - min) / step) * step;
+        if (angle && angle < 0 || angle > 90) throw new Error("angle should be >= 0 and <= 90");
+
+        return true;
     }
 }
 

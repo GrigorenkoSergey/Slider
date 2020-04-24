@@ -1,4 +1,4 @@
-import { EventObserver, IModel, ISubscriber } from "./Helpers";
+import { EventObserver, IModel, ISubscriber, isNumeric } from "./Helpers";
 
 export class Model implements IModel, ISubscriber {
     event = new EventObserver();
@@ -19,17 +19,7 @@ export class Model implements IModel, ISubscriber {
     _ticksValues: number[];
 
     constructor(options: IModel = {}) {
-        Object.assign(this, options);
-        this.ticks = options.ticks ? options.ticks : { [this.max]: this.max };
-
-        !options.thumbLeftPos && (this.thumbLeftPos = this.min);
-        !options.thumbRightPos && (this.thumbRightPos = this.max);
-
-        this._totalItems = Object.values(this.ticks).pop();
-        this._ticksRange = Object.keys(this.ticks).map(item => Number(item));
-        this._ticksValues = Object.values(this.ticks);
-        this._offsetLeft = this._findOffset(this.thumbLeftPos);
-        this._offsetRight = options.thumbRightPos ? this._findOffset(this.thumbRightPos) : 1;
+        this.setOptions(options);
     }
 
     update(eventType: string, data: any) {
@@ -46,7 +36,50 @@ export class Model implements IModel, ISubscriber {
     }
 
     getThumbsOffset() {
-        return this._response();
+        return {
+            "L": { x: this.thumbLeftPos, "offset": this._offsetLeft },
+            "R": { x: this.thumbRightPos, "offset": this._offsetRight },
+        }
+    }
+
+    setOptions(expactant) {
+        let obj = Object.assign({}, this);
+        Object.assign(obj, expactant);
+
+        let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks} = obj;
+        //сейчас у нас есть все необходимые опции и все переменные определены
+
+        if (!isNumeric(min)) throw new Error("Min should be a number!");
+        if (!isNumeric(max)) throw new Error("Max should be a number");
+        if (!isNumeric(step)) throw new Error("Step should be a number!");
+        if (!isNumeric(angle)) throw new Error("Angle should be a number!");
+        if (!isNumeric(thumbLeftPos)) throw new Error("ThumbLeftPos should be a number!");
+        if (!isNumeric(thumbRightPos)) throw new Error("ThumbRightPos should be a number!");
+
+        if (max < min) throw new Error("Max should be greater then min!");
+        if (angle < 0 || angle > 90) throw new Error("Angle should be >= 0 and <= 90");
+        if (step > (max - min)) throw new Error("To large step!");
+
+        if ((max - min) % step) max = min + Math.floor((max - min) / step) * step;
+        obj.max = max;
+
+        if (thumbLeftPos < min) throw new Error("ThumbLeftPos is lesser then min!"); 
+        if (obj.range && thumbRightPos > max) throw new Error("ThumbRightPos is greater then max!");
+        if (obj.range && thumbRightPos < thumbLeftPos) throw new Error("ThumbLeftPos is greater then thumbRightPos!");
+
+        //а сейчас самое запутанное и неочевидное. Если положиться на ticks по умолчанию ({100: 100})
+        //можно словить большие проблемы, поэтому его назначаем вручную.
+
+        ticks = expactant.ticks ? expactant.ticks : { [obj.max]: obj.max };
+        obj._totalItems = Object.values(ticks).pop();
+        obj._ticksRange = Object.keys(ticks).map(item => Number(item));;
+        obj._ticksValues = Object.values(ticks);
+        this._validateTicks.call(obj);
+
+        obj._offsetLeft = this._findOffset.call(obj, thumbLeftPos);
+        obj._offsetRight = this._findOffset.call(obj, thumbRightPos);
+
+        Object.assign(this, obj);
     }
 
     setThumbsPos(thumbLeftPos: number, thumbRightPos: number) {
@@ -66,18 +99,11 @@ export class Model implements IModel, ISubscriber {
             this._offsetRight = this._findOffset(thumbRightPos);
         }
 
-        this.event.broadcast("changeModel", this._response());
+        this.event.broadcast("changeModel", this.getThumbsOffset());
     }
 
     _takeStepIntoAccount(x: number) {
         return Math.floor(x / this.step) * this.step;
-    }
-
-    _response() {
-        return {
-            "L": { x: this.thumbLeftPos, "offset": this._offsetLeft },
-            "R": { x: this.thumbRightPos, "offset": this._offsetRight },
-        }
     }
 
     _intempolate(offset: number): number {
@@ -104,8 +130,6 @@ export class Model implements IModel, ISubscriber {
         let ticksRange = this._ticksRange;
         let ticksValue = this._ticksValues;
 
-        this.range && this._validateTicks(ticksRange, ticksValue);
-
         for (let i = 0; i < ticksRange.length; i++) {
             if (ticksRange[i] >= x) {
                 let a = ticksRange[i - 1] ? this._ticksValues[i - 1] : 0;
@@ -121,7 +145,9 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    _validateTicks(ticksRange: string[] | number[], ticksValue: string[] | number[]) {
+    _validateTicks() {
+        let ticksRange = this._ticksRange;
+        let ticksValue = this._ticksValues;
 
         if (+ticksRange[ticksRange.length - 1] != this.max) {
             throw new Error("last key of ticks should be equal to max!");
@@ -133,6 +159,7 @@ export class Model implements IModel, ISubscriber {
 
         return true;
     }
+
 }
 
 function isIncreasing(arr: number[] | string[]) {
@@ -143,5 +170,6 @@ function isIncreasing(arr: number[] | string[]) {
         if (+arr[i] <= prev) return false;
         prev = +arr[i];
     }
+
     return true;
 }

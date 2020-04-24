@@ -47,4 +47,7 @@ interface ISubscriber {
     update: (eventType: string, data: any) => void;
 }
 
-export {EventObserver, IModel, ISubscriber, IViewOptions};
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+export {EventObserver, IModel, ISubscriber, IViewOptions, isNumeric};

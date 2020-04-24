@@ -1,6 +1,6 @@
 import "./mainPage.scss";
 import "../assets/blocks/range-slider/range-slider";
-import { Slider } from "../assets/blocks/mySlider/mySlider";
+import { Slider } from "../assets/blocks/mySlider/Slider";
 
 let options1 = {
     ticks: { 1000: 100, 20000: 150 },
@@ -73,7 +73,6 @@ let slider4 = new Slider(options4);
 slider4.bindWith("h2", 0, 100, fnRes4);
 slider4.setThumbsPos(50, null);
 
-
 let pContent = document.querySelector('p').textContent;
 slider1.bindWith('p', 0, document.querySelector('p').textContent.length, fnRes1);
 
@@ -82,6 +81,7 @@ function fnRes1(elem, resLeft, resRight) {
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
 }
+
 function fnRes2(elem, resLeft, resRight) {
     elem.style.textShadow = resLeft + "px 19px 7px grey";
 }

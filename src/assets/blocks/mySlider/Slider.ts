@@ -1,15 +1,17 @@
-import { EventObserver, IModel, ISubscriber } from "./Helpers";
+import { EventObserver, ISubscriber } from "./Helpers";
 import { Model } from "./Model";
 import { View } from "./View";
 
-export class Presenter implements ISubscriber {
+// export class Presenter implements ISubscriber {
+export class Slider implements ISubscriber {
     private event: EventObserver = new EventObserver();
     private model: Model;
     private view: View;
 
-    constructor(model: Model, view: View) {
-        this.model = model;
-        this.view = view;
+    constructor(options: any) {
+        this.model = new Model(options);
+        this.view = new View(options);
+        let [model, view] = [this.model, this.view];
 
         this.event.addSubscriber("changeView", model);
         model.event.addSubscriber("changeModel", this);
@@ -25,14 +27,16 @@ export class Presenter implements ISubscriber {
             this.event.broadcast("changeModel", data);
 
         } else if (eventType == "changeView") {
-            let result = this.translateToModel(data);
-            this.event.broadcast("changeView", result);
+            data.el = data.el.className.includes("left") ? "L" : "R";
+            this.event.broadcast("changeView", data);
         }
     }
-
-    translateToModel(data: any) {
-        data.el = data.el.className.includes("left") ? "L" : "R";
-        return data;
+    
+    setThumbsPos(leftPos, rightPos) {
+        return this.model.setThumbsPos.call(this.model, leftPos, rightPos);
+    }
+    setOptions(options) {
+        return this.model.setOptions.call(this.model, options);
     }
 
     bindWith(selector: string, fnStart, fnEnd, fnRes) {
@@ -46,9 +50,9 @@ export class Presenter implements ISubscriber {
 
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType, data) {
-                data = model.getThumbsOffset();
-                return fnRes(elemDom, (fnEnd - fnStart) * data.L.offset + fnStart,
-                    (fnEnd - fnStart) * data.R.offset + fnStart);
+            data = model.getThumbsOffset();
+            return fnRes(elemDom, (fnEnd - fnStart) * data.L.offset + fnStart,
+                (fnEnd - fnStart) * data.R.offset + fnStart);
         }
 
         let elemSubscriber = {
