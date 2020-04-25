@@ -121,7 +121,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
 
-    self.event.broadcast("changeView", {
+    self.event.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
         el: thumb, 
         offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
     });

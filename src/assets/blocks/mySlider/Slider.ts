@@ -6,6 +6,7 @@ export class Slider implements ISubscriber {
     private event: EventObserver = new EventObserver();
     private model: Model;
     private view: View;
+    private bindedElements = [];
 
     constructor(options: any) {
         this.model = new Model(options);
@@ -62,9 +63,10 @@ export class Slider implements ISubscriber {
     }
 
     bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes) {
-        //fnRes(elem, data.L.x, resLeft, data.R.x, resRight, data)
+        //fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 
         let model = this.model;
+        let {min, max} = model;
         if (fnStart > fnEnd) {
             [fnStart, fnEnd] = [fnEnd, fnStart];
         }
@@ -72,16 +74,28 @@ export class Slider implements ISubscriber {
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType, data) {
             let dataModel = model.getThumbsOffset();
-            return fnRes(elemDom, dataModel.L.x, (fnEnd - fnStart) * dataModel.L.offset + fnStart,
-                dataModel.R.x, (fnEnd - fnStart) * dataModel.R.offset + fnStart, data);
+            return fnRes(elemDom,
+                dataModel.L.x, (fnEnd - fnStart)/(max - min) * dataModel.L.x + fnStart,
+                dataModel.R.x, (fnEnd - fnStart)/(max - min) * dataModel.R.x + fnStart,
+                data);
         }
 
         let elemSubscriber = {
             update: update,
+            el: elemDom,
         }
         this.event.addSubscriber("changeView", elemSubscriber);
         this.event.addSubscriber("changeModel", elemSubscriber);
 
         this.model.event.broadcast("changeModel", this.model.getThumbsOffset());
+        this.bindedElements.push(elemSubscriber);
+    }
+
+    unbindFrom(elemDom) { //не тестировал.
+        let elemSubscriber = this.bindedElements.find(elem => elem.el === elemDom);
+
+        this.event.removeSubscriber("chageView", elemSubscriber);
+        this.event.removeSubscriber("changeModel", elemSubscriber);
+        this.bindedElements = this.bindedElements.filter(elem => elemSubscriber);
     }
 }
