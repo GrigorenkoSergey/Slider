@@ -103,7 +103,7 @@ export class Model implements IModel, ISubscriber {
     }
 
     _takeStepIntoAccount(x: number) {
-        return Math.floor(x / this.step) * this.step;
+        return Math.round(x / this.step) * this.step;
     }
 
     _intempolate(offset: number): number {

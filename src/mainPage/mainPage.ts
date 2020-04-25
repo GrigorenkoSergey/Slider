@@ -3,8 +3,8 @@ import "../assets/blocks/range-slider/range-slider";
 import { Slider } from "../assets/blocks/mySlider/Slider";
 
 let options1 = {
-    ticks: { 1000: 100, 20000: 150 },
-    max: 20000,
+    // ticks: { 1000: 100, 20000: 150 },
+    max: 10000,
     min: 0,
     step: 100,
     selector: ".slider1",
@@ -23,7 +23,7 @@ let options2 = {
     selector: ".slider2",
     className: "slider",
     angle: 45,
-    range: true,
+    range: false,
     hintAboveThumb: true
 }
 
@@ -50,6 +50,16 @@ let options4 = {
     hintAboveThumb: true
 }
 
+let options5 = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".slider5",
+    className: "slider",
+    angle: 0,
+    range: false,
+}
+
 let slider1 = new Slider(options1);
 slider1.setThumbsPos(100, 10000);
 let pContent = document.querySelector('p').textContent;
@@ -67,8 +77,6 @@ slider2.setThumbsPos(200, 600);
 slider2.bindWith(document.querySelector("span"), 0, 20, fnRes2);
 
 function fnRes2(elem, leftX, resLeft, rightX, resRight, data) {
-    if (data.el == "L") console.log(leftX);
-    else console.log(rightX);
     elem.style.textShadow = resLeft + "px 19px 7px grey";
 }
 
@@ -90,8 +98,10 @@ function fnRes3(elem, leftX, resLeft) {
 }
 
 let slider4 = new Slider(options4);
-slider4.bindWith(document.querySelector("h2"), 0, 100, fnRes4);
-slider4.setThumbsPos(50, null);
+
+
+let slider5 = new Slider(options5);
+slider5.bindWith(document.querySelector('span'), 200, 360, fnRes4);
 
 function fnRes4(elem, leftX, resLeft) {
     resLeft = Math.round(resLeft);

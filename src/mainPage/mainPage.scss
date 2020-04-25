@@ -2,28 +2,45 @@
 // @import "src/assets/blocks/range-slider/range-slider.scss";
 @import "src/assets/blocks/mySlider/mySlider.scss";
 
+body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 100vh;
+    gap: 0px;
+    grid-template-areas:
+        "test letter"
+        "test bird"
+        "test line";
+}
+
 .slider-container1 {
-    width: 300px;
-    margin-left: 20px;
-    margin-top: 50px;
+    width: 400px;
+    box-sizing: border-box;
+    padding: 20px;
+    padding-top: 50px;
+    grid-area: line;
+
+    p {
+        padding-top: 30px;
+        font-size: medium;
+        font-weight: bolder;
+        word-break: break-all;
+        text-align: center;
+    }
 }
 
 .slider-container2 {
-    margin-top: 20px;
-    width: 300px;
-    height: 300px;
+    width: 500px;
+    // height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 20px;
     position: relative;
-
-    .slider2 {
-        margin-left: 50px;
-    }
+    grid-area: letter;
 
     span {
-        position: absolute;
+        // position: absolute;
         font-size: 150px;
         text-shadow: -10px 19px 7px grey;
         left: 300px;
@@ -31,22 +48,17 @@
 }
 
 .slider-container3 {
-    // width: 400px;
-    margin-left: 120px;
-    margin-top: 21px;
+    grid-area: bird;
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 600px;
-    padding: 0;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
 
     .slider3 {
         width: 200px;
+        margin-top: 100px;
     }
 
     .imgSprite {
-        // width: 918px;
-        // height: 506px;
         width: 183.6px;
         height: 168.66px;
         background: url("/src/assets/images/hotpng.com.png") no-repeat left top;
@@ -54,10 +66,14 @@
 }
 
 .slider-container4 {
-    width: 300px;
-    margin-left: 300px;
-    margin-top: 21px;
+    display: flex;
+    justify-content: start;
+    flex-direction: column;
+    width: 500px;
+    grid-area: test;
+    padding: 30px;
+    padding-top: 70px;
 }
 h2 {
-    margin-top: 10px;
+    // margin-top: 10px;
 }
