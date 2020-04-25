@@ -41,19 +41,16 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    setOptions(expactant) {
+    setOptions(expectant) {
         let obj = Object.assign({}, this);
-        Object.assign(obj, expactant);
+        Object.assign(obj, expectant);
 
-        let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks} = obj;
-        //сейчас у нас есть все необходимые опции и все переменные определены
+        let { min, max, step, angle, ticks } = obj;
 
         if (!isNumeric(min)) throw new Error("Min should be a number!");
         if (!isNumeric(max)) throw new Error("Max should be a number");
         if (!isNumeric(step)) throw new Error("Step should be a number!");
         if (!isNumeric(angle)) throw new Error("Angle should be a number!");
-        if (!isNumeric(thumbLeftPos)) throw new Error("ThumbLeftPos should be a number!");
-        if (!isNumeric(thumbRightPos)) throw new Error("ThumbRightPos should be a number!");
 
         if (max < min) throw new Error("Max should be greater then min!");
         if (angle < 0 || angle > 90) throw new Error("Angle should be >= 0 and <= 90");
@@ -62,25 +59,24 @@ export class Model implements IModel, ISubscriber {
         if ((max - min) % step) max = min + Math.floor((max - min) / step) * step;
         obj.max = max;
 
-        if (thumbLeftPos < min) throw new Error("ThumbLeftPos is lesser then min!"); 
-        if (obj.range && thumbRightPos > max) throw new Error("ThumbRightPos is greater then max!");
-        if (obj.range && thumbRightPos < thumbLeftPos) throw new Error("ThumbLeftPos is greater then thumbRightPos!");
+        this._validateThumbsPos(expectant); //именно expectant но не obj!!!
 
         //а сейчас самое запутанное и неочевидное. Если положиться на ticks по умолчанию ({100: 100})
         //можно словить большие проблемы, поэтому его назначаем вручную.
 
-        ticks = expactant.ticks ? expactant.ticks : { [obj.max]: obj.max };
+        ticks = expectant.ticks ? expectant.ticks : { [obj.max]: obj.max };
         obj._totalItems = Object.values(ticks).pop();
         obj._ticksRange = Object.keys(ticks).map(item => Number(item));;
         obj._ticksValues = Object.values(ticks);
-        this._validateTicks.call(obj);
+        this._validateTicks(obj);
 
-        obj._offsetLeft = this._findOffset.call(obj, thumbLeftPos);
-        obj._offsetRight = this._findOffset.call(obj, thumbRightPos);
+        obj._offsetLeft = this._findOffset.call(obj, obj.thumbLeftPos);
+        obj._offsetRight = this._findOffset.call(obj, obj.thumbRightPos);
 
         Object.assign(this, obj);
         this.event.broadcast("changeModel", this.getThumbsOffset());
     }
+
 
     setThumbsPos(thumbLeftPos: number, thumbRightPos: number) {
         if (thumbRightPos !== undefined && thumbLeftPos > thumbRightPos) {
@@ -103,7 +99,7 @@ export class Model implements IModel, ISubscriber {
     }
 
     _takeStepIntoAccount(x: number) {
-        return Math.floor(x / this.step) * this.step;
+        return Math.round(x / this.step) * this.step;
     }
 
     _intempolate(offset: number): number {
@@ -139,19 +135,41 @@ export class Model implements IModel, ISubscriber {
 
                 let fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
                 let fnB = ticksRange[i];
-                
+
                 return (x - fnA) * (b - a) / (fnB - fnA) + a;
             }
         }
     }
 
-    _validateTicks() {
-        let ticksRange = this._ticksRange;
-        let ticksValue = this._ticksValues;
+    _validateThumbsPos(expectant) {
+        let { min, max, thumbLeftPos, thumbRightPos } = expectant
 
-        if (+ticksRange[ticksRange.length - 1] != this.max) {
+        if (!thumbLeftPos) {
+            thumbLeftPos = min;
+            expectant.thumbLeftPos = thumbLeftPos;
+        }
+        if (!isNumeric(thumbLeftPos)) throw new Error("ThumbLeftPos should be a number!");
+        if (thumbLeftPos < min) throw new Error("ThumbLeftPos is lesser then min!")
+
+        if (!thumbRightPos) {
+            thumbRightPos = max;
+            expectant.thumbRightPos = thumbRightPos;
+        }
+        if (!isNumeric(thumbRightPos)) throw new Error("ThumbRightPos should be a number!");
+
+        if (thumbRightPos > max) throw new Error("ThumbRightPos is greater then max!")
+        if (thumbRightPos < thumbLeftPos) throw new Error("ThumbLeftPos is greater then thumbRightPos!");
+
+        return expectant;
+    }
+
+    _validateTicks(expectant) {
+        let ticksRange = expectant._ticksRange;
+        let ticksValue = expectant._ticksValues;
+
+        if (+ticksRange[ticksRange.length - 1] != expectant.max) {
             throw new Error("last key of ticks should be equal to max!");
-        } else if (+ticksRange[0] < this.min) {
+        } else if (+ticksRange[0] < expectant.min) {
             throw new Error("First key of ticks should be greater then min!");
         } else if (!isIncreasing(ticksRange) || !isIncreasing(ticksValue)) {
             throw new Error("Both keys and values of ticks must be increasing sequenses!")

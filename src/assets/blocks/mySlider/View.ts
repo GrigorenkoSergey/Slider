@@ -61,8 +61,8 @@ export class View implements ISubscriber {
         this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
     }
 
-    _validateOptions(expactant) {
-        let { min, max, step, angle } = expactant;
+    _validateOptions(expectant) {
+        let { min, max, step, angle } = expectant;
         if (!isNumeric(min)) throw new Error("min should be a number!");
         if (!isNumeric(max)) throw new Error("max should be a number");
         if (!isNumeric(step)) throw new Error("step should be a number!");
@@ -121,10 +121,15 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
 
-    self.event.broadcast("changeView", {
-        el: thumb, 
-        offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
-    });
+    // self.event.broadcast("changeView", {
+    //     el: thumb, 
+    //     offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
+    // });
+    // self.event.broadcast("mousedown", {//&
+    //     el: thumb, 
+    //     offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
+    // });
+
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -165,7 +170,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     }
 
     function takeStepIntoAccount(x: number, step: number) {
-        return Math.floor(x / step) * step;
+        return Math.round(x / step) * step;
     }
 
     function swapThumbClasses(): void {

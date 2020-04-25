@@ -55,12 +55,22 @@ slider1.setThumbsPos(100, 10000);
 let pContent = document.querySelector('p').textContent;
 slider1.bindWith(document.querySelector('p'), 0, document.querySelector('p').textContent.length, fnRes1);
 
+// slider1.addEvent("mousedown", (e, data) => console.log(e, data));
+slider1.addEvent("mousedown", consol);
+function consol(e, data) {
+    console.log(e, data);
+}
+// slider1.addEvent("mouseup", (e, data) => console.log(e));
+slider1.removeEventHandler("mousedown", consol);
+slider1.removeEvent("mousedown");
+
+// slider1.removeEvent("mousedown");
+
 function fnRes1(elem, leftX, resLeft, rightX, resRight) {
     resLeft = Math.round(resLeft);
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
 }
-
 
 let slider2 = new Slider(options2);
 slider2.setThumbsPos(200, 600);
@@ -71,7 +81,6 @@ function fnRes2(elem, leftX, resLeft, rightX, resRight, data) {
     else console.log(rightX);
     elem.style.textShadow = resLeft + "px 19px 7px grey";
 }
-
 
 let slider3 = new Slider(options3);
 slider3.setThumbsPos(500, 600);
@@ -88,7 +97,6 @@ function fnRes3(elem, leftX, resLeft) {
     elem.style.backgroundPositionX = -offsetLeft + "px";
     elem.style.backgroundPositionY = -offsetTop + "px";
 }
-
 let slider4 = new Slider(options4);
 slider4.bindWith(document.querySelector("h2"), 0, 100, fnRes4);
 slider4.setThumbsPos(50, null);
@@ -98,3 +106,5 @@ function fnRes4(elem, leftX, resLeft) {
     let resStr = "hsl(" + resLeft + ", 100%, 50%)";
     elem.style.color = resStr;
 }
+
+// slider1.setOptions({max: 1000});

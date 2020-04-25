@@ -6,6 +6,8 @@ export class Slider implements ISubscriber {
     private event: EventObserver = new EventObserver();
     private model: Model;
     private view: View;
+    private handlers = {};//& непосредственное хранение функций-обработчиков событий
+    private eventsGenerators = {}; //& для глобального хранения функций, заставлющих генерировать события
 
     constructor(options: any) {
         this.model = new Model(options);
@@ -28,8 +30,35 @@ export class Slider implements ISubscriber {
 
         this.event.addSubscriber("changeModel", view);
         view.event.addSubscriber("changeView", this);
+
         view.render();
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
+    }
+
+    addEvent(eventType, func) { //&
+        function _addEventBroadcast(e) {
+            return this.event.broadcast(eventType, e);
+        }
+
+        if (!(eventType in this.view.event.observers)) {
+            this.handlers[eventType] = [];
+
+            let bindedFunc = _addEventBroadcast.bind(this.view);
+            this.view.el.addEventListener(eventType, bindedFunc);
+            this.eventsGenerators[eventType] = bindedFunc;
+        }
+
+        this.handlers[eventType].push(func);
+        this.view.event.addSubscriber(eventType, this);
+    }
+
+    removeEventHandler(eventType, func) {//&
+        this.handlers[eventType] = this.handlers[eventType].filter(handler => handler != func);
+    }
+
+    removeEvent(eventType) {//&
+        this.view.el.removeEventListener(eventType, this.eventsGenerators[eventType]);
+        delete this.eventsGenerators[eventType];
     }
 
     update(eventType: string, data: any) {
@@ -39,6 +68,10 @@ export class Slider implements ISubscriber {
         } else if (eventType == "changeView") {
             data.el = data.el.className.includes("left") ? "L" : "R";
             this.event.broadcast("changeView", data);
+
+        } else {
+            console.log(eventType);
+            this.handlers[eventType].forEach(func => func(data, this.model.getThumbsOffset()));
         }
     }
 
@@ -62,9 +95,10 @@ export class Slider implements ISubscriber {
     }
 
     bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes) {
-        //fnRes(elem, data.L.x, resLeft, data.R.x, resRight, data)
+        //fnRes(elem, data.L.x, scaledLeftX, data.R.x, scaledRightX, data)
 
         let model = this.model;
+        let { min, max } = this.model;
         if (fnStart > fnEnd) {
             [fnStart, fnEnd] = [fnEnd, fnStart];
         }
@@ -72,8 +106,10 @@ export class Slider implements ISubscriber {
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType, data) {
             let dataModel = model.getThumbsOffset();
-            return fnRes(elemDom, dataModel.L.x, (fnEnd - fnStart) * dataModel.L.offset + fnStart,
-                dataModel.R.x, (fnEnd - fnStart) * dataModel.R.offset + fnStart, data);
+            return fnRes(elemDom,
+                dataModel.L.x, dataModel.L.x * (fnEnd - fnStart) / (max - min) + fnStart,
+                dataModel.R.x, dataModel.R.x * (fnEnd - fnStart) / (max - min) + fnStart,
+                data);
         }
 
         let elemSubscriber = {
