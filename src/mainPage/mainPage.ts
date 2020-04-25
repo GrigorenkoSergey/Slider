@@ -108,3 +108,6 @@ function fnRes4(elem, leftX, resLeft) {
 }
 
 // slider1.setOptions({max: 1000});
+
+let options = ["min", "max", "step"].forEach(option => slider1.getOption(option));
+console.log(options);
