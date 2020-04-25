@@ -56,13 +56,13 @@ let pContent = document.querySelector('p').textContent;
 slider1.bindWith(document.querySelector('p'), 0, document.querySelector('p').textContent.length, fnRes1);
 
 // slider1.addEvent("mousedown", (e, data) => console.log(e, data));
-slider1.addEvent("mousedown", consol);
-function consol(e, data) {
-    console.log(e, data);
-}
+// slider1.addEvent("mousedown", consol);
+// function consol(e, data) {
+//     console.log(e, data);
+// }
 // slider1.addEvent("mouseup", (e, data) => console.log(e));
-slider1.removeEventHandler("mousedown", consol);
-slider1.removeEvent("mousedown");
+// slider1.removeEventHandler("mousedown", consol);
+// slider1.removeEvent("mousedown");
 
 // slider1.removeEvent("mousedown");
 

@@ -37,6 +37,10 @@ export class View implements ISubscriber {
             let rightThumb = <HTMLElement>thumbList[1];
             rightThumb.style.left = data.R.offset * (this.el.clientWidth - rightThumb.offsetWidth) + 'px';
         }
+
+        if (!this.hintAboveThumb) {
+            this.el.removeEventListener("mousedown", this._showTip);
+        }
     }
 
     render(): void {
@@ -59,6 +63,23 @@ export class View implements ISubscriber {
 
     _addEventListeners(): void {
         this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
+
+        if (this.hintAboveThumb) {
+            this._showTip = this._showTip.bind(this);
+            this._hideTip = this._hideTip.bind(this);
+            this.el.addEventListener("mousedown", this._showTip);
+        }
+    }
+
+    _showTip(e) {
+        if (e.target.className.includes("thumb")) {
+            e.target.append(this.hintEl);
+            document.addEventListener("mouseup", this._hideTip);
+        }
+    }
+    _hideTip(e) {
+        this.hintEl.remove();
+        document.removeEventListener("mouseup", this._hideTip);
     }
 
     _validateOptions(expectant) {
@@ -113,23 +134,9 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     let shiftX = e.clientX - thumbCoords.left;
     let shiftY = e.clientY - thumbCoords.top;
 
-    if (self.hintAboveThumb) {
-        thumb.append(self.hintEl);
-    }
     thumb.classList.add(`${self.className}__thumb_moving`); //Если строчку написать раньше, то неверно будут определяться координаты
 
-
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
-
-    // self.event.broadcast("changeView", {
-    //     el: thumb, 
-    //     offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
-    // });
-    // self.event.broadcast("mousedown", {//&
-    //     el: thumb, 
-    //     offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
-    // });
-
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -164,7 +171,6 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
     function onMouseUp(e: MouseEvent): void {
         thumb.classList.remove(`${self.className}__thumb_moving`);
-        self.hintEl.remove();
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
     }

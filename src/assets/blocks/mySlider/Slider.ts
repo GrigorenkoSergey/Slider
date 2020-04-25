@@ -17,12 +17,15 @@ export class Slider implements ISubscriber {
         if (this.view.hintAboveThumb) {
             let hint = this.view.hintEl;
 
+            this._showTip = this._showTip.bind(this);
+            this.addDomEvent("mousedown", this._showTip);
+
             let fnRes = (elem, leftX, resLeft, rightX, resRight, data) => {
                 let res = data.el == "L" ? leftX : rightX;
                 elem.textContent = "" + Math.round(res);
-            }
+            };
 
-            this.bindWith(hint, this.model.min, this.model.max, fnRes);
+            this.bindWith(hint, model.min, model.max, fnRes);
         }
 
         this.event.addSubscriber("changeView", model);
@@ -35,7 +38,8 @@ export class Slider implements ISubscriber {
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
     }
 
-    addEvent(eventType, func) { //&
+    addDomEvent(eventType, func) { //&
+        //func(e, data)
         function _addEventBroadcast(e) {
             return this.event.broadcast(eventType, e);
         }
@@ -52,11 +56,11 @@ export class Slider implements ISubscriber {
         this.view.event.addSubscriber(eventType, this);
     }
 
-    removeEventHandler(eventType, func) {//&
+    removeDomEventHandler(eventType, func) {//&
         this.handlers[eventType] = this.handlers[eventType].filter(handler => handler != func);
     }
 
-    removeEvent(eventType) {//&
+    removeDomEvent(eventType) {//&
         this.view.el.removeEventListener(eventType, this.eventsGenerators[eventType]);
         delete this.eventsGenerators[eventType];
     }
@@ -70,8 +74,11 @@ export class Slider implements ISubscriber {
             this.event.broadcast("changeView", data);
 
         } else {
-            console.log(eventType);
             this.handlers[eventType].forEach(func => func(data, this.model.getThumbsOffset()));
+        }
+
+        if (!this.view.hintAboveThumb) {
+            this.removeDomEventHandler("mousedown", this._showTip);
         }
     }
 
@@ -95,7 +102,8 @@ export class Slider implements ISubscriber {
     }
 
     bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes) {
-        //fnRes(elem, data.L.x, scaledLeftX, data.R.x, scaledRightX, data)
+        //fnRes(elem, countedLeftX, scaledLeftX, countedRightX, scaledRightX, data)
+        if (elemDom == null) return;
 
         let model = this.model;
         let { min, max } = this.model;
@@ -119,5 +127,10 @@ export class Slider implements ISubscriber {
         this.event.addSubscriber("changeModel", elemSubscriber);
 
         this.model.event.broadcast("changeModel", this.model.getThumbsOffset());
+    }
+
+    _showTip(e, data) {
+        let res = e.target.className.includes('left') ? data.L.x : data.R.x;
+        this.view.hintEl.textContent = "" + Math.round(res);
     }
 }
