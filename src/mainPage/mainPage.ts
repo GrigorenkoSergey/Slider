@@ -1,6 +1,7 @@
 import "./mainPage.scss";
 import "../assets/blocks/range-slider/range-slider";
 import { Slider } from "../assets/blocks/mySlider/Slider";
+import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
 
 let options1 = {
     // ticks: { 1000: 100, 20000: 150 },
@@ -22,7 +23,8 @@ let options2 = {
     step: 10,
     selector: ".slider2",
     className: "slider",
-    angle: 45,
+    // angle: 45,
+    angle: 0,
     range: false,
     hintAboveThumb: true
 }
@@ -33,7 +35,8 @@ let options3 = {
     step: 10,
     selector: ".slider3",
     className: "slider",
-    angle: 90,
+    // angle: 90,
+    angle: 0,
     range: false,
     thumbLeftPos: 500,
     hintAboveThumb: true
@@ -71,7 +74,6 @@ function fnRes1(elem, leftX, resLeft, rightX, resRight) {
     elem.textContent = pContent.slice(resLeft, resRight);
 }
 
-
 let slider2 = new Slider(options2);
 slider2.setThumbsPos(200, 600);
 slider2.bindWith(document.querySelector("span"), 0, 20, fnRes2);
@@ -107,4 +109,27 @@ function fnRes4(elem, leftX, resLeft) {
     resLeft = Math.round(resLeft);
     let resStr = "hsl(" + resLeft + ", 100%, 50%)";
     elem.style.color = resStr;
+}
+
+let arr = [slider1, slider2, slider3, slider4, slider5];
+
+let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
+
+for (let i = 0; i < inputs.length; i++) {
+    getInputValue(inputs[i]);
+    inputs[i].addEventListener("change", onChangeInputValue);
+}
+
+function getInputValue(input) {
+    let num = +input.dataset.id.match(/\d+/)[0];
+    let option = input.name;
+    input.value = arr[num - 1].getOption(option);
+}
+
+function onChangeInputValue(e) {
+    let input = e.target;
+    let num = +input.dataset.id.match(/\d+/)[0];
+    let option = input.name;
+    arr[num - 1].setOptions({[option]: input.value});
+    inputs.forEach(item => getInputValue(item));
 }

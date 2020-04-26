@@ -1,4 +1,4 @@
-import { EventObserver, ISubscriber } from "./Helpers";
+import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 import { Model } from "./Model";
 import { View } from "./View";
 
@@ -28,6 +28,7 @@ export class Slider implements ISubscriber {
         model.event.addSubscriber("changeModel", this);
 
         this.event.addSubscriber("changeModel", view);
+        this.event.addSubscriber("updateView", view);//?
         view.event.addSubscriber("changeView", this);
         view.render();
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
@@ -38,7 +39,7 @@ export class Slider implements ISubscriber {
             this.event.broadcast("changeModel", data);
 
         } else if (eventType == "changeView") {
-            data.el = data.el.className.includes("left") ? "L" : "R";
+            data.el && (data.el = data.el.className.includes("left") ? "L" : "R");
             this.event.broadcast("changeView", data);
         }
     }
@@ -48,7 +49,13 @@ export class Slider implements ISubscriber {
     }
 
     setOptions(options) {
-        return this.model.setOptions.call(this.model, options);
+        this.model.setOptions.call(this.model, options);
+
+        if ("angle" in options) {
+            this.view.setOptions.call(this.view, options);
+            this.view.update("changeModel", this.model.getThumbsOffset());
+        }
+        return this;
     }
 
     getOption(optionName) {
@@ -66,7 +73,7 @@ export class Slider implements ISubscriber {
         //fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 
         let model = this.model;
-        let {min, max} = model;
+        let { min, max } = model;
         if (fnStart > fnEnd) {
             [fnStart, fnEnd] = [fnEnd, fnStart];
         }
@@ -75,8 +82,8 @@ export class Slider implements ISubscriber {
         function update(eventType, data) {
             let dataModel = model.getThumbsOffset();
             return fnRes(elemDom,
-                dataModel.L.x, (fnEnd - fnStart)/(max - min) * dataModel.L.x + fnStart,
-                dataModel.R.x, (fnEnd - fnStart)/(max - min) * dataModel.R.x + fnStart,
+                dataModel.L.x, (fnEnd - fnStart) / (max - min) * dataModel.L.x + fnStart,
+                dataModel.R.x, (fnEnd - fnStart) / (max - min) * dataModel.R.x + fnStart,
                 data);
         }
 

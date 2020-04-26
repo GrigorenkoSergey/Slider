@@ -64,16 +64,40 @@ body {
         background: url("/src/assets/images/hotpng.com.png") no-repeat left top;
     }
 }
-
-.slider-container4 {
-    display: flex;
-    justify-content: start;
-    flex-direction: column;
-    width: 500px;
+.examples {
     grid-area: test;
-    padding: 30px;
-    padding-top: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 }
-h2 {
-    // margin-top: 10px;
+.slider-container4 {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .slider {
+        max-width: 300px;
+    }
+}
+.slider-options {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    gap: 10px 20px;
+    margin-top: 20px;
+
+    width: 100%;
+    height: 100px;
+
+    &__li {
+        max-width: 120px;
+    }
+    &__input {
+        max-width: 120px;
+    }
 }

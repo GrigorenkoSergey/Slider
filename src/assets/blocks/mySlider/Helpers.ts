@@ -47,7 +47,8 @@ interface ISubscriber {
     update: (eventType: string, data: any) => void;
 }
 
-function isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-}
-export {EventObserver, IModel, ISubscriber, IViewOptions, isNumeric};
+let debuggerPoint = {start: 0}; //Специальный объект для отладки. Ставим debuggerPoint.start = 1
+//в нужном месте кода и в одном из проверяемых элементов ставим if(debuggerPoint.start) debugger;
+//и отладка довольно сильно упрощается.
+
+export {EventObserver, IModel, ISubscriber, IViewOptions, debuggerPoint};

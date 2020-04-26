@@ -1,4 +1,4 @@
-import { EventObserver, IModel, ISubscriber, isNumeric } from "./Helpers";
+import { EventObserver, IModel, ISubscriber, debuggerPoint } from "./Helpers";
 
 export class Model implements IModel, ISubscriber {
     event = new EventObserver();
@@ -45,15 +45,20 @@ export class Model implements IModel, ISubscriber {
         let obj = Object.assign({}, this);
         Object.assign(obj, expactant);
 
-        let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks} = obj;
+        let shouldBeNumbers = ["min", "max", "step", "thumbLeftPos",
+            "thumbRightPos", "angle"];
+
+        shouldBeNumbers.forEach(key => obj[key] = Number(obj[key]));
+
+        let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks } = obj;
         //сейчас у нас есть все необходимые опции и все переменные определены
 
-        if (!isNumeric(min)) throw new Error("Min should be a number!");
-        if (!isNumeric(max)) throw new Error("Max should be a number");
-        if (!isNumeric(step)) throw new Error("Step should be a number!");
-        if (!isNumeric(angle)) throw new Error("Angle should be a number!");
-        if (!isNumeric(thumbLeftPos)) throw new Error("ThumbLeftPos should be a number!");
-        if (!isNumeric(thumbRightPos)) throw new Error("ThumbRightPos should be a number!");
+        if (!isFinite(min)) throw new Error("Min should be a number!");
+        if (!isFinite(max)) throw new Error("Max should be a number");
+        if (!isFinite(step)) throw new Error("Step should be a number!");
+        if (!isFinite(angle)) throw new Error("Angle should be a number!");
+        if (!isFinite(thumbLeftPos)) throw new Error("ThumbLeftPos should be a number!");
+        if (!isFinite(thumbRightPos)) throw new Error("ThumbRightPos should be a number!");
 
         if (max < min) throw new Error("Max should be greater then min!");
         if (angle < 0 || angle > 90) throw new Error("Angle should be >= 0 and <= 90");
@@ -62,7 +67,10 @@ export class Model implements IModel, ISubscriber {
         if ((max - min) % step) max = min + Math.floor((max - min) / step) * step;
         obj.max = max;
 
-        if (thumbLeftPos < min) throw new Error("ThumbLeftPos is lesser then min!"); 
+        if (thumbLeftPos < min) {
+            if ("thumbsLeftPos" in expactant) throw new Error("ThumbLeftPos is lesser then min!");
+            obj.thumbLeftPos = thumbLeftPos = min;
+        }
         if (obj.range && thumbRightPos > max) throw new Error("ThumbRightPos is greater then max!");
         if (obj.range && thumbRightPos < thumbLeftPos) throw new Error("ThumbLeftPos is greater then thumbRightPos!");
 
@@ -139,7 +147,7 @@ export class Model implements IModel, ISubscriber {
 
                 let fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
                 let fnB = ticksRange[i];
-                
+
                 return (x - fnA) * (b - a) / (fnB - fnA) + a;
             }
         }

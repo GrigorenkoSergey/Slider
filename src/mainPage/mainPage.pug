@@ -5,6 +5,10 @@ block includes
 block variables
     - 
         var titleName = 'SLIDERS'
+        var optionsInputs = ["min", "max", "step", "angle",
+            "thumbLeftPos", "thumbRightPos"];
+        var optionsRadio = ["range", "hintAboveThumb"];
+
 block content
 
     .slider-container1
@@ -25,5 +29,10 @@ block content
     .slider-container3
         .imgSprite
         .slider3
-    .slider-container4
-        .slider4
+    .examples
+        .slider-container4
+            .slider4
+        ul.slider-options
+            each val in optionsInputs
+                li.slider-options__li= val
+                    input.slider-options__input(name = val value = val data-id= "slider4")
