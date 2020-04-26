@@ -39,8 +39,8 @@ export class View implements ISubscriber {
             data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
 
         if (this.range) {
-            this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
             this.el.append(this.thumbRight);
+            this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
         } else {
             this.thumbRight.remove();
         }
@@ -76,7 +76,6 @@ export class View implements ISubscriber {
         shouldBeNumbers.forEach(key => obj[key] = Number(obj[key]));
 
         let { min, max, step, angle } = obj;
-        // if (debuggerPoint.start) debugger;
 
         if (!isFinite(min)) throw new Error("min should be a number!");
         if (!isFinite(max)) throw new Error("max should be a number");
@@ -184,14 +183,8 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     }
 
     function swapThumbClasses(): void {
-        // const left = (slider.querySelector("[class*=left]"));
-        // const right = (slider.querySelector("[class*=right]"));
-
         [self.thumbLeft, self.thumbRight] = [self.thumbRight, self.thumbLeft];
-        // left.className = left.className.replace(/left/, "right");
-        // left.className = left.className
         self.thumbRight.className = self.thumbRight.className.replace(/left/, "right");
         self.thumbLeft.className = self.thumbLeft.className.replace(/right/, "left");
-        // right.className = right.className.replace(/right/, "left");
     }
 }

@@ -112,9 +112,7 @@ function fnRes4(elem, leftX, resLeft) {
 }
 
 
-
-let arr = [slider1, slider2, slider3, slider4, slider5];
-
+let sliders = { slider1, slider2, slider3, slider4, slider5 };
 let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
 
 for (let i = 0; i < inputs.length; i++) {
@@ -123,34 +121,54 @@ for (let i = 0; i < inputs.length; i++) {
 }
 
 function getInputValue(input) {
-    let num = +input.dataset.id.match(/\d+/)[0];
     let option = input.name;
-    input.value = arr[num - 1].getOption(option);
+    let slider = sliders[input.dataset.id];
+    input.value = slider.getOption(option);
+
     if (input.name === "thumbRightPos") {
-        let disabled = arr[num - 1].getOption("range");
-        if (!disabled) {
-            input.disabled = true;
-            input.value ='';
-        }
+        let disabled = !slider.getOption('range');
+        input.disabled = disabled;
+
+        if (disabled) input.value = "";
     }
 }
 
 function onChangeInputValue(e) {
     let input = e.target;
-    let num = +input.dataset.id.match(/\d+/)[0];
-    let option = input.name;
-    arr[num - 1].setOptions({ [option]: input.value });
+    let slider = sliders[input.dataset.id];
+    let prop = input.name;
+    slider.setOptions({ [prop]: input.value });
     inputs.forEach(item => getInputValue(item));
 }
 
 let checkboxes = Array.from(document.querySelectorAll("[type=checkbox]"));
 checkboxes.forEach((item: HTMLInputElement) => {
-    let num = +item.dataset.id.match(/\d+/)[0];
+    let slider = sliders[item.dataset.id];
     let prop = item.name;
-    item.checked = arr[num - 1].getOption(prop);
+    item.checked = slider.getOption(prop);
 
-    item.onchange = function(e) {
-        arr[num - 1].setOptions({[prop]: item.checked});
+    item.onchange = function (e) {
+        slider.setOptions({ [prop]: item.checked });
+        inputs.forEach(item => getInputValue(item));
     }
-    console.log(item.checked);
-})
+});
+
+let thumbsLeft = Array.from(document.querySelectorAll("[name=thumbLeftPos]"));
+thumbsLeft.forEach((item: HTMLInputElement) => {
+    let slider = sliders[item.dataset.id];
+    slider.bindWith(item, slider.max, slider.min,
+         (elem, leftX) => {item.value = leftX}
+    )
+});
+
+let thumbsRight = Array.from(document.querySelectorAll("[name=thumbRightPos]"));
+thumbsRight.forEach((item: HTMLInputElement) => {
+    let slider = sliders[item.dataset.id];
+    slider.bindWith(item, slider.max, slider.min,
+         (elem, leftX, foo, rightX) => {item.value = rightX}
+    )
+});
+
+
+debuggerPoint.start = 1;
+

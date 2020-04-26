@@ -57,15 +57,12 @@ export class Slider implements ISubscriber {
     }
 
     getOption(optionName) {
-        // let res = `Option "${optionName}" doesn't exist!`;
-        let res;
+        let res = `Option "${optionName}" doesn't exist!`;
 
         if (optionName in this.model) {
             res = this.model[optionName];
         } else if (optionName in this.view) {
             res = this.view[optionName];
-        } else {
-            res = `Option "${optionName}" doesn't exist!`;
         }
         return res;
     }
