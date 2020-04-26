@@ -111,6 +111,8 @@ function fnRes4(elem, leftX, resLeft) {
     elem.style.color = resStr;
 }
 
+
+
 let arr = [slider1, slider2, slider3, slider4, slider5];
 
 let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
@@ -124,12 +126,31 @@ function getInputValue(input) {
     let num = +input.dataset.id.match(/\d+/)[0];
     let option = input.name;
     input.value = arr[num - 1].getOption(option);
+    if (input.name === "thumbRightPos") {
+        let disabled = arr[num - 1].getOption("range");
+        if (!disabled) {
+            input.disabled = true;
+            input.value ='';
+        }
+    }
 }
 
 function onChangeInputValue(e) {
     let input = e.target;
     let num = +input.dataset.id.match(/\d+/)[0];
     let option = input.name;
-    arr[num - 1].setOptions({[option]: input.value});
+    arr[num - 1].setOptions({ [option]: input.value });
     inputs.forEach(item => getInputValue(item));
 }
+
+let checkboxes = Array.from(document.querySelectorAll("[type=checkbox]"));
+checkboxes.forEach((item: HTMLInputElement) => {
+    let num = +item.dataset.id.match(/\d+/)[0];
+    let prop = item.name;
+    item.checked = arr[num - 1].getOption(prop);
+
+    item.onchange = function(e) {
+        arr[num - 1].setOptions({[prop]: item.checked});
+    }
+    console.log(item.checked);
+})

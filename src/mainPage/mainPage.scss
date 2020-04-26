@@ -100,4 +100,16 @@ body {
     &__input {
         max-width: 120px;
     }
+     &__li_checkbox {
+         display: flex;
+         flex-direction: column;
+         flex-wrap: wrap;
+         max-width: 120px;
+     }
+     &__label {
+         width: 100%;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+     }
 }

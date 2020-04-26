@@ -50,21 +50,22 @@ export class Slider implements ISubscriber {
 
     setOptions(options) {
         this.model.setOptions.call(this.model, options);
+        this.view.setOptions.call(this.view, options);
+        this.view.update("changeModel", this.model.getThumbsOffset());
 
-        if ("angle" in options) {
-            this.view.setOptions.call(this.view, options);
-            this.view.update("changeModel", this.model.getThumbsOffset());
-        }
         return this;
     }
 
     getOption(optionName) {
-        let res = `Option "${optionName}" doesn't exist!`;
+        // let res = `Option "${optionName}" doesn't exist!`;
+        let res;
 
         if (optionName in this.model) {
             res = this.model[optionName];
         } else if (optionName in this.view) {
             res = this.view[optionName];
+        } else {
+            res = `Option "${optionName}" doesn't exist!`;
         }
         return res;
     }

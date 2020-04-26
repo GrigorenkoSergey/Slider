@@ -51,7 +51,6 @@ export class Model implements IModel, ISubscriber {
         shouldBeNumbers.forEach(key => obj[key] = Number(obj[key]));
 
         let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks } = obj;
-        //сейчас у нас есть все необходимые опции и все переменные определены
 
         if (!isFinite(min)) throw new Error("Min should be a number!");
         if (!isFinite(max)) throw new Error("Max should be a number");
