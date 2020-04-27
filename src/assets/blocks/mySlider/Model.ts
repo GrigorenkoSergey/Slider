@@ -42,6 +42,8 @@ export class Model implements IModel, ISubscriber {
     }
 
     setOptions(expactant) {
+        // if (debuggerPoint.start == 3) debugger; //Для будущей отладки
+
         let shouldBeNumbers = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
 
@@ -66,18 +68,13 @@ export class Model implements IModel, ISubscriber {
         if ((max - min) % step) max = min + Math.floor((max - min) / step) * step;
         obj.max = max;
 
-        if (thumbLeftPos < min) {
-            if ("thumbsLeftPos" in expactant) throw new Error("ThumbLeftPos is lesser then min!");
-            obj.thumbLeftPos = thumbLeftPos = min;
+        if (thumbLeftPos > thumbRightPos) { //Числа вычисляются обычно по умолчанию, поэтому не стоит выкидывать ошибку
+            [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
         }
-
-        if (!("thumbRightPos" in expactant)) {
-            obj.thumbRightPos = max;
-            thumbRightPos = max;
-        }
-
-        if (obj.range && thumbRightPos > max) throw new Error("ThumbRightPos is greater then max!");
-        if (obj.range && thumbRightPos < thumbLeftPos) throw new Error("ThumbLeftPos is greater then thumbRightPos!");
+        thumbLeftPos = Math.max(min, thumbLeftPos);
+        thumbRightPos = Math.min(max, thumbRightPos);
+        (thumbLeftPos == thumbRightPos) && (thumbRightPos = max); //Иногда бегунки сливаются. Нехорошо
+        Object.assign(obj, { thumbLeftPos, thumbRightPos });
 
         //а сейчас самое запутанное и неочевидное. Если положиться на ticks по умолчанию ({100: 100})
         //можно словить большие проблемы, поэтому его назначаем вручную.

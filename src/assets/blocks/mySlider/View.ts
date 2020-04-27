@@ -3,7 +3,7 @@ import { EventObserver, ISubscriber, IViewOptions, debuggerPoint } from "./Helpe
 export class View implements ISubscriber {
     el: HTMLDivElement;
     event: EventObserver = new EventObserver();
-    className: string = "";
+    className: string = "slider";
     angle: number = 0;
     step: number = 10;
     min: number = 0;
@@ -18,9 +18,9 @@ export class View implements ISubscriber {
     constructor(options: IViewOptions) {
         this.setOptions.call(this, options);
 
-        this.el = document.querySelector(this.selector);
-        this.hintEl = document.createElement('div');
-        [this.thumbLeft, this.thumbRight] = new Array(2).fill(1).map(item => document.createElement('div'));
+        let wrapper = document.querySelector(this.selector);
+        [this.el, this.hintEl, this.thumbLeft, this.thumbRight] = new Array(4).fill(1).map(item => document.createElement('div'));
+        wrapper.append(this.el);
 
         this.el.classList.add(this.className);
         this.step = this.step ? this.step : (this.max - this.min) / 100;

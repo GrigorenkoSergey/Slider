@@ -1,19 +1,21 @@
 extends ../assets/blocks/template/template.pug
 
-mixin sliderContainer(num)
+mixin example(num)
+    - let wrapper = "example" + num;
     - let containerName = "slider-container" + num;
     - let slider = "slider" + num
 
-    div(class= containerName)
+    div(class= wrapper)
+        //- div(class= containerName)
         div(class = slider)
-    ul.slider-options
-        each val in optionsInputs
-            li.slider-options__li= val
-                input.slider-options__input(name = val value = val data-id= slider)
-        li.slider-options__li_checkbox
-            each val in optionsCheckbox
-                label.slider-options__label= val[1]
-                    input.slider-options_checkbox(type="checkbox" name = val[0] data-id= slider)
+        ul.slider-options
+            each val in optionsInputs
+                li.slider-options__li= val
+                    input.slider-options__input(name = val value = val data-id= slider)
+            li.slider-options__li_checkbox
+                each val in optionsCheckbox
+                    label.slider-options__label= val[1]
+                        input.slider-options_checkbox(type="checkbox" name = val[0] data-id= slider)
 
 block includes
 
@@ -27,23 +29,26 @@ block variables
 block content
 
     .examples
-        +sliderContainer(1)
+        +example(1)
+        +example(2)
+        +example(3)
+        +example(4)
 
-    .slider-container5
-        .slider5
-        -
-            let i = 65;
-            let arr = new Array(58).fill(1).map(item => i++);
-            let pContent = String.fromCodePoint(...arr);
+    //- .slider-container5
+    //-     .slider5
+    //-     -
+    //-         let i = 65;
+    //-         let arr = new Array(58).fill(1).map(item => i++);
+    //-         let pContent = String.fromCodePoint(...arr);
 
-        p=  pContent 
+    //-     p=  pContent 
 
 
-    .slider-container6
-        .slider6
-        span A
-        .slider7
+    //- .slider-container6
+    //-     .slider6
+    //-     span A
+    //-     .slider7
 
-    .slider-container8
-        .imgSprite
-        .slider8
+    //- .slider-container8
+    //-     .imgSprite
+    //-     .slider8

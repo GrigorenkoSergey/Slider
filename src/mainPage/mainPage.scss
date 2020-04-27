@@ -2,16 +2,75 @@
 // @import "src/assets/blocks/range-slider/range-slider.scss";
 @import "src/assets/blocks/mySlider/mySlider.scss";
 
-body {
+.examples {
+    margin-top: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    height: 100vh;
+    // grid-template-rows: 1fr 1fr 1fr 1fr;
+    // grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto auto;
+    // height: 100vh;
     gap: 0px;
+    // grid-template-areas:
+    //     "test letter"
+    //     "test bird"
+    //     "test line";
+    // grid-template-areas:
+    //     "test1 test2"
+    //     "test3 test4"
+    //     "letter bird"
+    //     "line line";
     grid-template-areas:
-        "test letter"
-        "test bird"
-        "test line";
+        "test1 test2"
+        "test3 test4";
+    row-gap: 20px;
+}
+
+@for $i from 1 through 4 {
+    .example#{$i} {
+        grid-area: test#{$i};
+        display: grid;
+        grid-template-columns: auto auto;
+        column-gap: 10px;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+@for $i from 1 to 9 {
+    .slider#{$i} {
+        width: 300px;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.slider-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 10px 20px;
+    justify-content: space-between;
+
+    &__li {
+        max-width: 100px;
+    }
+    &__input {
+        max-width: 100px;
+    }
+    &__li_checkbox {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        max-width: 100px;
+    }
+    &__label {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 }
 
 .slider-container5 {
@@ -63,53 +122,4 @@ body {
         height: 168.66px;
         background: url("/src/assets/images/hotpng.com.png") no-repeat left top;
     }
-}
-.examples {
-    grid-area: test;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-}
-.slider-container1 {
-    width: 300px;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .slider {
-        max-width: 300px;
-    }
-}
-.slider-options {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: center;
-    justify-items: center;
-    gap: 10px 20px;
-    margin-top: 20px;
-
-    width: 100%;
-    height: 100px;
-
-    &__li {
-        max-width: 120px;
-    }
-    &__input {
-        max-width: 120px;
-    }
-     &__li_checkbox {
-         display: flex;
-         flex-direction: column;
-         flex-wrap: wrap;
-         max-width: 120px;
-     }
-     &__label {
-         width: 100%;
-         display: flex;
-         justify-content: space-between;
-         align-items: center;
-     }
 }

@@ -8,25 +8,55 @@ let options1 = {
     max: 100,
     step: 1,
     selector: ".slider1",
-    className: "slider",
     angle: 0,
     range: false,
     hintAboveThumb: true
 }
 let slider1 = new Slider(options1);
 
+let options2 = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".slider2",
+    angle: 0,
+    range: false,
+    hintAboveThumb: true
+}
+let slider2 = new Slider(options2);
+
+let options3 = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".slider3",
+    angle: 0,
+    range: false,
+    hintAboveThumb: true
+}
+let slider3 = new Slider(options3);
+
+let options4 = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".slider4",
+    angle: 0,
+    range: false,
+    hintAboveThumb: true
+}
+let slider4 = new Slider(options4);
+/*
 let options5 = {
     max: 1000,
     min: 0,
     step: 10,
     selector: ".slider5",
-    className: "slider",
     angle: 0,
     range: true,
     hintAboveThumb: true
 }
 
-debuggerPoint.start = 1;
 let slider5 = new Slider(options5);
 
 let pContent = document.querySelector('p').textContent;
@@ -43,7 +73,6 @@ let options6 = {
     min: 0,
     step: 10,
     selector: ".slider6",
-    className: "slider",
     angle: 0,
     range: false,
     hintAboveThumb: true
@@ -61,7 +90,6 @@ let options7 = {
     max: 100,
     step: 1,
     selector: ".slider7",
-    className: "slider",
     angle: 65,
     range: false,
 }
@@ -86,14 +114,12 @@ let options8 = {
     min: 0,
     step: 10,
     selector: ".slider8",
-    className: "slider",
     angle: 0,
     range: false,
     hintAboveThumb: true
 }
 
 let slider8 = new Slider(options8);
-// slider8.setThumbsPos(500, 600);
 slider8.bindWith(document.querySelector('.imgSprite'), 0, 13, fnRes8);
 
 function fnRes8(elem, leftX, resLeft) {
@@ -107,9 +133,9 @@ function fnRes8(elem, leftX, resLeft) {
     elem.style.backgroundPositionX = -offsetLeft + "px";
     elem.style.backgroundPositionY = -offsetTop + "px";
 }
+*/
 
-// let sliders = { slider1, slider2, slider3, slider4, slider5 };
-let sliders = { slider1};
+let sliders = { slider1, slider2, slider3, slider4 };
 let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
 
 for (let i = 0; i < inputs.length; i++) {
@@ -131,6 +157,8 @@ function getInputValue(input) {
 }
 
 function onChangeInputValue(e) {
+    // debuggerPoint.start += 1; //Специально оставил на будущее, чтобы не вспоминать технику отладки
+    // console.log(debuggerPoint.start);
     let input = e.target;
     let slider = sliders[input.dataset.id];
     let prop = input.name;
@@ -145,6 +173,8 @@ checkboxes.forEach((item: HTMLInputElement) => {
     item.checked = slider.getOption(prop);
 
     item.onchange = function (e) {
+        // debuggerPoint.start += 1;
+        // console.log(debuggerPoint.start);
         slider.setOptions({ [prop]: item.checked });
         inputs.forEach(item => getInputValue(item));
     }
@@ -154,7 +184,7 @@ let thumbsLeft = Array.from(document.querySelectorAll("[name=thumbLeftPos]"));
 thumbsLeft.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
     slider.bindWith(item, slider.max, slider.min,
-         (elem, leftX) => {item.value = leftX}
+        (elem, leftX) => { item.value = leftX }
     )
 });
 
@@ -162,9 +192,7 @@ let thumbsRight = Array.from(document.querySelectorAll("[name=thumbRightPos]"));
 thumbsRight.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
     slider.bindWith(item, slider.max, slider.min,
-         (elem, leftX, foo, rightX) => {item.value = rightX}
+        (elem, leftX, foo, rightX) => { item.value = rightX }
     )
 });
-
-
-
+debuggerPoint.start = 1;
