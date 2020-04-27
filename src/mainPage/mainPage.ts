@@ -10,27 +10,28 @@ let options1 = {
     selector: ".slider1",
     angle: 0,
     range: false,
-    hintAboveThumb: true
+    hintAboveThumb: false,
 }
 let slider1 = new Slider(options1);
 
 let options2 = {
-    min: 0,
-    max: 100,
+    min: 100,
+    max: 2000,
     step: 1,
     selector: ".slider2",
-    angle: 0,
+    angle: 90,
     range: false,
-    hintAboveThumb: true
+    hintAboveThumb: true,
+    thumbLeftPos: 800,
 }
 let slider2 = new Slider(options2);
 
 let options3 = {
     min: 0,
-    max: 100,
+    max: 1000,
     step: 1,
     selector: ".slider3",
-    angle: 0,
+    angle: 45,
     range: false,
     hintAboveThumb: true
 }
@@ -38,15 +39,16 @@ let slider3 = new Slider(options3);
 
 let options4 = {
     min: 0,
-    max: 100,
-    step: 1,
+    max: 20000,
+    ticks: {500: 100, 10000: 150, 20000: 180},
+    step: 10,
     selector: ".slider4",
     angle: 0,
     range: false,
     hintAboveThumb: true
 }
 let slider4 = new Slider(options4);
-/*
+
 let options5 = {
     max: 1000,
     min: 0,
@@ -57,12 +59,12 @@ let options5 = {
     hintAboveThumb: true
 }
 
+debuggerPoint.start = 5;
 let slider5 = new Slider(options5);
+let pContent = document.querySelector('.slider5__p').textContent;
+slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('p').textContent.length, fnResLine);
 
-let pContent = document.querySelector('p').textContent;
-slider5.bindWith(document.querySelector('p'), 0, document.querySelector('p').textContent.length, fnRes5);
-
-function fnRes5(elem, leftX, resLeft, rightX, resRight) {
+function fnResLine(elem, leftX, resLeft, rightX, resRight) {
     resLeft = Math.round(resLeft);
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
@@ -79,50 +81,33 @@ let options6 = {
 }
 
 let slider6 = new Slider(options6);
-slider6.bindWith(document.querySelector("span"), 0, 20, fnRes6);
+slider6.bindWith(document.querySelector("[class*=__text]"), 0, 20, fnResShadow);
+slider6.bindWith(document.querySelector('[class*=__text]'), 200, 360, fnResColor);
 
-function fnRes6(elem, leftX, resLeft, rightX, resRight, data) {
+function fnResShadow(elem, leftX, resLeft, rightX, resRight, data) {
     elem.style.textShadow = resLeft + "px 19px 7px grey";
 }
-
-let options7 = {
-    min: 0,
-    max: 100,
-    step: 1,
-    selector: ".slider7",
-    angle: 65,
-    range: false,
-}
-
-
-
-
-
-
-
-let slider7 = new Slider(options7);
-slider7.bindWith(document.querySelector('span'), 200, 360, fnRes7);
-
-function fnRes7(elem, leftX, resLeft) {
+function fnResColor(elem, leftX, resLeft) {
     resLeft = Math.round(resLeft);
     let resStr = "hsl(" + resLeft + ", 100%, 50%)";
     elem.style.color = resStr;
 }
 
-let options8 = {
+
+let options7 = {
     max: 1000,
     min: 0,
     step: 10,
-    selector: ".slider8",
+    selector: ".slider7",
     angle: 0,
     range: false,
     hintAboveThumb: true
 }
 
-let slider8 = new Slider(options8);
-slider8.bindWith(document.querySelector('.imgSprite'), 0, 13, fnRes8);
+let slider7 = new Slider(options7);
+slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 
-function fnRes8(elem, leftX, resLeft) {
+function fnResBird(elem, leftX, resLeft) {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
     resLeft = Math.round(resLeft);
@@ -133,9 +118,8 @@ function fnRes8(elem, leftX, resLeft) {
     elem.style.backgroundPositionX = -offsetLeft + "px";
     elem.style.backgroundPositionY = -offsetTop + "px";
 }
-*/
 
-let sliders = { slider1, slider2, slider3, slider4 };
+let sliders = { slider1, slider2, slider3, slider4, slider5, slider6, slider7};
 let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
 
 for (let i = 0; i < inputs.length; i++) {

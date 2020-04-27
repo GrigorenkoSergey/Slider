@@ -18,6 +18,9 @@ export class Model implements IModel, ISubscriber {
     _ticksValues: number[];
 
     constructor(options: IModel = {}) {
+        if (!("thumbsRigthPos" in options)) options.thumbRightPos = options.max;
+        if (!("ticks" in options)) options.ticks = { [options.max]: options.max};
+
         this.setOptions(options);
     }
 
@@ -42,8 +45,6 @@ export class Model implements IModel, ISubscriber {
     }
 
     setOptions(expactant) {
-        // if (debuggerPoint.start == 3) debugger; //Для будущей отладки
-
         let shouldBeNumbers = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
 
@@ -59,6 +60,7 @@ export class Model implements IModel, ISubscriber {
         let obj = Object.assign({}, this);
         Object.assign(obj, expactant);
 
+        // if (debuggerPoint.start == 5) debugger; //Для будущей отладки
         let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks } = obj;
 
         if (max < min) throw new Error("Max should be greater then min!");
@@ -68,18 +70,16 @@ export class Model implements IModel, ISubscriber {
         if ((max - min) % step) max = min + Math.floor((max - min) / step) * step;
         obj.max = max;
 
-        if (thumbLeftPos > thumbRightPos) { //Числа вычисляются обычно по умолчанию, поэтому не стоит выкидывать ошибку
-            [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
+        if (!obj.range) {
+            thumbRightPos = max;
+        } else {
+            thumbRightPos = Math.min(max, thumbRightPos);
         }
+
         thumbLeftPos = Math.max(min, thumbLeftPos);
-        thumbRightPos = Math.min(max, thumbRightPos);
         (thumbLeftPos == thumbRightPos) && (thumbRightPos = max); //Иногда бегунки сливаются. Нехорошо
         Object.assign(obj, { thumbLeftPos, thumbRightPos });
 
-        //а сейчас самое запутанное и неочевидное. Если положиться на ticks по умолчанию ({100: 100})
-        //можно словить большие проблемы, поэтому его назначаем вручную.
-
-        ticks = expactant.ticks ? expactant.ticks : { [obj.max]: obj.max };
         obj._totalItems = Object.values(ticks).pop();
         obj._ticksRange = Object.keys(ticks).map(item => Number(item));;
         obj._ticksValues = Object.values(ticks);

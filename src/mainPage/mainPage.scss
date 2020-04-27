@@ -6,20 +6,8 @@
     margin-top: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    // grid-template-rows: 1fr 1fr 1fr 1fr;
-    // grid-template-rows: 1fr 1fr;
     grid-template-rows: auto auto;
-    // height: 100vh;
     gap: 0px;
-    // grid-template-areas:
-    //     "test letter"
-    //     "test bird"
-    //     "test line";
-    // grid-template-areas:
-    //     "test1 test2"
-    //     "test3 test4"
-    //     "letter bird"
-    //     "line line";
     grid-template-areas:
         "test1 test2"
         "test3 test4";
@@ -36,7 +24,7 @@
         align-items: center;
     }
 }
-@for $i from 1 to 9 {
+@for $i from 1 to 5 {
     .slider#{$i} {
         width: 300px;
         height: 300px;
@@ -73,53 +61,49 @@
     }
 }
 
-.slider-container5 {
-    width: 400px;
-    box-sizing: border-box;
+.imgSprite {
+    width: 183.6px;
+    height: 168.66px;
+    background: url("/src/assets/images/hotpng.com.png") no-repeat left top;
+}
+
+p {
+    font-size: medium;
+    font-weight: bolder;
+    word-break: break-all;
+    text-align: center;
+    padding: 20px;
+}
+
+.usage-examples {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    overflow: hidden;
+    justify-content: space-between;
+    column-gap: 10px;
+    margin-bottom: 50px;
+}
+
+.slider6-container {
+    display: flex;
+    flex-direction: column;
+
+    &__text {
+        height: 150px;  
+        font-size: 150px;
+        line-height: 150px;
+        text-align: center;
+        text-shadow: -10px 19px 7px grey;
+    }
+}
+
+.slider5,
+.slider6,
+.slider7 {
     padding: 20px;
     padding-top: 50px;
-    grid-area: line;
-
-    p {
-        padding-top: 30px;
-        font-size: medium;
-        font-weight: bolder;
-        word-break: break-all;
-        text-align: center;
-    }
 }
 
-.slider-container6 {
-    width: 500px;
-    // height: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    grid-area: letter;
-
-    span {
-        // position: absolute;
-        font-size: 150px;
-        text-shadow: -10px 19px 7px grey;
-        left: 300px;
-    }
-}
-
-.slider-container8 {
-    grid-area: bird;
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: row-reverse;
-
-    .slider8 {
-        width: 200px;
-        margin-top: 100px;
-    }
-
-    .imgSprite {
-        width: 183.6px;
-        height: 168.66px;
-        background: url("/src/assets/images/hotpng.com.png") no-repeat left top;
-    }
+h1 {
+    text-align: center;
 }

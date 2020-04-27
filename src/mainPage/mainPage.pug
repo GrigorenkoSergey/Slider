@@ -6,7 +6,6 @@ mixin example(num)
     - let slider = "slider" + num
 
     div(class= wrapper)
-        //- div(class= containerName)
         div(class = slider)
         ul.slider-options
             each val in optionsInputs
@@ -32,23 +31,25 @@ block content
         +example(1)
         +example(2)
         +example(3)
-        +example(4)
+        .div
+            p Below is an example of a non-linear scale. Do not experiment with max and min.
+            +example(4)
 
-    //- .slider-container5
-    //-     .slider5
-    //-     -
-    //-         let i = 65;
-    //-         let arr = new Array(58).fill(1).map(item => i++);
-    //-         let pContent = String.fromCodePoint(...arr);
+    h1 Usage examples
+    .usage-examples
+        .slider5-container
+            .slider5
+            -
+                let i = 65;
+                let arr = new Array(58).fill(1).map(item => i++);
+                let pContent = String.fromCodePoint(...arr);
 
-    //-     p=  pContent 
+            p.slider5__p=  pContent 
 
+        .slider6-container
+            .slider6
+            .slider6-container__text A
 
-    //- .slider-container6
-    //-     .slider6
-    //-     span A
-    //-     .slider7
-
-    //- .slider-container8
-    //-     .imgSprite
-    //-     .slider8
+        .slider7-container
+            .slider7
+            .imgSprite

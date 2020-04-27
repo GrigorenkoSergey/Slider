@@ -13,16 +13,14 @@ export class Slider implements ISubscriber {
         this.view = new View(options);
         let [model, view] = [this.model, this.view];
 
-        if (this.view.hintAboveThumb) {
-            let hint = this.view.hintEl;
+        let hint = this.view.hintEl;
 
-            let fnRes = (elem, leftX, resLeft, rightX, resRight, data) => {
-                let res = data.el == "L" ? leftX : rightX;
-                elem.textContent = "" + Math.round(res);
-            }
-
-            this.bindWith(hint, this.model.min, this.model.max, fnRes);
+        let fnRes = (elem, leftX, resLeft, rightX, resRight, data) => {
+            let res = data.el == "L" ? leftX : rightX;
+            elem.textContent = "" + Math.round(res);
         }
+
+        this.bindWith(hint, this.model.min, this.model.max, fnRes);
 
         this.event.addSubscriber("changeView", model);
         model.event.addSubscriber("changeModel", this);
