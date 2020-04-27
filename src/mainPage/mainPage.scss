@@ -14,7 +14,7 @@ body {
         "test line";
 }
 
-.slider-container1 {
+.slider-container5 {
     width: 400px;
     box-sizing: border-box;
     padding: 20px;
@@ -30,7 +30,7 @@ body {
     }
 }
 
-.slider-container2 {
+.slider-container6 {
     width: 500px;
     // height: 400px;
     display: flex;
@@ -47,13 +47,13 @@ body {
     }
 }
 
-.slider-container3 {
+.slider-container8 {
     grid-area: bird;
     display: flex;
     justify-content: flex-end;
     flex-direction: row-reverse;
 
-    .slider3 {
+    .slider8 {
         width: 200px;
         margin-top: 100px;
     }
@@ -71,7 +71,7 @@ body {
     align-items: center;
 
 }
-.slider-container4 {
+.slider-container1 {
     width: 300px;
     height: 300px;
     display: flex;

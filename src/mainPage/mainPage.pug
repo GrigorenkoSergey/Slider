@@ -1,5 +1,20 @@
 extends ../assets/blocks/template/template.pug
 
+mixin sliderContainer(num)
+    - let containerName = "slider-container" + num;
+    - let slider = "slider" + num
+
+    div(class= containerName)
+        div(class = slider)
+    ul.slider-options
+        each val in optionsInputs
+            li.slider-options__li= val
+                input.slider-options__input(name = val value = val data-id= slider)
+        li.slider-options__li_checkbox
+            each val in optionsCheckbox
+                label.slider-options__label= val[1]
+                    input.slider-options_checkbox(type="checkbox" name = val[0] data-id= slider)
+
 block includes
 
 block variables
@@ -11,8 +26,11 @@ block variables
 
 block content
 
-    .slider-container1
-        .slider1
+    .examples
+        +sliderContainer(1)
+
+    .slider-container5
+        .slider5
         -
             let i = 65;
             let arr = new Array(58).fill(1).map(item => i++);
@@ -21,22 +39,11 @@ block content
         p=  pContent 
 
 
-    .slider-container2
-        .slider2
+    .slider-container6
+        .slider6
         span A
-        .slider5
+        .slider7
 
-    .slider-container3
+    .slider-container8
         .imgSprite
-        .slider3
-    .examples
-        .slider-container4
-            .slider4
-        ul.slider-options
-            each val in optionsInputs
-                li.slider-options__li= val
-                    input.slider-options__input(name = val value = val data-id= "slider4")
-            li.slider-options__li_checkbox
-                each val in optionsCheckbox
-                    label.slider-options__label= val[1]
-                        input.slider-options_checkbox(type="checkbox" name = val[0] data-id= "slider4")
+        .slider8

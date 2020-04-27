@@ -4,90 +4,99 @@ import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
 
 let options1 = {
-    // ticks: { 1000: 100, 20000: 150 },
-    max: 10000,
     min: 0,
-    step: 100,
+    max: 100,
+    step: 1,
     selector: ".slider1",
     className: "slider",
     angle: 0,
-    range: true,
-    thumbLeftPos: 200,
-    thumbRightPos: 8000,
-    hintAboveThumb: true
-}
-
-let options2 = {
-    max: 1000,
-    min: 0,
-    step: 10,
-    selector: ".slider2",
-    className: "slider",
-    // angle: 45,
-    angle: 0,
     range: false,
     hintAboveThumb: true
 }
-
-let options3 = {
-    max: 1000,
-    min: 0,
-    step: 10,
-    selector: ".slider3",
-    className: "slider",
-    // angle: 90,
-    angle: 0,
-    range: false,
-    thumbLeftPos: 500,
-    hintAboveThumb: true
-}
-
-let options4 = {
-    min: 0,
-    max: 100,
-    step: 1,
-    selector: ".slider4",
-    className: "slider",
-    angle: 0,
-    range: false,
-    hintAboveThumb: true
-}
+let slider1 = new Slider(options1);
 
 let options5 = {
+    max: 1000,
     min: 0,
-    max: 100,
-    step: 1,
+    step: 10,
     selector: ".slider5",
     className: "slider",
     angle: 0,
-    range: false,
+    range: true,
+    hintAboveThumb: true
 }
 
-let slider1 = new Slider(options1);
-slider1.setThumbsPos(100, 10000);
-let pContent = document.querySelector('p').textContent;
-slider1.bindWith(document.querySelector('p'), 0, document.querySelector('p').textContent.length, fnRes1);
+debuggerPoint.start = 1;
+let slider5 = new Slider(options5);
 
-function fnRes1(elem, leftX, resLeft, rightX, resRight) {
+let pContent = document.querySelector('p').textContent;
+slider5.bindWith(document.querySelector('p'), 0, document.querySelector('p').textContent.length, fnRes5);
+
+function fnRes5(elem, leftX, resLeft, rightX, resRight) {
     resLeft = Math.round(resLeft);
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
 }
 
-let slider2 = new Slider(options2);
-slider2.setThumbsPos(200, 600);
-slider2.bindWith(document.querySelector("span"), 0, 20, fnRes2);
+let options6 = {
+    max: 1000,
+    min: 0,
+    step: 10,
+    selector: ".slider6",
+    className: "slider",
+    angle: 0,
+    range: false,
+    hintAboveThumb: true
+}
 
-function fnRes2(elem, leftX, resLeft, rightX, resRight, data) {
+let slider6 = new Slider(options6);
+slider6.bindWith(document.querySelector("span"), 0, 20, fnRes6);
+
+function fnRes6(elem, leftX, resLeft, rightX, resRight, data) {
     elem.style.textShadow = resLeft + "px 19px 7px grey";
 }
 
+let options7 = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".slider7",
+    className: "slider",
+    angle: 65,
+    range: false,
+}
 
-let slider3 = new Slider(options3);
-slider3.setThumbsPos(500, 600);
-slider3.bindWith(document.querySelector('.imgSprite'), 0, 13, fnRes3);
 
-function fnRes3(elem, leftX, resLeft) {
+
+
+
+
+
+let slider7 = new Slider(options7);
+slider7.bindWith(document.querySelector('span'), 200, 360, fnRes7);
+
+function fnRes7(elem, leftX, resLeft) {
+    resLeft = Math.round(resLeft);
+    let resStr = "hsl(" + resLeft + ", 100%, 50%)";
+    elem.style.color = resStr;
+}
+
+let options8 = {
+    max: 1000,
+    min: 0,
+    step: 10,
+    selector: ".slider8",
+    className: "slider",
+    angle: 0,
+    range: false,
+    hintAboveThumb: true
+}
+
+let slider8 = new Slider(options8);
+// slider8.setThumbsPos(500, 600);
+slider8.bindWith(document.querySelector('.imgSprite'), 0, 13, fnRes8);
+
+function fnRes8(elem, leftX, resLeft) {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
     resLeft = Math.round(resLeft);
@@ -99,20 +108,8 @@ function fnRes3(elem, leftX, resLeft) {
     elem.style.backgroundPositionY = -offsetTop + "px";
 }
 
-let slider4 = new Slider(options4);
-
-
-let slider5 = new Slider(options5);
-slider5.bindWith(document.querySelector('span'), 200, 360, fnRes4);
-
-function fnRes4(elem, leftX, resLeft) {
-    resLeft = Math.round(resLeft);
-    let resStr = "hsl(" + resLeft + ", 100%, 50%)";
-    elem.style.color = resStr;
-}
-
-
-let sliders = { slider1, slider2, slider3, slider4, slider5 };
+// let sliders = { slider1, slider2, slider3, slider4, slider5 };
+let sliders = { slider1};
 let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
 
 for (let i = 0; i < inputs.length; i++) {
@@ -170,5 +167,4 @@ thumbsRight.forEach((item: HTMLInputElement) => {
 });
 
 
-debuggerPoint.start = 1;
 

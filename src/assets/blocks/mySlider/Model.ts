@@ -42,22 +42,22 @@ export class Model implements IModel, ISubscriber {
     }
 
     setOptions(expactant) {
-        let obj = Object.assign({}, this);
-        Object.assign(obj, expactant);
-
         let shouldBeNumbers = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
 
-        shouldBeNumbers.forEach(key => obj[key] = Number(obj[key]));
+        shouldBeNumbers.forEach(key => {
+            if (key in expactant) {
+                expactant[key] = Number(expactant[key])
+                if (!isFinite(expactant[key])) {
+                    throw new Error(key[0].toUpperCase().slice(1) + " should be a number!");
+                }
+            }
+        });
+
+        let obj = Object.assign({}, this);
+        Object.assign(obj, expactant);
 
         let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks } = obj;
-
-        if (!isFinite(min)) throw new Error("Min should be a number!");
-        if (!isFinite(max)) throw new Error("Max should be a number");
-        if (!isFinite(step)) throw new Error("Step should be a number!");
-        if (!isFinite(angle)) throw new Error("Angle should be a number!");
-        if (!isFinite(thumbLeftPos)) throw new Error("ThumbLeftPos should be a number!");
-        if (!isFinite(thumbRightPos)) throw new Error("ThumbRightPos should be a number!");
 
         if (max < min) throw new Error("Max should be greater then min!");
         if (angle < 0 || angle > 90) throw new Error("Angle should be >= 0 and <= 90");
@@ -70,6 +70,12 @@ export class Model implements IModel, ISubscriber {
             if ("thumbsLeftPos" in expactant) throw new Error("ThumbLeftPos is lesser then min!");
             obj.thumbLeftPos = thumbLeftPos = min;
         }
+
+        if (!("thumbRightPos" in expactant)) {
+            obj.thumbRightPos = max;
+            thumbRightPos = max;
+        }
+
         if (obj.range && thumbRightPos > max) throw new Error("ThumbRightPos is greater then max!");
         if (obj.range && thumbRightPos < thumbLeftPos) throw new Error("ThumbLeftPos is greater then thumbRightPos!");
 
