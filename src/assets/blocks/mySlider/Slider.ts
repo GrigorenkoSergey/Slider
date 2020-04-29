@@ -2,11 +2,15 @@ import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 import { Model } from "./Model";
 import { View } from "./View";
 
+type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
+    rightX: number, scaledRightX: number, data: any) => void;
+type Obj = {[key: string]: any};
+
 export class Slider implements ISubscriber {
     private event: EventObserver = new EventObserver();
     private model: Model;
     private view: View;
-    private bindedElements = [];
+    private bindedElements: Array<ISubscriber & {el: HTMLElement}> = [];
 
     constructor(options: any) {
         this.model = new Model(options);
@@ -15,7 +19,7 @@ export class Slider implements ISubscriber {
 
         let hint = this.view.hintEl;
 
-        let fnRes = (elem, leftX, resLeft, rightX, resRight, data) => {
+        let fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
             let res = data.el == "L" ? leftX : rightX;
             elem.textContent = "" + Math.round(res);
         }
@@ -26,13 +30,12 @@ export class Slider implements ISubscriber {
         model.event.addSubscriber("changeModel", this);
 
         this.event.addSubscriber("changeModel", view);
-        this.event.addSubscriber("updateView", view);//?
         view.event.addSubscriber("changeView", this);
         view.render();
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
     }
 
-    update(eventType: string, data: any) {
+    update(eventType: string, data: any): void {
         if (eventType == "changeModel") {
             this.event.broadcast("changeModel", data);
 
@@ -42,11 +45,11 @@ export class Slider implements ISubscriber {
         }
     }
 
-    setThumbsPos(leftPos, rightPos) {
+    setThumbsPos(leftPos: number, rightPos: number): void {
         return this.model.setThumbsPos.call(this.model, leftPos, rightPos);
     }
 
-    setOptions(options) {
+    setOptions(options: Obj): Slider {
         this.model.setOptions.call(this.model, options);
         this.view.setOptions.call(this.view, options);
         this.view.update("changeModel", this.model.getThumbsOffset());
@@ -54,18 +57,18 @@ export class Slider implements ISubscriber {
         return this;
     }
 
-    getOption(optionName) {
-        let res = `Option "${optionName}" doesn't exist!`;
+    getOption(optionName: string) {
+        let res: any = `Option "${optionName}" doesn't exist!`;
 
         if (optionName in this.model) {
-            res = this.model[optionName];
+            res = this.model[<keyof Model>optionName];
         } else if (optionName in this.view) {
-            res = this.view[optionName];
+            res = this.view[<keyof View>optionName];
         }
         return res;
     }
 
-    bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes) {
+    bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes: fnResType) {
         //fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 
         let model = this.model;
@@ -75,7 +78,7 @@ export class Slider implements ISubscriber {
         }
 
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
-        function update(eventType, data) {
+        function update(eventType: string, data: any) {
             let dataModel = model.getThumbsOffset();
             return fnRes(elemDom,
                 dataModel.L.x, (fnEnd - fnStart) / (max - min) * dataModel.L.x + fnStart,
@@ -94,11 +97,12 @@ export class Slider implements ISubscriber {
         this.bindedElements.push(elemSubscriber);
     }
 
-    unbindFrom(elemDom) { //не тестировал.
+    unbindFrom(elemDom: HTMLElement): Slider { //не тестировал.
         let elemSubscriber = this.bindedElements.find(elem => elem.el === elemDom);
 
         this.event.removeSubscriber("chageView", elemSubscriber);
         this.event.removeSubscriber("changeModel", elemSubscriber);
         this.bindedElements = this.bindedElements.filter(elem => elemSubscriber);
+        return this;
     }
 }

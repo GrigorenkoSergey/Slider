@@ -26,9 +26,8 @@ interface IModel {
     thumbRightPos?: number;
     step?: number;
     ticks?: any; //Пока не знаю, как оформить
-    _totalItems?: number;
     angle?: number;
-    bifurcation?: boolean;
+    range?: boolean;
 }
 
 interface IViewOptions {

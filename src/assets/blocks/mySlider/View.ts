@@ -1,5 +1,7 @@
 import { EventObserver, ISubscriber, IViewOptions, debuggerPoint } from "./Helpers";
 
+type Obj = {[key: string]: any};
+
 export class View implements ISubscriber {
     el: HTMLDivElement;
     event: EventObserver = new EventObserver();
@@ -26,8 +28,8 @@ export class View implements ISubscriber {
         this.step = this.step ? this.step : (this.max - this.min) / 100;
     }
 
-    setOptions(options) {
-        let expectant = {};
+    setOptions(options:{[key: string]: any}) {
+        let expectant: Obj  = {};
         Object.keys(options).filter(prop => prop in this)
             .forEach(prop => expectant[prop] = options[prop])
 
@@ -64,15 +66,15 @@ export class View implements ISubscriber {
         this._addEventListeners();
     }
 
-    _addEventListeners(): void {
+    private _addEventListeners(): void {
         this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
     }
 
-    _validateOptions(expactant) {
-        let obj = Object.assign({}, this);
-        Object.assign(obj, expactant);
+    private _validateOptions(expectant: Obj): never | true {
+        let obj: Obj = Object.assign({}, this);
+        Object.assign(obj, expectant);
 
-        let shouldBeNumbers = ["max", "min", "step", "angle"];
+        let shouldBeNumbers: string[] = ["max", "min", "step", "angle"];
         shouldBeNumbers.forEach(key => obj[key] = Number(obj[key]));
 
         let { min, max, step, angle } = obj;
@@ -98,22 +100,21 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     const thumb = <HTMLElement>e.target;
     if (!thumb.className.includes("thumb")) return;
 
-    const slider = this;
+    const slider: HTMLDivElement =   this;
+    const thisCoord: DOMRect = this.getBoundingClientRect();
+    const thumbCoords: DOMRect = thumb.getBoundingClientRect();
 
-    const thisCoord = this.getBoundingClientRect();
-    const thumbCoords = thumb.getBoundingClientRect();
+    const startX: number = thisCoord.left + this.clientLeft;
+    const startY: number = thisCoord.top + this.clientTop;
 
-    const startX = thisCoord.left + this.clientLeft;
-    const startY = thisCoord.top + this.clientTop;
+    let cosA: number = Math.cos(self.angle / 180 * Math.PI);
+    let sinA: number = Math.sin(self.angle / 180 * Math.PI);
 
-    let cosA = Math.cos(self.angle / 180 * Math.PI);
-    let sinA = Math.sin(self.angle / 180 * Math.PI);
-
-    let pixelStep = self.step * (slider.clientWidth - thumb.offsetWidth) / self.max;
+    let pixelStep: number = self.step * (slider.clientWidth - thumb.offsetWidth) / self.max;
 
     //Найдем ограничители для бегунка 
-    let leftLimit = 0;
-    let rightLimit = slider.clientWidth - thumb.offsetWidth;
+    let leftLimit: number = 0;
+    let rightLimit: number = slider.clientWidth - thumb.offsetWidth;
 
     let swapClassLimit: number | null; //Используется только при наличии второго бегунка
 
@@ -124,8 +125,8 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
         swapClassLimit = parseFloat(nextThumbStyle.left)
     }
 
-    let shiftX = e.clientX - thumbCoords.left;
-    let shiftY = e.clientY - thumbCoords.top;
+    let shiftX: number = e.clientX - thumbCoords.left;
+    let shiftY: number = e.clientY - thumbCoords.top;
 
     if (self.hintAboveThumb) {
         thumb.append(self.hintEl);
@@ -147,9 +148,9 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
         e.preventDefault();
         thumb.style.zIndex = "" + 1000;
 
-        let newLeftX = e.clientX - startX - shiftX;
-        let newLeftY = e.clientY - startY - shiftY;
-        let newLeft = newLeftX * cosA + newLeftY * sinA;
+        let newLeftX: number = e.clientX - startX - shiftX;
+        let newLeftY: number = e.clientY - startY - shiftY;
+        let newLeft: number = newLeftX * cosA + newLeftY * sinA;
 
         newLeft = Math.max(leftLimit, newLeft);
         newLeft = Math.min(newLeft, rightLimit);
@@ -178,7 +179,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
         document.removeEventListener("mouseup", onMouseUp);
     }
 
-    function takeStepIntoAccount(x: number, step: number) {
+    function takeStepIntoAccount(x: number, step: number): number {
         return Math.round(x / step) * step;
     }
 

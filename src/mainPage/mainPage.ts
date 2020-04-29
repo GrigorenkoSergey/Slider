@@ -59,16 +59,19 @@ let options5 = {
     hintAboveThumb: true
 }
 
-debuggerPoint.start = 5;
+//скопировали с сигнатуры коллбека функции bindWith (последнего аргумента)
+type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number, rightX: number, scaledRightX: number, data: any) => void;
+
 let slider5 = new Slider(options5);
 let pContent = document.querySelector('.slider5__p').textContent;
-slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('p').textContent.length, fnResLine);
 
-function fnResLine(elem, leftX, resLeft, rightX, resRight) {
+let fnResLine: fnResType = (elem, leftX, resLeft, rightX, resRight) => {
     resLeft = Math.round(resLeft);
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
 }
+slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('p').textContent.length, fnResLine);
+
 
 let options6 = {
     max: 1000,
@@ -81,17 +84,18 @@ let options6 = {
 }
 
 let slider6 = new Slider(options6);
-slider6.bindWith(document.querySelector("[class*=__text]"), 0, 20, fnResShadow);
-slider6.bindWith(document.querySelector('[class*=__text]'), 200, 360, fnResColor);
 
-function fnResShadow(elem, leftX, resLeft, rightX, resRight, data) {
+let fnResShadow: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
     elem.style.textShadow = resLeft + "px 19px 7px grey";
 }
-function fnResColor(elem, leftX, resLeft) {
+let fnResColor: fnResType = (elem, leftX, resLeft) => {
     resLeft = Math.round(resLeft);
     let resStr = "hsl(" + resLeft + ", 100%, 50%)";
     elem.style.color = resStr;
 }
+slider6.bindWith(document.querySelector("[class*=__text]"), 0, 20, fnResShadow);
+slider6.bindWith(document.querySelector('[class*=__text]'), 200, 360, fnResColor);
+
 
 
 let options7 = {
@@ -105,9 +109,7 @@ let options7 = {
 }
 
 let slider7 = new Slider(options7);
-slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
-
-function fnResBird(elem, leftX, resLeft) {
+let fnResBird: fnResType = (elem, leftX, resLeft) => {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
     resLeft = Math.round(resLeft);
@@ -119,17 +121,22 @@ function fnResBird(elem, leftX, resLeft) {
     elem.style.backgroundPositionY = -offsetTop + "px";
 }
 
-let sliders = { slider1, slider2, slider3, slider4, slider5, slider6, slider7};
-let inputs: Array<HTMLElement> = Array.from(document.querySelectorAll(".slider-options__input"));
+slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
+
+
+let sliders: {[key: string]: Slider} = { slider1, slider2, slider3, slider4, slider5, slider6, slider7};
+
+let inputs: Array<HTMLInputElement> = Array.from(document.querySelectorAll(".slider-options__input"));
 
 for (let i = 0; i < inputs.length; i++) {
     getInputValue(inputs[i]);
     inputs[i].addEventListener("change", onChangeInputValue);
 }
 
-function getInputValue(input) {
+function getInputValue(input: HTMLInputElement) {
     let option = input.name;
     let slider = sliders[input.dataset.id];
+    
     input.value = slider.getOption(option);
 
     if (input.name === "thumbRightPos") {
@@ -140,10 +147,10 @@ function getInputValue(input) {
     }
 }
 
-function onChangeInputValue(e) {
+function onChangeInputValue(e: Event): void {
     // debuggerPoint.start += 1; //Специально оставил на будущее, чтобы не вспоминать технику отладки
     // console.log(debuggerPoint.start);
-    let input = e.target;
+    let input = <HTMLInputElement>e.target;
     let slider = sliders[input.dataset.id];
     let prop = input.name;
     slider.setOptions({ [prop]: input.value });
@@ -167,16 +174,23 @@ checkboxes.forEach((item: HTMLInputElement) => {
 let thumbsLeft = Array.from(document.querySelectorAll("[name=thumbLeftPos]"));
 thumbsLeft.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
-    slider.bindWith(item, slider.max, slider.min,
-        (elem, leftX) => { item.value = leftX }
+    // slider.bindWith(item, slider.max, slider.min,
+    //     (elem, leftX) => { item.value = leftX }
+    // )
+    slider.bindWith(item, slider.getOption("max"), slider.getOption("min"),
+        (elem, leftX) => { item.value = leftX.toString() }
     )
 });
 
 let thumbsRight = Array.from(document.querySelectorAll("[name=thumbRightPos]"));
 thumbsRight.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
-    slider.bindWith(item, slider.max, slider.min,
-        (elem, leftX, foo, rightX) => { item.value = rightX }
+    // slider.bindWith(item, slider.max, slider.min,
+    //     (elem, leftX, foo, rightX) => { item.value = rightX }
+    // )
+    slider.bindWith(item, slider.getOption("max"), slider.getOption("min"),
+        (elem, leftX, foo, rightX) => { item.value = rightX.toString() }
     )
+
 });
 debuggerPoint.start = 1;

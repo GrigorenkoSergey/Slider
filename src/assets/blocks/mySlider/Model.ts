@@ -1,5 +1,8 @@
 import { EventObserver, IModel, ISubscriber, debuggerPoint } from "./Helpers";
 
+type Obj = { [key: string]: any };
+type modelResponse = { L: { x: number, offset: number }, R: { x: number, offset: number } }
+
 export class Model implements IModel, ISubscriber {
     event = new EventObserver();
     min = 0;
@@ -11,20 +14,20 @@ export class Model implements IModel, ISubscriber {
     angle = 0;
     range = false;
 
-    _totalItems = this.max;
-    _offsetLeft: number = 0;
-    _offsetRight: number = 1;
-    _ticksRange: number[];
-    _ticksValues: number[];
+    private _totalItems: number = this.max;
+    private _offsetLeft: number = 0;
+    private _offsetRight: number = 1;
+    private _ticksRange: number[];
+    private _ticksValues: number[];
 
     constructor(options: IModel = {}) {
         if (!("thumbsRigthPos" in options)) options.thumbRightPos = options.max;
-        if (!("ticks" in options)) options.ticks = { [options.max]: options.max};
+        if (!("ticks" in options)) options.ticks = { [options.max]: options.max };
 
         this.setOptions(options);
     }
 
-    update(eventType: string, data: any) {
+    update(eventType: string, data: any): void {
         let x = this._intempolate(data.offset);
         x = this._takeStepIntoAccount(x);
 
@@ -37,15 +40,15 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    getThumbsOffset() {
+    getThumbsOffset(): modelResponse {
         return {
             "L": { x: this.thumbLeftPos, "offset": this._offsetLeft },
             "R": { x: this.thumbRightPos, "offset": this._offsetRight },
         }
     }
 
-    setOptions(expactant) {
-        let shouldBeNumbers = ["min", "max", "step", "thumbLeftPos",
+    setOptions(expactant: Obj): Model {
+        let shouldBeNumbers: string[] = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
 
         shouldBeNumbers.forEach(key => {
@@ -61,14 +64,13 @@ export class Model implements IModel, ISubscriber {
         Object.assign(obj, expactant);
 
         // if (debuggerPoint.start == 5) debugger; //Для будущей отладки
+        if (Object.keys(obj.ticks).length == 1) obj.ticks = { [obj.max]: obj.max };
+
         let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks } = obj;
 
         if (max < min) throw new Error("Max should be greater then min!");
         if (angle < 0 || angle > 90) throw new Error("Angle should be >= 0 and <= 90");
         if (step > (max - min)) throw new Error("To large step!");
-
-        if ((max - min) % step) max = min + Math.floor((max - min) / step) * step;
-        obj.max = max;
 
         if (!obj.range) {
             thumbRightPos = max;
@@ -90,9 +92,11 @@ export class Model implements IModel, ISubscriber {
 
         Object.assign(this, obj);
         this.event.broadcast("changeModel", this.getThumbsOffset());
+
+        return this;
     }
 
-    setThumbsPos(thumbLeftPos: number, thumbRightPos: number) {
+    setThumbsPos(thumbLeftPos: number, thumbRightPos: number): Model {
         if (thumbRightPos !== undefined && thumbLeftPos > thumbRightPos) {
             [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
         }
@@ -110,13 +114,14 @@ export class Model implements IModel, ISubscriber {
         }
 
         this.event.broadcast("changeModel", this.getThumbsOffset());
+        return this;
     }
 
-    _takeStepIntoAccount(x: number) {
+    private _takeStepIntoAccount(x: number): number {
         return Math.round(x / this.step) * this.step;
     }
 
-    _intempolate(offset: number): number {
+    private _intempolate(offset: number): number {
         let ticksRange = this._ticksRange;
         let ticksValue = this._ticksValues;
 
@@ -136,7 +141,7 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    _findOffset(x: number): number {
+    private _findOffset(x: number): number {
         let ticksRange = this._ticksRange;
         let ticksValue = this._ticksValues;
 
@@ -155,7 +160,7 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    _validateTicks() {
+    private _validateTicks(): never | boolean {
         let ticksRange = this._ticksRange;
         let ticksValue = this._ticksValues;
 
