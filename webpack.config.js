@@ -11,12 +11,13 @@ const PATHS = {
 
 let entries = { "index": `${PATHS.src}` };
 
-let conf = {
+module.exports = {
   entry: entries,
 
   resolve: {
-    extensions: ['.tsx', '.ts', '.js' ],
+    extensions: ['.tsx', '.ts', '.js'],
   },
+  devtool: "inline-source-map",
 
   output: {
     path: path.resolve(__dirname, "./dist"),
@@ -41,10 +42,12 @@ let conf = {
       loader: "babel-loader"
     },
     {
-      test: /\.tsx?$/,
-      use: "ts-loader",
-      // use: "awesome-typescript-loader",
-      exclude: /node_modules/
+      test: /\.tsx?/,  //?
+      exclude: /node_modules/,
+      use: [
+        "@jsdevtools/coverage-istanbul-loader",
+        "ts-loader"
+      ]
     },
     {
       test: /\.css$/,
@@ -123,13 +126,3 @@ let conf = {
     ]),
   ],
 };
-
-module.exports = (env, options) => {
-  let production = options.mode === "production";
-
-  conf.devtool = production
-    ? false
-    // : "eval-sourcemap";
-    : "inline-source-map";
-  return conf;
-}

@@ -1,5 +1,4 @@
 import "./mainPage.scss";
-import "../assets/blocks/range-slider/range-slider";
 import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
 

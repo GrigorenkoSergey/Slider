@@ -176,7 +176,7 @@ export class Model implements IModel, ISubscriber {
     }
 }
 
-function isIncreasing(arr: number[] | string[]) {
+function isIncreasing(arr: number[] | string[]): boolean {
     let prev = +arr[0];
     arr = arr.slice(1);
 
