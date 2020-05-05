@@ -21,7 +21,18 @@ module.exports = function (config) {
     ],
 
     webpack: {
-      module: webpackConfig.module,
+      module: {
+        rules: [
+          {
+            test: /\.tsx?/,  //?
+            exclude: /node_modules/,
+            use: [
+              // "@jsdevtools/coverage-istanbul-loader", //нужно отключать, если собираешься дебажить
+              "ts-loader"
+            ]
+          },
+        ]
+      },
       resolve: webpackConfig.resolve,
       mode: "development",
       devtool: 'inline-source-map',
@@ -36,7 +47,7 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      "test/*.ts": ['webpack'],  //?
+      "test/*.ts": ['webpack'],
     },
 
 
@@ -108,33 +119,7 @@ module.exports = function (config) {
         // all options available at: https://github.com/istanbuljs/istanbuljs/blob/73c25ce79f91010d1ff073aa6ff3fd01114f90db/packages/istanbul-reports/lib/html/index.js#L257-L261
         html: {
           // outputs the report in ./coverage/html
-          subdir: 'html'
-        }
-      },
-
-      // enforce percentage thresholds
-      // anything under these percentages will cause karma to fail with an exit code of 1 if not running in watch mode
-      thresholds: {
-        emitWarning: false, // set to `true` to not fail the test command when thresholds are not met
-        // thresholds for all files
-        global: {
-          statements: 100,
-          lines: 100,
-          branches: 100,
-          functions: 100
-        },
-        // thresholds per file
-        each: {
-          statements: 100,
-          lines: 100,
-          branches: 100,
-          functions: 100,
-          overrides: {
-            'src/assets/blocks/**/*.ts': {
-            // 'baz/component/**/*.js': {
-              statements: 98
-            }
-          }
+          // subdir: 'html'
         }
       },
 

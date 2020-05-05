@@ -7,7 +7,7 @@ type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
 type Obj = {[key: string]: any};
 
 export class Slider implements ISubscriber {
-    private event: EventObserver = new EventObserver();
+    private observer: EventObserver = new EventObserver();
     private model: Model;
     private view: View;
     private bindedElements: Array<ISubscriber & {el: HTMLElement}> = [];
@@ -26,22 +26,22 @@ export class Slider implements ISubscriber {
 
         this.bindWith(hint, this.model.min, this.model.max, fnRes);
 
-        this.event.addSubscriber("changeView", model);
-        model.event.addSubscriber("changeModel", this);
+        this.observer.addSubscriber("changeView", model);
+        model.observer.addSubscriber("changeModel", this);
 
-        this.event.addSubscriber("changeModel", view);
-        view.event.addSubscriber("changeView", this);
+        this.observer.addSubscriber("changeModel", view);
+        view.observer.addSubscriber("changeView", this);
         view.render();
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
     }
 
     update(eventType: string, data: any): void {
         if (eventType == "changeModel") {
-            this.event.broadcast("changeModel", data);
+            this.observer.broadcast("changeModel", data);
 
         } else if (eventType == "changeView") {
             data.el && (data.el = data.el.className.includes("left") ? "L" : "R");
-            this.event.broadcast("changeView", data);
+            this.observer.broadcast("changeView", data);
         }
     }
 
@@ -90,18 +90,18 @@ export class Slider implements ISubscriber {
             update: update,
             el: elemDom,
         }
-        this.event.addSubscriber("changeView", elemSubscriber);
-        this.event.addSubscriber("changeModel", elemSubscriber);
+        this.observer.addSubscriber("changeView", elemSubscriber);
+        this.observer.addSubscriber("changeModel", elemSubscriber);
 
-        this.model.event.broadcast("changeModel", this.model.getThumbsOffset());
+        this.model.observer.broadcast("changeModel", this.model.getThumbsOffset());
         this.bindedElements.push(elemSubscriber);
     }
 
     unbindFrom(elemDom: HTMLElement): Slider { //не тестировал.
         let elemSubscriber = this.bindedElements.find(elem => elem.el === elemDom);
 
-        this.event.removeSubscriber("chageView", elemSubscriber);
-        this.event.removeSubscriber("changeModel", elemSubscriber);
+        this.observer.removeSubscriber("chageView", elemSubscriber);
+        this.observer.removeSubscriber("changeModel", elemSubscriber);
         this.bindedElements = this.bindedElements.filter(elem => elemSubscriber);
         return this;
     }

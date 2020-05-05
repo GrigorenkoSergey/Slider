@@ -4,12 +4,12 @@ type Obj = { [key: string]: any };
 type modelResponse = { L: { x: number, offset: number }, R: { x: number, offset: number } }
 
 export class Model implements IModel, ISubscriber {
-    event = new EventObserver();
+    observer = new EventObserver();
     min = 0;
     max = 100;
     thumbLeftPos = this.min;
     thumbRightPos = this.max;
-    step = 10;
+    step = 1;
     ticks = { [this.max]: this.max };
     angle = 0;
     range = false;
@@ -20,7 +20,13 @@ export class Model implements IModel, ISubscriber {
     private _ticksRange: number[];
     private _ticksValues: number[];
 
-    constructor(options: IModel = {}) {
+    constructor(options: IModel) {
+        let argsRequire = ["min", "max"];
+
+        if (!argsRequire.every(key => key in options)) {
+            throw new Error(`Not enough values. Should be at least "${argsRequire.join('", "')}" in options`);
+        }
+
         if (!("thumbsRigthPos" in options)) options.thumbRightPos = options.max;
         if (!("ticks" in options)) options.ticks = { [options.max]: options.max };
 
@@ -47,30 +53,38 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    setOptions(expactant: Obj): Model {
+    setOptions(expectant: Obj): Model {
         let shouldBeNumbers: string[] = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
 
+        //Проигнорируем лишние свойства
+        let commonKeys = Object.keys(expectant).filter((key: string) => key in this); 
+        let trimedObj: Obj = {};
+        commonKeys.forEach(key => trimedObj[key] = expectant[key]);
+        expectant = trimedObj;
+
+        //Преобразуем необходимые значения в тип Number или выкинем ошибку при неудаче
         shouldBeNumbers.forEach(key => {
-            if (key in expactant) {
-                expactant[key] = Number(expactant[key])
-                if (!isFinite(expactant[key])) {
+            if (key in expectant) {
+                expectant[key] = Number(expectant[key])
+                if (!isFinite(expectant[key])) {
                     throw new Error(key[0].toUpperCase().slice(1) + " should be a number!");
                 }
             }
         });
 
         let obj = Object.assign({}, this);
-        Object.assign(obj, expactant);
+        Object.assign(obj, expectant);
 
         // if (debuggerPoint.start == 5) debugger; //Для будущей отладки
-        if (Object.keys(obj.ticks).length == 1) obj.ticks = { [obj.max]: obj.max };
+        if (Object.keys(obj.ticks).length < 2) obj.ticks = { [obj.max]: obj.max };
 
         let { min, max, step, thumbLeftPos, thumbRightPos, angle, ticks } = obj;
 
         if (max < min) throw new Error("Max should be greater then min!");
         if (angle < 0 || angle > 90) throw new Error("Angle should be >= 0 and <= 90");
         if (step > (max - min)) throw new Error("To large step!");
+        if (step === 0) obj.step = step = (max - min) / 100;
 
         if (!obj.range) {
             thumbRightPos = max;
@@ -91,7 +105,7 @@ export class Model implements IModel, ISubscriber {
         obj._offsetRight = this._findOffset.call(obj, thumbRightPos);
 
         Object.assign(this, obj);
-        this.event.broadcast("changeModel", this.getThumbsOffset());
+        this.observer.broadcast("changeModel", this.getThumbsOffset());
 
         return this;
     }
@@ -113,7 +127,7 @@ export class Model implements IModel, ISubscriber {
             this._offsetRight = this._findOffset(thumbRightPos);
         }
 
-        this.event.broadcast("changeModel", this.getThumbsOffset());
+        this.observer.broadcast("changeModel", this.getThumbsOffset());
         return this;
     }
 
@@ -173,10 +187,10 @@ export class Model implements IModel, ISubscriber {
         }
 
         return true;
-    }
+    };
 }
 
-function isIncreasing(arr: number[] | string[]): boolean {
+export function isIncreasing(arr: number[] | string[]): boolean {
     let prev = +arr[0];
     arr = arr.slice(1);
 

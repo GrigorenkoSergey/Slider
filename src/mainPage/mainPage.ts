@@ -5,12 +5,13 @@ import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
 let options1 = {
     min: 0,
     max: 100,
-    step: 1,
+    step: 0,
     selector: ".slider1",
     angle: 0,
     range: false,
     hintAboveThumb: false,
 }
+
 let slider1 = new Slider(options1);
 
 let options2 = {
@@ -192,4 +193,3 @@ thumbsRight.forEach((item: HTMLInputElement) => {
     )
 
 });
-debuggerPoint.start = 1;

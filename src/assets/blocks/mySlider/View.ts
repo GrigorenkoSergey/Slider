@@ -4,7 +4,7 @@ type Obj = {[key: string]: any};
 
 export class View implements ISubscriber {
     el: HTMLDivElement;
-    event: EventObserver = new EventObserver();
+    observer: EventObserver = new EventObserver();
     className: string = "slider";
     angle: number = 0;
     step: number = 10;
@@ -136,7 +136,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
 
-    self.event.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
+    self.observer.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
         el: thumb,
         offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
     });
@@ -166,7 +166,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
             }
         }
 
-        self.event.broadcast("changeView", {
+        self.observer.broadcast("changeView", {
             el: thumb,
             offset: newLeft / scaleInnerWidth,
         });

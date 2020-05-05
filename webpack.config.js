@@ -45,7 +45,7 @@ module.exports = {
       test: /\.tsx?/,  //?
       exclude: /node_modules/,
       use: [
-        "@jsdevtools/coverage-istanbul-loader",
+        // "@jsdevtools/coverage-istanbul-loader", OOOPS! and now debugger not working correctly ))
         "ts-loader"
       ]
     },
