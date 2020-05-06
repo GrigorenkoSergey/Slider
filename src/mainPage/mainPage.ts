@@ -6,6 +6,7 @@ let options1 = {
     min: 0,
     max: 100,
     step: 0,
+    ticks: {20: 20, 40: 60, 80: 80, 100: 82},//?
     selector: ".slider1",
     angle: 0,
     range: false,
@@ -164,8 +165,6 @@ checkboxes.forEach((item: HTMLInputElement) => {
     item.checked = slider.getOption(prop);
 
     item.onchange = function (e) {
-        // debuggerPoint.start += 1;
-        // console.log(debuggerPoint.start);
         slider.setOptions({ [prop]: item.checked });
         inputs.forEach(item => getInputValue(item));
     }
@@ -174,9 +173,6 @@ checkboxes.forEach((item: HTMLInputElement) => {
 let thumbsLeft = Array.from(document.querySelectorAll("[name=thumbLeftPos]"));
 thumbsLeft.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
-    // slider.bindWith(item, slider.max, slider.min,
-    //     (elem, leftX) => { item.value = leftX }
-    // )
     slider.bindWith(item, slider.getOption("max"), slider.getOption("min"),
         (elem, leftX) => { item.value = leftX.toString() }
     )
@@ -185,9 +181,6 @@ thumbsLeft.forEach((item: HTMLInputElement) => {
 let thumbsRight = Array.from(document.querySelectorAll("[name=thumbRightPos]"));
 thumbsRight.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
-    // slider.bindWith(item, slider.max, slider.min,
-    //     (elem, leftX, foo, rightX) => { item.value = rightX }
-    // )
     slider.bindWith(item, slider.getOption("max"), slider.getOption("min"),
         (elem, leftX, foo, rightX) => { item.value = rightX.toString() }
     )

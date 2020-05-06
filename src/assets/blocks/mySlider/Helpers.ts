@@ -1,6 +1,6 @@
 class EventObserver {
     //every subscriber should have method "update(eventType, data)"
-    observers: { [key: string]: ISubscriber[]} = {};
+    observers: { [key: string]: ISubscriber[] } = {};
 
     addSubscriber(eventType: string, obj: ISubscriber): void {
         this.observers[eventType] = this.observers[eventType] || [];
@@ -25,7 +25,7 @@ interface IModel {
     thumbLeftPos?: number;
     thumbRightPos?: number;
     step?: number;
-    ticks?: any; //Пока не знаю, как оформить
+    ticks?: { [key: number]: number };
     angle?: number;
     range?: boolean;
 }
@@ -35,7 +35,7 @@ interface IViewOptions {
     className: string;
     angle: number;
     min: number;
-    max: number; 
+    max: number;
     step: number;
     range: boolean;
     hintAboveThumb?: boolean;
@@ -46,8 +46,8 @@ interface ISubscriber {
     update: (eventType: string, data: any) => void;
 }
 
-let debuggerPoint = {start: 0}; //Специальный объект для отладки. Ставим debuggerPoint.start = 1
+let debuggerPoint = { start: 0 }; //Специальный объект для отладки. Ставим debuggerPoint.start = 1
 //в нужном месте кода и в одном из проверяемых элементов ставим if(debuggerPoint.start) debugger;
 //и отладка довольно сильно упрощается.
 
-export {EventObserver, IModel, ISubscriber, IViewOptions, debuggerPoint};
+export { EventObserver, IModel, ISubscriber, IViewOptions, debuggerPoint };

@@ -1,4 +1,5 @@
 import { Model, isIncreasing } from "../src/assets/blocks/mySlider/Model";
+import { NamedModulesPlugin } from "webpack";
 
 describe(`Model\n`, () => {
 
@@ -20,7 +21,6 @@ describe(`Model\n`, () => {
         it(`Если аргументов для инициализации не достаточно, выкидывает ошибку`, () => {
             expect(() => {
                 let model = new Model({ min: 0 });
-                return model;
             }).toThrowError();
         });
 
@@ -30,14 +30,8 @@ describe(`Model\n`, () => {
             expect(model.step).toEqual((model.max - model.min) / 100);
         });
 
-        it(`По умолчанию свойство "thumbRightPos" всегда определено и равно максимальному значению`, () => {
+        it(`По умолчанию свойство "thumbRightPos" всегда определено (даже если не задано пользователем) и равно максимальному значению`, () => {
             let model = new Model({ min: 0, max: 100, step: 1 });
-            expect(model.thumbRightPos).toEqual(model.max);
-        });
-
-        it(`Если свойство "thumbRightPos" не задано пользователем, оно автоматически становится
-        равным максимальному значению диапазона бегунка`, () => {
-            let model = new Model({ min: 0, max: 100, step: 0 });
             expect(model.thumbRightPos).toEqual(model.max);
         });
 
@@ -49,7 +43,11 @@ describe(`Model\n`, () => {
     });
 
     describe(`Проверка правильности задания свойств`, () => {
-        let model = new Model({ max: 100, min: 0 });
+        let model: Model;
+
+        beforeEach(() => {
+            model = new Model({ max: 100, min: 0 });
+        });
 
         it(`Допустимо задавать свойства в виде строки`, () => {
             model.setOptions({
@@ -102,64 +100,221 @@ describe(`Model\n`, () => {
             model.setOptions({ thumbLeftPos: model.thumbRightPos });
             expect(model.thumbRightPos).toEqual(model.max);
         });
+
+        it(`Технически можно задавать напрямую значения свойств, но это не рекомендуется
+       т.к. внутренние механизмы проверки правильности свойств не будут работать`, () => {
+            model.max = -10;
+            expect(model.min).toEqual(0);
+            expect(model.max).toEqual(-10);
+        })
     });
 
     describe(`Задание нелинейной шкалы\n`, () => {
-        let model = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
 
         it(`При задании нелинейной шкалы последний ключ ticks должен быть равен max, иначе ошибка`, () => {
+            let model = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
             expect(+Object.keys(model.ticks).pop()).toEqual(model.max);
 
             expect(() => {
-                let model2 = new Model({ min: 0, max: 1000, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
+                let model = new Model({ min: 0, max: 1000, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
             }).toThrowError();
 
             expect(() => {
-                let model3 = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 1000: 80 } });
+                let model = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 1000: 80 } });
             }).toThrowError();
         });
 
         it(`Первый ключ ticks должен быть больше min`, () => {
+            let model = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
+
             expect(+Object.keys(model.ticks)[0]).toBeGreaterThan(model.min);
 
             expect(() => {
-                let model2 = new Model({ min: 20, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
+                let model = new Model({ min: 20, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
             }).toThrowError();
         });
 
         it(`И ключи, и значения ticks должны быть возрастающими числовыми последовательностями`, () => {
             expect(() => {
-                let model2 = new Model({ min: 0, max: 100, ticks: { 10: 2, 20: 1, 100: 5 } });
+                let model = new Model({ min: 0, max: 100, ticks: { 10: 2, 20: 1, 100: 5 } });
             }).toThrowError();
             expect(() => {
-                let model2 = new Model({ min: 0, max: 100, ticks: { 1: 2, 30: 4, 20: 5, 100: 20 } });
+                let model = new Model({ min: 0, max: 100, ticks: { 1: 2, 30: 4, 20: 5, 100: 20 } });
             }).toThrowError();
         });
 
         it(`При попытке изменить max без изменения ticks получим ошибку`, () => {
             expect(() => {
-                let model2 = new Model({ min: 0, max: 100, ticks: { 10: 5, 100: 7 } });
-                model2.setOptions({ max: 150 });
-            }).toThrowError();
-            expect(() => {
+                let model = new Model({ min: 0, max: 100, ticks: { 10: 5, 100: 7 } });
                 model.setOptions({ max: 150 });
             }).toThrowError();
         });
 
         it(`При изменении max и соответсвующем изменении ticks все пройдет гладко`, () => {
+            let model = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
             expect(() => {
-                let {...modelOptions} = model;
-                let model2 = new Model(modelOptions);
-
-                model2.setOptions({ max: 150, ticks: { 10: 20, 30: 45, 80: 50, 150: 52 } });
+                model.setOptions({ max: 150, ticks: { 10: 20, 30: 45, 80: 50, 150: 52 } });
             }).not.toThrowError();
         });
 
         it(`Сброс до обычной линейной шкалы происходит заданием ticks = {}`, () => {
-            model.setOptions({ticks: {}});
-            expect(model.ticks).toEqual({[model.max]: 100});
-            model.setOptions({max: 200});
+            let model = new Model({ min: 0, max: 100, ticks: { 10: 50, 20: 55, 50: 70, 100: 80 } });
+
+            model.setOptions({ ticks: {} });
+            expect(model.ticks).toEqual({ [model.max]: 100 });
+            model.setOptions({ max: 200 });
             expect(model.max).toEqual(200);
+        });
+
+    });
+
+    describe(`Метод "setThumbsPos"\n`, () => {
+        let model: Model;
+        beforeEach(() => {
+            model = new Model({ min: 0, max: 100, range: true });
+        });
+
+        it(`Меняет положение левого и правого значений диапазона`, () => {
+            model.setThumbsPos(20, 80);
+            expect(model.thumbLeftPos).toEqual(20);
+            expect(model.thumbRightPos).toEqual(80);
+            expect(model.min).toEqual(0);
+            expect(model.max).toEqual(100);
+
+            model.setThumbsPos(30, 95);
+            expect(model.thumbLeftPos).toEqual(30);
+            expect(model.thumbRightPos).toEqual(95);
+            expect(model.min).toEqual(0);
+            expect(model.max).toEqual(100);
+        });
+
+        it(`Если левое значение всегда ближе к началу, а правое к концу, меняются автоматически`, () => {
+            model.setThumbsPos(90, 20);
+            expect(model.thumbLeftPos).toEqual(20);
+            expect(model.thumbRightPos).toEqual(90);
+        });
+        it(`Минимальное значение левого бегунка равно значению свойства "min", ставится автоматически`, () => {
+            model.setThumbsPos(-10);
+            expect(model.thumbLeftPos).toEqual(model.min);
+        });
+        it(`Максимальное значение правого диапазона равно значению свойства "max", ставится автоматически`, () => {
+            model.setThumbsPos(model.thumbLeftPos, 101);
+            expect(model.thumbRightPos).toEqual(100);
+        });
+
+        it(`Допускается задавать только одно минимальное значение диапазона`, () => {
+            expect(() => model.setThumbsPos(-10)).not.toThrowError();
+        });
+
+        it(`Если значение границы диапазона не кратно шагу, оно округляется`, () => {
+            model.setOptions({ step: 10 });
+            model.setThumbsPos(6, 94);
+            expect(model.thumbLeftPos).toEqual(10);
+            expect(model.thumbRightPos).toEqual(90);
+        });
+    });
+
+    describe(`Обновление состояния, метод "update"\n`, () => {
+        let model: Model;
+        beforeEach(() => {
+            model = new Model({ min: 0, max: 100, range: true, thumbRightPos: 10, thumbLeftPos: 90, step: 10 });
+        });
+
+        it(`Model - это всего лишь функция интерполяции, поэтому она просто высчитывает значения
+       в зависимости от аргумента, который представляет собой координату смещения
+       от начала отсчета`, () => {
+            model.update("event", { el: "L", offset: 0 });
+            expect(model.thumbLeftPos).toEqual(0);
+            model.update("event", { el: "L", offset: 0.5 });
+            expect(model.thumbLeftPos).toEqual(50);
+            model.update("event", { el: "L", offset: 1 });
+            expect(model.thumbLeftPos).toEqual(100);
+            model.update("event", { el: "L", offset: 0 });
+            model.update("event", { el: "R", offset: 0.5 });
+            expect(model.thumbRightPos).toEqual(50);
+            model.update("event", { el: "R", offset: 0.7 });
+            expect(model.thumbRightPos).toEqual(70);
+        });
+
+        it(`ВАЖНО!!! Корректность значений offset никак не обрабатывается при update`, () => {
+            model.update("", {el: "R", offset: 0.5});
+            model.update("", {el: "L", offset: 0.9});
+            expect(model.thumbLeftPos).toEqual(90);
+            expect(model.thumbRightPos).toEqual(50);
+        });
+
+        it(`Корректно вычисляет значения функции для нелинейной шкалы.
+        К примеру, у нас товары по цене от 100 до 200 рублей. 
+        50% товаров находятся в ценовом диапазоне от 100 до 120 рублей,
+        25% товаров в диапазоне от 120 до 150 рублей,
+        25% товаров в диапазоне от 150 до 200 рублей.`, () => {
+            model.setOptions({ min: 100, max: 200, step: 1 });
+            model.setOptions({ ticks: { 120: 50, 150: 75, 200: 100 } })
+
+            model.update("", { el: "L", offset: 0 });
+            expect(model.thumbLeftPos).toEqual(100);
+
+            model.update("", { el: "L", offset: 0.25 });
+            expect(model.thumbLeftPos).toEqual(110);
+
+            model.update("", { el: "L", offset: 0.5 });
+            expect(model.thumbLeftPos).toEqual(120);
+
+            model.update("", { el: "L", offset: (0.5 + 0.75) / 2 });
+            expect(model.thumbLeftPos).toEqual(135);
+
+            model.update("", { el: "L", offset: 0.75 });
+            expect(model.thumbLeftPos).toEqual(150);
+
+            model.update("", { el: "L", offset: (0.75 + 1) / 2 });
+            expect(model.thumbLeftPos).toEqual(175);
+
+            model.update("", { el: "L", offset: 1 });
+            expect(model.thumbLeftPos).toEqual(200);
+
+            model.update("", { el: "L", offset: 0 });
+            expect(model.thumbLeftPos).toEqual(100);
+
+            model.update("", { el: "R", offset: 0.25 });
+            expect(model.thumbRightPos).toEqual(110);
+
+            model.update("", { el: "R", offset: 0.5 });
+            expect(model.thumbRightPos).toEqual(120);
+
+            model.update("", { el: "R", offset: (0.5 + 0.75) / 2 });
+            expect(model.thumbRightPos).toEqual(135);
+
+            model.update("", { el: "R", offset: 0.75 });
+            expect(model.thumbRightPos).toEqual(150);
+
+            model.update("", { el: "R", offset: (0.75 + 1) / 2 });
+            expect(model.thumbRightPos).toEqual(175);
+
+            model.update("", { el: "R", offset: 1 });
+            expect(model.thumbRightPos).toEqual(200);
+
+        });
+    });
+
+    describe(`Метод getThumbsOffset предназначен для получения положения бегунков\n`, () => {
+        let model = new Model({ min: 0, max: 100 });
+        it(`В любой момент времени можно получить расширенную информацию о положении бегунков`, () => {
+            expect(model.getThumbsOffset().L.x).toEqual(model.thumbLeftPos);
+            expect(model.getThumbsOffset().R.x).toEqual(model.thumbRightPos);
+            expect(model.getThumbsOffset().L.offset).toEqual(0);
+            expect(model.getThumbsOffset().R.offset).toEqual(1);
+
+            model.update("", { el: "L", offset: 0.3 });
+            expect(model.getThumbsOffset().L.x).toEqual(30);
+            expect(model.getThumbsOffset().R.x).toEqual(100);
+            expect(model.getThumbsOffset().L.offset).toEqual(.3);
+            expect(model.getThumbsOffset().R.offset).toEqual(1);
+
+            model.update("", { el: "R", offset: 0.7 });
+            expect(model.getThumbsOffset().L.x).toEqual(30);
+            expect(model.getThumbsOffset().R.x).toEqual(70);
+            expect(model.getThumbsOffset().L.offset).toEqual(.3);
+            expect(model.getThumbsOffset().R.offset).toEqual(0.7);
         });
     });
 });
