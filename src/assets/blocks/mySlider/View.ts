@@ -1,6 +1,10 @@
 import { EventObserver, ISubscriber, IViewOptions, debuggerPoint } from "./Helpers";
 
-type Obj = {[key: string]: any};
+type Obj = { [key: string]: any };
+type ViewUpdateDataFormat = {
+    "L": { x: number, offset: number },
+    "R": { x: number, offset: number }
+};
 
 export class View implements ISubscriber {
     el: HTMLDivElement;
@@ -28,15 +32,15 @@ export class View implements ISubscriber {
         this.step = this.step ? this.step : (this.max - this.min) / 100;
     }
 
-    setOptions(options:{[key: string]: any}) {
-        let expectant: Obj  = {};
+    setOptions(options: { [key: string]: any }) {
+        let expectant: Obj = {};
         Object.keys(options).filter(prop => prop in this)
             .forEach(prop => expectant[prop] = options[prop])
 
         this._validateOptions(expectant) && Object.assign(this, expectant);
     }
 
-    update(eventType: string, data: any): void {
+    update(eventType: string, data: ViewUpdateDataFormat): void {
         this.thumbLeft.style.left =
             data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
 
@@ -95,12 +99,11 @@ export class View implements ISubscriber {
 function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     //Применим всплытие, this - это элемент DOM, на котором навесили обработчик,
     // e.target - то, на котором сработало событие
-
     e.preventDefault();
     const thumb = <HTMLElement>e.target;
     if (!thumb.className.includes("thumb")) return;
 
-    const slider: HTMLDivElement =   this;
+    const slider: HTMLDivElement = this;
     const thisCoord: DOMRect = this.getBoundingClientRect();
     const thumbCoords: DOMRect = thumb.getBoundingClientRect();
 
@@ -145,6 +148,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     document.addEventListener("mouseup", onMouseUp);
 
     function onMouseMove(e: MouseEvent): void {
+        console.log("mousemove!!!");
         e.preventDefault();
         thumb.style.zIndex = "" + 1000;
 
@@ -165,6 +169,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
                 (newLeft > swapClassLimit) && swapThumbClasses();
             }
         }
+        console.log(e.clientX);
 
         self.observer.broadcast("changeView", {
             el: thumb,

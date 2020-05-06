@@ -1,5 +1,5 @@
 import { Model, isIncreasing } from "../src/assets/blocks/mySlider/Model";
-import { NamedModulesPlugin } from "webpack";
+import {debuggerPoint} from "../src/assets/blocks/mySlider/Helpers";
 
 describe(`Model\n`, () => {
 
@@ -28,6 +28,13 @@ describe(`Model\n`, () => {
         it(`Если задан нулевой шаг, он пересчитывается и становится равным 1/100 от длины диапазона`, () => {
             let model = new Model({ min: 0, max: 100, step: 0 });
             expect(model.step).toEqual((model.max - model.min) / 100);
+        });
+
+        it(`Можно задавать начальные положения бегунков`, () => {
+            // debuggerPoint.start = 3;
+            let model = new Model({ min: 0, max: 100, thumbLeftPos: 20, thumbRightPos: 80, range: true });
+            expect(model.thumbLeftPos).toEqual(20);
+            expect(model.thumbRightPos).toEqual(80);
         });
 
         it(`По умолчанию свойство "thumbRightPos" всегда определено (даже если не задано пользователем) и равно максимальному значению`, () => {
@@ -236,9 +243,9 @@ describe(`Model\n`, () => {
             expect(model.thumbRightPos).toEqual(70);
         });
 
-        it(`ВАЖНО!!! Корректность значений offset никак не обрабатывается при update`, () => {
-            model.update("", {el: "R", offset: 0.5});
-            model.update("", {el: "L", offset: 0.9});
+        it(`ВАЖНО!!! Корректность значений data никак не обрабатывается при update (для скорости)`, () => {
+            model.update("", { el: "R", offset: 0.5 });
+            model.update("", { el: "L", offset: 0.9 });
             expect(model.thumbLeftPos).toEqual(90);
             expect(model.thumbRightPos).toEqual(50);
         });

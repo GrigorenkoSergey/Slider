@@ -4,13 +4,13 @@ import { View } from "./View";
 
 type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
     rightX: number, scaledRightX: number, data: any) => void;
-type Obj = {[key: string]: any};
+type Obj = { [key: string]: any };
 
 export class Slider implements ISubscriber {
     private observer: EventObserver = new EventObserver();
     private model: Model;
     private view: View;
-    private bindedElements: Array<ISubscriber & {el: HTMLElement}> = [];
+    private bindedElements: Array<ISubscriber & { el: HTMLElement }> = [];
 
     constructor(options: any) {
         this.model = new Model(options);
@@ -37,15 +37,19 @@ export class Slider implements ISubscriber {
 
     update(eventType: string, data: any): void {
         if (eventType == "changeModel") {
+            //for View data should be {"L": {x: number, offset: number}, "R": {x: number, offset: number}}
+            //data.offset should be in range from 0 to 1
             this.observer.broadcast("changeModel", data);
 
         } else if (eventType == "changeView") {
+            //for Model data should be {el: HTMLDivElement, offset: number}
+            //data.el.className should contain "left" of "right" substrings
             data.el && (data.el = data.el.className.includes("left") ? "L" : "R");
             this.observer.broadcast("changeView", data);
         }
     }
 
-    setThumbsPos(leftPos: number, rightPos: number): void {
+    setThumbsPos(leftPos: number, rightPos?: number): void {
         return this.model.setThumbsPos.call(this.model, leftPos, rightPos);
     }
 

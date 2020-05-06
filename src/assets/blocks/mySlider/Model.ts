@@ -7,9 +7,9 @@ export class Model implements IModel, ISubscriber {
     observer = new EventObserver();
     min = 0;
     max = 100;
+    step = 1;
     thumbLeftPos = this.min;
     thumbRightPos = this.max;
-    step = 1;
     ticks = { [this.max]: this.max };
     angle = 0;
     range = false;
@@ -27,16 +27,13 @@ export class Model implements IModel, ISubscriber {
             throw new Error(`Not enough values. Should be at least "${argsRequire.join('", "')}" in options`);
         }
 
-        if (!("thumbsRigthPos" in options)) options.thumbRightPos = options.max;
+        if (!("thumbRightPos" in options)) options.thumbRightPos = options.max;
         if (!("ticks" in options)) options.ticks = { [options.max]: options.max };
 
         this.setOptions(options);
     }
 
     update(eventType: string, data: { el: "L" | "R", offset: number }): void {
-        if (data.el[0] !== "R" && data.el[0] !== "L") return;
-        if (data.offset < 0 || data.offset > 1) return;
-
         let x = this._intempolate(data.offset);
         x = this._takeStepIntoAccount(x);
 
@@ -59,7 +56,7 @@ export class Model implements IModel, ISubscriber {
     setOptions(expectant: Obj): Model {
         let shouldBeNumbers: string[] = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
-
+            
         //Проигнорируем лишние свойства
         let commonKeys = Object.keys(expectant).filter((key: string) => key in this);
         let trimedObj: Obj = {};
@@ -94,7 +91,6 @@ export class Model implements IModel, ISubscriber {
         } else {
             thumbRightPos = Math.min(max, thumbRightPos);
         }
-
         thumbLeftPos = Math.max(min, thumbLeftPos);
         (thumbLeftPos == thumbRightPos) && (thumbRightPos = max); //Иногда бегунки сливаются. Нехорошо
         Object.assign(obj, { thumbLeftPos, thumbRightPos });
