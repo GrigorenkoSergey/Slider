@@ -14,21 +14,34 @@ export class Model implements IModel, ISubscriber {
     angle = 0;
     range = false;
 
-    private _totalItems: number = this.max;
+    private _totalItems: number;
     private _offsetLeft: number = 0;
     private _offsetRight: number = 1;
     private _ticksRange: number[];
     private _ticksValues: number[];
 
-    constructor(options: IModel) {
+    constructor(options: Obj) {
         let argsRequire = ["min", "max"];
 
         if (!argsRequire.every(key => key in options)) {
             throw new Error(`Not enough values. Should be at least "${argsRequire.join('", "')}" in options`);
         }
 
-        if (!("thumbRightPos" in options)) options.thumbRightPos = options.max;
-        if (!("ticks" in options)) options.ticks = { [options.max]: options.max };
+        let defaultOptions: Obj = {
+            step: () => (options.max - options.min) / 100,
+            thumbLeftPos: () => options.min,
+            thumbRightPos: () => options.max,
+            ticks: () => { return { [options.max]: options.max } },
+            angle: () => 0,
+            range: () => false,
+        };
+
+        let optionsArr: string[] = ["step", "thumbLeftPos", "thumbRightPos",
+            "ticks", "angle", "range"];
+
+        optionsArr.forEach(key => {
+            if (!(key in options)) options[key] = defaultOptions[key]();
+        }) 
 
         this.setOptions(options);
     }

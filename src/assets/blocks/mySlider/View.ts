@@ -29,7 +29,7 @@ export class View implements ISubscriber {
         wrapper.append(this.el);
 
         this.el.classList.add(this.className);
-        this.step = this.step ? this.step : (this.max - this.min) / 100;
+        if (!("step" in options) || this.step === 0) this.step = (this.max - this.min) / 100; //На будущее можно вынести в отдельный объект с дефолтными настройками.
     }
 
     setOptions(options: { [key: string]: any }) {
@@ -100,6 +100,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     //Применим всплытие, this - это элемент DOM, на котором навесили обработчик,
     // e.target - то, на котором сработало событие
     e.preventDefault();
+
     const thumb = <HTMLElement>e.target;
     if (!thumb.className.includes("thumb")) return;
 
@@ -138,7 +139,6 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
-
     self.observer.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
         el: thumb,
         offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
@@ -148,7 +148,6 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     document.addEventListener("mouseup", onMouseUp);
 
     function onMouseMove(e: MouseEvent): void {
-        console.log("mousemove!!!");
         e.preventDefault();
         thumb.style.zIndex = "" + 1000;
 
@@ -169,7 +168,6 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
                 (newLeft > swapClassLimit) && swapThumbClasses();
             }
         }
-        console.log(e.clientX);
 
         self.observer.broadcast("changeView", {
             el: thumb,

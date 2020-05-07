@@ -37,6 +37,11 @@ describe(`Model\n`, () => {
             expect(model.thumbRightPos).toEqual(80);
         });
 
+        it(`Если не задано положение левого бегунка, он становится равными минимуму`, () => {
+            let model = new Model({ min: -200, max: 100});
+            expect(model.thumbLeftPos).toEqual(-200);
+        });
+
         it(`По умолчанию свойство "thumbRightPos" всегда определено (даже если не задано пользователем) и равно максимальному значению`, () => {
             let model = new Model({ min: 0, max: 100, step: 1 });
             expect(model.thumbRightPos).toEqual(model.max);
