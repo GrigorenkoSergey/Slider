@@ -3,14 +3,19 @@ import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
 
 let options1 = {
-    min: 0,
-    max: 100,
-    step: 0,
-    ticks: {20: 20, 40: 60, 80: 80, 100: 82},//?
+    // min: 0,
+    min: 10,
+    // max: 100,
+    max: 299,
+    // step: 0,
+    step: 3,
+    // ticks: {20: 20, 40: 60, 80: 80, 100: 82},//?
     selector: ".slider1",
     angle: 0,
-    range: false,
-    hintAboveThumb: false,
+    // range: false,
+    range: true,
+    // hintAboveThumb: false,
+    hintAboveThumb: true,
 }
 
 let slider1 = new Slider(options1);

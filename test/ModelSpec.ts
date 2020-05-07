@@ -52,6 +52,14 @@ describe(`Model\n`, () => {
             expect(model.ticks).toEqual({ 100: 100 });
         });
 
+        it(`При некратном шаге достижимые значения слайдера не могут быть меньше min и больше max`, () => {
+            let model = new Model({min: 10, max: 299, step: 3});
+            expect(model.thumbLeftPos).toBeGreaterThanOrEqual(10);
+            expect(model.min).toEqual(10);
+            expect(model.thumbRightPos).toBeLessThanOrEqual(299);
+            expect(model.max).toEqual(299);
+        });
+
     });
 
     describe(`Проверка правильности задания свойств`, () => {

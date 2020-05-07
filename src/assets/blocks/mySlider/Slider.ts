@@ -32,6 +32,7 @@ export class Slider implements ISubscriber {
         this.observer.addSubscriber("changeModel", view);
         view.observer.addSubscriber("changeView", this);
         view.render();
+
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
     }
 
@@ -83,6 +84,7 @@ export class Slider implements ISubscriber {
 
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType: string, data: any) {
+
             let dataModel = model.getThumbsOffset();
             return fnRes(elemDom,
                 dataModel.L.x, (fnEnd - fnStart) / (max - min) * dataModel.L.x + fnStart,

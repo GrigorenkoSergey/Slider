@@ -36,12 +36,9 @@ export class Model implements IModel, ISubscriber {
             range: () => false,
         };
 
-        let optionsArr: string[] = ["step", "thumbLeftPos", "thumbRightPos",
-            "ticks", "angle", "range"];
-
-        optionsArr.forEach(key => {
+        Object.keys(defaultOptions).forEach(key => {
             if (!(key in options)) options[key] = defaultOptions[key]();
-        }) 
+        });
 
         this.setOptions(options);
     }
@@ -49,6 +46,7 @@ export class Model implements IModel, ISubscriber {
     update(eventType: string, data: { el: "L" | "R", offset: number }): void {
         let x = this._intempolate(data.offset);
         x = this._takeStepIntoAccount(x);
+        x = Math.min(this.max, Math.max(this.min, x)); //Иногда так округляется, что выходим за пределы
 
         if (data.el[0] == 'R') {
             this.thumbRightPos = x;
@@ -69,7 +67,7 @@ export class Model implements IModel, ISubscriber {
     setOptions(expectant: Obj): Model {
         let shouldBeNumbers: string[] = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];
-            
+
         //Проигнорируем лишние свойства
         let commonKeys = Object.keys(expectant).filter((key: string) => key in this);
         let trimedObj: Obj = {};
@@ -127,14 +125,17 @@ export class Model implements IModel, ISubscriber {
             [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
         }
 
+        thumbLeftPos = this._takeStepIntoAccount(thumbLeftPos);
         if (thumbLeftPos < this.min) thumbLeftPos = this.min;
+        this.thumbLeftPos = thumbLeftPos;
 
-        this.thumbLeftPos = thumbLeftPos = this._takeStepIntoAccount(thumbLeftPos);
         this._offsetLeft = this._findOffset(thumbLeftPos);
 
         if (thumbRightPos !== undefined && this.range) {
+            thumbRightPos = this._takeStepIntoAccount(thumbRightPos);
             if (thumbRightPos > this.max) thumbRightPos = this.max;
-            this.thumbRightPos = thumbRightPos = this._takeStepIntoAccount(thumbRightPos);
+            this.thumbRightPos = thumbRightPos;
+
             this._offsetRight = this._findOffset(thumbRightPos);
         }
 

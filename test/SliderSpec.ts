@@ -179,8 +179,8 @@ describe(`Любые изменения View затрагивают и Model\n`,
 
     it(`Можно двигать мышкой левый бегунок`, () => {
         let option = { min: 0, max: 1000, range: false, selector: ".div", className: "slider" };
-        debuggerPoint.start = 1;
         let slider = new Slider(option);
+        
         let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
         // let rightThumb = div.querySelector("[class*=right]");
         let scaleWidth = div.clientWidth - leftThumb.offsetWidth;
@@ -197,7 +197,7 @@ describe(`Любые изменения View затрагивают и Model\n`,
             let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: i * scaleWidth / 8 });
             document.dispatchEvent(fakeMouseMove);
             //Да, мой юный друг, это связано с погрешностью округления ))
-            expect(Math.abs(slider.getOption("thumbLeftPos") - (max - min) / 8 * i)).toBeLessThanOrEqual(step);
+            expect(Math.abs(slider.getOption("thumbLeftPos") - (max - min) / 8 * i)).toBeLessThanOrEqual(2 * step);
         }
 
         let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
@@ -208,12 +208,13 @@ describe(`Любые изменения View затрагивают и Model\n`,
         fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth });
         leftThumb.dispatchEvent(fakeMouseDown);
         document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth / 2 }))
-        expect(Math.abs(slider.getOption("thumbLeftPos") - (max - min) / 2)).toBeLessThanOrEqual(step);
+        expect(Math.abs(slider.getOption("thumbLeftPos") - (max - min) / 2)).toBeLessThanOrEqual(2 * step);
 
     });
 
     it(`Можно двигать мышкой правый бегунок`, () => {
         let option = { min: -200, max: 100, range: true, selector: ".div", className: "slider" };
+        debuggerPoint.start = 1;
         let slider = new Slider(option);
         let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
         let scaleWidth = div.clientWidth - rightThumb.offsetWidth;
@@ -226,15 +227,10 @@ describe(`Любые изменения View затрагивают и Model\n`,
         let step = slider.getOption("step");
 
         //бежим к началу
-// debugger;
         for (let i = 7; i > 1; i--) {
             let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: i * scaleWidth / 8 });
             document.dispatchEvent(fakeMouseMove);
-            expect(Math.abs(slider.getOption("thumbRightPos") - ((max - min) / 8 * i))).toBeLessThanOrEqual(step);
-            console.log(slider.getOption("thumbRightPos"));
-            // console.log((max - min) / 8 * i);
-            console.log("\n");
-// debugger;
+            expect(Math.abs(slider.getOption("thumbRightPos") - ((max - min) / 8 * i + min))).toBeLessThanOrEqual(2 * step);
         }
 
         let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
@@ -244,7 +240,7 @@ describe(`Любые изменения View затрагивают и Model\n`,
         fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
         rightThumb.dispatchEvent(fakeMouseDown);
         document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth }))
-        expect(Math.abs(slider.getOption("thumbRightPos") - max + min)).toBeLessThanOrEqual(step);
+        expect(Math.abs(slider.getOption("thumbRightPos") - max)).toBeLessThanOrEqual(2 * step);
     });
 
     it(`Ближний к началу бегунок ВСЕГДА меняет свойство "thumbLeftPos", а ближний к концу - "thumbRightPos"`, () => {

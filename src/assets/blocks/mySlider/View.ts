@@ -154,10 +154,10 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
         let newLeftX: number = e.clientX - startX - shiftX;
         let newLeftY: number = e.clientY - startY - shiftY;
         let newLeft: number = newLeftX * cosA + newLeftY * sinA;
-
+        
+        newLeft = takeStepIntoAccount(newLeft, pixelStep);
         newLeft = Math.max(leftLimit, newLeft);
         newLeft = Math.min(newLeft, rightLimit);
-        newLeft = takeStepIntoAccount(newLeft, pixelStep);
 
         thumb.style.left = newLeft + 'px';
 
