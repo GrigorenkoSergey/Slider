@@ -64,6 +64,15 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
+    getOptions() { // не тестировал в unit test
+        let publicOtions = ["min", "max", "range", "step",
+            "thumbLeftPos", "thumbRightPos", "ticks", "angle"];
+
+        let obj: Obj = {}
+        publicOtions.forEach(key => obj[key] = this[<keyof this>key]);
+        return obj;
+    }
+
     setOptions(expectant: Obj): Model {
         let shouldBeNumbers: string[] = ["min", "max", "step", "thumbLeftPos",
             "thumbRightPos", "angle"];

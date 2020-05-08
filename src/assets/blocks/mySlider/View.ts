@@ -21,7 +21,13 @@ export class View implements ISubscriber {
     thumbLeft: HTMLElement;
     thumbRight: HTMLElement;
 
-    constructor(options: IViewOptions) {
+    constructor(options: Obj) {
+        let argsRequire = ["min", "max", "selector"];
+
+        if (!argsRequire.every(key => key in options)) {
+            throw new Error(`Not enough values. Should be at least "${argsRequire.join('", "')}" in options`);
+        }
+
         this.setOptions.call(this, options);
 
         let wrapper = document.querySelector(this.selector);
@@ -30,6 +36,7 @@ export class View implements ISubscriber {
 
         this.el.classList.add(this.className);
         if (!("step" in options) || this.step === 0) this.step = (this.max - this.min) / 100; //На будущее можно вынести в отдельный объект с дефолтными настройками.
+        this.render();
     }
 
     setOptions(options: { [key: string]: any }) {
@@ -38,6 +45,14 @@ export class View implements ISubscriber {
             .forEach(prop => expectant[prop] = options[prop])
 
         this._validateOptions(expectant) && Object.assign(this, expectant);
+    }
+
+    getOptions() {
+        let publicOtions = ["min", "max", "range", "step", 
+        "className", "selector", "hintAboveThumb", "el", "angle"];
+        let obj: Obj = {}
+        publicOtions.forEach(key => obj[key] = this[<keyof this>key]);
+        return obj;
     }
 
     update(eventType: string, data: ViewUpdateDataFormat): void {
@@ -114,7 +129,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     let cosA: number = Math.cos(self.angle / 180 * Math.PI);
     let sinA: number = Math.sin(self.angle / 180 * Math.PI);
 
-    let pixelStep: number = self.step * (slider.clientWidth - thumb.offsetWidth) / self.max;
+    let pixelStep: number = self.step * (slider.clientWidth - thumb.offsetWidth) / (self.max - self.min);
 
     //Найдем ограничители для бегунка 
     let leftLimit: number = 0;

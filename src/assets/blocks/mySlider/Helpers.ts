@@ -20,8 +20,8 @@ class EventObserver {
 
 interface IModel {
     event?: EventObserver;
-    min?: number
-    max?: number
+    min: number
+    max: number
     thumbLeftPos?: number;
     thumbRightPos?: number;
     step?: number;
@@ -32,12 +32,12 @@ interface IModel {
 
 interface IViewOptions {
     selector: string;
-    className: string;
-    angle: number;
+    className?: string;
+    angle?: number;
     min: number;
     max: number;
-    step: number;
-    range: boolean;
+    step?: number;
+    range?: boolean;
     hintAboveThumb?: boolean;
 }
 

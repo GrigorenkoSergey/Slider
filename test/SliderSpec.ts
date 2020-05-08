@@ -48,6 +48,10 @@ document.head.append(style);
 
 let div = document.createElement('div');
 div.className = "div";
+//Обратить внимание, что лучше создать для каждого спека свой блок со своим отдельным классом.
+//В этом спеке класс == "div". Иначе начинается путаница с тестами.
+//Мои попытки использовать beforeAll anc afterAll ни к чему не привели
+
 document.body.append(div);
 
 
@@ -73,8 +77,9 @@ describe(`Работает в принципе...\n`, () => {
     it(`Инициализируется с минимальным количеством опций`, () => {
         expect(() => { let slider = new Slider(option) }).not.toThrowError();
         let slider = new Slider(option);
+
         expect(slider.update).toBeDefined();
-        expect(slider.getOption).toBeDefined();
+        expect(slider.getOptions).toBeDefined();
         expect(slider.setOptions).toBeDefined();
         expect(slider.bindWith).toBeDefined();
         expect(slider.setThumbsPos).toBeDefined();
@@ -88,7 +93,7 @@ describe(`Работает в принципе...\n`, () => {
             selector: ".div",
             bar: 12,
             foo: "asdf",
-            thumbLeftPos: 10,
+            thumbLeftPos: 30,
             thumbRightPos: 90,
             range: true,
             angle: 45,
@@ -96,35 +101,48 @@ describe(`Работает в принципе...\n`, () => {
         };
 
         let slider = new Slider(option);
-        expect(slider.getOption("min")).toEqual(0);
-        expect(slider.getOption("max")).toEqual(100);
-        expect(slider.getOption("step")).toEqual(1);
-        expect(slider.getOption("thumbLeftPos")).toEqual(10);
-        expect(slider.getOption("thumbRightPos")).toEqual(90);
-        expect(slider.getOption("ticks")).toEqual({ 100: 100 });
-        expect(slider.getOption("angle")).toEqual(45);
-        expect(slider.getOption("range")).toBeTruthy();
-        expect(slider.getOption("className")).toEqual("slider");
-        expect(slider.getOption("selector")).toEqual(".div");
-        expect(slider.getOption("hintAboveThumb")).toBeTruthy();
+        expect(slider.getOptions().min).toEqual(0);
+        expect(slider.getOptions().max).toEqual(100);
+        expect(slider.getOptions().step).toEqual(1);
+        expect(slider.getOptions().thumbLeftPos).toEqual(30);
+
+        //Проверим положение крайних бегунков относительно оси
+        let left = parseFloat(getComputedStyle(slider._view.thumbLeft).left);
+        let right = parseFloat(getComputedStyle(slider._view.thumbRight).left);
+        let scaleWidth = div.clientWidth - slider._view.thumbLeft.offsetWidth;
+
+        //ниже относительное смещения левого и правого бегунков от начала
+        let offsetLeft = left / scaleWidth;
+        let offsetRight = right / scaleWidth;
+
+        expect(offsetLeft > 0.29 && offsetLeft < 0.31).toBeTruthy(); 
+        expect(offsetRight > 0.89 && offsetRight < 0.91).toBeTruthy();
+
+        expect(slider.getOptions().thumbRightPos).toEqual(90);
+        expect(slider.getOptions().ticks).toEqual({ 100: 100 });
+        expect(slider.getOptions().angle).toEqual(45);
+        expect(slider.getOptions().range).toBeTruthy();
+        
+        expect(slider.getOptions().className).toEqual("slider");
+        expect(slider.getOptions().selector).toEqual(".div");
+        expect(slider.getOptions().hintAboveThumb).toBeTruthy();
     });
 
-    it(`Позволяет двигать бегунки`, () => {
+    it(`Позволяет двигать бегунки с помощью setThumbsPos`, () => {
         let option = { min: 0, max: 100, range: true, selector: ".div" };
         let slider = new Slider(option);
 
         slider.setThumbsPos(20, 80);
-        expect(slider.getOption("thumbLeftPos")).toEqual(20);
-        expect(slider.getOption("thumbRightPos")).toEqual(80);
+        expect(slider.getOptions().thumbLeftPos).toEqual(20);
+        expect(slider.getOptions().thumbRightPos).toEqual(80);
 
         slider.setThumbsPos(70, 30);
-        expect(slider.getOption("thumbLeftPos")).toEqual(30);
-        expect(slider.getOption("thumbRightPos")).toEqual(70);
+        expect(slider.getOptions().thumbLeftPos).toEqual(30);
+        expect(slider.getOptions().thumbRightPos).toEqual(70);
 
         slider.setThumbsPos(20);
-        expect(slider.getOption("thumbLeftPos")).toEqual(20);
-        expect(slider.getOption("thumbRightPos")).toEqual(70);
-
+        expect(slider.getOptions().thumbLeftPos).toEqual(20);
+        expect(slider.getOptions().thumbRightPos).toEqual(70);
     });
 
     it(`Однако, если задан в функцию "setThumbsPos" передан один аргумент, проверки на корректность задания положения бегунка не делается`, () => {
@@ -132,8 +150,8 @@ describe(`Работает в принципе...\n`, () => {
         let slider = new Slider(option);
 
         slider.setThumbsPos(90);
-        expect(slider.getOption("thumbLeftPos")).toEqual(90);
-        expect(slider.getOption("thumbRightPos")).toEqual(50);
+        expect(slider.getOptions().thumbLeftPos).toEqual(90);
+        expect(slider.getOptions().thumbRightPos).toEqual(50);
     });
 
     it(`Можно задавать вообще любые свойства, лишние свойства будут проигнорированы`, () => {
@@ -152,25 +170,17 @@ describe(`Работает в принципе...\n`, () => {
 
         let slider = new Slider(option);
         slider.setOptions({ min: 20, max: 80, range: false, angle: 0 });
-        expect(slider.getOption("min")).toEqual(20);
-        expect(slider.getOption("max")).toEqual(80);
-        expect(slider.getOption("range")).toEqual(false);
-        expect(slider.getOption("angle")).toEqual(0);
+        expect(slider.getOptions().min).toEqual(20);
+        expect(slider.getOptions().max).toEqual(80);
+        expect(slider.getOptions().range).toEqual(false);
+        expect(slider.getOptions().angle).toEqual(0);
 
         slider.setOptions({ hintAboveThumb: true });
-        expect(slider.getOption("hintAboveThumb")).toBeTruthy();
+        expect(slider.getOptions().hintAboveThumb).toBeTruthy();
     });
-
-    it(`При попытке обращения к несуществующим свойствам функция вернет строку:
-    "Option "<optionName>" doesn't exist!"`, () => {
-        let slider = new Slider(option);
-        expect(slider.getOption("bar")).toEqual(`Option "bar" doesn't exist!`);
-        expect(slider.getOption("foo")).toEqual(`Option "foo" doesn't exist!`);
-    });
-
 });
 
-describe(`Любые изменения View затрагивают и Model\n`, () => {
+describe(`Любые изменения View затрагивают  Model и наоборот\n`, () => {
     beforeEach(() => {
         document.body.append(div);
     });
@@ -181,7 +191,7 @@ describe(`Любые изменения View затрагивают и Model\n`,
     });
 
     it(`Можно двигать мышкой левый бегунок`, () => {
-        let option = { min: 0, max: 1000, range: false, selector: ".div", className: "slider" };
+        let option = { min: -10000, max: 1000, range: false, selector: ".div", className: "slider" };
         let slider = new Slider(option);
 
         let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
@@ -190,16 +200,14 @@ describe(`Любые изменения View затрагивают и Model\n`,
         let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, });
         leftThumb.dispatchEvent(fakeMouseDown);
 
-        let min = slider.getOption("min");
-        let max = slider.getOption("max");
-        let step = slider.getOption("step");
+        let {max, min, step} = slider.getOptions();
 
         //бежим к концу
         for (let i = 1; i < 9; i++) {
             let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: i * scaleWidth / 8 });
             document.dispatchEvent(fakeMouseMove);
             //Да, мой юный друг, это связано с погрешностью округления ))
-            expect(Math.abs(slider.getOption("thumbLeftPos") - (max - min) / 8 * i)).toBeLessThanOrEqual(2 * step);
+            expect(Math.abs(slider.getOptions().thumbLeftPos - ((max - min) / 8 * i + min))).toBeLessThanOrEqual(step);
         }
 
         let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
@@ -210,7 +218,7 @@ describe(`Любые изменения View затрагивают и Model\n`,
         fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth });
         leftThumb.dispatchEvent(fakeMouseDown);
         document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth / 2 }))
-        expect(Math.abs(slider.getOption("thumbLeftPos") - (max - min) / 2)).toBeLessThanOrEqual(2 * step);
+        expect(Math.abs(slider.getOptions().thumbLeftPos - ((max - min) / 2 + min))).toBeLessThanOrEqual(step);
 
     });
 
@@ -223,15 +231,13 @@ describe(`Любые изменения View затрагивают и Model\n`,
         let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth });
         rightThumb.dispatchEvent(fakeMouseDown);
 
-        let min = slider.getOption("min");
-        let max = slider.getOption("max");
-        let step = slider.getOption("step");
+        let {max, min, step} = slider.getOptions();
 
         //бежим к началу
         for (let i = 7; i > 1; i--) {
             let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: i * scaleWidth / 8 });
             document.dispatchEvent(fakeMouseMove);
-            expect(Math.abs(slider.getOption("thumbRightPos") - ((max - min) / 8 * i + min))).toBeLessThanOrEqual(2 * step);
+            expect(Math.abs(slider.getOptions().thumbRightPos - ((max - min) / 8 * i + min))).toBeLessThanOrEqual(2 * step);
         }
 
         let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
@@ -241,7 +247,7 @@ describe(`Любые изменения View затрагивают и Model\n`,
         fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
         rightThumb.dispatchEvent(fakeMouseDown);
         document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth }))
-        expect(Math.abs(slider.getOption("thumbRightPos") - max)).toBeLessThanOrEqual(2 * step);
+        expect(Math.abs(slider.getOptions().thumbRightPos - max)).toBeLessThanOrEqual(2 * step);
     });
 
     it(`Ближний к началу бегунок ВСЕГДА меняет свойство "thumbLeftPos", а ближний к концу - "thumbRightPos"`, () => {
@@ -275,8 +281,8 @@ describe(`Любые изменения View затрагивают и Model\n`,
         document.dispatchEvent(fakeMouseUp);
 
         let { min, max, step } = option;
-        expect(Math.abs(slider.getOption("thumbLeftPos") - min)).toBeLessThanOrEqual(step);
-        expect(slider.getOption("thumbRightPos") - max).toBeLessThanOrEqual(step);
+        expect(Math.abs(slider.getOptions().thumbLeftPos - min)).toBeLessThanOrEqual(step);
+        expect(slider.getOptions().thumbRightPos - max).toBeLessThanOrEqual(step);
     });
 
     it(`Подсказка над бегунками всегда отображает корректное значение положения бегунка`, () => {
@@ -299,27 +305,27 @@ describe(`Любые изменения View затрагивают и Model\n`,
 
         leftThumb.dispatchEvent(fakeMouseDown);
         //Подсказка появляется только после нажатия на кругляше, поэтому должно произойти mousedown для правильного выделения
-        let hint = <HTMLDivElement>div.querySelector("[class*=hint]"); 
+        let hint = <HTMLDivElement>div.querySelector("[class*=hint]");
 
-        expect(slider.getOption("thumbLeftPos")).toEqual(+hint.textContent);
+        expect(slider.getOptions().thumbLeftPos).toEqual(+hint.textContent);
         document.dispatchEvent(fakeMouseMove);
 
-        expect(slider.getOption("thumbLeftPos")).toEqual(+hint.textContent);
+        expect(slider.getOptions().thumbLeftPos).toEqual(+hint.textContent);
         document.dispatchEvent(fakeMouseUp);
 
-        expect(slider.getOption("thumbLeftPos")).toEqual(+hint.textContent);
+        expect(slider.getOptions().thumbLeftPos).toEqual(+hint.textContent);
 
         fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth, clientY: 0, });
         fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth * 0.75, clientY: 500 })
 
         rightThumb.dispatchEvent(fakeMouseDown);
-        expect(slider.getOption("thumbRightPos")).toEqual(+hint.textContent);
+        expect(slider.getOptions().thumbRightPos).toEqual(+hint.textContent);
 
         document.dispatchEvent(fakeMouseMove);
-        expect(slider.getOption("thumbRightPos")).toEqual(+hint.textContent);
+        expect(slider.getOptions().thumbRightPos).toEqual(+hint.textContent);
 
         document.dispatchEvent(fakeMouseUp);
-        expect(slider.getOption("thumbRightPos")).toEqual(+hint.textContent);
+        expect(slider.getOptions().thumbRightPos).toEqual(+hint.textContent);
 
     });
 
@@ -335,12 +341,12 @@ describe(`Любые изменения View затрагивают и Model\n`,
         let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
         let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
 
-        let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true});
-        let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true});
+        let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true });
+        let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true });
         let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
 
         leftThumb.dispatchEvent(fakeMouseDown);
-        let hint = <HTMLDivElement>div.querySelector("[class*=hint]"); 
+        let hint = <HTMLDivElement>div.querySelector("[class*=hint]");
         expect(leftThumb.contains(hint)).toBeTrue();
         document.dispatchEvent(fakeMouseUp);
 
@@ -348,7 +354,7 @@ describe(`Любые изменения View затрагивают и Model\n`,
         expect(rightThumb.contains(hint)).toBeTrue();
         document.dispatchEvent(fakeMouseUp);
 
-        slider.setOptions({hintAboveThumb: false});
+        slider.setOptions({ hintAboveThumb: false });
 
         leftThumb.dispatchEvent(fakeMouseDown);
         expect(leftThumb.contains(hint)).toBeFalse();
@@ -370,7 +376,7 @@ describe(`Метод "unbundFrom" позволяет отвязать привя
         div.remove();
     });
 
-    it (`В частности, можно отвязать даже значение подсказки над кругляшом`, () => {
+    it(`В частности, можно отвязать даже значение подсказки над кругляшом`, () => {
         let option = {
             min: -1000, max: 1000, step: 10, range: true,
             selector: ".div", className: "slider",
@@ -382,14 +388,14 @@ describe(`Метод "unbundFrom" позволяет отвязать привя
         let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
         let scaleWidth = div.clientWidth - leftThumb.offsetWidth;
 
-        let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: 0});
-        let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth});
+        let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: 0 });
+        let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth });
         let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
 
         leftThumb.dispatchEvent(fakeMouseDown);
-        let hint = <HTMLDivElement>div.querySelector("[class*=hint]"); 
+        let hint = <HTMLDivElement>div.querySelector("[class*=hint]");
         expect(leftThumb.contains(hint)).toBeTrue();
-        expect(slider.getOption("thumbLeftPos")).toEqual(-1000);
+        expect(slider.getOptions().thumbLeftPos).toEqual(-1000);
         document.dispatchEvent(fakeMouseUp);
 
         slider.unbindFrom(hint);

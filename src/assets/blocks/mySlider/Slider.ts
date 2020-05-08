@@ -7,33 +7,33 @@ type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
 type Obj = { [key: string]: any };
 
 export class Slider implements ISubscriber {
+    _model: Model; //Хотел сделать приватными, но для отладки довольно неудобно. Перенастраивать Karma для js неохота..
+    _view: View;
     private observer: EventObserver = new EventObserver();
-    private model: Model;
-    private view: View;
     private bindedElements: Array<ISubscriber & { el: HTMLElement }> = [];
 
     constructor(options: any) {
-        this.model = new Model(options);
-        this.view = new View(options);
-        let [model, view] = [this.model, this.view];
+        this._model = new Model(options);
+        this._view = new View(options);
+        let [model, view] = [this._model, this._view];
 
         this.observer.addSubscriber("changeView", model);
         model.observer.addSubscriber("changeModel", this);
 
         this.observer.addSubscriber("changeModel", view);
         view.observer.addSubscriber("changeView", this);
-        view.render();
+        // view.render(); //перестал видеть причины для выноса в отдельный метод
 
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
 
         //Займемся подсказкой
-        let hint = this.view.hintEl;
+        let hint = this._view.hintEl;
         let fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
             let res = data.el == "L" ? leftX : rightX;
             elem.textContent = "" + Math.round(res);
         }
         //Информация в подсказке должна отображаться уже после того, как обработана модель и вид, поэтому она добавлена именно в конце.
-        this.bindWith(hint, this.model.min, this.model.max, fnRes);
+        this.bindWith(hint, this._model.min, this._model.max, fnRes);
     }
 
     update(eventType: string, data: any): void {
@@ -51,32 +51,35 @@ export class Slider implements ISubscriber {
     }
 
     setThumbsPos(leftPos: number, rightPos?: number): void {
-        return this.model.setThumbsPos.call(this.model, leftPos, rightPos);
+        return this._model.setThumbsPos.call(this._model, leftPos, rightPos);
     }
 
     setOptions(options: Obj): Slider {
-        this.model.setOptions.call(this.model, options);
-        this.view.setOptions.call(this.view, options);
-        this.view.update("changeModel", this.model.getThumbsOffset());
+        this._model.setOptions.call(this._model, options);
+        this._view.setOptions.call(this._view, options);
+        this._view.update("changeModel", this._model.getThumbsOffset());
 
         return this;
     }
 
-    getOption(optionName: string) {
-        let res: any = `Option "${optionName}" doesn't exist!`;
+    getOptions() {
+        let viewOps = this._view.getOptions.call(this._view);
+        let modelOps = this._model.getOptions.call(this._model);
+        //Сравним, совпадают ли значения общих опций, если нет (А ВДРУГ????), выкинем ошибку для отладки
 
-        if (optionName in this.model) {
-            res = this.model[<keyof Model>optionName];
-        } else if (optionName in this.view) {
-            res = this.view[<keyof View>optionName];
-        }
-        return res;
+        let synchronized = Object.keys(viewOps).every(key => { 
+           return key in modelOps ? viewOps[key] === modelOps[key] : true;
+        });
+
+        if (!synchronized) throw new Error("Модель не синхронизирована с View!");
+        
+        return Object.assign({}, viewOps, modelOps);
     }
 
     bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes: fnResType) {
         //fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 
-        let model = this.model;
+        let model = this._model;
         let { min, max } = model;
         if (fnStart > fnEnd) {
             [fnStart, fnEnd] = [fnEnd, fnStart];
@@ -99,7 +102,7 @@ export class Slider implements ISubscriber {
         this.observer.addSubscriber("changeView", elemSubscriber);
         this.observer.addSubscriber("changeModel", elemSubscriber);
 
-        this.model.observer.broadcast("changeModel", this.model.getThumbsOffset());
+        this._model.observer.broadcast("changeModel", this._model.getThumbsOffset());
         this.bindedElements.push(elemSubscriber);
     }
 
