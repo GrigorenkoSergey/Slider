@@ -17,15 +17,6 @@ export class Slider implements ISubscriber {
         this.view = new View(options);
         let [model, view] = [this.model, this.view];
 
-        let hint = this.view.hintEl;
-
-        let fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
-            let res = data.el == "L" ? leftX : rightX;
-            elem.textContent = "" + Math.round(res);
-        }
-
-        this.bindWith(hint, this.model.min, this.model.max, fnRes);
-
         this.observer.addSubscriber("changeView", model);
         model.observer.addSubscriber("changeModel", this);
 
@@ -34,6 +25,15 @@ export class Slider implements ISubscriber {
         view.render();
 
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
+
+        //Займемся подсказкой
+        let hint = this.view.hintEl;
+        let fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
+            let res = data.el == "L" ? leftX : rightX;
+            elem.textContent = "" + Math.round(res);
+        }
+        //Информация в подсказке должна отображаться уже после того, как обработана модель и вид, поэтому она добавлена именно в конце.
+        this.bindWith(hint, this.model.min, this.model.max, fnRes);
     }
 
     update(eventType: string, data: any): void {
@@ -103,10 +103,10 @@ export class Slider implements ISubscriber {
         this.bindedElements.push(elemSubscriber);
     }
 
-    unbindFrom(elemDom: HTMLElement): Slider { //не тестировал.
+    unbindFrom(elemDom: HTMLElement): Slider {
         let elemSubscriber = this.bindedElements.find(elem => elem.el === elemDom);
 
-        this.observer.removeSubscriber("chageView", elemSubscriber);
+        this.observer.removeSubscriber("changeView", elemSubscriber);
         this.observer.removeSubscriber("changeModel", elemSubscriber);
         this.bindedElements = this.bindedElements.filter(elem => elemSubscriber);
         return this;
