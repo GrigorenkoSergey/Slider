@@ -6,9 +6,8 @@ type ViewUpdateDataFormat = {
     "R": { x: number, offset: number }
 };
 
-export class View implements ISubscriber {
+export class View extends EventObserver implements ISubscriber {
     el: HTMLDivElement;
-    observer: EventObserver = new EventObserver();
     className: string = "slider";
     angle: number = 0;
     step: number = 10;
@@ -20,8 +19,10 @@ export class View implements ISubscriber {
     hintEl: HTMLDivElement;
     thumbLeft: HTMLElement;
     thumbRight: HTMLElement;
+    scale: Scale; //?
 
     constructor(options: Obj) {
+        super();
         let argsRequire = ["min", "max", "selector"];
 
         if (!argsRequire.every(key => key in options)) {
@@ -50,29 +51,34 @@ export class View implements ISubscriber {
     }
 
     getOptions() {
-        let publicOtions = ["min", "max", "range", "step", 
-        "className", "selector", "hintAboveThumb", "el", "angle"];
+        let publicOtions = ["min", "max", "range", "step",
+            "className", "selector", "hintAboveThumb", "el", "angle"];
         let obj: Obj = {}
         publicOtions.forEach(key => obj[key] = this[<keyof this>key]);
         return obj;
     }
 
-    update(eventType: string, data: ViewUpdateDataFormat): this {
-        this.thumbLeft.style.left =
-            data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
-
-        if (this.range) {
-            this.el.append(this.thumbRight);
-            this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
+    // update(eventType: string, data: ViewUpdateDataFormat): this {
+    update(eventType: string, data: any): this {
+        if (eventType == "AnchorClick") {
+            console.log("Click on Anchor!!!");
         } else {
-            this.thumbRight.remove();
-        }
+            this.thumbLeft.style.left =
+                data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
 
-        this.el.style.transform = `rotate(${this.angle}deg)`;
+            if (this.range) {
+                this.el.append(this.thumbRight);
+                this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
+            } else {
+                this.thumbRight.remove();
+            }
+
+            this.el.style.transform = `rotate(${this.angle}deg)`;
+        }
         return this;
     }
 
-    render(firstTime? : true): this {
+    render(firstTime?: true): this {
         let { thumbLeft, thumbRight } = this;
 
         this.hintEl.className = `${this.className}__hint`;
@@ -86,6 +92,8 @@ export class View implements ISubscriber {
 
         this.el.style.transform = `rotate(${this.angle}deg)`;
         firstTime && this._addEventListeners();
+
+        this.scale = new Scale({ view: this, angle: this.angle, points: [0, 0.5, 1], container: this.el, className: this.className });//?
         return this;
     }
 
@@ -117,6 +125,7 @@ export class View implements ISubscriber {
 }
 
 function mouseDownThumbHandler(e: MouseEvent, self: View): void {
+    //Не фига создавать новый класс Thumb!!!!
     //Применим всплытие, this - это элемент DOM, на котором навесили обработчик,
     // e.target - то, на котором сработало событие
     e.preventDefault();
@@ -132,9 +141,9 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
     const startY: number = thisCoord.top + this.clientTop;
 
     let cosA: number = Math.cos(self.angle / 180 * Math.PI);
-    let sinA: number = Math.sin(self.angle / 180 * Math.PI);
+    let sinA: number = Math.sin(self.getOptions().angle / 180 * Math.PI);
 
-    let pixelStep: number = self.step * (slider.clientWidth - thumb.offsetWidth) / (self.max - self.min);
+    let pixelStep: number = self.getOptions().step * (slider.clientWidth - thumb.offsetWidth) / (self.max - self.min);
 
     //Найдем ограничители для бегунка 
     let leftLimit: number = 0;
@@ -159,7 +168,8 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
-    self.observer.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
+    // self.observer.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
+    self.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
         el: thumb,
         offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
     });
@@ -174,7 +184,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
         let newLeftX: number = e.clientX - startX - shiftX;
         let newLeftY: number = e.clientY - startY - shiftY;
         let newLeft: number = newLeftX * cosA + newLeftY * sinA;
-        
+
         newLeft = takeStepIntoAccount(newLeft, pixelStep);
         newLeft = Math.max(leftLimit, newLeft);
         newLeft = Math.min(newLeft, rightLimit);
@@ -189,7 +199,7 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
             }
         }
 
-        self.observer.broadcast("changeView", {
+        self.broadcast("changeView", {
             el: thumb,
             offset: newLeft / scaleInnerWidth,
         });
@@ -210,5 +220,52 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
         [self.thumbLeft, self.thumbRight] = [self.thumbRight, self.thumbLeft];
         self.thumbRight.className = self.thumbRight.className.replace(/left/, "right");
         self.thumbLeft.className = self.thumbLeft.className.replace(/right/, "left");
+    }
+}
+
+class Scale extends EventObserver {
+    points: number[] = [0, 1]; //Возможно, придется как-то изменить вид [min, max] что-то вроде
+    container: HTMLDivElement | null = null;
+    className: string = "";
+    angle: number = 0;
+    view: View | null = null;
+
+    constructor(options: Obj) {
+        super();
+        Object.keys(options).forEach(key => {
+            if (key in this) this[<keyof this>key] = options[key];
+        });
+
+        this._validatePoints(this.points);
+        this.renderAnchors();
+        this.container.addEventListener("click", this._onMouseClick.bind(this));
+        this.addSubscriber("AnchorClick", this.view);
+    }
+    renderAnchors() {
+        let scalePoints: Array<HTMLDivElement> = [];
+
+        for (let i = 0; i < this.points.length; i++) {
+            let div = document.createElement('div');
+            scalePoints[i] = div;
+            div.className = this.className + "__scale-points";
+            div.style.transform = `rotate(-${this.angle}deg)`;
+
+            let scaleWidthPx = this.container.clientWidth - scalePoints[0].offsetWidth;
+            scalePoints.forEach((div, i) => div.style.left = this.points[i] * scaleWidthPx + 'px');
+
+        }
+        this.container.append(...scalePoints);
+    }
+
+    _onMouseClick(e: MouseEvent) {
+        let target = <HTMLDivElement>e.target;
+        if (!target.className.includes("scale")) return;
+        console.log("click");
+        
+        this.broadcast("AnchorClick", target);
+    }
+
+    _validatePoints(points: number[]) {
+        return true;
     }
 }

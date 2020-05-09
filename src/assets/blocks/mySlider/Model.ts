@@ -3,8 +3,10 @@ import { EventObserver, IModel, ISubscriber, debuggerPoint } from "./Helpers";
 type Obj = { [key: string]: any };
 type modelResponse = { L: { x: number, offset: number }, R: { x: number, offset: number } }
 
-export class Model implements IModel, ISubscriber {
-    observer = new EventObserver();
+// export class Model implements IModel, ISubscriber {
+export class Model extends EventObserver
+    implements IModel, ISubscriber {
+
     min = 0;
     max = 100;
     step = 1;
@@ -21,6 +23,7 @@ export class Model implements IModel, ISubscriber {
     private _ticksValues: number[];
 
     constructor(options: Obj) {
+        super();
         let argsRequire = ["min", "max"];
 
         if (!argsRequire.every(key => key in options)) {
@@ -64,7 +67,7 @@ export class Model implements IModel, ISubscriber {
         }
     }
 
-    getOptions() { // не тестировал в unit test
+    getOptions() {
         let publicOtions = ["min", "max", "range", "step",
             "thumbLeftPos", "thumbRightPos", "ticks", "angle"];
 
@@ -124,7 +127,7 @@ export class Model implements IModel, ISubscriber {
         obj._offsetRight = this._findOffset.call(obj, thumbRightPos);
 
         Object.assign(this, obj);
-        this.observer.broadcast("changeModel", this.getThumbsOffset());
+        this.broadcast("changeModel", this.getThumbsOffset());
 
         return this;
     }
@@ -148,7 +151,7 @@ export class Model implements IModel, ISubscriber {
             this._offsetRight = this._findOffset(thumbRightPos);
         }
 
-        this.observer.broadcast("changeModel", this.getThumbsOffset());
+        this.broadcast("changeModel", this.getThumbsOffset());
         return this;
     }
 

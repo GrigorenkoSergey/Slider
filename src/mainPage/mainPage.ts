@@ -50,9 +50,9 @@ let options4 = {
 let slider4 = new Slider(options4);
 
 let options5 = {
-    max: 1000,
+    max: 100,
     min: 0,
-    step: 10,
+    step: 1,
     selector: ".slider5",
     angle: 0,
     range: true,
@@ -70,7 +70,7 @@ let fnResLine: fnResType = (elem, leftX, resLeft, rightX, resRight) => {
     resRight = Math.round(resRight);
     elem.textContent = pContent.slice(resLeft, resRight);
 }
-slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('p').textContent.length, fnResLine);
+slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('.slider5__p').textContent.length, fnResLine);
 
 
 let options6 = {

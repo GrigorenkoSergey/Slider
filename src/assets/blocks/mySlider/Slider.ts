@@ -6,23 +6,22 @@ type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
     rightX: number, scaledRightX: number, data: any) => void;
 type Obj = { [key: string]: any };
 
-export class Slider implements ISubscriber {
+export class Slider extends EventObserver implements ISubscriber {
     _model: Model; //Хотел сделать приватными, но для отладки довольно неудобно. Перенастраивать Karma для js неохота..
     _view: View;
-    private observer: EventObserver = new EventObserver();
     private bindedElements: Array<ISubscriber & { el: HTMLElement }> = [];
 
     constructor(options: any) {
+        super();
         this._model = new Model(options);
         this._view = new View(options);
         let [model, view] = [this._model, this._view];
 
-        this.observer.addSubscriber("changeView", model);
-        model.observer.addSubscriber("changeModel", this);
+        this.addSubscriber("changeView", model);
+        model.addSubscriber("changeModel", this);
 
-        this.observer.addSubscriber("changeModel", view);
-        view.observer.addSubscriber("changeView", this);
-        // view.render(); //перестал видеть причины для выноса в отдельный метод
+        this.addSubscriber("changeModel", view);
+        view.addSubscriber("changeView", this);
 
         model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
 
@@ -40,13 +39,13 @@ export class Slider implements ISubscriber {
         if (eventType == "changeModel") {
             //for View data should be {"L": {x: number, offset: number}, "R": {x: number, offset: number}}
             //data.offset should be in range from 0 to 1
-            this.observer.broadcast("changeModel", data);
+            this.broadcast("changeModel", data);
 
         } else if (eventType == "changeView") {
             //for Model data should be {el: HTMLDivElement, offset: number}
             //data.el.className should contain "left" of "right" substrings
             data.el && (data.el = data.el.className.includes("left") ? "L" : "R");
-            this.observer.broadcast("changeView", data);
+            this.broadcast("changeView", data);
         }
     }
 
@@ -99,18 +98,18 @@ export class Slider implements ISubscriber {
             update: update,
             el: elemDom,
         }
-        this.observer.addSubscriber("changeView", elemSubscriber);
-        this.observer.addSubscriber("changeModel", elemSubscriber);
+        this.addSubscriber("changeView", elemSubscriber);
+        this.addSubscriber("changeModel", elemSubscriber);
 
-        this._model.observer.broadcast("changeModel", this._model.getThumbsOffset());
+        this._model.broadcast("changeModel", this._model.getThumbsOffset());
         this.bindedElements.push(elemSubscriber);
     }
 
     unbindFrom(elemDom: HTMLElement): Slider {
         let elemSubscriber = this.bindedElements.find(elem => elem.el === elemDom);
 
-        this.observer.removeSubscriber("changeView", elemSubscriber);
-        this.observer.removeSubscriber("changeModel", elemSubscriber);
+        this.removeSubscriber("changeView", elemSubscriber);
+        this.removeSubscriber("changeModel", elemSubscriber);
         this.bindedElements = this.bindedElements.filter(elem => elemSubscriber);
         return this;
     }

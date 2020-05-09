@@ -38,4 +38,20 @@
     &__thumb-right {
       right: 0;
     }
+
+    &__scale-points {
+      width: 10px;
+      height: 10px;
+      top: 15px;
+      position: absolute;
+    }
+    &__scale-points::before {
+      // display: block;
+      content: "\2693";
+      // width: 10px;
+      // height: 10px;
+      // position: relative;
+      // top: 15px;
+    }
+
   }

@@ -169,7 +169,7 @@ describe(`Работает в принципе...\n`, () => {
         };
 
         let slider = new Slider(option);
-        slider.setOptions({ min: 20, max: 80, range: false, angle: 0 });
+        slider.setOptions({ min: "20", max: 80, range: false, angle: "0" });
         expect(slider.getOptions().min).toEqual(20);
         expect(slider.getOptions().max).toEqual(80);
         expect(slider.getOptions().range).toEqual(false);
