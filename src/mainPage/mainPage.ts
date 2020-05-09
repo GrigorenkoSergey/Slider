@@ -3,18 +3,12 @@ import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
 
 let options1 = {
-    // min: 0,
     min: 10,
-    // max: 100,
-    max: 299,
-    // step: 0,
-    step: 3,
-    // ticks: {20: 20, 40: 60, 80: 80, 100: 82},//?
+    max: 100,
+    step: 1,
     selector: ".slider1",
     angle: 0,
-    // range: false,
-    range: true,
-    // hintAboveThumb: false,
+    range: false,
     hintAboveThumb: true,
 }
 
@@ -159,6 +153,7 @@ function onChangeInputValue(e: Event): void {
     let input = <HTMLInputElement>e.target;
     let slider = sliders[input.dataset.id];
     let prop = input.name;
+
     slider.setOptions({ [prop]: input.value });
     inputs.forEach(item => getInputValue(item));
 }
@@ -189,5 +184,4 @@ thumbsRight.forEach((item: HTMLInputElement) => {
     slider.bindWith(item, slider.getOptions().max, slider.getOptions().min,
         (elem, leftX, foo, rightX) => { item.value = rightX.toString() }
     )
-
 });

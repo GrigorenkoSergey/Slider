@@ -71,7 +71,7 @@ export class Slider implements ISubscriber {
            return key in modelOps ? viewOps[key] === modelOps[key] : true;
         });
 
-        if (!synchronized) throw new Error("Модель не синхронизирована с View!");
+        if (!synchronized) throw new Error("Model не синхронизирована с View!");
         
         return Object.assign({}, viewOps, modelOps);
     }

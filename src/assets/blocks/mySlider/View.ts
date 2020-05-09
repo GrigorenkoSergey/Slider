@@ -36,7 +36,7 @@ export class View implements ISubscriber {
 
         this.el.classList.add(this.className);
         if (!("step" in options) || this.step === 0) this.step = (this.max - this.min) / 100; //На будущее можно вынести в отдельный объект с дефолтными настройками.
-        this.render();
+        this.render(true);
     }
 
     setOptions(options: { [key: string]: any }) {
@@ -44,7 +44,9 @@ export class View implements ISubscriber {
         Object.keys(options).filter(prop => prop in this)
             .forEach(prop => expectant[prop] = options[prop])
 
+        //ATTENTION: _validateOptions is dirty function!
         this._validateOptions(expectant) && Object.assign(this, expectant);
+        return this;
     }
 
     getOptions() {
@@ -55,7 +57,7 @@ export class View implements ISubscriber {
         return obj;
     }
 
-    update(eventType: string, data: ViewUpdateDataFormat): void {
+    update(eventType: string, data: ViewUpdateDataFormat): this {
         this.thumbLeft.style.left =
             data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
 
@@ -67,9 +69,10 @@ export class View implements ISubscriber {
         }
 
         this.el.style.transform = `rotate(${this.angle}deg)`;
+        return this;
     }
 
-    render(): void {
+    render(firstTime? : true): this {
         let { thumbLeft, thumbRight } = this;
 
         this.hintEl.className = `${this.className}__hint`;
@@ -82,7 +85,8 @@ export class View implements ISubscriber {
         this.range && this.el.append(thumbRight);
 
         this.el.style.transform = `rotate(${this.angle}deg)`;
-        this._addEventListeners();
+        firstTime && this._addEventListeners();
+        return this;
     }
 
     private _addEventListeners(): void {
@@ -99,13 +103,14 @@ export class View implements ISubscriber {
         let { min, max, step, angle } = obj;
 
         if (!isFinite(min)) throw new Error("min should be a number!");
-        if (!isFinite(max)) throw new Error("max should be a number");
+        if (!isFinite(max)) throw new Error("max should be a number!");
         if (!isFinite(step)) throw new Error("step should be a number!");
-        if (angle && !isFinite(angle)) throw new Error("angle should be a number!");
+        if (!isFinite(angle)) throw new Error("angle should be a number!");
 
         if (max < min) throw new Error("max should be greater then min!");
-        if ((max - min) % step) this.max = min + Math.floor((max - min) / step) * step;
-        if (angle && angle < 0 || angle > 90) throw new Error("angle should be >= 0 and <= 90");
+        // if ((max - min) % step) this.max = min + Math.floor((max - min) / step) * step; //больше не нужно
+        if (angle < 0 || angle > 90) throw new Error("angle should be >= 0 and <= 90");
+        Object.assign(expectant, obj);
 
         return true;
     }

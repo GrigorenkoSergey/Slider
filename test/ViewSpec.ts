@@ -50,7 +50,7 @@ let div = document.createElement('div');
 div.className = "divViewSpec"; //Должен быть уникальный класс для каждого спека.
 document.body.append(div);
 
-describe(`Первоначальная минимальная инициализация`, () => {
+describe(`Первоначальная минимальная инициализация\n`, () => {
   beforeEach(() => {
     document.body.append(div);
   });
@@ -89,8 +89,16 @@ describe(`Первоначальная минимальная инициализ
     expect(view.getOptions().step).toEqual(10);
   });
 
+  it(`Если неправильно заданы некоторые опции вывалит ошибку`, () => {
+    let view = new View({ min: 200, max: 1200, selector: ".divViewSpec", step: 0 });
 
-
+    expect(() => { view.setOptions({min: "200a"}); }).toThrowError("min should be a number!");
+    expect(() => { view.setOptions({max: "1200a"}); }).toThrowError("max should be a number!");
+    expect(() => { view.setOptions({step: "1200a"}); }).toThrowError("step should be a number!");
+    expect(() => { view.setOptions({angle: "90deg"}); }).toThrowError("angle should be a number!");
+    expect(() => { view.setOptions({min: 1000, max: 0}); }).toThrowError("max should be greater then min!");
+    expect(() => { view.setOptions({angle: -10}); }).toThrowError("angle should be >= 0 and <= 90");
+  });
 });
 
 describe(`Позволяет пользователю взаимодействовать с бегунком\n`, () => {
@@ -103,6 +111,7 @@ describe(`Позволяет пользователю взаимодейство
     div.remove();
   });
 
+
   it(`Можно двигать левый бегунок мышкой`, () => {
     let option = { min: 0, max: 1000, range: false, selector: ".divViewSpec", className: "slider" };
     let view = new View(option);
@@ -110,48 +119,149 @@ describe(`Позволяет пользователю взаимодейство
     let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
     let scaleWidth = div.clientWidth - leftThumb.offsetWidth;
 
-    let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: 0, clientY: 0 });
-    //вообще для fakeMouseDown clientX and clientY по умолчанию равны нулю, но указывают дополнительно, чтоб впоследствии самому не запутаться
-    leftThumb.dispatchEvent(fakeMouseDown);
-
     let { min, max, step } = view.getOptions()
 
     //бежим к концу
-    let startLeft = leftThumb.getBoundingClientRect().left; //начальное положение бегунка
-    for (let i = 1; i < 9; i++) {
-      let deltaPx = i * scaleWidth / 8;
-      let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: deltaPx });
-      document.dispatchEvent(fakeMouseMove);
-      let deltaInFact = leftThumb.getBoundingClientRect().left - startLeft;
-      let pixelStep: number = step * (scaleWidth) / (max - min);
+    let deltaPx: number = scaleWidth / 8;
+    let pixelStep: number = step * (scaleWidth) / (max - min);
 
-      //Погрешность округления всегда присутствует...
+    for (let i = 1; i < 8; i++) {
+      //не стоит бежать до самого конца, т.к. из-зи погрешности округления мы можем достичь конца раньше, чем надеялись
+      let startLeft = leftThumb.getBoundingClientRect().left; //начальное положение бегунка
+      moveThumb(leftThumb, deltaPx);
+      let deltaInFact = leftThumb.getBoundingClientRect().left - startLeft;
       expect(Math.abs(deltaInFact - deltaPx)).toBeLessThanOrEqual(pixelStep);
     }
-
-    /*
-    let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
-    document.dispatchEvent(fakeMouseUp);
-
-    //При fakeMouseDown обязательно генерировать clientX, если хочешь, к примеру, двигаться назад
-    //По умолчанию clientX всегда равно 0, поэтому бегунок при fakeMouseMove будет двигаться только вперед
-    fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth });
-    leftThumb.dispatchEvent(fakeMouseDown);
-    document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth / 2 }))
-    expect(Math.abs(view.getOption("thumbLeftPos") - (max - min) / 2)).toBeLessThanOrEqual(2 * step);
-    */
-
   });
 
   it(`Можно двигать правый бегунок мышкой`, () => {
+    let option = { min: -300, max: 1300, range: false, selector: ".divViewSpec", className: "slider" };
+    let view = new View(option);
+    view.setOptions({ range: true }).render();
 
+    let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
+    let scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+    let { min, max, step } = view.getOptions()
+
+    //бежим к началу
+    let deltaPx = scaleWidth / 8;
+    let pixelStep: number = step * (scaleWidth) / (max - min);
+
+    for (let i = 7; i < 1; i++) {
+      let startLeft = rightThumb.getBoundingClientRect().left; //начальное положение бегунка
+      moveThumb(rightThumb, deltaPx);
+      let deltaInFact = rightThumb.getBoundingClientRect().left - startLeft;
+      expect(Math.abs(deltaInFact - deltaPx)).toBeLessThanOrEqual(pixelStep);
+    }
   });
 
   it(`Если левый и правый бегунок меняются местами, также меняются и их классы:
       thumb-left и thumb-right соответственно`, () => {
+    let option = { min: -300, max: 1300, range: false, selector: ".divViewSpec", className: "slider" };
+    let view = new View(option);
+    view.setOptions({ range: true, min: -1000, max: 2000 }).render();
 
+    let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
+    let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
+    let scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+
+    let { min, max, step } = view.getOptions();
+    moveThumb(leftThumb, scaleWidth * 7 / 8);
+    moveThumb(rightThumb, -scaleWidth);
+
+    expect(leftThumb.className.includes("right")).toBeTruthy();
+    expect(leftThumb.className.includes("left")).toBeFalsy();
+
+    expect(rightThumb.className.includes("left")).toBeTruthy();
+    expect(rightThumb.className.includes("right")).toBeFalsy();
   });
+
   it(`Движение бегунков ограничено шкалой`, () => {
+    let option = { min: -300, max: 1300, range: false, selector: ".divViewSpec", className: "slider" };
+    let view = new View(option);
+    view.setOptions({ range: true, min: -2777, max: 5341, step: 5 }).render();
 
+    let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
+    let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
+    let scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+
+    let startTop: number;
+
+    startTop = rightThumb.getBoundingClientRect().top;
+    moveThumb(rightThumb, -scaleWidth * 100, 1000);
+    expect(parseFloat(getComputedStyle(rightThumb).left)).toBeGreaterThanOrEqual(0);
+    expect(rightThumb.getBoundingClientRect().top).toEqual(startTop);
+
+    startTop = rightThumb.getBoundingClientRect().top;
+    moveThumb(rightThumb, scaleWidth * 100, -50000);
+    expect(parseFloat(getComputedStyle(rightThumb).left)).toBeLessThanOrEqual(scaleWidth);
+    expect(rightThumb.getBoundingClientRect().top).toEqual(startTop);
+
+    startTop = leftThumb.getBoundingClientRect().top;
+    moveThumb(leftThumb, -scaleWidth * 100, 1000);
+    expect(parseFloat(getComputedStyle(leftThumb).left)).toBeGreaterThanOrEqual(0);
+    expect(leftThumb.getBoundingClientRect().top).toEqual(startTop);
+
+    startTop = leftThumb.getBoundingClientRect().top;
+    moveThumb(leftThumb, scaleWidth * 100, -50000);
+    expect(parseFloat(getComputedStyle(leftThumb).left)).toBeLessThanOrEqual(scaleWidth);
+    expect(leftThumb.getBoundingClientRect().top).toEqual(startTop);
   });
+
+  it(`Слайдер может работать в вертикальном положении`, () => {
+    let option = {
+      min: 0, max: 100, range: true, selector: ".divViewSpec",
+      className: "slider", angle: 90
+    };
+    let view = new View(option);
+
+    let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
+    let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
+    let scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+    let { min, max, step } = view.getOptions()
+
+    let highLimit = leftThumb.getBoundingClientRect().top;
+    let lowLimit = rightThumb.getBoundingClientRect().top; //да, да... Именно top
+    let leftLimit = leftThumb.getBoundingClientRect().left;
+    let rightLimit = leftThumb.getBoundingClientRect().right;
+
+    //проверим поведение верхнего бегунка (левого)
+    let startTop = highLimit;
+    moveThumb(leftThumb, 1000, scaleWidth / 4);
+    let pos = leftThumb.getBoundingClientRect();
+    expect(pos.left).toEqual(leftLimit);
+    expect(pos.right).toEqual(rightLimit);
+    expect(pos.top - startTop).toEqual(parseFloat(getComputedStyle(leftThumb).left));
+
+    //проверим поведение верхнего бегунка (левого)
+    startTop = lowLimit;
+    moveThumb(rightThumb, 1000, -scaleWidth / 4);
+    pos = rightThumb.getBoundingClientRect();
+    expect(pos.left).toEqual(leftLimit);
+    expect(pos.right).toEqual(rightLimit);
+    expect(startTop - pos.top).toEqual(parseFloat(getComputedStyle(leftThumb).left));
+  });
+
+  it(`Проверки на углы более 0 и менее 90 градусов слишком сложны, поэтому их нужно проводить вручную`, () => {
+    expect(true).toBeTrue();
+  });
+
 });
+
+function moveThumb(thumb: HTMLDivElement, deltaXPx: number, deltaYPx: number = 0): void {
+  let startX = Math.abs(deltaXPx);
+  let startY = Math.abs(deltaYPx);
+
+  let fakeMouseDown = new MouseEvent("mousedown",
+    { bubbles: true, cancelable: true, clientX: startX, clientY: startY });
+
+  let fakeMouseMove = new MouseEvent("mousemove",
+    { bubbles: true, cancelable: true, clientX: startX + deltaXPx, clientY: startY + deltaYPx });
+
+  let fakeMouseUp = new MouseEvent("mouseup",
+    { bubbles: true, cancelable: true });
+
+  thumb.dispatchEvent(fakeMouseDown);
+  thumb.dispatchEvent(fakeMouseMove);
+  thumb.dispatchEvent(fakeMouseUp);
+}
