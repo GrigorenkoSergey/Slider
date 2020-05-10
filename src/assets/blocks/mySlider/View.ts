@@ -15,11 +15,13 @@ export class View extends EventObserver implements ISubscriber {
     max: number = 100;
     range: boolean = true;
     selector: string = "";
-    hintAboveThumb = false;
+    hintAboveThumb = true;
     hintEl: HTMLDivElement;
-    thumbLeft: HTMLElement;
-    thumbRight: HTMLElement;
+    thumbLeft: HTMLDivElement;
+    thumbRight: HTMLDivElement;
+
     scale: Scale; //?
+    showScale: boolean = true;
 
     constructor(options: Obj) {
         super();
@@ -34,9 +36,12 @@ export class View extends EventObserver implements ISubscriber {
         let wrapper = document.querySelector(this.selector);
         [this.el, this.hintEl, this.thumbLeft, this.thumbRight] = new Array(4).fill(1).map(item => document.createElement('div'));
         wrapper.append(this.el);
+        this.scale = new Scale({ view: this });
+
 
         this.el.classList.add(this.className);
         if (!("step" in options) || this.step === 0) this.step = (this.max - this.min) / 100; //На будущее можно вынести в отдельный объект с дефолтными настройками.
+
         this.render(true);
     }
 
@@ -47,6 +52,8 @@ export class View extends EventObserver implements ISubscriber {
 
         //ATTENTION: _validateOptions is dirty function!
         this._validateOptions(expectant) && Object.assign(this, expectant);
+
+        this.scale && this.scale.update("showScale", this.showScale);
         return this;
     }
 
@@ -58,23 +65,18 @@ export class View extends EventObserver implements ISubscriber {
         return obj;
     }
 
-    // update(eventType: string, data: ViewUpdateDataFormat): this {
-    update(eventType: string, data: any): this {
-        if (eventType == "AnchorClick") {
-            console.log("Click on Anchor!!!");
+    update(eventType: string, data: ViewUpdateDataFormat): this {
+        this.thumbLeft.style.left =
+            data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
+
+        if (this.range) {
+            this.el.append(this.thumbRight);
+            this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
         } else {
-            this.thumbLeft.style.left =
-                data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
-
-            if (this.range) {
-                this.el.append(this.thumbRight);
-                this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
-            } else {
-                this.thumbRight.remove();
-            }
-
-            this.el.style.transform = `rotate(${this.angle}deg)`;
+            this.thumbRight.remove();
         }
+
+        this.el.style.transform = `rotate(${this.angle}deg)`;
         return this;
     }
 
@@ -93,7 +95,9 @@ export class View extends EventObserver implements ISubscriber {
         this.el.style.transform = `rotate(${this.angle}deg)`;
         firstTime && this._addEventListeners();
 
-        this.scale = new Scale({ view: this, angle: this.angle, points: [0, 0.5, 1], container: this.el, className: this.className });//?
+        let scaleWidth = this.el.clientWidth - thumbLeft.offsetWidth;
+        this.scale.width = scaleWidth; 
+        this.showScale && this.scale.renderAnchors();
         return this;
     }
 
@@ -116,12 +120,12 @@ export class View extends EventObserver implements ISubscriber {
         if (!isFinite(angle)) throw new Error("angle should be a number!");
 
         if (max < min) throw new Error("max should be greater then min!");
-        // if ((max - min) % step) this.max = min + Math.floor((max - min) / step) * step; //больше не нужно
         if (angle < 0 || angle > 90) throw new Error("angle should be >= 0 and <= 90");
         Object.assign(expectant, obj);
 
         return true;
     }
+
 }
 
 function mouseDownThumbHandler(e: MouseEvent, self: View): void {
@@ -168,7 +172,6 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 
 
     let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
-    // self.observer.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
     self.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
         el: thumb,
         offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
@@ -224,11 +227,12 @@ function mouseDownThumbHandler(e: MouseEvent, self: View): void {
 }
 
 class Scale extends EventObserver {
-    points: number[] = [0, 1]; //Возможно, придется как-то изменить вид [min, max] что-то вроде
-    container: HTMLDivElement | null = null;
-    className: string = "";
-    angle: number = 0;
+    width: number = 0;
     view: View | null = null;
+
+    el: HTMLDivElement;
+    points: number[] = [0, 1];
+    range: number[];
 
     constructor(options: Obj) {
         super();
@@ -236,36 +240,76 @@ class Scale extends EventObserver {
             if (key in this) this[<keyof this>key] = options[key];
         });
 
-        this._validatePoints(this.points);
-        this.renderAnchors();
-        this.container.addEventListener("click", this._onMouseClick.bind(this));
-        this.addSubscriber("AnchorClick", this.view);
+        this.range = [this.view.min, this.view.max];
+        this.view.addSubscriber("changeView", this);
     }
+
+    update(eventType: string, data: boolean) {
+        if (!this.view.showScale) {
+            this.el.style.display = "none";
+            return;
+        } else {
+            this.el.style.display = "";
+        }
+        this.range = [this.view.min, this.view.max];
+
+        this.el.querySelector("[data-side=L]").textContent = this.range[0] + '';
+        this.el.querySelector("[data-side=R]").textContent = this.range[1] + '';
+    }
+
     renderAnchors() {
-        let scalePoints: Array<HTMLDivElement> = [];
+        let scaleDiv = document.createElement('div');
+        scaleDiv.className = this.view.el.className + "__scale"
+        this.view.el.append(scaleDiv);
+        this.el = scaleDiv;
 
         for (let i = 0; i < this.points.length; i++) {
             let div = document.createElement('div');
-            scalePoints[i] = div;
-            div.className = this.className + "__scale-points";
-            div.style.transform = `rotate(-${this.angle}deg)`;
 
-            let scaleWidthPx = this.container.clientWidth - scalePoints[0].offsetWidth;
-            scalePoints.forEach((div, i) => div.style.left = this.points[i] * scaleWidthPx + 'px');
+            div.dataset.side = i == 0 ? "L" : "R";
+            div.className = this.view.el.className + "__scale-points";
+            scaleDiv.append(div);
 
+            div.style.left = this.points[i] * this.width + "px";
+            div.textContent = this.range[i] + "";
+
+            div.addEventListener("click", this._onMouseClick.bind(this));
         }
-        this.container.append(...scalePoints);
     }
 
     _onMouseClick(e: MouseEvent) {
-        let target = <HTMLDivElement>e.target;
-        if (!target.className.includes("scale")) return;
-        console.log("click");
-        
-        this.broadcast("AnchorClick", target);
+        let closestThumb = this._findClosestThumb(e);
+        let target: HTMLDivElement = <HTMLDivElement>e.target;
+
+        let data = {
+            el: closestThumb,
+            offset: target.dataset.side === "L" ? 0 : 1,
+        }
+
+        this._moveThumbToOffset(data.el, data.offset);
+        this.view.broadcast("changeView", data);
     }
 
-    _validatePoints(points: number[]) {
-        return true;
+    _findClosestThumb(e: MouseEvent): HTMLDivElement {
+        let thumbs: HTMLDivElement[] = Array.from(this.view.el.querySelectorAll("[class*=thumb]"));
+        let minDistance: number = Infinity;
+        let closestThumb: HTMLDivElement = thumbs[0];
+
+        for (let i = 0; i < thumbs.length; i++) {
+            let thumbBox = thumbs[i].getBoundingClientRect();
+            let centerX = (thumbBox.right - thumbBox.left) / 2 + thumbBox.left;
+            let centerY = (thumbBox.bottom - thumbBox.top) / 2 + thumbBox.top;
+            let currDistance = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+
+            if (currDistance < minDistance) {
+                minDistance = currDistance;
+                closestThumb = thumbs[i];
+            }
+        }
+        return closestThumb;
+    }
+
+    _moveThumbToOffset(thumb: HTMLDivElement, offset: number): void {
+        thumb.style.left = offset * this.width + "px";
     }
 }

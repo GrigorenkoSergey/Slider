@@ -8,8 +8,9 @@ let options1 = {
     step: 1,
     selector: ".slider1",
     angle: 0,
-    range: false,
+    range: true,
     hintAboveThumb: true,
+    // showScale: false,
 }
 
 let slider1 = new Slider(options1);
@@ -167,6 +168,7 @@ checkboxes.forEach((item: HTMLInputElement) => {
     item.onchange = function (e) {
         slider.setOptions({ [prop]: item.checked });
         inputs.forEach(item => getInputValue(item));
+        debugger;
     }
 });
 
