@@ -11,6 +11,7 @@ let options1 = {
     range: true,
     hintAboveThumb: true,
     // showScale: false,
+
 }
 
 let slider1 = new Slider(options1);
@@ -34,14 +35,27 @@ let options3 = {
     selector: ".slider3",
     angle: 45,
     range: false,
-    hintAboveThumb: true
+    hintAboveThumb: true,
+    rangeValue: ["Jan", "Dec"],
 }
 let slider3 = new Slider(options3);
+//Пример задания вообще левых значений
+slider3.unbindFrom(slider3.hintEl);
+let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {
+    let months = ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    if (data.el == "L") {
+        elem.textContent = months[Math.round(scaledLeftX)];
+    } else {
+        elem.textContent = months[Math.round(scaledRightX)];
+    }
+}
+slider3.bindWith(slider3.hintEl, 0, 11, fnMonths);
 
 let options4 = {
     min: 0,
     max: 20000,
-    ticks: {500: 100, 10000: 150, 20000: 180},
+    ticks: { 500: 100, 10000: 150, 20000: 180 },
     step: 10,
     selector: ".slider4",
     angle: 0,
@@ -125,7 +139,7 @@ let fnResBird: fnResType = (elem, leftX, resLeft) => {
 slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 
 
-let sliders: {[key: string]: Slider} = { slider1, slider2, slider3, slider4, slider5, slider6, slider7};
+let sliders: { [key: string]: Slider } = { slider1, slider2, slider3, slider4, slider5, slider6, slider7 };
 
 let inputs: Array<HTMLInputElement> = Array.from(document.querySelectorAll(".slider-options__input"));
 
@@ -137,7 +151,7 @@ for (let i = 0; i < inputs.length; i++) {
 function getInputValue(input: HTMLInputElement) {
     let option = input.name;
     let slider = sliders[input.dataset.id];
-    
+
     input.value = slider.getOptions()[option];
 
     if (input.name === "thumbRightPos") {
@@ -163,12 +177,12 @@ let checkboxes = Array.from(document.querySelectorAll("[type=checkbox]"));
 checkboxes.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
     let prop = item.name;
+    // if (prop == "showScale") debugger;
     item.checked = slider.getOptions()[prop];
 
     item.onchange = function (e) {
         slider.setOptions({ [prop]: item.checked });
         inputs.forEach(item => getInputValue(item));
-        debugger;
     }
 });
 

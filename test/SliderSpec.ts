@@ -115,14 +115,14 @@ describe(`Работает в принципе...\n`, () => {
         let offsetLeft = left / scaleWidth;
         let offsetRight = right / scaleWidth;
 
-        expect(offsetLeft > 0.29 && offsetLeft < 0.31).toBeTruthy(); 
+        expect(offsetLeft > 0.29 && offsetLeft < 0.31).toBeTruthy();
         expect(offsetRight > 0.89 && offsetRight < 0.91).toBeTruthy();
 
         expect(slider.getOptions().thumbRightPos).toEqual(90);
         expect(slider.getOptions().ticks).toEqual({ 100: 100 });
         expect(slider.getOptions().angle).toEqual(45);
         expect(slider.getOptions().range).toBeTruthy();
-        
+
         expect(slider.getOptions().className).toEqual("slider");
         expect(slider.getOptions().selector).toEqual(".div");
         expect(slider.getOptions().hintAboveThumb).toBeTruthy();
@@ -200,7 +200,7 @@ describe(`Любые изменения View затрагивают  Model и н
         let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, });
         leftThumb.dispatchEvent(fakeMouseDown);
 
-        let {max, min, step} = slider.getOptions();
+        let { max, min, step } = slider.getOptions();
 
         //бежим к концу
         for (let i = 1; i < 9; i++) {
@@ -231,7 +231,7 @@ describe(`Любые изменения View затрагивают  Model и н
         let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth });
         rightThumb.dispatchEvent(fakeMouseDown);
 
-        let {max, min, step} = slider.getOptions();
+        let { max, min, step } = slider.getOptions();
 
         //бежим к началу
         for (let i = 7; i > 1; i--) {
@@ -403,5 +403,68 @@ describe(`Метод "unbundFrom" позволяет отвязать привя
         document.dispatchEvent(fakeMouseMove);
         expect(leftThumb.contains(hint)).toBeTrue();
         expect(+hint.textContent).toEqual(-1000);
+    });
+
+    it(`Можно заставить над подсказкой отображать любые значения`, () => {
+        let options = {
+            min: 0,
+            max: 1200,
+            selector: ".div",
+            range: true,
+            hintAboveThumb: true,
+            rangeValue: ["Jan", "Dec"],
+        }
+
+        let slider = new Slider(options);
+
+        type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
+            rightX: number, scaledRightX: number, data: any) => void;
+        //Пример задания вообще левых значений
+        slider.unbindFrom(slider.hintEl);
+        let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {
+            let months = ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            if (data.el == "L") {
+                elem.textContent = months[Math.round(scaledLeftX)];
+            } else {
+                elem.textContent = months[Math.round(scaledRightX)];
+            }
+        }
+        slider.bindWith(slider.hintEl, 0, 11, fnMonths);
+
+        let leftThumb = <HTMLDivElement>div.querySelector("[class*=left]");
+        let rightThumb = <HTMLDivElement>div.querySelector("[class*=right]");
+        let scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+
+        let rightRangeValue = slider._view.el.querySelector("[data-side=R]");
+        let leftRangeValue = slider._view.el.querySelector("[data-side=L]");
+
+        let fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: 0 });
+        let fakeMouseUp = new MouseEvent("mouseup", { bubbles: true, cancelable: true });
+        let fameMouseClick = new MouseEvent("click", {cancelable: true, bubbles: true});
+
+        let months = ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+
+        leftThumb.dispatchEvent(fakeMouseDown);
+        expect(slider.hintEl.textContent).toEqual("Jan");
+
+        for (let i = 1; i < 10; i++) {
+            let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth / 11 * i });
+            leftThumb.dispatchEvent(fakeMouseMove);
+            expect(slider.hintEl.textContent).toEqual(months[i]);
+        }
+        leftThumb.dispatchEvent(fakeMouseUp);
+        leftRangeValue.dispatchEvent(fameMouseClick); //Уберем бегунок опять в начало
+
+        fakeMouseDown = new MouseEvent("mousedown", { bubbles: true, cancelable: true, clientX: scaleWidth });
+        rightThumb.dispatchEvent(fakeMouseDown);
+        expect(slider.hintEl.textContent).toEqual("Dec");
+
+        for (let i = 10; i > 1; i--) {
+            let fakeMouseMove = new MouseEvent("mousemove", { bubbles: true, cancelable: true, clientX: scaleWidth / 11 * i });
+            rightThumb.dispatchEvent(fakeMouseMove);
+            expect(slider.hintEl.textContent).toEqual(months[i]);
+        }
     });
 });

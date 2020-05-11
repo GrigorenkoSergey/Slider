@@ -42,6 +42,14 @@ style.textContent = `
     .slider__thumb-right {
       right: 0;
     }
+    .slider__scale {
+      position: relative;
+      top: 10px;
+    }
+    .slider__scale-points {
+      position: absolute;
+      cursor: pointer;
+    }
 `;
 
 document.head.append(style);
@@ -92,12 +100,12 @@ describe(`Первоначальная минимальная инициализ
   it(`Если неправильно заданы некоторые опции вывалит ошибку`, () => {
     let view = new View({ min: 200, max: 1200, selector: ".divViewSpec", step: 0 });
 
-    expect(() => { view.setOptions({min: "200a"}); }).toThrowError("min should be a number!");
-    expect(() => { view.setOptions({max: "1200a"}); }).toThrowError("max should be a number!");
-    expect(() => { view.setOptions({step: "1200a"}); }).toThrowError("step should be a number!");
-    expect(() => { view.setOptions({angle: "90deg"}); }).toThrowError("angle should be a number!");
-    expect(() => { view.setOptions({min: 1000, max: 0}); }).toThrowError("max should be greater then min!");
-    expect(() => { view.setOptions({angle: -10}); }).toThrowError("angle should be >= 0 and <= 90");
+    expect(() => { view.setOptions({ min: "200a" }); }).toThrowError("min should be a number!");
+    expect(() => { view.setOptions({ max: "1200a" }); }).toThrowError("max should be a number!");
+    expect(() => { view.setOptions({ step: "1200a" }); }).toThrowError("step should be a number!");
+    expect(() => { view.setOptions({ angle: "90deg" }); }).toThrowError("angle should be a number!");
+    expect(() => { view.setOptions({ min: 1000, max: 0 }); }).toThrowError("max should be greater then min!");
+    expect(() => { view.setOptions({ angle: -10 }); }).toThrowError("angle should be >= 0 and <= 90");
   });
 });
 
@@ -246,6 +254,112 @@ describe(`Позволяет пользователю взаимодейство
     expect(true).toBeTrue();
   });
 
+});
+
+describe(`Также присутствует интерактивная шкала\n`, () => {
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = "";
+    div.remove();
+  });
+  it(`Шкала отображает минимальные и максимальные значения диапазона слайдера`, () => {
+    let option = {
+      min: 0, max: 100, range: true, selector: ".divViewSpec",
+      className: "slider", showScale: true,
+    };
+    let view = new View(option);
+    expect(view.el.querySelector("[data-side=L]").textContent).toEqual(view.min + "");
+
+    expect(view.el.querySelector("[data-side=R]").textContent).toEqual(view.max + "");
+    let min = 25;
+    let max = 50;
+
+    for (let i = 0; i < 10; i++) {
+      view.setOptions({ min: -min * i });
+      expect(view.el.querySelector("[data-side=L]").textContent).toEqual(view.min + "");
+      view.setOptions({ max: max * i });
+      expect(view.el.querySelector("[data-side=R]").textContent).toEqual(view.max + "");
+
+      view.setOptions({ min: -min * 2 * i, max: max * 2 * i });
+      expect(view.el.querySelector("[data-side=L]").textContent).toEqual(view.min + "");
+      expect(view.el.querySelector("[data-side=R]").textContent).toEqual(view.max + "");
+    }
+  });
+
+  it(`При щелчке на значении диапазона ближайший бегунок бежит к этому значению (начало и конец)`, () => {
+    let option = {
+      min: -100, max: 1000, step: 3, range: true, selector: ".divViewSpec",
+      className: "slider", showScale: true,
+    };
+    let view = new View(option);
+
+    let rightRangeValue = view.el.querySelector("[data-side=R]");
+    let leftRangeValue = view.el.querySelector("[data-side=L]");
+    let fakeMouseClick = new MouseEvent("click", { bubbles: true, cancelable: true });
+
+    for (let i = 3; i < 8; i++) {
+      let rightThumb: HTMLDivElement = view.el.querySelector("[class*=right]");
+      let leftThumb: HTMLDivElement = view.el.querySelector("[class*=left]");
+
+      moveThumb(rightThumb, -view.scale.width / i);
+      moveThumb(leftThumb, view.scale.width / i);
+
+      leftRangeValue.dispatchEvent(fakeMouseClick);
+      rightRangeValue.dispatchEvent(fakeMouseClick);
+
+      expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(0);
+      expect(parseFloat(getComputedStyle(rightThumb).left)).toEqual(view.scale.width);
+    }
+
+    view.setOptions({range: false});
+    view.render();
+    for (let i = 1; i < 8; i++) {
+      let leftThumb: HTMLDivElement = view.el.querySelector("[class*=left]");
+
+      moveThumb(leftThumb, view.scale.width / i);
+      leftRangeValue.dispatchEvent(fakeMouseClick);
+      expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(0);
+
+      rightRangeValue.dispatchEvent(fakeMouseClick);
+      expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(view.scale.width);
+    }
+
+  });
+
+  it (`Шкалу можно прятать`, () => {
+    let option = {
+      min: -333, max: 555, step: 3, range: true, selector: ".divViewSpec",
+      className: "slider", showScale: true,
+    };
+
+    let view = new View(option);
+    let labelLeft: HTMLDivElement = view.el.querySelector("[data-side=L]");
+    let labelRight: HTMLDivElement = view.el.querySelector("[data-side=R]");
+
+    expect(labelLeft.offsetHeight).toBeTruthy();
+    expect(labelRight.offsetHeight).toBeTruthy();
+
+    view.setOptions({showScale: false});
+    expect(labelLeft.offsetHeight).toBeFalsy();
+    expect(labelRight.offsetHeight).toBeFalsy();
+  });
+
+  it (`Шкалу можно отвязывать от максимума и минимума и менять значения на произвольные заданием свойства "rangeValue"`, () => {
+    let option = {
+      min: -100, max: 1000, step: 3, range: true, selector: ".divViewSpec",
+      className: "slider", showScale: true, rangeValue: ["Jan", "Dec"],
+    };
+
+    let view = new View(option);
+    let rightRangeValue = view.el.querySelector("[data-side=R]");
+    let leftRangeValue = view.el.querySelector("[data-side=L]");
+
+    expect(leftRangeValue.textContent).toEqual("Jan");
+    expect(rightRangeValue.textContent).toEqual("Dec");
+  });
 });
 
 function moveThumb(thumb: HTMLDivElement, deltaXPx: number, deltaYPx: number = 0): void {

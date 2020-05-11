@@ -20,8 +20,10 @@ export class View extends EventObserver implements ISubscriber {
     thumbLeft: HTMLDivElement;
     thumbRight: HTMLDivElement;
 
-    scale: Scale; //?
+
+    scale: Scale;
     showScale: boolean = true;
+    rangeValue: any[] = [];
 
     constructor(options: Obj) {
         super();
@@ -53,13 +55,13 @@ export class View extends EventObserver implements ISubscriber {
         //ATTENTION: _validateOptions is dirty function!
         this._validateOptions(expectant) && Object.assign(this, expectant);
 
-        this.scale && this.scale.update("showScale", this.showScale);
+        this.scale && this.scale.update("", null);
         return this;
     }
 
     getOptions() {
         let publicOtions = ["min", "max", "range", "step",
-            "className", "selector", "hintAboveThumb", "el", "angle"];
+            "className", "selector", "hintAboveThumb", "el", "angle", "showScale", "rangeValue"];
         let obj: Obj = {}
         publicOtions.forEach(key => obj[key] = this[<keyof this>key]);
         return obj;
@@ -90,14 +92,19 @@ export class View extends EventObserver implements ISubscriber {
         thumbRight.className = `${this.className}__thumb-right`;
 
         this.el.append(thumbLeft);
-        this.range && this.el.append(thumbRight);
+        // this.range && this.el.append(thumbRight);
+        if (this.range) {
+            this.el.append(thumbRight);
+        } else {
+            thumbRight.remove();
+        }
 
         this.el.style.transform = `rotate(${this.angle}deg)`;
         firstTime && this._addEventListeners();
 
         let scaleWidth = this.el.clientWidth - thumbLeft.offsetWidth;
-        this.scale.width = scaleWidth; 
-        this.showScale && this.scale.renderAnchors();
+        this.scale.width = scaleWidth;
+        this.scale.renderAnchors();
         return this;
     }
 
@@ -233,12 +240,14 @@ class Scale extends EventObserver {
     el: HTMLDivElement;
     points: number[] = [0, 1];
     range: number[];
+    // rangeValue: number[] | string[] = []; //?
 
     constructor(options: Obj) {
         super();
         Object.keys(options).forEach(key => {
             if (key in this) this[<keyof this>key] = options[key];
         });
+        // if (debuggerPoint.start == 1) debugger;
 
         this.range = [this.view.min, this.view.max];
         this.view.addSubscriber("changeView", this);
@@ -251,10 +260,21 @@ class Scale extends EventObserver {
         } else {
             this.el.style.display = "";
         }
+
         this.range = [this.view.min, this.view.max];
 
-        this.el.querySelector("[data-side=L]").textContent = this.range[0] + '';
-        this.el.querySelector("[data-side=R]").textContent = this.range[1] + '';
+        let left = this.el.querySelector("[data-side=L]")
+        let right: HTMLDivElement = this.el.querySelector("[data-side=R]");
+
+        if (this.view.rangeValue.length) {
+            left.textContent = this.view.rangeValue[0] + '';
+            right.textContent = this.view.rangeValue[1] + '';
+        } else {
+            left.textContent = this.range[0] + '';
+            right.textContent = this.range[1] + '';
+        }
+
+        right.style.left = this.view.el.clientWidth - right.offsetWidth + "px";
     }
 
     renderAnchors() {
@@ -275,11 +295,17 @@ class Scale extends EventObserver {
 
             div.addEventListener("click", this._onMouseClick.bind(this));
         }
+        this.update("", null);
     }
 
     _onMouseClick(e: MouseEvent) {
-        let closestThumb = this._findClosestThumb(e);
         let target: HTMLDivElement = <HTMLDivElement>e.target;
+        let closestThumb: HTMLDivElement = this.view.el.querySelector("[class*=left]");
+
+        if (target.dataset.side === "R") {
+            let rightThumb: HTMLDivElement | null = this.view.el.querySelector("[class*=right]");
+            closestThumb = rightThumb ? rightThumb : closestThumb;
+        }
 
         let data = {
             el: closestThumb,
@@ -288,25 +314,6 @@ class Scale extends EventObserver {
 
         this._moveThumbToOffset(data.el, data.offset);
         this.view.broadcast("changeView", data);
-    }
-
-    _findClosestThumb(e: MouseEvent): HTMLDivElement {
-        let thumbs: HTMLDivElement[] = Array.from(this.view.el.querySelectorAll("[class*=thumb]"));
-        let minDistance: number = Infinity;
-        let closestThumb: HTMLDivElement = thumbs[0];
-
-        for (let i = 0; i < thumbs.length; i++) {
-            let thumbBox = thumbs[i].getBoundingClientRect();
-            let centerX = (thumbBox.right - thumbBox.left) / 2 + thumbBox.left;
-            let centerY = (thumbBox.bottom - thumbBox.top) / 2 + thumbBox.top;
-            let currDistance = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
-
-            if (currDistance < minDistance) {
-                minDistance = currDistance;
-                closestThumb = thumbs[i];
-            }
-        }
-        return closestThumb;
     }
 
     _moveThumbToOffset(thumb: HTMLDivElement, offset: number): void {

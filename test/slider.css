@@ -32,5 +32,13 @@
 .slider__thumb-right {
   right: 0;
 }
+.slider__scale {
+  position: relative;
+  top: 10px;
+}
+.slider__scale-points {
+  position: absolute;
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=slider.css.map */

@@ -9,12 +9,15 @@ type Obj = { [key: string]: any };
 export class Slider extends EventObserver implements ISubscriber {
     _model: Model; //Хотел сделать приватными, но для отладки довольно неудобно. Перенастраивать Karma для js неохота..
     _view: View;
+    hintEl: HTMLDivElement;
     private bindedElements: Array<ISubscriber & { el: HTMLElement }> = [];
 
     constructor(options: any) {
         super();
         this._model = new Model(options);
         this._view = new View(options);
+        this.hintEl = this._view.hintEl; //для того, чтобы можно было отвязать и привязать подсказку над бегунком
+
         let [model, view] = [this._model, this._view];
 
         this.addSubscriber("changeView", model);
@@ -66,12 +69,12 @@ export class Slider extends EventObserver implements ISubscriber {
         let modelOps = this._model.getOptions.call(this._model);
         //Сравним, совпадают ли значения общих опций, если нет (А ВДРУГ????), выкинем ошибку для отладки
 
-        let synchronized = Object.keys(viewOps).every(key => { 
-           return key in modelOps ? viewOps[key] === modelOps[key] : true;
+        let synchronized = Object.keys(viewOps).every(key => {
+            return key in modelOps ? viewOps[key] === modelOps[key] : true;
         });
 
         if (!synchronized) throw new Error("Model не синхронизирована с View!");
-        
+
         return Object.assign({}, viewOps, modelOps);
     }
 
