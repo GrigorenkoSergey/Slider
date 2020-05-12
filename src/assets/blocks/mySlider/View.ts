@@ -20,7 +20,6 @@ export class View extends EventObserver implements ISubscriber {
     thumbLeft: HTMLDivElement;
     thumbRight: HTMLDivElement;
 
-
     scale: Scale;
     showScale: boolean = true;
     rangeValue: any[] = [];
@@ -92,7 +91,7 @@ export class View extends EventObserver implements ISubscriber {
         thumbRight.className = `${this.className}__thumb-right`;
 
         this.el.append(thumbLeft);
-        // this.range && this.el.append(thumbRight);
+
         if (this.range) {
             this.el.append(thumbRight);
         } else {
@@ -240,14 +239,12 @@ class Scale extends EventObserver {
     el: HTMLDivElement;
     points: number[] = [0, 1];
     range: number[];
-    // rangeValue: number[] | string[] = []; //?
 
     constructor(options: Obj) {
         super();
         Object.keys(options).forEach(key => {
             if (key in this) this[<keyof this>key] = options[key];
         });
-        // if (debuggerPoint.start == 1) debugger;
 
         this.range = [this.view.min, this.view.max];
         this.view.addSubscriber("changeView", this);

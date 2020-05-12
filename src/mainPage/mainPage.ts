@@ -1,6 +1,7 @@
 import "./mainPage.scss";
 import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
+import * as $ from "jquery";
 
 let options1 = {
     min: 10,
@@ -11,10 +12,10 @@ let options1 = {
     range: true,
     hintAboveThumb: true,
     // showScale: false,
-
 }
 
-let slider1 = new Slider(options1);
+// let slider1 = new Slider(options1);
+let slider1 = $('.slider1').slider(options1);
 
 let options2 = {
     min: 100,
@@ -26,7 +27,9 @@ let options2 = {
     hintAboveThumb: true,
     thumbLeftPos: 800,
 }
-let slider2 = new Slider(options2);
+// let slider2 = new Slider(options2); //работает
+// let slider2 = $('.slider2').slider(options2); //работает
+let slider2 = $().slider(options2); //так тоже работает
 
 let options3 = {
     min: 0,
@@ -38,7 +41,10 @@ let options3 = {
     hintAboveThumb: true,
     rangeValue: ["Jan", "Dec"],
 }
-let slider3 = new Slider(options3);
+
+// let slider3 = new Slider(options3);
+let slider3 = $('.slider3').slider(options3);
+
 //Пример задания вообще левых значений
 slider3.unbindFrom(slider3.hintEl);
 let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {
@@ -62,7 +68,8 @@ let options4 = {
     range: false,
     hintAboveThumb: true
 }
-let slider4 = new Slider(options4);
+// let slider4 = new Slider(options4);
+let slider4 = $('.slider4').slider(options4);
 
 let options5 = {
     max: 100,
@@ -98,7 +105,8 @@ let options6 = {
     hintAboveThumb: true
 }
 
-let slider6 = new Slider(options6);
+// let slider6 = new Slider(options6);
+let slider6 = $('.slider6').slider(options6);
 
 let fnResShadow: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
     elem.style.textShadow = resLeft + "px 19px 7px grey";
@@ -123,8 +131,9 @@ let options7 = {
     hintAboveThumb: true
 }
 
-let slider7 = new Slider(options7);
-let fnResBird: fnResType = (elem, leftX, resLeft) => {
+// let slider7 = new Slider(options7);
+let slider7 = $('.slider7').slider(options7);
+let fnResBird: fnResType = (elem, resLeft) => {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
     resLeft = Math.round(resLeft);
@@ -164,7 +173,6 @@ function getInputValue(input: HTMLInputElement) {
 
 function onChangeInputValue(e: Event): void {
     // debuggerPoint.start += 1; //Специально оставил на будущее, чтобы не вспоминать технику отладки
-    // console.log(debuggerPoint.start);
     let input = <HTMLInputElement>e.target;
     let slider = sliders[input.dataset.id];
     let prop = input.name;
@@ -177,7 +185,6 @@ let checkboxes = Array.from(document.querySelectorAll("[type=checkbox]"));
 checkboxes.forEach((item: HTMLInputElement) => {
     let slider = sliders[item.dataset.id];
     let prop = item.name;
-    // if (prop == "showScale") debugger;
     item.checked = slider.getOptions()[prop];
 
     item.onchange = function (e) {

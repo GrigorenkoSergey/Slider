@@ -419,6 +419,7 @@ describe(`Метод "unbundFrom" позволяет отвязать привя
 
         type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
             rightX: number, scaledRightX: number, data: any) => void;
+
         //Пример задания вообще левых значений
         slider.unbindFrom(slider.hintEl);
         let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {

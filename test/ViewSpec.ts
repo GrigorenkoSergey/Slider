@@ -314,7 +314,7 @@ describe(`Также присутствует интерактивная шка�
       expect(parseFloat(getComputedStyle(rightThumb).left)).toEqual(view.scale.width);
     }
 
-    view.setOptions({range: false});
+    view.setOptions({ range: false });
     view.render();
     for (let i = 1; i < 8; i++) {
       let leftThumb: HTMLDivElement = view.el.querySelector("[class*=left]");
@@ -329,7 +329,7 @@ describe(`Также присутствует интерактивная шка�
 
   });
 
-  it (`Шкалу можно прятать`, () => {
+  it(`Шкалу можно прятать`, () => {
     let option = {
       min: -333, max: 555, step: 3, range: true, selector: ".divViewSpec",
       className: "slider", showScale: true,
@@ -342,12 +342,12 @@ describe(`Также присутствует интерактивная шка�
     expect(labelLeft.offsetHeight).toBeTruthy();
     expect(labelRight.offsetHeight).toBeTruthy();
 
-    view.setOptions({showScale: false});
+    view.setOptions({ showScale: false });
     expect(labelLeft.offsetHeight).toBeFalsy();
     expect(labelRight.offsetHeight).toBeFalsy();
   });
 
-  it (`Шкалу можно отвязывать от максимума и минимума и менять значения на произвольные заданием свойства "rangeValue"`, () => {
+  it(`Шкалу можно отвязывать от максимума и минимума и менять значения на произвольные заданием свойства "rangeValue"`, () => {
     let option = {
       min: -100, max: 1000, step: 3, range: true, selector: ".divViewSpec",
       className: "slider", showScale: true, rangeValue: ["Jan", "Dec"],

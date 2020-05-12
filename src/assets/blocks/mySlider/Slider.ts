@@ -1,6 +1,13 @@
 import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 import { Model } from "./Model";
 import { View } from "./View";
+import jQuery from "jquery";
+
+(function ($) {
+    $.fn.slider = function (props: any) {
+        return new Slider(props)
+    };
+})(jQuery);
 
 type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
     rightX: number, scaledRightX: number, data: any) => void;
@@ -79,7 +86,7 @@ export class Slider extends EventObserver implements ISubscriber {
     }
 
     bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes: fnResType) {
-        //fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
+        // fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 
         let model = this._model;
         let { min, max } = model;
@@ -89,7 +96,6 @@ export class Slider extends EventObserver implements ISubscriber {
 
         //создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
         function update(eventType: string, data: any) {
-
             let dataModel = model.getThumbsOffset();
             return fnRes(elemDom,
                 dataModel.L.x, (fnEnd - fnStart) / (max - min) * dataModel.L.x + fnStart,
