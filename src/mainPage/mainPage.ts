@@ -133,7 +133,7 @@ let options7 = {
 
 // let slider7 = new Slider(options7);
 let slider7 = $('.slider7').slider(options7);
-let fnResBird: fnResType = (elem, resLeft) => {
+let fnResBird: fnResType = (elem, leftX, resLeft) => {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
     resLeft = Math.round(resLeft);
