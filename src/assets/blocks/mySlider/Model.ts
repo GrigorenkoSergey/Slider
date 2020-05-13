@@ -1,11 +1,10 @@
-import { EventObserver, IModel, ISubscriber, debuggerPoint } from "./Helpers";
+import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 
 type Obj = { [key: string]: any };
 type modelResponse = { L: { x: number, offset: number }, R: { x: number, offset: number } }
 
-// export class Model implements IModel, ISubscriber {
 export class Model extends EventObserver
-    implements IModel, ISubscriber {
+    implements ISubscriber {
 
     min = 0;
     max = 100;

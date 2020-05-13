@@ -1,4 +1,4 @@
-import { EventObserver, ISubscriber, IViewOptions, debuggerPoint } from "./Helpers";
+import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 
 type Obj = { [key: string]: any };
 type ViewUpdateDataFormat = {
@@ -237,7 +237,7 @@ class Scale extends EventObserver {
     view: View | null = null;
 
     el: HTMLDivElement;
-    points: number[] = [0, 1];
+    private points: number[] = [0, 1];
     range: number[];
 
     constructor(options: Obj) {
