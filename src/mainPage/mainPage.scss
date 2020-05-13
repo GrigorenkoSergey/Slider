@@ -67,7 +67,9 @@
 .imgSprite {
     width: 183.6px;
     height: 168.66px;
-    background: url("/src/assets/images/hotpng.com.png") no-repeat left top;
+    // background: url("/assets/images/hotpng.com.png") no-repeat left top; //В dist это уже не видно...
+    // background: url("assets/images/hotpng.com.png") no-repeat left top; //В dist это уже не видно...
+    background: url("../assets/images/hotpng.com.png") no-repeat left top;
 }
 
 p {
