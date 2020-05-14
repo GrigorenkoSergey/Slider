@@ -1,3 +1,4 @@
+import "./mySlider.scss";
 import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 
 type Obj = { [key: string]: any };
