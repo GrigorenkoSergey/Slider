@@ -1,2 +1,5 @@
-// import "./mainPage/mainPage";//раскомментировать, если нужна демо-страница и закомментировать строку ниже
-import "./assets/blocks/mySlider/Slider"; //раскомментировать, если нужен билд непосредственно слайдера и закомментировать строку выше
+// const {Slider} = require("./mainPage/mainPage");//Раскомментировать, если нужна демо-страница
+// import "./mainPage/mainPage";
+
+const {Slider} = require("./assets/blocks/mySlider/Slider"); //если нужно пересобрать бандл, нужно раскомментировать эти строки
+module.exports =  Slider;

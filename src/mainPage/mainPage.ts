@@ -1,7 +1,6 @@
 import "./mainPage.scss";
 import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
-import * as $ from "jquery";
 
 let options1 = {
     min: 10,
@@ -11,7 +10,6 @@ let options1 = {
     angle: 0,
     range: true,
     hintAboveThumb: true,
-    // showScale: false,
 }
 
 // let slider1 = new Slider(options1);

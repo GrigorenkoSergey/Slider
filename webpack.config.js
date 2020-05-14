@@ -3,6 +3,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
+const webpack = require("webpack");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const PATHS = {
   src: path.join(__dirname, "./src"),
@@ -10,7 +12,7 @@ const PATHS = {
 }
 
 module.exports = {
-  entry: "./src/index",//?
+  entry: "./src/index.ts",//?
 
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
@@ -19,14 +21,17 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, "./dist"),
-    filename: "[name].js",
+    filename: "slider.js",
+    libraryTarget: "var",
+    library: "Slider", //чтобы Slider вынести в глобальную область видимости
     publicPath: "",
   },
 
   optimization: {
-    splitChunks: {
-      chunks: "all",
-    },
+    // splitChunks: {//не дает нормально экспортировать класс модуля Slider.
+    //   chunks: "all",
+    // },
+    // minimizer: [new UglifyJsPlugin()],//Использовать для бандла. А вообще, нужно составить 2 разных файла с конфигом для разных модов
   },
 
 
@@ -37,8 +42,17 @@ module.exports = {
 
   module: {
     rules: [{
+
       test: /\.js$/,
       loader: "babel-loader"
+    },
+
+    {
+      test: require.resolve('jquery'), //только так смог вынести jquery в глобальную видимость
+      use: [{
+        loader: 'expose-loader',
+        options: '$'
+      }],
     },
     {
       test: /\.tsx?/,  //?
@@ -113,8 +127,14 @@ module.exports = {
     }),
 
     new MiniCssExtractPlugin({
-      filename: '[name].css',
+      filename: 'slider.css',
       chunkFilename: "[id].css",
+    }),
+
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
     }),
 
     new CopyPlugin([
