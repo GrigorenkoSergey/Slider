@@ -59,8 +59,9 @@ export class Slider extends EventObserver implements ISubscriber {
         }
     }
 
-    setThumbsPos(leftPos: number, rightPos?: number): void {
-        return this._model.setThumbsPos.call(this._model, leftPos, rightPos);
+    setThumbsPos(leftPos: number, rightPos?: number): Slider {
+        this._model.setThumbsPos.call(this._model, leftPos, rightPos);
+        return this;
     }
 
     setOptions(options: Obj): Slider {
@@ -85,7 +86,7 @@ export class Slider extends EventObserver implements ISubscriber {
         return Object.assign({}, viewOps, modelOps);
     }
 
-    bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes: fnResType) {
+    bindWith(elemDom: HTMLElement, fnStart: number, fnEnd: number, fnRes: fnResType): void {
         // fnRes(elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 
         let model = this._model;

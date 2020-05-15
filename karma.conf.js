@@ -31,6 +31,17 @@ module.exports = function (config) {
               "ts-loader"
             ]
           },
+          {
+            test: /\.s[ac]ss$/i, //?
+            use: [
+              "css-loader",
+              {
+                loader: 'postcss-loader',
+                options: { sourceMap: true, config: { path: 'src/postcss.config.js' } }
+              },
+              "sass-loader",
+            ],
+          },
         ]
       },
       resolve: webpackConfig.resolve,
@@ -48,6 +59,15 @@ module.exports = function (config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       "test/*.ts": ['webpack'],
+      'src/**/*.scss': ['scss'],
+      'test/**/*.scss': ['scss'],
+    },
+
+    scssPreprocessor: {
+      options: {
+        sourceMap: true,
+        includePaths: ['bower_components']
+      }
     },
 
 
@@ -93,6 +113,7 @@ module.exports = function (config) {
       'karma-coverage-istanbul-reporter',
       'karma-chrome-launcher',
       'karma-webpack',
+      'karma-scss-preprocessor'
     ],
 
     reporters: ['coverage-istanbul'],

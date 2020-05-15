@@ -3,16 +3,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const PATHS = {
   src: path.join(__dirname, "./src"),
   dist: path.join(__dirname, "./dist"),
 }
 
-let entries = { "index": `${PATHS.src}` };
-
 module.exports = {
-  entry: entries,
+  entry: "./src/index.ts",//?
 
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
@@ -21,15 +20,19 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, "./dist"),
-    filename: (data) => data.chunk.name == "index" ? "index.js" : "pages/[name]/[name].js",
+    filename: "slider.js",
+    libraryTarget: "var",
+    library: "Slider", //чтобы Slider вынести в глобальную область видимости
     publicPath: "",
   },
 
   optimization: {
-    splitChunks: {
-      chunks: "all",
-    },
+    // splitChunks: {//не дает нормально экспортировать класс модуля Slider.
+    //   chunks: "all",
+    // },
+    minimizer: [new UglifyJsPlugin()],//Использовать для бандла. А вообще, нужно составить 2 разных файла с конфигом для разных модов
   },
+
 
   devServer: {
     overlay: true,
@@ -38,14 +41,23 @@ module.exports = {
 
   module: {
     rules: [{
+
       test: /\.js$/,
       loader: "babel-loader"
+    },
+
+    {
+      test: require.resolve('jquery'), //только так смог вынести jquery в глобальную видимость
+      use: [{
+        loader: 'expose-loader',
+        options: '$'
+      }],
     },
     {
       test: /\.tsx?/,  //?
       exclude: /node_modules/,
       use: [
-        // "@jsdevtools/coverage-istanbul-loader", OOOPS! and now debugger not working correctly ))
+        // "@jsdevtools/coverage-istanbul-loader",// OOOPS! and now debugger not working correctly ))
         "ts-loader"
       ]
     },
@@ -111,11 +123,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: `${PATHS.src}/index.pug`,
       filename: './index.html',
-      //chunks: ['index'], //c этой строкой не происходит автоматического обновления страницы, нужно обновлять вручную.. 
     }),
 
     new MiniCssExtractPlugin({
-      moduleFilename: ({ name }) => name === "index" ? "[name].css" : "pages/[name]/[name].css",
+      filename: 'slider.css',
       chunkFilename: "[id].css",
     }),
 

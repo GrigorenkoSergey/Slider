@@ -1,7 +1,6 @@
 import "./mainPage.scss";
 import { Slider } from "../assets/blocks/mySlider/Slider";
 import { debuggerPoint } from "../assets/blocks/mySlider/Helpers";
-import * as $ from "jquery";
 
 let options1 = {
     min: 10,
@@ -11,7 +10,6 @@ let options1 = {
     angle: 0,
     range: true,
     hintAboveThumb: true,
-    // showScale: false,
 }
 
 // let slider1 = new Slider(options1);
@@ -37,7 +35,7 @@ let options3 = {
     step: 1,
     selector: ".slider3",
     angle: 45,
-    range: false,
+    range: true,
     hintAboveThumb: true,
     rangeValue: ["Jan", "Dec"],
 }
@@ -59,7 +57,7 @@ let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 slider3.bindWith(slider3.hintEl, 0, 11, fnMonths);
 
 let options4 = {
-    min: 0,
+    min: 100,
     max: 20000,
     ticks: { 500: 100, 10000: 150, 20000: 180 },
     step: 10,
@@ -94,7 +92,6 @@ let fnResLine: fnResType = (elem, leftX, resLeft, rightX, resRight) => {
 }
 slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('.slider5__p').textContent.length, fnResLine);
 
-
 let options6 = {
     max: 1000,
     min: 0,
@@ -118,8 +115,6 @@ let fnResColor: fnResType = (elem, leftX, resLeft) => {
 }
 slider6.bindWith(document.querySelector("[class*=__text]"), 0, 20, fnResShadow);
 slider6.bindWith(document.querySelector('[class*=__text]'), 200, 360, fnResColor);
-
-
 
 let options7 = {
     max: 1000,
