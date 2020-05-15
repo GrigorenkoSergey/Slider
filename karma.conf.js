@@ -113,7 +113,7 @@ module.exports = function (config) {
       'karma-coverage-istanbul-reporter',
       'karma-chrome-launcher',
       'karma-webpack',
-      'karma-scss-preprocessor' //?
+      'karma-scss-preprocessor'
     ],
 
     reporters: ['coverage-istanbul'],

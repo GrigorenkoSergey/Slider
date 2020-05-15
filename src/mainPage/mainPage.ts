@@ -35,7 +35,7 @@ let options3 = {
     step: 1,
     selector: ".slider3",
     angle: 45,
-    range: false,
+    range: true,
     hintAboveThumb: true,
     rangeValue: ["Jan", "Dec"],
 }
@@ -92,7 +92,6 @@ let fnResLine: fnResType = (elem, leftX, resLeft, rightX, resRight) => {
 }
 slider5.bindWith(document.querySelector('.slider5__p'), 0, document.querySelector('.slider5__p').textContent.length, fnResLine);
 
-
 let options6 = {
     max: 1000,
     min: 0,
@@ -116,8 +115,6 @@ let fnResColor: fnResType = (elem, leftX, resLeft) => {
 }
 slider6.bindWith(document.querySelector("[class*=__text]"), 0, 20, fnResShadow);
 slider6.bindWith(document.querySelector('[class*=__text]'), 200, 360, fnResColor);
-
-
 
 let options7 = {
     max: 1000,
@@ -206,4 +203,3 @@ thumbsRight.forEach((item: HTMLInputElement) => {
         (elem, leftX, foo, rightX) => { item.value = rightX.toString() }
     )
 });
-debuggerPoint.start = 1;

@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
-const webpack = require("webpack");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const PATHS = {
@@ -31,7 +30,7 @@ module.exports = {
     // splitChunks: {//не дает нормально экспортировать класс модуля Slider.
     //   chunks: "all",
     // },
-    // minimizer: [new UglifyJsPlugin()],//Использовать для бандла. А вообще, нужно составить 2 разных файла с конфигом для разных модов
+    minimizer: [new UglifyJsPlugin()],//Использовать для бандла. А вообще, нужно составить 2 разных файла с конфигом для разных модов
   },
 
 
@@ -129,12 +128,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'slider.css',
       chunkFilename: "[id].css",
-    }),
-
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
     }),
 
     new CopyPlugin([
