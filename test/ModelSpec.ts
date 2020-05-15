@@ -1,5 +1,6 @@
 import { Model, isIncreasing } from "../src/assets/blocks/mySlider/Model";
 import {debuggerPoint} from "../src/assets/blocks/mySlider/Helpers";
+import { HotModuleReplacementPlugin } from "webpack";
 
 describe(`Model\n`, () => {
 
@@ -45,6 +46,29 @@ describe(`Model\n`, () => {
         it(`По умолчанию свойство "thumbRightPos" всегда определено (даже если не задано пользователем) и равно максимальному значению`, () => {
             let model = new Model({ min: 0, max: 100, step: 1 });
             expect(model.thumbRightPos).toEqual(model.max);
+        });
+
+        it(`Свойства "thumbLeftPos" и "thumbRightPos" не могут выйти за пределы шкалы.`, () => {
+            let model = new Model({ min: 0, max: 100, step: 1, thumbLeftPos: 200});
+            expect(model.thumbLeftPos).toEqual(model.max);
+
+            model.setOptions({thumbLeftPos: -100})
+            expect(model.thumbLeftPos).toEqual(model.min);
+
+            model.setOptions({thumbRightPos: -100});
+            expect(model.thumbRightPos).toEqual(model.max);
+
+            model.setOptions({thumbRightPos: 200});
+            expect(model.thumbRightPos).toEqual(model.max);
+
+            model.setThumbsPos(-100);
+            expect(model.thumbLeftPos).toEqual(model.min);
+            expect(model.thumbRightPos).toEqual(model.max);
+
+            model.setThumbsPos(-100, 500);
+            expect(model.thumbLeftPos).toEqual(model.min);
+            expect(model.thumbRightPos).toEqual(model.max);
+
         });
 
         it(`Свойсто "ticks" всегда определено, даже если не задано пользователем`, () => {

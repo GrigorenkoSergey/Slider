@@ -57,7 +57,7 @@ let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data)
 slider3.bindWith(slider3.hintEl, 0, 11, fnMonths);
 
 let options4 = {
-    min: 0,
+    min: 100,
     max: 20000,
     ticks: { 500: 100, 10000: 150, 20000: 180 },
     step: 10,
@@ -206,3 +206,4 @@ thumbsRight.forEach((item: HTMLInputElement) => {
         (elem, leftX, foo, rightX) => { item.value = rightX.toString() }
     )
 });
+debuggerPoint.start = 1;

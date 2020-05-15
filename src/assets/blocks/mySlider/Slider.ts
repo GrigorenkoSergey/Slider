@@ -1,18 +1,25 @@
 import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
 import { Model } from "./Model";
 import { View } from "./View";
+import jQuery from "jquery";
 
-declare global {
-    interface JQuery {
-        slider: any,
-    }
-}
+// declare global {
+//     interface JQuery {
+//         slider: any,
+//     }
+// }
 
-$.fn.extend({
-    slider: function(props: any) {
-        return new Slider(props);
-    }
-});
+// $.fn.extend({
+//     slider: function(props: any) {
+//         return new Slider(props);
+//     }
+// });
+
+(function ($) {
+    $.fn.slider = function (props: any) {
+        return new Slider(props)
+    };
+})(jQuery);
 
 type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
     rightX: number, scaledRightX: number, data: any) => void;

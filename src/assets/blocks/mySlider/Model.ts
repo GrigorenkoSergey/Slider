@@ -111,9 +111,14 @@ export class Model extends EventObserver
         if (!obj.range) {
             thumbRightPos = max;
         } else {
-            thumbRightPos = Math.min(max, thumbRightPos);
+            thumbRightPos = Math.max(min, Math.min(max, thumbRightPos)); //вдруг зададут меньше минимума?
         }
-        thumbLeftPos = Math.max(min, thumbLeftPos);
+        thumbLeftPos = Math.min(max, Math.max(min, thumbLeftPos));//могут задать больше максимума
+
+        if (thumbLeftPos > thumbRightPos) {
+            [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
+        }
+
         (thumbLeftPos == thumbRightPos) && (thumbRightPos = max); //Иногда бегунки сливаются. Нехорошо
         Object.assign(obj, { thumbLeftPos, thumbRightPos });
 

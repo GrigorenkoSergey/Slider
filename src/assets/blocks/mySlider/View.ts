@@ -61,7 +61,7 @@ export class View extends EventObserver implements ISubscriber {
 
     getOptions() {
         let publicOtions = ["min", "max", "range", "step",
-            "className", "selector", "hintAboveThumb", "el", "angle", "showScale", "rangeValue"];
+            "className", "selector", "hintAboveThumb", "angle", "showScale", "rangeValue"];
         let obj: Obj = {}
         publicOtions.forEach(key => obj[key] = this[<keyof this>key]);
         return obj;
