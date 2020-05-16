@@ -1,5 +1,4 @@
-# Демо-страница слайдера: 
-[Вот она)))](https://grigorenkosergey.github.io/git_pages/index.html)
+# [Демо-страница слайдера: ](https://grigorenkosergey.github.io/git_pages/index.html)
 
 # Подключение 
 1. Через **webpack**. Либо скачай полностью проект, если нужно добавить функционал и подправить стили, либо только файлы **slider.js** и **slider.css** из директории ***./dist/***.
