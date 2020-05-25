@@ -1,320 +1,367 @@
-import "./mySlider.scss";
-import { EventObserver, ISubscriber, debuggerPoint } from "./Helpers";
+import './mySlider.scss';
+import {EventObserver, ISubscriber} from './Helpers';
+import {debuggerPoint} from './Helpers';
 
-type Obj = { [key: string]: any };
+type Obj = {[key: string]: any};
 type ViewUpdateDataFormat = {
-    "L": { x: number, offset: number },
-    "R": { x: number, offset: number }
+  'L': {x: number, offset: number},
+  'R': {x: number, offset: number}
 };
 
 export class View extends EventObserver implements ISubscriber {
-    el: HTMLDivElement;
-    className: string = "slider";
-    angle: number = 0;
-    step: number = 10;
-    min: number = 0;
-    max: number = 100;
-    range: boolean = true;
-    selector: string = "";
-    hintAboveThumb = true;
-    hintEl: HTMLDivElement;
-    thumbLeft: HTMLDivElement;
-    thumbRight: HTMLDivElement;
+  el: HTMLDivElement;
+  className: string = 'slider';
+  angle: number = 0;
+  step: number = 10;
+  min: number = 0;
+  max: number = 100;
+  range: boolean = true;
+  selector: string = '';
+  hintAboveThumb = true;
+  hintEl: HTMLDivElement;
+  thumbLeft: HTMLDivElement;
+  thumbRight: HTMLDivElement;
+  thumbs: ThumbsTwinsBrothers;
 
-    scale: Scale;
-    showScale: boolean = true;
-    rangeValue: any[] = [];
+  scale: Scale;
+  showScale: boolean = true;
+  rangeValue: any[] = [];
 
-    constructor(options: Obj) {
-        super();
-        let argsRequire = ["min", "max", "selector"];
+  constructor(options: Obj) {
+    super();
+    const argsRequire = ['min', 'max', 'selector'];
 
-        if (!argsRequire.every(key => key in options)) {
-            throw new Error(`Not enough values. Should be at least "${argsRequire.join('", "')}" in options`);
-        }
-
-        this.setOptions.call(this, options);
-
-        let wrapper = document.querySelector(this.selector);
-        [this.el, this.hintEl, this.thumbLeft, this.thumbRight] = new Array(4).fill(1).map(item => document.createElement('div'));
-        wrapper.append(this.el);
-        this.scale = new Scale({ view: this });
-
-
-        this.el.classList.add(this.className);
-        if (!("step" in options) || this.step === 0) this.step = (this.max - this.min) / 100; //На будущее можно вынести в отдельный объект с дефолтными настройками.
-
-        this.render(true);
+    if (!argsRequire.every((key) => key in options)) {
+      throw new Error(
+        `Not enough values. Should be at least 
+        "${argsRequire.join('", "')}" in options`);
     }
 
-    setOptions(options: { [key: string]: any }) {
-        let expectant: Obj = {};
-        Object.keys(options).filter(prop => prop in this)
-            .forEach(prop => expectant[prop] = options[prop])
-
-        //ATTENTION: _validateOptions is dirty function!
-        this._validateOptions(expectant) && Object.assign(this, expectant);
-
-        this.scale && this.scale.update("", null);
-        return this;
+    this.setOptions.call(this, options);
+    if (!('step' in options) || this.step === 0) {
+      this.step = (this.max - this.min) / 100;
     }
 
-    getOptions() {
-        let publicOtions = ["min", "max", "range", "step",
-            "className", "selector", "hintAboveThumb", "angle", "showScale", "rangeValue"];
-        let obj: Obj = {}
-        publicOtions.forEach(key => obj[key] = this[<keyof this>key]);
-        return obj;
+    this.render(true);
+  }
+
+  setOptions(options: {[key: string]: any}) {
+    const expectant: Obj = {};
+    Object.keys(options).filter((prop) => prop in this)
+      .forEach((prop) => expectant[prop] = options[prop]);
+
+    // ATTENTION: _validateOptions is dirty function!
+    this._validateOptions(expectant) && Object.assign(this, expectant);
+
+    this.scale && this.scale.update();
+    this.thumbs && this.thumbs.update('', null);
+    return this;
+  }
+
+  getOptions() {
+    const publicOtions = ['min', 'max', 'range', 'step',
+      'className', 'selector', 'hintAboveThumb',
+      'angle', 'showScale', 'rangeValue'];
+
+    const obj: Obj = {};
+    publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
+    return obj;
+  }
+
+  update(eventType: string, data: ViewUpdateDataFormat): this {
+    this.thumbs.update(eventType, data);
+    this.el.style.transform = `rotate(${this.angle}deg)`;
+    return this;
+  }
+
+  render(firstTime?: true): this {
+    if (firstTime) {
+      const wrapper = document.querySelector(this.selector);
+      [this.el, this.hintEl] =
+        new Array(2).fill(1).map(() => document.createElement('div'));
+      wrapper.append(this.el);
+
+      this.thumbs = new ThumbsTwinsBrothers(this);
+      this.thumbLeft = this.thumbs.thumbLeft;
+      this.thumbRight = this.thumbs.thumbRight;
+      this.scale = new Scale({view: this});
     }
 
-    update(eventType: string, data: ViewUpdateDataFormat): this {
-        this.thumbLeft.style.left =
-            data.L.offset * (this.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
+    this.el.classList.add(this.className);
 
-        if (this.range) {
-            this.el.append(this.thumbRight);
-            this.thumbRight.style.left = data.R.offset * (this.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
-        } else {
-            this.thumbRight.remove();
-        }
+    this.hintEl.className = `${this.className}__hint`;
+    this.hintEl.textContent = 'HINT!';
+    this.el.style.transform = `rotate(${this.angle}deg)`;
 
-        this.el.style.transform = `rotate(${this.angle}deg)`;
-        return this;
+    const scaleWidth = this.el.clientWidth - this.thumbLeft.offsetWidth;
+    this.scale.width = scaleWidth;
+    this.scale.renderAnchors();
+    return this;
+  }
+
+  private _validateOptions(expectant: Obj): never | true {
+    const obj: Obj = Object.assign({}, this);
+    Object.assign(obj, expectant);
+
+    const shouldBeNumbers: string[] = ['max', 'min', 'step', 'angle'];
+    shouldBeNumbers.forEach((key) => obj[key] = Number(obj[key]));
+
+    const {min, max, step, angle} = obj;
+
+    if (!isFinite(min)) throw new Error('min should be a number!');
+    if (!isFinite(max)) throw new Error('max should be a number!');
+    if (!isFinite(step)) throw new Error('step should be a number!');
+    if (!isFinite(angle)) throw new Error('angle should be a number!');
+
+    if (max < min) throw new Error('max should be greater then min!');
+    if (angle < 0 || angle > 90) {
+      throw new Error('angle should be >= 0 and <= 90');
     }
+    Object.assign(expectant, obj);
 
-    render(firstTime?: true): this {
-        let { thumbLeft, thumbRight } = this;
-
-        this.hintEl.className = `${this.className}__hint`;
-        this.hintEl.textContent = "HINT!";
-
-        thumbLeft.className = `${this.className}__thumb-left`;
-        thumbRight.className = `${this.className}__thumb-right`;
-
-        this.el.append(thumbLeft);
-
-        if (this.range) {
-            this.el.append(thumbRight);
-        } else {
-            thumbRight.remove();
-        }
-
-        this.el.style.transform = `rotate(${this.angle}deg)`;
-        firstTime && this._addEventListeners();
-
-        let scaleWidth = this.el.clientWidth - thumbLeft.offsetWidth;
-        this.scale.width = scaleWidth;
-        this.scale.renderAnchors();
-        return this;
-    }
-
-    private _addEventListeners(): void {
-        this.el.addEventListener("mousedown", (e) => mouseDownThumbHandler.call(this.el, e, this));
-    }
-
-    private _validateOptions(expectant: Obj): never | true {
-        let obj: Obj = Object.assign({}, this);
-        Object.assign(obj, expectant);
-
-        let shouldBeNumbers: string[] = ["max", "min", "step", "angle"];
-        shouldBeNumbers.forEach(key => obj[key] = Number(obj[key]));
-
-        let { min, max, step, angle } = obj;
-
-        if (!isFinite(min)) throw new Error("min should be a number!");
-        if (!isFinite(max)) throw new Error("max should be a number!");
-        if (!isFinite(step)) throw new Error("step should be a number!");
-        if (!isFinite(angle)) throw new Error("angle should be a number!");
-
-        if (max < min) throw new Error("max should be greater then min!");
-        if (angle < 0 || angle > 90) throw new Error("angle should be >= 0 and <= 90");
-        Object.assign(expectant, obj);
-
-        return true;
-    }
-
+    return true;
+  }
 }
 
-function mouseDownThumbHandler(e: MouseEvent, self: View): void {
-    //Не фига создавать новый класс Thumb!!!!
-    //Применим всплытие, this - это элемент DOM, на котором навесили обработчик,
-    // e.target - то, на котором сработало событие
+class ThumbsTwinsBrothers extends EventObserver {
+  thumbLeft: HTMLDivElement = document.createElement('div');
+  thumbRight: HTMLDivElement = document.createElement('div');
+  view: View | null = null;
+
+  constructor(view: View) {
+    super();
+    this.view = view;
+    this.render();
+  }
+
+  render() {
+    const {thumbLeft, thumbRight} = this;
+    thumbLeft.className = `${this.view.className}__thumb-left`;
+    thumbRight.className = `${this.view.className}__thumb-right`;
+
+    this.view.el.append(thumbLeft);
+
+    if (this.view.range) {
+      this.view.el.append(thumbRight);
+    } else {
+      thumbRight.remove();
+    }
+
+    thumbLeft.addEventListener('mousedown', this._addClickHandlers.bind(this));
+    thumbRight.addEventListener('mousedown', this._addClickHandlers.bind(this));
+  }
+  update(eventType: string, data: ViewUpdateDataFormat | null): this {
+    if (data) {
+      this.thumbLeft.style.left =
+        data.L.offset *
+        (this.view.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
+    }
+
+    if (this.view.range) {
+      this.view.el.append(this.thumbRight);
+
+      if (data) {
+        this.thumbRight.style.left =
+          data.R.offset *
+          (this.view.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
+      }
+    } else {
+      this.thumbRight.remove();
+    }
+    return this;
+  }
+
+  _addClickHandlers(e: MouseEvent) {
     e.preventDefault();
 
     const thumb = <HTMLElement>e.target;
-    if (!thumb.className.includes("thumb")) return;
+    const slider = this.view.el;
+    const {view} = this;
 
-    const slider: HTMLDivElement = this;
-    const thisCoord: DOMRect = this.getBoundingClientRect();
+    const sliderCoords: DOMRect = slider.getBoundingClientRect();
     const thumbCoords: DOMRect = thumb.getBoundingClientRect();
 
-    const startX: number = thisCoord.left + this.clientLeft;
-    const startY: number = thisCoord.top + this.clientTop;
+    const startX: number = sliderCoords.left + slider.clientLeft;
+    const startY: number = sliderCoords.top + slider.clientTop;
 
-    let cosA: number = Math.cos(self.angle / 180 * Math.PI);
-    let sinA: number = Math.sin(self.getOptions().angle / 180 * Math.PI);
+    const cosA: number = Math.cos(view.angle / 180 * Math.PI);
+    const sinA: number = Math.sin(view.getOptions().angle / 180 * Math.PI);
 
-    let pixelStep: number = self.getOptions().step * (slider.clientWidth - thumb.offsetWidth) / (self.max - self.min);
+    const pixelStep: number =
+      view.getOptions().step * (slider.clientWidth - thumb.offsetWidth) /
+      (view.max - view.min);
 
-    //Найдем ограничители для бегунка 
-    let leftLimit: number = 0;
-    let rightLimit: number = slider.clientWidth - thumb.offsetWidth;
+    // Найдем ограничители для бегунка
+    const leftLimit: number = 0;
+    const rightLimit: number = slider.clientWidth - thumb.offsetWidth;
 
-    let swapClassLimit: number | null; //Используется только при наличии второго бегунка
+    let swapClassLimit: number | null = null;
 
-    if (self.range) {
-        const thumbList = (this.querySelectorAll("[class*=thumb]"));
-        const nextThumb = [].filter.call(thumbList, (item: Element) => item != e.target)[0];
-        let nextThumbStyle = getComputedStyle(nextThumb);
-        swapClassLimit = parseFloat(nextThumbStyle.left)
+    if (view.range) {
+      const thumbList = (view.el.querySelectorAll('[class*=thumb]'));
+      const nextThumb = [].filter
+        .call(thumbList, (item: Element) => item != e.target)[0];
+
+      const nextThumbStyle = getComputedStyle(nextThumb);
+      swapClassLimit = parseFloat(nextThumbStyle.left);
     }
 
-    let shiftX: number = e.clientX - thumbCoords.left;
-    let shiftY: number = e.clientY - thumbCoords.top;
+    const shiftX: number = e.clientX - thumbCoords.left;
+    const shiftY: number = e.clientY - thumbCoords.top;
 
-    if (self.hintAboveThumb) {
-        thumb.append(self.hintEl);
+    if (view.hintAboveThumb) {
+      thumb.append(view.hintEl);
     }
-    thumb.classList.add(`${self.className}__thumb_moving`); //Если строчку написать раньше, то неверно будут определяться координаты
+    thumb.classList.add(`${view.className}__thumb_moving`);
 
+    const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
+    // scaleInnerWidth for use in onMouseMove
 
-    let scaleInnerWidth = slider.clientWidth - thumb.offsetWidth; //for use in onMouseMove
-    self.broadcast("changeView", { //при любом событии элементы впредь будут пищать о нем ))
-        el: thumb,
-        offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
+    // при любом событии элементы впредь будут пищать о нем ))
+    view.broadcast('changeView', {
+      el: thumb,
+      offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
     });
 
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
 
     function onMouseMove(e: MouseEvent): void {
-        e.preventDefault();
-        thumb.style.zIndex = "" + 1000;
+      e.preventDefault();
+      thumb.style.zIndex = '' + 1000;
 
-        let newLeftX: number = e.clientX - startX - shiftX;
-        let newLeftY: number = e.clientY - startY - shiftY;
-        let newLeft: number = newLeftX * cosA + newLeftY * sinA;
+      const newLeftX: number = e.clientX - startX - shiftX;
+      const newLeftY: number = e.clientY - startY - shiftY;
+      let newLeft: number = newLeftX * cosA + newLeftY * sinA;
 
-        newLeft = takeStepIntoAccount(newLeft, pixelStep);
-        newLeft = Math.max(leftLimit, newLeft);
-        newLeft = Math.min(newLeft, rightLimit);
+      newLeft = takeStepIntoAccount(newLeft, pixelStep);
+      newLeft = Math.max(leftLimit, newLeft);
+      newLeft = Math.min(newLeft, rightLimit);
 
-        thumb.style.left = newLeft + 'px';
+      thumb.style.left = newLeft + 'px';
 
-        if (self.range) {
-            if (thumb.className.includes("right")) {
-                (newLeft < swapClassLimit) && swapThumbClasses();
-            } else {
-                (newLeft > swapClassLimit) && swapThumbClasses();
-            }
+      if (view.range) {
+        if (thumb.className.includes('right')) {
+          (newLeft < swapClassLimit) && swapThumbClasses();
+        } else {
+          (newLeft > swapClassLimit) && swapThumbClasses();
         }
+      }
 
-        self.broadcast("changeView", {
-            el: thumb,
-            offset: newLeft / scaleInnerWidth,
-        });
+      view.broadcast('changeView', {
+        el: thumb,
+        offset: newLeft / scaleInnerWidth,
+      });
     }
 
-    function onMouseUp(e: MouseEvent): void {
-        thumb.classList.remove(`${self.className}__thumb_moving`);
-        self.hintEl.remove();
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
+    function onMouseUp(): void {
+      thumb.classList.remove(`${view.className}__thumb_moving`);
+      view.hintEl.remove();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
     }
 
     function takeStepIntoAccount(x: number, step: number): number {
-        return Math.round(x / step) * step;
+      return Math.round(x / step) * step;
     }
 
     function swapThumbClasses(): void {
-        [self.thumbLeft, self.thumbRight] = [self.thumbRight, self.thumbLeft];
-        self.thumbRight.className = self.thumbRight.className.replace(/left/, "right");
-        self.thumbLeft.className = self.thumbLeft.className.replace(/right/, "left");
+      [view.thumbLeft, view.thumbRight] = [view.thumbRight, view.thumbLeft];
+      view.thumbRight.className =
+        view.thumbRight.className.replace(/left/, 'right');
+      view.thumbLeft.className =
+        view.thumbLeft.className.replace(/right/, 'left');
     }
+  }
 }
 
 class Scale extends EventObserver {
-    width: number = 0;
-    view: View | null = null;
+  width: number = 0;
+  view: View | null = null;
 
-    el: HTMLDivElement;
-    private points: number[] = [0, 1];
-    range: number[];
+  el: HTMLDivElement;
+  private points: number[] = [0, 1];
+  range: number[];
 
-    constructor(options: Obj) {
-        super();
-        Object.keys(options).forEach(key => {
-            if (key in this) this[<keyof this>key] = options[key];
-        });
+  constructor(options: Obj) {
+    super();
+    Object.keys(options).forEach((key) => {
+      if (key in this) this[<keyof this>key] = options[key];
+    });
 
-        this.range = [this.view.min, this.view.max];
-        this.view.addSubscriber("changeView", this);
+    this.range = [this.view.min, this.view.max];
+    this.view.addSubscriber('changeView', this);
+  }
+
+  update() {
+    if (!this.view.showScale) {
+      this.el.style.display = 'none';
+      return;
+    } else {
+      this.el.style.display = '';
     }
 
-    update(eventType: string, data: boolean) {
-        if (!this.view.showScale) {
-            this.el.style.display = "none";
-            return;
-        } else {
-            this.el.style.display = "";
-        }
+    this.range = [this.view.min, this.view.max];
 
-        this.range = [this.view.min, this.view.max];
+    const left = this.el.querySelector('[data-side=L]');
+    const right: HTMLDivElement = this.el.querySelector('[data-side=R]');
 
-        let left = this.el.querySelector("[data-side=L]")
-        let right: HTMLDivElement = this.el.querySelector("[data-side=R]");
-
-        if (this.view.rangeValue.length) {
-            left.textContent = this.view.rangeValue[0] + '';
-            right.textContent = this.view.rangeValue[1] + '';
-        } else {
-            left.textContent = this.range[0] + '';
-            right.textContent = this.range[1] + '';
-        }
-
-        right.style.left = this.view.el.clientWidth - right.offsetWidth + "px";
+    if (this.view.rangeValue.length) {
+      left.textContent = this.view.rangeValue[0] + '';
+      right.textContent = this.view.rangeValue[1] + '';
+    } else {
+      left.textContent = this.range[0] + '';
+      right.textContent = this.range[1] + '';
     }
 
-    renderAnchors() {
-        let scaleDiv = document.createElement('div');
-        scaleDiv.className = this.view.el.className + "__scale"
-        this.view.el.append(scaleDiv);
-        this.el = scaleDiv;
+    right.style.left = this.view.el.clientWidth - right.offsetWidth + 'px';
+  }
 
-        for (let i = 0; i < this.points.length; i++) {
-            let div = document.createElement('div');
+  renderAnchors() {
+    const scaleDiv = document.createElement('div');
+    scaleDiv.className = this.view.el.className + '__scale';
+    this.view.el.append(scaleDiv);
+    this.el = scaleDiv;
 
-            div.dataset.side = i == 0 ? "L" : "R";
-            div.className = this.view.el.className + "__scale-points";
-            scaleDiv.append(div);
+    // if (debuggerPoint.start) debugger;
+    for (let i = 0; i < this.points.length; i++) {
+      const div = document.createElement('div');
 
-            div.style.left = this.points[i] * this.width + "px";
-            div.textContent = this.range[i] + "";
+      div.dataset.side = i == 0 ? 'L' : 'R';
+      div.className = this.view.el.className + '__scale-points';
+      scaleDiv.append(div);
 
-            div.addEventListener("click", this._onMouseClick.bind(this));
-        }
-        this.update("", null);
+      div.style.left = this.points[i] * this.width + 'px';
+      div.textContent = this.range[i] + '';
+
+      div.addEventListener('click', this._onMouseClick.bind(this));
     }
 
-    _onMouseClick(e: MouseEvent) {
-        let target: HTMLDivElement = <HTMLDivElement>e.target;
-        let closestThumb: HTMLDivElement = this.view.el.querySelector("[class*=left]");
+    this.update();
+    debuggerPoint.start = 2;
+  }
 
-        if (target.dataset.side === "R") {
-            let rightThumb: HTMLDivElement | null = this.view.el.querySelector("[class*=right]");
-            closestThumb = rightThumb ? rightThumb : closestThumb;
-        }
+  _onMouseClick(e: MouseEvent) {
+    const target: HTMLDivElement = <HTMLDivElement>e.target;
+    let closestThumb: HTMLDivElement =
+      this.view.el.querySelector('[class*=left]');
 
-        let data = {
-            el: closestThumb,
-            offset: target.dataset.side === "L" ? 0 : 1,
-        }
-
-        this._moveThumbToOffset(data.el, data.offset);
-        this.view.broadcast("changeView", data);
+    if (target.dataset.side === 'R') {
+      const rightThumb: HTMLDivElement | null =
+        this.view.el.querySelector('[class*=right]');
+      closestThumb = rightThumb ? rightThumb : closestThumb;
     }
 
-    _moveThumbToOffset(thumb: HTMLDivElement, offset: number): void {
-        thumb.style.left = offset * this.width + "px";
-    }
+    const data = {
+      el: closestThumb,
+      offset: target.dataset.side === 'L' ? 0 : 1,
+    };
+
+    this._moveThumbToOffset(data.el, data.offset);
+    this.view.broadcast('changeView', data);
+  }
+
+  _moveThumbToOffset(thumb: HTMLDivElement, offset: number): void {
+    thumb.style.left = offset * this.width + 'px';
+  }
 }

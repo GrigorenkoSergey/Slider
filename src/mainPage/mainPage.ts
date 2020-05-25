@@ -11,8 +11,6 @@ let options1 = {
   range: true,
   hintAboveThumb: true,
 }
-
-// let slider1 = new Slider(options1);
 let slider1 = $('.slider1').slider(options1);
 
 let options2 = {
@@ -25,9 +23,8 @@ let options2 = {
   hintAboveThumb: true,
   thumbLeftPos: 800,
 }
-// let slider2 = new Slider(options2); //работает
-// let slider2 = $('.slider2').slider(options2); //работает
-let slider2 = $().slider(options2); //так тоже работает
+debuggerPoint.start = 1;
+let slider2 = $().slider(options2);
 
 let options3 = {
   min: 0,
@@ -39,8 +36,6 @@ let options3 = {
   hintAboveThumb: true,
   rangeValue: ["Jan", "Dec"],
 }
-
-// let slider3 = new Slider(options3);
 let slider3 = $('.slider3').slider(options3);
 
 //Пример задания вообще левых значений
