@@ -23,7 +23,6 @@ let options2 = {
   hintAboveThumb: true,
   thumbLeftPos: 800,
 }
-debuggerPoint.start = 1;
 let slider2 = $().slider(options2);
 
 let options3 = {
@@ -206,3 +205,5 @@ thumbsRight.forEach((item: HTMLInputElement) => {
     (elem, leftX, foo, rightX) => {item.value = rightX.toString()}
   )
 });
+
+// debuggerPoint.start = 1;

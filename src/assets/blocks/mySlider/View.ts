@@ -27,6 +27,8 @@ export class View extends EventObserver implements ISubscriber {
   showScale: boolean = true;
   rangeValue: any[] = [];
 
+  stretcher: Stretcher; // Ну как назвал, так назвал...
+
   constructor(options: Obj) {
     super();
     const argsRequire = ['min', 'max', 'selector'];
@@ -69,7 +71,12 @@ export class View extends EventObserver implements ISubscriber {
   }
 
   update(eventType: string, data: ViewUpdateDataFormat): this {
+    // debuggerPoint.start++;
+    // console.log(debuggerPoint.start);
     this.thumbs.update(eventType, data);
+
+    // this.stretcher.update(eventType, data);
+
     this.el.style.transform = `rotate(${this.angle}deg)`;
     return this;
   }
@@ -80,6 +87,8 @@ export class View extends EventObserver implements ISubscriber {
       [this.el, this.hintEl] =
         new Array(2).fill(1).map(() => document.createElement('div'));
       wrapper.append(this.el);
+
+      // this.stretcher = new Stretcher(this);
 
       this.thumbs = new ThumbsTwinsBrothers(this);
       this.thumbLeft = this.thumbs.thumbLeft;
@@ -150,6 +159,7 @@ class ThumbsTwinsBrothers extends EventObserver {
     thumbLeft.addEventListener('mousedown', this._addClickHandlers.bind(this));
     thumbRight.addEventListener('mousedown', this._addClickHandlers.bind(this));
   }
+
   update(eventType: string, data: ViewUpdateDataFormat | null): this {
     if (data) {
       this.thumbLeft.style.left =
@@ -272,6 +282,28 @@ class ThumbsTwinsBrothers extends EventObserver {
       view.thumbLeft.className =
         view.thumbLeft.className.replace(/right/, 'left');
     }
+  }
+}
+class Stretcher extends EventObserver {
+  el: HTMLDivElement;
+  view: View;
+
+  constructor(view: View) {
+    super();
+    this.view = view;
+    this.render();
+    // this.view.addSubscriber('changeView', this);
+  }
+
+  render() {
+    this.el = document.createElement('div');
+    this.el.className = `${this.view.className}__stretcher`;
+    this.view.el.append(this.el);
+  }
+
+  update(eventType: string, data: ViewUpdateDataFormat) {
+    this.el.style.left = data.L.offset * this.view.el.clientWidth + 'px';
+    this.el.style.right = data.R.offset * this.view.el.clientWidth + 'px';
   }
 }
 

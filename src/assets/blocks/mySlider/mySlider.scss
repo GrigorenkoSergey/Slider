@@ -49,4 +49,10 @@
       cursor: pointer;
     }
 
+    &__stretcher {
+      background-color: red;
+      position: absolute;
+      height: 6px;
+    }
+
   }
