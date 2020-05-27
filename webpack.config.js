@@ -58,17 +58,11 @@ module.exports = {
       exclude: /node_modules/,
       use: [
         // '@jsdevtools/coverage-istanbul-loader',
-        // OOOPS! and now debugger not working correctly )) with string above
+        // OOOPS! and now debugger is not working correctly )) with string above
         'ts-loader',
         // 'eslint-loader', //Нужен ли он?
       ],
     },
-    // {//?
-    //   enforce: 'pre',
-    //   test: /\.ts$/,
-    //   exclude: /node_modules/,
-    //   loader: 'eslint-loader', // to use or not to use?
-    // },
     {
       test: /\.css$/,
       use: [

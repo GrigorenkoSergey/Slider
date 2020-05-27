@@ -205,5 +205,3 @@ thumbsRight.forEach((item: HTMLInputElement) => {
     (elem, leftX, foo, rightX) => {item.value = rightX.toString()}
   )
 });
-
-// debuggerPoint.start = 1;

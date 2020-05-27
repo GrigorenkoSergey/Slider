@@ -57,6 +57,7 @@ export class View extends EventObserver implements ISubscriber {
 
     this.scale && this.scale.update();
     this.thumbs && this.thumbs.update('', null);
+    this.stretcher && this.stretcher.update();
     return this;
   }
 
@@ -71,12 +72,8 @@ export class View extends EventObserver implements ISubscriber {
   }
 
   update(eventType: string, data: ViewUpdateDataFormat): this {
-    // debuggerPoint.start++;
-    // console.log(debuggerPoint.start);
     this.thumbs.update(eventType, data);
-
-    // this.stretcher.update(eventType, data);
-
+    this.stretcher.update();
     this.el.style.transform = `rotate(${this.angle}deg)`;
     return this;
   }
@@ -88,8 +85,9 @@ export class View extends EventObserver implements ISubscriber {
         new Array(2).fill(1).map(() => document.createElement('div'));
       wrapper.append(this.el);
 
-      // this.stretcher = new Stretcher(this);
+      this.stretcher = new Stretcher(this);
 
+      // Come, brothers!! COME!!!!
       this.thumbs = new ThumbsTwinsBrothers(this);
       this.thumbLeft = this.thumbs.thumbLeft;
       this.thumbRight = this.thumbs.thumbRight;
@@ -292,7 +290,7 @@ class Stretcher extends EventObserver {
     super();
     this.view = view;
     this.render();
-    // this.view.addSubscriber('changeView', this);
+    this.view.addSubscriber('changeView', this);
   }
 
   render() {
@@ -301,9 +299,24 @@ class Stretcher extends EventObserver {
     this.view.el.append(this.el);
   }
 
-  update(eventType: string, data: ViewUpdateDataFormat) {
-    this.el.style.left = data.L.offset * this.view.el.clientWidth + 'px';
-    this.el.style.right = data.R.offset * this.view.el.clientWidth + 'px';
+  update() {
+    // Да, можно было изначально сделать thumbs в Stratcher,
+    // но я благополучно слажал с самого начала, забыв про цветовое
+    // выделение диапазона.
+    if (this.view.range) {
+      this.el.style.left =
+        parseFloat(getComputedStyle(this.view.thumbLeft).left) +
+        this.view.thumbLeft.offsetWidth / 2 + 'px';
+
+      this.el.style.right =
+        this.view.el.clientWidth -
+        parseFloat(getComputedStyle(this.view.thumbRight).left) + 'px';
+    } else {
+      this.el.style.left = '0px';
+      this.el.style.right =
+        this.view.el.clientWidth -
+        parseFloat(getComputedStyle(this.view.thumbLeft).left) + 'px';
+    }
   }
 }
 
@@ -355,7 +368,6 @@ class Scale extends EventObserver {
     this.view.el.append(scaleDiv);
     this.el = scaleDiv;
 
-    // if (debuggerPoint.start) debugger;
     for (let i = 0; i < this.points.length; i++) {
       const div = document.createElement('div');
 
