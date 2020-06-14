@@ -1,3 +1,4 @@
+# Slider
 # [Демо-страница слайдера: ](https://grigorenkosergey.github.io/sliderDemo/index.html)
 
 # Подключение 
