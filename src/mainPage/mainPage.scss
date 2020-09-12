@@ -1,112 +1,110 @@
-@import "src/assets/blocks/template/template.scss";
+@import 'src/assets/blocks/template/template.scss';
 
 .examples {
-    margin-top: 30px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 0px;
-    grid-template-areas:
-        "test1 test2"
-        "test3 test4";
-    row-gap: 20px;
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0px;
+  grid-template-areas:
+    'test1 test2'
+    'test3 test4';
+  row-gap: 20px;
 }
 
 @for $i from 1 through 4 {
-    .example#{$i} {
-        grid-area: test#{$i};
-        display: grid;
-        grid-template-columns: auto auto;
-        column-gap: 10px;
-        justify-content: space-around;
-        align-items: center;
-    }
+  .example#{$i} {
+    grid-area: test#{$i};
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+  }
 }
 @for $i from 1 to 5 {
-    .slider#{$i} {
-        width: 300px;
-        height: 300px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+  .slider#{$i} {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .slider-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr auto;
-    gap: 10px 20px;
-    justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr auto;
+  gap: 10px 20px;
+  justify-content: space-between;
 
-    &__li {
-        max-width: 100px;
-    }
-    &__input {
-        max-width: 100px;
-    }
-    &__li_checkbox {
-        grid-column: 1 / 3;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        max-width: 220px;
-    }
-    &__label {
-        width: 50%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 100px;
-        flex-wrap: nowrap;
-    }
+  &__li {
+    max-width: 100px;
+  }
+  &__input {
+    max-width: 100px;
+  }
+  &__li_checkbox {
+    grid-column: 1 / 3;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 220px;
+  }
+  &__label {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100px;
+    flex-wrap: nowrap;
+  }
 }
 
 .imgSprite {
-    width: 183.6px;
-    height: 168.66px;
-    // background: url("/assets/images/hotpng.com.png") no-repeat left top; //В dist это уже не видно...
-    // background: url("assets/images/hotpng.com.png") no-repeat left top; //В dist это уже не видно...
-    background: url("../assets/images/hotpng.com.png") no-repeat left top;
+  width: 183.6px;
+  height: 168.66px;
+  background: url('../assets/images/hotpng.com.png') no-repeat left top;
 }
 
 p {
-    font-size: medium;
-    font-weight: bolder;
-    word-break: break-all;
-    text-align: center;
-    padding: 20px;
+  font-size: medium;
+  font-weight: bolder;
+  word-break: break-all;
+  text-align: center;
+  padding: 20px;
 }
 
 .usage-examples {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    overflow: hidden;
-    justify-content: space-between;
-    column-gap: 10px;
-    margin-bottom: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  overflow: hidden;
+  justify-content: space-between;
+  column-gap: 10px;
+  margin-bottom: 50px;
 }
 
 .slider6-container {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    &__text {
-        height: 150px;
-        font-size: 150px;
-        line-height: 150px;
-        text-align: center;
-        text-shadow: -10px 19px 7px grey;
-    }
+  &__text {
+    height: 150px;
+    font-size: 150px;
+    line-height: 150px;
+    text-align: center;
+    text-shadow: -10px 19px 7px grey;
+  }
 }
 
 .slider5,
 .slider6,
 .slider7 {
-    padding: 20px;
-    padding-top: 50px;
+  padding: 20px;
+  padding-top: 50px;
 }
 
 h1 {
-    text-align: center;
+  text-align: center;
 }
