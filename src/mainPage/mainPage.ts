@@ -1,6 +1,7 @@
 import "./mainPage.scss";
 import {Slider} from "../assets/blocks/mySlider/Slider";
 import {debuggerPoint} from "../assets/blocks/mySlider/Helpers";
+import {SliderOptionsPalette} from './slider-options-palette';
 
 let options1 = {
   min: 10,
@@ -63,6 +64,11 @@ let options4 = {
 }
 // let slider4 = new Slider(options4);
 let slider4 = $('.slider4').slider(options4);
+
+const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
+const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
+const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
+const palette4 = new SliderOptionsPalette(document.querySelector('.example4'), slider4);
 
 let options5 = {
   max: 100,
@@ -139,69 +145,3 @@ let fnResBird: fnResType = (elem, leftX, resLeft) => {
 }
 
 slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
-
-
-let sliders: {[key: string]: Slider} = {
-  slider1, slider2, slider3, slider4, slider5, slider6, slider7,
-};
-
-let inputs: Array<HTMLInputElement> = Array.from(
-  document.querySelectorAll(".slider-options__input")
-);
-
-for (let i = 0; i < inputs.length; i++) {
-  getInputValue(inputs[i]);
-  inputs[i].addEventListener("change", onChangeInputValue);
-}
-
-function getInputValue(input: HTMLInputElement) {
-  let option = input.name;
-  let slider = sliders[input.dataset.id];
-
-  input.value = slider.getOptions()[option];
-
-  if (input.name === "thumbRightPos") {
-    let disabled = !slider.getOptions().range;
-    input.disabled = disabled;
-
-    if (disabled) input.value = "";
-  }
-}
-
-function onChangeInputValue(e: Event): void {
-  // debuggerPoint.start += 1; //Специально оставил на будущее, чтобы не вспоминать технику отладки
-  let input = <HTMLInputElement>e.target;
-  let slider = sliders[input.dataset.id];
-  let prop = input.name;
-
-  slider.setOptions({[prop]: input.value});
-  inputs.forEach(item => getInputValue(item));
-}
-
-let checkboxes = Array.from(document.querySelectorAll("[type=checkbox]"));
-checkboxes.forEach((item: HTMLInputElement) => {
-  let slider = sliders[item.dataset.id];
-  let prop = item.name;
-  item.checked = slider.getOptions()[prop];
-
-  item.onchange = function(e) {
-    slider.setOptions({[prop]: item.checked});
-    inputs.forEach(item => getInputValue(item));
-  }
-});
-
-let thumbsLeft = Array.from(document.querySelectorAll("[name=thumbLeftPos]"));
-thumbsLeft.forEach((item: HTMLInputElement) => {
-  let slider = sliders[item.dataset.id];
-  slider.bindWith(item, slider.getOptions().max, slider.getOptions().min,
-    (elem, leftX) => {item.value = leftX.toString()}
-  )
-});
-
-let thumbsRight = Array.from(document.querySelectorAll("[name=thumbRightPos]"));
-thumbsRight.forEach((item: HTMLInputElement) => {
-  let slider = sliders[item.dataset.id];
-  slider.bindWith(item, slider.getOptions().max, slider.getOptions().min,
-    (elem, leftX, foo, rightX) => {item.value = rightX.toString()}
-  )
-});

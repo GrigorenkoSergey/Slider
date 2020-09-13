@@ -106,7 +106,7 @@ export class Slider extends EventObserver implements ISubscriber {
       [fnStart, fnEnd] = [fnEnd, fnStart];
     }
 
-    // создадим замыкание, чтобы не тащись в свойства elemSubscriber лишнего
+    // создадим замыкание, чтобы не тащить в свойства elemSubscriber лишнего
     function update(eventType: string, data: any) {
       const dataModel = model.getThumbsOffset();
 

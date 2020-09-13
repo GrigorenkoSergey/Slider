@@ -10,11 +10,11 @@ mixin example(num)
     ul.slider-options
       each val in optionsInputs
         li.slider-options__li= val
-          input.slider-options__input(name = val value = val data-id= slider)
+          input.slider-options__input(name = val value = val)
       li.slider-options__li_checkbox
         each val in optionsCheckbox
           label.slider-options__label= val[1]
-            input.slider-options_checkbox(type="checkbox" name = val[0] data-id= slider)
+            input.slider-options_checkbox(type="checkbox" name = val[0])
 
 block includes
 
@@ -23,8 +23,7 @@ block variables
     var titleName = 'SLIDERS'
     var optionsInputs = ["min", "max", "step", "angle",
       "thumbLeftPos", "thumbRightPos"];
-    var optionsCheckbox = [["range", "Диапазон"], ["hintAboveThumb", "Подсказка"], ["showScale", "Покзать шкалу"]];
-    //- var optionsCheckbox = [["range", "Диапазон"], ["hintAboveThumb", "Подсказка"]];
+    var optionsCheckbox = [["range", "Диапазон"], ["hintAboveThumb", "Подсказка"], ["showScale", "Покaзать шкалу"]];
 
 block content
 
