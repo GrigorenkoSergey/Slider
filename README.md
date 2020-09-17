@@ -5,48 +5,48 @@
 Клонируй одним из возможных способов:  
 `git clone https://github.com/GrigorenkoSergey/Slider.git`  
 `git clone git@github.com:GrigorenkoSergey/Slider.git`  
-Или просто скачай [ZIP архив](`https://github.com/GrigorenkoSergey/Slider/archive/master.zip`).
+Или просто скачай [ZIP архив](https://github.com/GrigorenkoSergey/Slider/archive/master.zip).
 
 Далее 3 возможных варианта подключения.
 1. Полный проект с использованием **webpack**. 
-Развертывание. Зайди в установленную директорию (*Slider*) и выполни команду
-`npm install`  
-Если выдаст ошибку, попробуй переустановить ***babel-loader*** командами  
-`npm uninstall babel-loader @babel/core @babel/preset-env`  
-`npm install -D babel-loader @babel/core @babel/preset-env`
+  Развертывание. Зайди в установленную директорию (*Slider*) и выполни команду
+  `npm install`  
+  Если выдаст ошибку, попробуй переустановить ***babel-loader*** командами  
+  `npm uninstall babel-loader @babel/core @babel/preset-env`  
+  `npm install -D babel-loader @babel/core @babel/preset-env`
 
-Запуск webpack-dev-server  
-`npm run dev`  
-Запуск production build  
-`npm run build`
+  Запуск webpack-dev-server  
+  `npm run dev`  
+  Запуск production build  
+  `npm run build`
 
 2. Использование только файлов непосредственно слайдера, опять с **webpack**.
-Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
-```js
-// твой js-файл
-import {Slider} from '../path/to/directory/slider/slider.js';
-import '../path/to/directory/slider/slider.css';
-```
+  Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
+  ```js
+  // твой js-файл
+  import {Slider} from '../path/to/directory/slider/slider.js';
+  import '../path/to/directory/slider/slider.css';
+  ```
 
 3. По старинке. Добавь стили **slider.css**  и **slider.js** в тэг *head* в конце тега *body* подключи скрипт, который будет его использовать. Доступ только через jquery (отдельно подключать нет необходимости).
-```html
-<html>
-    <head>
-        <link href="../path/to/directory/slider/slider.css" rel="stylesheet" type="text/css">
-        <script src="../path/to/directory/slider/slider.js"></script>
-    </head>
-    <body>
-      <div class="slider"></div>
-      <script>
-        let options = {
-          //some options here...
-        };
+  ```html
+  <html>
+      <head>
+          <link href="../path/to/directory/slider/slider.css" rel="stylesheet" type="text/css">
+          <script src="../path/to/directory/slider/slider.js"></script>
+      </head>
+      <body>
+        <div class="slider"></div>
+        <script>
+          let options = {
+            //some options here...
+          };
 
-        let slider = $('.slider').slider(options);
-      </script>
-    </body>
-</html>
-```
+          let slider = $('.slider').slider(options);
+        </script>
+      </body>
+  </html>
+  ```
 Исходники js-кода и стилей лежат в ***src/assets/blocks/slider***.
 
 ## Структура проекта
