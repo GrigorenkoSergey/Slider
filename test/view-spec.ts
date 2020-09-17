@@ -1,6 +1,5 @@
-import {View} from '../src/assets/blocks/mySlider/View';
-// import {debuggerPoint} from '../src/assets/blocks/mySlider/Helpers';
-// import "./mySlider.scss";
+import {View} from '../src/assets/blocks/slider/view';
+// import {debuggerPoint} from '../src/assets/blocks/slider/helpers';
 
 const style = document.createElement('style');
 style.type = 'text/css';

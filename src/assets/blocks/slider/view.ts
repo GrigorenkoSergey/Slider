@@ -1,6 +1,6 @@
-import './mySlider.scss';
-import {EventObserver, ISubscriber} from './Helpers';
-import {debuggerPoint} from './Helpers';
+import './slider.scss';
+import {EventObserver, ISubscriber} from './helpers';
+import {debuggerPoint} from './helpers';
 
 type Obj = {[key: string]: any};
 type ViewUpdateDataFormat = {

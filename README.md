@@ -3,7 +3,7 @@
 
 # Подключение 
 1. Через **webpack**. Либо скачай полностью проект, если нужно добавить функционал и подправить стили, либо только файлы **slider.js** и **slider.css** из директории ***./dist/***.
-Исходники непосредственно бегунка находятся в директории ***./src/assets/blocks/mySlider***.  
+Исходники непосредственно бегунка находятся в директории ***./src/assets/blocks/slider***.  
 2. По старинке. Добавь стили **slider.css** в тэг *head*, в конце тега *body* подключи скрипт **slider.js**. Можно еще скачать библиотеку **jquery** версии 3.5.1, которую тоже можно подлючить (не обязательно, можно запустить и без него).
 
 # Использование
@@ -118,8 +118,8 @@ setOptions({thumbLeftPos: left, thumbRighPos: right})
 ### unbindFrom(elemDom)
 В противоположность функции **bindWith** отвязывает элемент DOM от бегунка.
 
-## UML-диаграмма
-![](./src/assets/images/UML.png)
+## uml-диаграмма
+![](./src/assets/images/uml.png)
 
 # Примеры продвинутых настроек 
 ## Пример1. Птичка (см. демо-страницу, последний пример).
@@ -195,4 +195,4 @@ let fnMonths = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {
 }
 slider3.bindWith(slider3.hintEl, 0, 11, fnMonths);
 ```
-Полный код примеров смотри в ***src/mainPage/mainPage.ts***.
+Полный код примеров смотри в ***src/main-page/main-page.ts***.

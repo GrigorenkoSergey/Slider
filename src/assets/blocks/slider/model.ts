@@ -1,4 +1,4 @@
-import {EventObserver, ISubscriber, isIncreasing} from './Helpers';
+import {EventObserver, ISubscriber, isIncreasing} from './helpers';
 // import {debuggerPoint} from './Helpers';
 
 type Obj = {[key: string]: any};

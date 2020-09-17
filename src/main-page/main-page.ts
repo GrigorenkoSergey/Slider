@@ -1,6 +1,6 @@
-import "./mainPage.scss";
-import {Slider} from "../assets/blocks/mySlider/Slider";
-import {debuggerPoint} from "../assets/blocks/mySlider/Helpers";
+import "./main-page.scss";
+import {Slider} from "../assets/blocks/slider/slider";
+import {debuggerPoint} from "../assets/blocks/slider/helpers";
 import {SliderOptionsPalette} from './slider-options-palette';
 
 let options1 = {

@@ -2,16 +2,21 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const PATHS = {
-  src: path.join(__dirname, './src'),
-  dist: path.join(__dirname, './dist'),
+const entries = {
+  index: './index',
+  slider: './assets/blocks/slider/slider',
 };
 
-module.exports = {
-  entry: './src/index.ts',
+const outputPaths = {
+  index: './index',
+  slider: './slider/slider',
+};
+
+module.exports =  {
+  context: path.resolve(__dirname, 'src'),
+  entry: entries,
 
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
@@ -19,17 +24,12 @@ module.exports = {
   devtool: 'inline-source-map',
 
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'slider.js',
+    filename: (pathData) => `${outputPaths[pathData.chunk.name]}.js`,
     libraryTarget: 'var',
     library: 'Slider', // чтобы Slider вынести в глобальную область видимости
-    publicPath: '',
   },
 
   optimization: {
-    // splitChunks: {//не дает нормально экспортировать класс модуля Slider.
-    //   chunks: 'all',
-    // },
     minimizer: [new UglifyJsPlugin()],
   },
 
@@ -60,7 +60,6 @@ module.exports = {
         // '@jsdevtools/coverage-istanbul-loader',
         // OOOPS! and now debugger is not working correctly )) with string above
         'ts-loader',
-        // 'eslint-loader', //Нужен ли он?
       ],
     },
     {
@@ -100,7 +99,7 @@ module.exports = {
         {
           loader: 'file-loader',
           options: {
-            name: '[name].[ext]',
+            name: 'images/[name].[ext]',
           },
         },
       ],
@@ -122,19 +121,14 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
 
-    new HtmlWebpackPlugin({
-      template: `${PATHS.src}/index.pug`,
-      filename: './index.html',
-    }),
+    ...Object.keys(entries).map((key) => new HtmlWebpackPlugin({
+      template: `${entries[key]}.pug`,
+      filename: `${outputPaths[key]}.html`,
+      chunks: [`${key}`],
+    })),
 
     new MiniCssExtractPlugin({
-      filename: 'slider.css',
-      chunkFilename: '[id].css',
+      moduleFilename: ({ name }) => `${outputPaths[name]}.css`,
     }),
-
-    new CopyPlugin([
-      {from: `${PATHS.src}/assets/blocks/`, to: `${PATHS.dist}/assets/blocks/`},
-      {from: `${PATHS.src}/assets/images/`, to: `${PATHS.dist}/assets/images/`},
-    ]),
   ],
 };

@@ -1,7 +1,7 @@
-import {EventObserver, ISubscriber} from './Helpers';
+import {EventObserver, ISubscriber} from './helpers';
 // import {debuggerPoint} from './Helpers';
-import {Model} from './Model';
-import {View} from './View';
+import {Model} from './model';
+import {View} from './view';
 import jQuery from 'jquery';
 
 (function($) {
@@ -141,3 +141,5 @@ export class Slider extends EventObserver implements ISubscriber {
     return this;
   }
 }
+
+// module.exports = Slider; // ?

@@ -1,5 +1,5 @@
-import {EventObserver} from '../assets/blocks/mySlider/Helpers';
-import {Slider} from '../assets/blocks/mySlider/Slider';
+import {EventObserver} from '../assets/blocks/slider/helpers';
+import {Slider} from '../assets/blocks/slider/slider';
 
 type Obj = {[key: string]: any};
 
