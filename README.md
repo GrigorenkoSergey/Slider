@@ -1,21 +1,90 @@
 # Slider
-# [Демо-страница слайдера: ](https://grigorenkosergey.github.io/sliderDemo/index.html)
+## [Демо-страница слайдера: ](https://grigorenkosergey.github.io/sliderDemo/index.html)
 
-# Подключение 
-1. Через **webpack**. Либо скачай полностью проект, если нужно добавить функционал и подправить стили, либо только файлы **slider.js** и **slider.css** из директории ***./dist/***.
-Исходники непосредственно бегунка находятся в директории ***./src/assets/blocks/slider***.  
-2. По старинке. Добавь стили **slider.css** в тэг *head*, в конце тега *body* подключи скрипт **slider.js**. Можно еще скачать библиотеку **jquery** версии 3.5.1, которую тоже можно подлючить (не обязательно, можно запустить и без него).
+## Подключение 
+Клонируй одним из возможных способов:  
+`git clone https://github.com/GrigorenkoSergey/Slider.git`  
+`git clone git@github.com:GrigorenkoSergey/Slider.git`  
+Или просто скачай [ZIP архив](`https://github.com/GrigorenkoSergey/Slider/archive/master.zip`).
 
-# Использование
+Далее 3 возможных варианта подключения.
+1. Полный проект с использованием **webpack**. 
+Развертывание. Зайди в установленную директорию (*Slider*) и выполни команду
+`npm install`  
+Если выдаст ошибку, попробуй переустановить ***babel-loader*** командами  
+`npm uninstall babel-loader @babel/core @babel/preset-env`  
+`npm install -D babel-loader @babel/core @babel/preset-env`
+
+Запуск webpack-dev-server  
+`npm run dev`  
+Запуск production build  
+`npm run build`
+
+2. Использование только файлов непосредственно слайдера, опять с **webpack**.
+Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
+```js
+// твой js-файл
+import {Slider} from '../path/to/directory/slider/slider.js';
+import '../path/to/directory/slider/slider.css';
+```
+
+3. По старинке. Добавь стили **slider.css**  и **slider.js** в тэг *head* в конце тега *body* подключи скрипт, который будет его использовать. Доступ только через jquery (отдельно подключать нет необходимости).
+```html
+<html>
+    <head>
+        <link href="../path/to/directory/slider/slider.css" rel="stylesheet" type="text/css">
+        <script src="../path/to/directory/slider/slider.js"></script>
+    </head>
+    <body>
+      <div class="slider"></div>
+      <script>
+        let options = {
+          //some options here...
+        };
+
+        let slider = $('.slider').slider(options);
+      </script>
+    </body>
+</html>
+```
+Исходники js-кода и стилей лежат в ***src/assets/blocks/slider***.
+
+## Структура проекта
+.
+├── coverage
+├── dist
+├── karma.conf.js
+├── node_modules
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── README.md
+├── src
+│   ├── assets
+│   ├── index.pug
+│   ├── index.ts
+│   ├── main-page
+│   └── postcss.config.js
+├── test
+│   ├── helpers-spec.ts
+│   ├── model-spec.ts
+│   ├── slider.css
+│   ├── slider.scss
+│   ├── slider-spec.ts
+│   └── view-spec.ts
+├── tsconfig.json
+└── webpack.config.js
+
+## Использование
 Сам слайдер должен находиться в каком-либо блоке (*div*). Возможны 3 варианта вызова: 
 ```js
-    let slider = new Slider(options);
+    let slider = new Slider(options); //только с webpack
     let slider = $(selector).slider(options); //c jquery
     let slider = $().slider(options); //с jquery, селектор находится в options.
 ```
 В объекте настроек, передаваемых параметром **options** есть поле **selector**, в которое необходимо записать селектор выбора, аналогичный тому, что мы передаем через ```document.body.querySelector(selector)``` или через ```$(selector)```.
 
-# Обязательные опции  
+## Обязательные опции  
 ### min
 Минимальное значение шкалы диапазона
 ### max 
@@ -23,7 +92,7 @@
 ### selector  
 CSS-селектор выбора блока, содержащего наш слайдер
 
-# Дополнительные опции
+## Дополнительные опции
 ### className: *string*  
 По умолчанию **"slider"**. Это имя блока, именованного по методологии BEM, который будет сгенерирован в контейнере со своими элементами. К нему привязаны стили слайдера. При необходимости изменить стили поправь исходный (S)?CSS файл. Если возможен конфликт имен, просто переименуй приставку **"slider"** в стилях, на любое имя, заданное в этом свойстве, например на **"superMegaCoolSlider"**.
 
@@ -60,7 +129,7 @@ ticks = { 500: 100, 10000: 150, 20000: 180 }.
 Дополнительное свойство, не отображается командой **getOptions()**. Сcылка на элемент подсказки. Нужна для продвинутых настроек.
 
 
-# API
+## API
 ## Основные методы
 ### getOptions()
 Используется для того, чтобы узнать значения опций слайдера. Возвращает объект со значениями опций.
@@ -121,8 +190,8 @@ setOptions({thumbLeftPos: left, thumbRighPos: right})
 ## uml-диаграмма
 ![](./src/assets/images/uml.png)
 
-# Примеры продвинутых настроек 
-## Пример1. Птичка (см. демо-страницу, последний пример).
+## Примеры продвинутых настроек 
+### Пример1. Птичка (см. демо-страницу, последний пример).
 Пусть в DOM у нас имеется элемент ```<div class="slider7></div> ```  
 Картинка imgSprite - это спрайт, состоящий из 14 картинок по 5 в ряду, 3 ряда.  
 Высота спрайта 506 пикселей, ширина 918.  
@@ -159,7 +228,7 @@ slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 Итого у нас один бегунок, положение которого мы связали с номером картинки.
 Крайнее левое положение отображает первую картинку (нумерация с нуля), в крайнем правом положении мы отображаем последнюю 14-ю картинку (с индексом 13).
 
-## Пример2. Месяцы (наклонный слайдер)
+### Пример2. Месяцы (наклонный слайдер)
 Мы хотим, чтобы шкала отображала какой-то временной период, например, год.
 Тогда мы должны задать опцию rangeValue с границами периода. 
 Поместим наш слайдер в блок с классом "slider3".
