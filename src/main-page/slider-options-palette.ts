@@ -72,6 +72,7 @@ class BindedInput extends EventObserver {
     }
 
     this.slider.setOptions({[this.prop]: newValue});
+    console.log(this.slider.getOptions()[this.prop]);
   }
 }
 

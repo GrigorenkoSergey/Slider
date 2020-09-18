@@ -154,8 +154,8 @@ class ThumbsTwinsBrothers extends EventObserver {
       thumbRight.remove();
     }
 
-    thumbLeft.addEventListener('mousedown', this._addClickHandlers.bind(this));
-    thumbRight.addEventListener('mousedown', this._addClickHandlers.bind(this));
+    thumbLeft.addEventListener('mousedown', this.handleThumbClick.bind(this));
+    thumbRight.addEventListener('mousedown', this.handleThumbClick.bind(this));
   }
 
   update(eventType: string, data: ViewUpdateDataFormat | null): this {
@@ -179,7 +179,7 @@ class ThumbsTwinsBrothers extends EventObserver {
     return this;
   }
 
-  _addClickHandlers(e: MouseEvent) {
+  handleThumbClick(e: MouseEvent) {
     e.preventDefault();
 
     const thumb = <HTMLElement>e.target;
@@ -223,7 +223,7 @@ class ThumbsTwinsBrothers extends EventObserver {
     thumb.classList.add(`${view.className}__thumb_moving`);
 
     const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
-    // scaleInnerWidth for use in onMouseMove
+    // scaleInnerWidth for use in handleDocumentMouseMove
 
     // при любом событии элементы впредь будут пищать о нем ))
     view.broadcast('changeView', {
@@ -231,10 +231,10 @@ class ThumbsTwinsBrothers extends EventObserver {
       offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
     });
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', handleDocumentMouseMove);
+    document.addEventListener('mouseup', handleDocumentMouseUp);
 
-    function onMouseMove(e: MouseEvent): void {
+    function handleDocumentMouseMove(e: MouseEvent): void {
       e.preventDefault();
       thumb.style.zIndex = '' + 1000;
 
@@ -262,11 +262,11 @@ class ThumbsTwinsBrothers extends EventObserver {
       });
     }
 
-    function onMouseUp(): void {
+    function handleDocumentMouseUp(): void {
       thumb.classList.remove(`${view.className}__thumb_moving`);
       view.hintEl.remove();
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', handleDocumentMouseMove);
+      document.removeEventListener('mouseup', handleDocumentMouseUp);
     }
 
     function takeStepIntoAccount(x: number, step: number): number {
