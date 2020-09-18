@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -26,7 +25,7 @@ module.exports =  {
   output: {
     filename: (pathData) => `${outputPaths[pathData.chunk.name]}.js`,
     libraryTarget: 'var',
-    library: 'Slider', // чтобы Slider вынести в глобальную область видимости
+    library: 'Slider',
   },
 
   optimization: {
@@ -119,8 +118,6 @@ module.exports =  {
   },
 
   plugins: [
-    new CleanWebpackPlugin(),
-
     ...Object.keys(entries).map((key) => new HtmlWebpackPlugin({
       template: `${entries[key]}.pug`,
       filename: `${outputPaths[key]}.html`,
