@@ -65,14 +65,22 @@ class BindedInput extends EventObserver {
 
   handleInputChange() {
     let newValue;
+    
     if (this.el.type === 'checkbox') {
       newValue = this.el.checked;
     } else {
       newValue = this.el.value;
     }
 
-    this.slider.setOptions({[this.prop]: newValue});
-    console.log(this.slider.getOptions()[this.prop]);
+    const oldValue = this.slider.getOptions()[this.prop];
+
+    try {
+      this.slider.setOptions({[this.prop]: newValue});
+    } catch {
+      this.slider.setOptions({[this.prop]: oldValue});
+    }
+
+    this.update();
   }
 }
 

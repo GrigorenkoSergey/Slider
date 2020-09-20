@@ -141,5 +141,3 @@ export class Slider extends EventObserver implements ISubscriber {
     return this;
   }
 }
-
-// module.exports = Slider; // ?

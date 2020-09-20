@@ -3,7 +3,7 @@ import {Model} from '../src/assets/blocks/slider/model';
 
 describe(`Model\n`, () => {
   describe(`Первоначальная минимальная инициализация\n`, () => {
-    it(`Можно инициализировать с необходимым минимумом аргументов`, () => {
+    it(`Можно инициализировать с необходимым минимумом аргументов: min, max`, () => {
       const model = new Model({min: 0, max: 100});
       Object.keys(model).forEach((key: keyof Model) => {
         expect(model[key]).toBeDefined();
@@ -22,13 +22,6 @@ describe(`Model\n`, () => {
       expect(() => {
         new Model({min: 0});
       }).toThrowError();
-    });
-
-
-    it(`Если задан нулевой шаг, он пересчитывается и становится
-     равным 1/100 от длины диапазона`, () => {
-      const model = new Model({min: 0, max: 100, step: 0});
-      expect(model.step).toEqual((model.max - model.min) / 100);
     });
 
     it(`Можно задавать начальные положения бегунков`, () => {
@@ -90,6 +83,12 @@ describe(`Model\n`, () => {
       expect(model.thumbRightPos).toBeLessThanOrEqual(299);
       expect(model.max).toEqual(299);
     });
+
+    it(`Проверка правильности округления`, () => {
+      const model = new Model({min: 2, max: 6, step: 4, rangle: false});
+      expect(model.setThumbsPos(2));
+      expect(model.thumbLeftPos).toEqual(2);
+    });
   });
 
   describe(`Проверка правильности задания свойств`, () => {
@@ -121,6 +120,10 @@ describe(`Model\n`, () => {
       shouldBeNumbers.map((key) => {
         expect(() => model.setOptions({[key]: '1000x'})).toThrowError();
       });
+    });
+
+    it(`Шаг не может быть отрицательным`, () => {
+      expect( () => model.setOptions({step: -1})).toThrowError();
     });
 
     it(`Значение свойства "max" должно быть больше, чем "min"`, () => {

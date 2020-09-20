@@ -4,15 +4,16 @@ import {debuggerPoint} from "../assets/blocks/slider/helpers";
 import {SliderOptionsPalette} from './slider-options-palette';
 
 let options1 = {
-  min: 10,
-  max: 100,
-  step: 1,
+  min: 2,
+  max: 6,
+  step: 4,
   selector: ".slider1",
   angle: 0,
-  range: true,
+  range: false,
   hintAboveThumb: true,
 }
 let slider1 = $('.slider1').slider(options1);
+console.log(slider1);
 
 let options2 = {
   min: 100,

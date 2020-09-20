@@ -121,7 +121,7 @@ export class Model extends EventObserver
       throw new Error('Angle should be >= 0 and <= 90');
     }
     if (step > (max - min)) throw new Error('To large step!');
-    if (step === 0) obj.step = step = (max - min) / 100;
+    if (step <= 0) throw new Error('Step should be >= 0');
 
     if (!obj.range) {
       thumbRightPos = max;
@@ -150,7 +150,6 @@ export class Model extends EventObserver
 
     Object.assign(this, obj);
     this.broadcast('changeModel', this.getThumbsOffset());
-
     return this;
   }
 
@@ -178,7 +177,7 @@ export class Model extends EventObserver
   }
 
   private _takeStepIntoAccount(x: number): number {
-    return Math.round(x / this.step) * this.step;
+    return Math.round((x - this.min) / this.step) * this.step + this.min;
   }
 
   private _intempolate(offset: number): number {
