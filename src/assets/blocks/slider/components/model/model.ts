@@ -2,7 +2,7 @@ import EventObserver from '../../../helpers/event-observer';
 import ISubscriber from '../../../helpers/i-subscriber';
 import isIncreasing from '../../../helpers/is-Increasing-func';
 
-// import debuggerPoint from '../helpers/debugger-point';
+// import debuggerPoint from '../../../helpers/debugger-point';
 
 
 type Obj = {[key: string]: any};
