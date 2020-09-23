@@ -25,7 +25,7 @@
     Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
     ```js
     // твой js-файл
-    import {Slider} from '../path/to/directory/slider/slider.js';
+    import {Slider}from '../path/to/directory/slider/slider.js';
     import '../path/to/directory/slider/slider.css';
     ```
 
@@ -61,12 +61,21 @@
 ├── package-lock.json
 ├── postcss.config.js
 ├── README.md
+|
 ├── src
 │   ├── assets
+|   │   ├── blocks
+|   |   │   ├── main-page
+|   |   │   ├── slider
+|   |   │   └── template
+|   │   |
+|   │   ├── fonts
+|   │   └── images
+|   |   
 │   ├── index.pug
 │   ├── index.ts
-│   ├── main-page
 │   └── postcss.config.js
+|
 ├── test
 │   ├── helpers-spec.ts
 │   ├── model-spec.ts

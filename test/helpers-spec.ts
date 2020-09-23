@@ -1,5 +1,5 @@
-import {EventObserver, ISubscriber} from
-  '../src/assets/blocks/slider/helpers';
+import EventObserver from '../src/assets/blocks/helpers/event-observer';
+import ISubscriber from '../src/assets/blocks/helpers/i-subscriber';
 
 describe('EventObserver\n', () => {
   let observer: EventObserver;

@@ -1,7 +1,12 @@
-import {EventObserver, ISubscriber} from './helpers';
-// import {debuggerPoint} from './Helpers';
-import {Model} from './model';
-import {View} from './view';
+import './slider.scss';
+
+import EventObserver from '../helpers/event-observer';
+import ISubscriber from '../helpers/i-subscriber';
+
+// import debuggerPoint from './components/helpers/debugger-point';
+
+import Model from './components/model/model';
+import View from './components/view/view';
 import jQuery from 'jquery';
 
 (function($) {
@@ -14,7 +19,7 @@ type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
   rightX: number, scaledRightX: number, data: any) => void;
 type Obj = {[key: string]: any};
 
-export class Slider extends EventObserver implements ISubscriber {
+class Slider extends EventObserver implements ISubscriber {
   _model: Model;
   _view: View;
   // Хотел сделать приватными, но для отладки довольно неудобно.
@@ -141,3 +146,5 @@ export class Slider extends EventObserver implements ISubscriber {
     return this;
   }
 }
+
+export {Slider};

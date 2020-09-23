@@ -1,6 +1,7 @@
-import './slider.scss';
-import {EventObserver, ISubscriber} from './helpers';
-import {debuggerPoint} from './helpers';
+import EventObserver from '../../../helpers/event-observer';
+import ISubscriber from '../../../helpers/i-subscriber';
+
+// import debuggerPoint from '../helpers/debugger-point';
 
 type Obj = {[key: string]: any};
 type ViewUpdateDataFormat = {
@@ -8,7 +9,7 @@ type ViewUpdateDataFormat = {
   'R': {x: number, offset: number}
 };
 
-export class View extends EventObserver implements ISubscriber {
+export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement;
   className: string = 'slider';
   angle: number = 0;
@@ -382,7 +383,6 @@ class Scale extends EventObserver {
     }
 
     this.update();
-    debuggerPoint.start = 2;
   }
 
   _onMouseClick(e: MouseEvent) {

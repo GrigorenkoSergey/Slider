@@ -1,5 +1,4 @@
-import {Model} from '../src/assets/blocks/slider/model';
-// import {debuggerPoint} from '../src/assets/blocks/slider/Helpers';
+import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe(`Model\n`, () => {
   describe(`Первоначальная минимальная инициализация\n`, () => {

@@ -1,11 +1,11 @@
-import "./main-page.scss";
-import {Slider} from "../assets/blocks/slider/slider";
-import {debuggerPoint} from "../assets/blocks/slider/helpers";
-import {SliderOptionsPalette} from './slider-options-palette';
+import './main-page.scss';
+import '../slider/slider';
+
+import SliderOptionsPalette from './components/slider-options-palette';
 
 let options1 = {
   min: 2,
-  max: 6,
+  max: 600,
   step: 4,
   selector: ".slider1",
   angle: 0,
@@ -13,7 +13,6 @@ let options1 = {
   hintAboveThumb: true,
 }
 let slider1 = $('.slider1').slider(options1);
-console.log(slider1);
 
 let options2 = {
   min: 100,
@@ -86,7 +85,7 @@ type fnResType = (elem: HTMLElement, leftX: number,
   scaledLeftX: number, rightX: number, scaledRightX: number,
   data: any) => void;
 
-let slider5 = new Slider(options5);
+let slider5 = $('.slider5').slider(options5);
 let pContent = document.querySelector('.slider5__p').textContent;
 
 let fnResLine: fnResType = (elem, leftX, resLeft, rightX, resRight) => {
