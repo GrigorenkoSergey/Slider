@@ -1,7 +1,7 @@
 import './slider.scss';
 
 import EventObserver from '../helpers/event-observer';
-import ISubscriber from '../helpers/i-subscriber';
+import {ISubscriber} from '../helpers/interfaces';
 
 // import debuggerPoint from './components/helpers/debugger-point';
 

@@ -1,4 +1,4 @@
-import ISubscriber from './i-subscriber';
+import {ISubscriber} from './interfaces';
 
 export default class EventObserver {
   // every subscriber should have method "update(eventType, data)"

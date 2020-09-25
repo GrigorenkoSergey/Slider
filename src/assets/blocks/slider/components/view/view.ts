@@ -1,5 +1,5 @@
 import EventObserver from '../../../helpers/event-observer';
-import ISubscriber from '../../../helpers/i-subscriber';
+import {ISubscriber} from '../../../helpers/interfaces';
 
 import Stretcher from './components/stretcher';
 import Scale from './components/scale';

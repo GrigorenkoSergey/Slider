@@ -1,6 +1,6 @@
 import EventObserver from '../../../helpers/event-observer';
-import ISubscriber from '../../../helpers/i-subscriber';
-import isIncreasing from '../../../helpers/is-Increasing-func';
+import {ISubscriber} from '../../../helpers/interfaces';
+import isIncreasing from '../../../helpers/functions/is-Increasing-func';
 
 // import debuggerPoint from '../../../helpers/debugger-point';
 

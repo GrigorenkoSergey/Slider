@@ -25,7 +25,7 @@
     Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
     ```js
     // твой js-файл
-    import {Slider}from '../path/to/directory/slider/slider.js';
+    import {Slider} from '../path/to/directory/slider/slider.js';
     import '../path/to/directory/slider/slider.css';
     ```
 
@@ -65,9 +65,41 @@
 ├── src
 │   ├── assets
 |   │   ├── blocks
-|   |   │   ├── main-page
-|   |   │   ├── slider
-|   |   │   └── template
+|   |   |   |
+|   |   |   ├── helpers
+|   |   |   │   ├── debugger-point.ts
+|   |   |   │   ├── event-observer.ts
+|   |   |   │   ├── functions
+|   |   |   │   │   └── is-Increasing-func.ts
+|   |   |   │   └── interfaces.ts
+|   |   |   |
+|   |   |   ├── main-page
+|   |   |   │   ├── components
+|   |   |   │   │   ├── binded-input.ts
+|   |   |   │   │   └── slider-options-palette.ts
+|   |   |   │   ├── main-page.pug
+|   |   |   │   ├── main-page.scss
+|   |   |   │   └── main-page.ts
+|   |   |   |
+|   |   |   ├── slider
+|   |   |   │   ├── components
+|   |   |   │   │   ├── model
+|   |   |   │   │   │   └── model.ts
+|   |   |   │   │   └── view
+|   |   |   │   │       ├── components
+|   |   |   │   │       │   ├── scale.ts
+|   |   |   │   │       │   ├── stretcher.ts
+|   |   |   │   │       │   └── thumbs-twins-brothers.ts
+|   |   |   │   │       └── view.ts
+|   |   |   │   ├── jquery.slider.d.ts
+|   |   |   │   ├── slider.pug
+|   |   |   │   ├── slider.scss
+|   |   |   │   └── slider.ts
+|   |   |   |
+|   |   |   └── template
+|   |   |       ├── template.js
+|   |   |       ├── template.pug
+|   |   |       └── template.scss
 |   │   |
 |   │   ├── fonts
 |   │   └── images
@@ -89,7 +121,7 @@
 
 ## Использование
 Сам слайдер должен находиться в каком-либо блоке (*div*). Возможны 3 варианта вызова: 
-```js
+```js 
     let slider = new Slider(options); //только с webpack
     let slider = $(selector).slider(options); //c jquery
     let slider = $().slider(options); //с jquery, селектор находится в options.
