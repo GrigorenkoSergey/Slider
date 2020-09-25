@@ -1,15 +1,10 @@
 import EventObserver from '../../../helpers/event-observer';
 import {ISubscriber} from '../../../helpers/interfaces';
-import isIncreasing from '../../../helpers/functions/is-Increasing-func';
+import isIncreasing from '../../../helpers/functions/is-increasing';
+
+import '../../../helpers/types';
 
 // import debuggerPoint from '../../../helpers/debugger-point';
-
-
-type Obj = {[key: string]: any};
-type modelResponse = {
-  L: {x: number, offset: number},
-  R: {x: number, offset: number}
-}
 
 export default class Model extends EventObserver
   implements ISubscriber {

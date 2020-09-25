@@ -1,23 +1,20 @@
 import './slider.scss';
 
+import '../helpers/types';
+
 import EventObserver from '../helpers/event-observer';
 import {ISubscriber} from '../helpers/interfaces';
-
-// import debuggerPoint from './components/helpers/debugger-point';
-
 import Model from './components/model/model';
 import View from './components/view/view';
 import jQuery from 'jquery';
+
+// import debuggerPoint from './components/helpers/debugger-point';
 
 (function($) {
   $.fn.slider = function(props: any) {
     return new Slider(props);
   };
 })(jQuery);
-
-type fnResType = (elem: HTMLElement, leftX: number, scaledLeftX: number,
-  rightX: number, scaledRightX: number, data: any) => void;
-type Obj = {[key: string]: any};
 
 class Slider extends EventObserver implements ISubscriber {
   _model: Model;

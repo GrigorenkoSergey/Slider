@@ -71,7 +71,8 @@
 |   |   |   │   ├── event-observer.ts
 |   |   |   │   ├── functions
 |   |   |   │   │   └── is-increasing.ts
-|   |   |   │   └── interfaces.ts
+|   |   |   │   ├── interfaces.ts
+|   |   |   │   └── types.ts
 |   |   |   |
 |   |   |   ├── main-page
 |   |   |   │   ├── components

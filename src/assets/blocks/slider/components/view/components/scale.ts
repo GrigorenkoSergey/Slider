@@ -1,7 +1,7 @@
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
-type Obj = {[key: string]: any};
+import '../../../../helpers/types';
 
 export default class Scale extends EventObserver {
   width: number = 0;

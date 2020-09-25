@@ -1,4 +1,5 @@
 import './main-page.scss';
+import '../helpers/types';
 import '../slider/slider';
 
 import SliderOptionsPalette from './components/slider-options-palette';
@@ -62,7 +63,6 @@ let options4 = {
   range: false,
   hintAboveThumb: true
 }
-// let slider4 = new Slider(options4);
 let slider4 = $('.slider4').slider(options4);
 
 const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
@@ -79,11 +79,6 @@ let options5 = {
   range: true,
   hintAboveThumb: true
 }
-
-//скопировали с сигнатуры коллбека функции bindWith (последнего аргумента)
-type fnResType = (elem: HTMLElement, leftX: number,
-  scaledLeftX: number, rightX: number, scaledRightX: number,
-  data: any) => void;
 
 let slider5 = $('.slider5').slider(options5);
 let pContent = document.querySelector('.slider5__p').textContent;

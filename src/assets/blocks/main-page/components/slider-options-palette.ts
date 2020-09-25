@@ -1,7 +1,7 @@
 import BindedInput from '../components/binded-input';
 import {Slider} from '../../slider/slider';
 
-type Obj = {[key: string]: any};
+import '../../helpers/types';
 
 export default class SliderOptionsPalette {
   el: HTMLDivElement = null;

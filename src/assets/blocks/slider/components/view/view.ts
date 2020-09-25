@@ -5,13 +5,9 @@ import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import ThumbsTwinsBrothers from './components/thumbs-twins-brothers';
 
-// import debuggerPoint from '../../../helpers/debugger-point';
+import '../../../helpers/types';
 
-type Obj = {[key: string]: any};
-type ViewUpdateDataFormat = {
-  'L': {x: number, offset: number},
-  'R': {x: number, offset: number}
-};
+// import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement;

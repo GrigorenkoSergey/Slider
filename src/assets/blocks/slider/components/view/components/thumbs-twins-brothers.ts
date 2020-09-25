@@ -1,11 +1,6 @@
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
-type ViewUpdateDataFormat = {
-  'L': {x: number, offset: number},
-  'R': {x: number, offset: number}
-};
-
 export default class ThumbsTwinsBrothers extends EventObserver {
   thumbLeft: HTMLDivElement = document.createElement('div');
   thumbRight: HTMLDivElement = document.createElement('div');
