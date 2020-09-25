@@ -70,7 +70,7 @@
 |   |   |   │   ├── debugger-point.ts
 |   |   |   │   ├── event-observer.ts
 |   |   |   │   ├── functions
-|   |   |   │   │   └── is-Increasing-func.ts
+|   |   |   │   │   └── is-increasing.ts
 |   |   |   │   └── interfaces.ts
 |   |   |   |
 |   |   |   ├── main-page
