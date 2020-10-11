@@ -6,8 +6,8 @@ import SliderOptionsPalette from './components/slider-options-palette';
 
 let options1 = {
   min: 2,
-  max: 600,
-  step: 4,
+  max: 6,
+  step: 3,
   selector: ".slider1",
   angle: 0,
   range: false,

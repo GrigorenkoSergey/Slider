@@ -1,7 +1,6 @@
 import {ISubscriber} from './interfaces';
 
 export default class EventObserver {
-  // every subscriber should have method "update(eventType, data)"
   observers: {[key: string]: ISubscriber[]} = {};
 
   addSubscriber(eventType: string, obj: ISubscriber): void {

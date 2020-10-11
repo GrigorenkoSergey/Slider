@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import EventObserver from '../../../helpers/event-observer';
 import {ISubscriber} from '../../../helpers/interfaces';
 
-import Stretcher from './components/stretcher';
+// import Stretcher from './components/stretcher';
 import Scale from './components/scale';
-import ThumbsTwinsBrothers from './components/thumbs-twins-brothers';
+import Thumbs from './components/thumbs';
 
 import '../../../helpers/types';
 
@@ -12,27 +13,28 @@ import '../../../helpers/types';
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement;
   className: string = 'slider';
+
+  step: number = 1/100;
   angle: number = 0;
-  step: number = 10;
-  min: number = 0;
-  max: number = 100;
   range: boolean = true;
   selector: string = '';
   hintAboveThumb = true;
+
   hintEl: HTMLDivElement;
-  thumbLeft: HTMLDivElement;
-  thumbRight: HTMLDivElement;
-  thumbs: ThumbsTwinsBrothers;
+  hintAlwaysShow: false;
+
+  thumbs: Thumbs;
 
   scale: Scale;
   showScale: boolean = true;
+  parts: number = 2;
   rangeValue: any[] = [];
+  // stretcher: Stretcher; // Ну как назвал, так назвал...
 
-  stretcher: Stretcher; // Ну как назвал, так назвал...
 
-  constructor(options: Obj) {
+  constructor(options: Obj) { // пока не лезь сюда. Вроде все нормально.
     super();
-    const argsRequire = ['min', 'max', 'selector'];
+    const argsRequire = ['selector'];
 
     if (!argsRequire.every((key) => key in options)) {
       throw new Error(
@@ -40,93 +42,136 @@ export default class View extends EventObserver implements ISubscriber {
         "${argsRequire.join('", "')}" in options`);
     }
 
-    this.setOptions.call(this, options);
-    if (!('step' in options) || this.step === 0) {
-      this.step = (this.max - this.min) / 100;
-    }
-
-    this.render(true);
+    this.setOptions(options);
+    this.render();
   }
 
-  setOptions(options: {[key: string]: any}) {
+  setOptions(options: Obj) {// не лезь
     const expectant: Obj = {};
+
     Object.keys(options).filter((prop) => prop in this)
       .forEach((prop) => expectant[prop] = options[prop]);
 
-    // ATTENTION: _validateOptions is dirty function!
-    this._validateOptions(expectant) && Object.assign(this, expectant);
+    Object.entries(expectant).forEach(([prop, value]) => {
+      this.validateOptions(prop, value, expectant);
+    });
 
-    this.scale && this.scale.update();
-    this.thumbs && this.thumbs.update('', null);
-    this.stretcher && this.stretcher.update();
+    Object.assign(this, expectant);
+    Object.entries(expectant).forEach(([prop, value]) => {
+      this.broadcast(prop, value);
+    });
+
     return this;
   }
 
-  getOptions() {
-    const publicOtions = ['min', 'max', 'range', 'step',
-      'className', 'selector', 'hintAboveThumb',
-      'angle', 'showScale', 'rangeValue'];
+  getOptions() { // Не лезь..
+    const publicOtions = [
+      'step',
+      'range', 
+      'className',
+      'selector', 
+      'hintAboveThumb',
+      'angle', 
+      'showScale', 
+      'parts',
+      // 'rangeValue'
+    ];
 
     const obj: Obj = {};
     publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
     return obj;
   }
 
-  update(eventType: string, data: ViewUpdateDataFormat): this {
-    this.thumbs.update(eventType, data);
-    this.stretcher.update();
-    this.el.style.transform = `rotate(${this.angle}deg)`;
+  update(eventType: string, data: any): this { // пока ересь
+    if (eventType === 'angle') {
+      this.el.style.transform = `rotate(${this.angle}deg)`;
+
+    } else if (eventType === 'thumbMove') {
+      this.broadcast('changeView', data);
+
+    } else if (eventType === 'anchorClick') {
+      this.handleAnchorClick(data);
+    } 
+
     return this;
   }
 
-  render(firstTime?: true): this {
-    if (firstTime) {
-      const wrapper = document.querySelector(this.selector);
-      [this.el, this.hintEl] =
-        new Array(2).fill(1).map(() => document.createElement('div'));
-      wrapper.append(this.el);
-
-      this.stretcher = new Stretcher(this);
-
-      // Come, brothers!! COME!!!!
-      this.thumbs = new ThumbsTwinsBrothers(this);
-      this.thumbLeft = this.thumbs.thumbLeft;
-      this.thumbRight = this.thumbs.thumbRight;
-      this.scale = new Scale({view: this});
-    }
-
-    this.el.classList.add(this.className);
+  render(): this { //отдельно переписать потом вызов хинта                                                                                                                   
+    const wrapper = document.querySelector(this.selector);
+    [this.el, this.hintEl] = new Array(2).fill(1).map(() => document.createElement('div'));
+    wrapper.append(this.el);
 
     this.hintEl.className = `${this.className}__hint`;
-    this.hintEl.textContent = 'HINT!';
     this.el.style.transform = `rotate(${this.angle}deg)`;
+    this.el.classList.add(this.className);
 
-    const scaleWidth = this.el.clientWidth - this.thumbLeft.offsetWidth;
-    this.scale.width = scaleWidth;
-    this.scale.renderAnchors();
+    this.thumbs = new Thumbs(this);
+    this.thumbs.addSubscriber('thumbMove', this);
+
+    this.scale = new Scale({view: this});
+    this.scale.addSubscriber('anchorClick', this);
+
+    this.addSubscriber('angle', this);
+
     return this;
   }
 
-  private _validateOptions(expectant: Obj): never | true {
-    const obj: Obj = Object.assign({}, this);
-    Object.assign(obj, expectant);
+  handleAnchorClick(offset: number): void {
+    const {thumbLeft, thumbRight} = this.thumbs;
 
-    const shouldBeNumbers: string[] = ['max', 'min', 'step', 'angle'];
-    shouldBeNumbers.forEach((key) => obj[key] = Number(obj[key]));
+    let closestThumb;
 
-    const {min, max, step, angle} = obj;
-
-    if (!isFinite(min)) throw new Error('min should be a number!');
-    if (!isFinite(max)) throw new Error('max should be a number!');
-    if (!isFinite(step)) throw new Error('step should be a number!');
-    if (!isFinite(angle)) throw new Error('angle should be a number!');
-
-    if (max < min) throw new Error('max should be greater then min!');
-    if (angle < 0 || angle > 90) {
-      throw new Error('angle should be >= 0 and <= 90');
+    if (this.range) {
+      if (offset - this.thumbs.thumbLeftOffset < this.thumbs.thumbRightOffset - offset) {
+        closestThumb = thumbLeft;
+      } else {
+        closestThumb = thumbRight;
+      }
+    } else {
+      closestThumb = thumbLeft;
     }
-    Object.assign(expectant, obj);
+    this.thumbs.moveThumbToPos(closestThumb, offset);
+  }
 
-    return true;
+  private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
+    const validator: Obj = {
+      step: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('step should be a number!');
+        }
+
+        if (val > 1) {
+          throw new Error('step is too big!');
+        } else if (val < 0) {
+          throw new Error('step is negative!');
+        } else if (val == 0) {
+          throw new Error('step is equal to zero!');
+        }
+      },
+
+      angle: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('angle should be a number!');
+        }
+
+        if (val < 0 || val > 90) {
+          throw new Error('angle should be >= 0 and <= 90');
+        }
+      },
+
+      parts: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('parts should be a number!');
+        }
+
+        let step = expectant.step || this.step;
+        if (val * step >= 1 + step) {
+          throw new Error('Either step or number of parts is too large');
+        }
+      }
+    }
+
+    if (!(key in validator)) return;
+    return validator[key](value);
   }
 }

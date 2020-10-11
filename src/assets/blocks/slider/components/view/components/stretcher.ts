@@ -24,17 +24,17 @@ export default class Stretcher extends EventObserver {
     // выделение диапазона.
     if (this.view.range) {
       this.el.style.left =
-        parseFloat(getComputedStyle(this.view.thumbLeft).left) +
-        this.view.thumbLeft.offsetWidth / 2 + 'px';
+        parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left) +
+        this.view.thumbs.thumbLeft.offsetWidth / 2 + 'px';
 
       this.el.style.right =
         this.view.el.clientWidth -
-        parseFloat(getComputedStyle(this.view.thumbRight).left) + 'px';
+        parseFloat(getComputedStyle(this.view.thumbs.thumbRight).left) + 'px';
     } else {
       this.el.style.left = '0px';
       this.el.style.right =
         this.view.el.clientWidth -
-        parseFloat(getComputedStyle(this.view.thumbLeft).left) + 'px';
+        parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left) + 'px';
     }
   }
 }

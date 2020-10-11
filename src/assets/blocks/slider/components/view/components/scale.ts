@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
+import debuggerPoint from '../../../../helpers/debugger-point';
 
 import '../../../../helpers/types';
 
@@ -7,9 +9,10 @@ export default class Scale extends EventObserver {
   width: number = 0;
   view: View | null = null;
 
-  el: HTMLDivElement;
-  private points: number[] = [0, 1];
-  range: number[];
+  el: HTMLDivElement = document.createElement('div');
+  parts: number;
+  anchors: HTMLDivElement[];
+  values: number[] = [];
 
   constructor(options: Obj) {
     super();
@@ -17,77 +20,85 @@ export default class Scale extends EventObserver {
       if (key in this) this[<keyof this>key] = options[key];
     });
 
-    this.range = [this.view.min, this.view.max];
-    this.view.addSubscriber('changeView', this);
+    this.init();
   }
 
-  update() {
+  init() {
+    const propsToSubscribe = ['showScale', 'rangeValue', 'parts'];
+    propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
+
+    this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
+    this.parts = this.view.parts;
+    this.anchors = [];
+
+    this.render();
+  }
+
+  update(prop: string, data: any) { // пока не обработал rangeValue
+    if (debuggerPoint.start == 1) debugger;
+    if (prop === 'showScale') {
+      this.displayScale();
+    }
+
+    if (prop === 'parts') {
+      this.parts = this.view.parts;
+      this.render();
+    }
+
+    if(prop === 'step') {
+      this.render();
+    }
+  }
+
+  render() {
+    this.anchors.forEach(item => item.remove());
+    this.anchors.length = 0;
+
+    this.el.className = this.view.el.className + '__scale';
+    this.view.el.append(this.el);
+
+    const {step} = this.view;
+    this.values.length = 0;
+
+    for (let i = 1; i < this.parts; i++) {
+      let value = Math.round(Math.round(i / this.parts / step) * step * 1000) / 1000;
+      value = Math.min(1, value);
+
+      this.values.push(value);
+    }
+
+    this.values = [0, ...this.values, 1];
+
+    this.values.forEach(value => {
+      const div = document.createElement('div');
+      div.className = this.view.el.className + '__scale-points';
+
+      const pixelStep: number = step * this.width;
+      let left = value * this.width;
+      div.style.left = left + 'px';
+      div.textContent = String(value);
+
+      this.anchors.push(div);
+      div.style.transform = `rotate(-${this.view.angle}deg)`; //?
+
+      this.el.append(div);
+      div.addEventListener('click', this.handleMouseClick.bind(this));
+    });
+  }
+
+  handleMouseClick(e: MouseEvent) {
+    const el = <HTMLDivElement>e.target;
+    const left = getComputedStyle(el).left;
+    const offset = parseFloat(left) / this.width;
+
+    this.broadcast('anchorClick', offset);
+  }
+
+  displayScale() {
     if (!this.view.showScale) {
       this.el.style.display = 'none';
-      return;
     } else {
       this.el.style.display = '';
     }
-
-    this.range = [this.view.min, this.view.max];
-
-    const left = this.el.querySelector('[data-side=L]');
-    const right: HTMLDivElement = this.el.querySelector('[data-side=R]');
-
-    if (this.view.rangeValue.length) {
-      left.textContent = this.view.rangeValue[0] + '';
-      right.textContent = this.view.rangeValue[1] + '';
-    } else {
-      left.textContent = this.range[0] + '';
-      right.textContent = this.range[1] + '';
-    }
-
-    right.style.left = this.view.el.clientWidth - right.offsetWidth + 'px';
-  }
-
-  renderAnchors() {
-    const scaleDiv = document.createElement('div');
-    scaleDiv.className = this.view.el.className + '__scale';
-    this.view.el.append(scaleDiv);
-    this.el = scaleDiv;
-
-    for (let i = 0; i < this.points.length; i++) {
-      const div = document.createElement('div');
-
-      div.dataset.side = i == 0 ? 'L' : 'R';
-      div.className = this.view.el.className + '__scale-points';
-      scaleDiv.append(div);
-
-      div.style.left = this.points[i] * this.width + 'px';
-      div.textContent = this.range[i] + '';
-
-      div.addEventListener('click', this._onMouseClick.bind(this));
-    }
-
-    this.update();
-  }
-
-  _onMouseClick(e: MouseEvent) {
-    const target: HTMLDivElement = <HTMLDivElement>e.target;
-    let closestThumb: HTMLDivElement =
-      this.view.el.querySelector('[class*=left]');
-
-    if (target.dataset.side === 'R') {
-      const rightThumb: HTMLDivElement | null =
-        this.view.el.querySelector('[class*=right]');
-      closestThumb = rightThumb ? rightThumb : closestThumb;
-    }
-
-    const data = {
-      el: closestThumb,
-      offset: target.dataset.side === 'L' ? 0 : 1,
-    };
-
-    this._moveThumbToOffset(data.el, data.offset);
-    this.view.broadcast('changeView', data);
-  }
-
-  _moveThumbToOffset(thumb: HTMLDivElement, offset: number): void {
-    thumb.style.left = offset * this.width + 'px';
   }
 }

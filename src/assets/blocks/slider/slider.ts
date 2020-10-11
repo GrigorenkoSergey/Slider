@@ -28,7 +28,12 @@ class Slider extends EventObserver implements ISubscriber {
   constructor(options: any) {
     super();
     this._model = new Model(options);
+
+    //step для View немного отличается
+    const {min, max, step} = options;
+    options.step = step / (max - min);
     this._view = new View(options);
+
     this.hintEl = this._view.hintEl;
     // для того, чтобы можно было отвязать и привязать подсказку над бегунком
 
@@ -78,7 +83,7 @@ class Slider extends EventObserver implements ISubscriber {
   setOptions(options: Obj): Slider {
     this._model.setOptions.call(this._model, options);
     this._view.setOptions.call(this._view, options);
-    this._view.update('changeModel', this._model.getThumbsOffset());
+    // this._view.update('changeModel', this._model.getThumbsOffset());
 
     return this;
   }

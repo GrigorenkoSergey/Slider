@@ -1,9 +1,13 @@
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
-export default class ThumbsTwinsBrothers extends EventObserver {
-  thumbLeft: HTMLDivElement = document.createElement('div');
-  thumbRight: HTMLDivElement = document.createElement('div');
+import '../../../../helpers/types.ts';
+
+export default class Thumbs extends EventObserver {
+  thumbLeft: HTMLDivElement;
+  thumbRight: HTMLDivElement;
+  thumbLeftOffset: number = 0;
+  thumbRightOffset: number = 1;
   view: View | null = null;
 
   constructor(view: View) {
@@ -13,41 +17,41 @@ export default class ThumbsTwinsBrothers extends EventObserver {
   }
 
   render() {
-    const {thumbLeft, thumbRight} = this;
+    const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
+    Object.assign(this, {thumbLeft, thumbRight});
+
     thumbLeft.className = `${this.view.className}__thumb-left`;
     thumbRight.className = `${this.view.className}__thumb-right`;
 
     this.view.el.append(thumbLeft);
-
-    if (this.view.range) {
-      this.view.el.append(thumbRight);
-    } else {
-      thumbRight.remove();
-    }
+    this.displayThumbRight();
 
     thumbLeft.addEventListener('mousedown', this.handleThumbClick.bind(this));
     thumbRight.addEventListener('mousedown', this.handleThumbClick.bind(this));
+
+    this.view.addSubscriber('range', this);
   }
 
-  update(eventType: string, data: ViewUpdateDataFormat | null): this {
-    if (data) {
-      this.thumbLeft.style.left =
-        data.L.offset *
-        (this.view.el.clientWidth - this.thumbLeft.offsetWidth) + 'px';
-    }
-
-    if (this.view.range) {
-      this.view.el.append(this.thumbRight);
-
-      if (data) {
-        this.thumbRight.style.left =
-          data.R.offset *
-          (this.view.el.clientWidth - this.thumbRight.offsetWidth) + 'px';
-      }
-    } else {
-      this.thumbRight.remove();
+  update(eventType: string): this {
+    if (eventType === 'range') {
+      this.displayThumbRight();
     }
     return this;
+  }
+
+  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+    thumb.style.left = offset * (this.view.el.clientWidth - thumb.offsetWidth) + 'px';
+
+    if (thumb == this.thumbLeft) {
+      this.thumbLeftOffset = offset;
+    } else {
+      this.thumbRightOffset = offset;
+    }
+    
+    this.broadcast('thumbMove', {
+      el: thumb,
+      offset: offset,
+    });
   }
 
   handleThumbClick(e: MouseEvent) {
@@ -67,41 +71,34 @@ export default class ThumbsTwinsBrothers extends EventObserver {
     const sinA: number = Math.sin(view.getOptions().angle / 180 * Math.PI);
 
     const pixelStep: number =
-      view.getOptions().step * (slider.clientWidth - thumb.offsetWidth) /
-      (view.max - view.min);
+      this.view.step * (slider.clientWidth - thumb.offsetWidth);
 
-    // Найдем ограничители для бегунка
-    const leftLimit: number = 0;
-    const rightLimit: number = slider.clientWidth - thumb.offsetWidth;
-
-    let swapClassLimit: number | null = null;
-
-    if (view.range) {
-      const thumbList = (view.el.querySelectorAll('[class*=thumb]'));
-      const nextThumb = [].filter
-        .call(thumbList, (item: Element) => item != e.target)[0];
-
-      const nextThumbStyle = getComputedStyle(nextThumb);
-      swapClassLimit = parseFloat(nextThumbStyle.left);
+    let leftLimit: number; 
+    if (thumb === this.thumbLeft) {
+      leftLimit = 0;
+    } else {
+      leftLimit = parseFloat(getComputedStyle(this.thumbLeft).left) + this.thumbLeft.offsetWidth;
     }
+
+    let rightLimit: number;
+    if (thumb === this.thumbLeft && this.view.range) {
+      rightLimit = parseFloat(getComputedStyle(this.thumbRight).left)- thumb.offsetWidth;
+    } else {
+      rightLimit = slider.clientWidth - thumb.offsetWidth;
+    } 
 
     const shiftX: number = e.clientX - thumbCoords.left;
     const shiftY: number = e.clientY - thumbCoords.top;
 
-    if (view.hintAboveThumb) {
-      thumb.append(view.hintEl);
-    }
     thumb.classList.add(`${view.className}__thumb_moving`);
 
     const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
-    // scaleInnerWidth for use in handleDocumentMouseMove
 
-    // при любом событии элементы впредь будут пищать о нем ))
-    view.broadcast('changeView', {
+    this.broadcast('thumbClick', {
       el: thumb,
-      offset: parseFloat(getComputedStyle(thumb).left) / scaleInnerWidth,
     });
 
+    const self = this;
     document.addEventListener('mousemove', handleDocumentMouseMove);
     document.addEventListener('mouseup', handleDocumentMouseUp);
 
@@ -119,23 +116,22 @@ export default class ThumbsTwinsBrothers extends EventObserver {
 
       thumb.style.left = newLeft + 'px';
 
-      if (view.range) {
-        if (thumb.className.includes('right')) {
-          (newLeft < swapClassLimit) && swapThumbClasses();
-        } else {
-          (newLeft > swapClassLimit) && swapThumbClasses();
-        }
+      const offset = newLeft / scaleInnerWidth;
+
+      if (thumb === self.thumbLeft) {
+        self.thumbLeftOffset = offset;
+      } else {
+        self.thumbRightOffset = offset;
       }
 
-      view.broadcast('changeView', {
+      self.broadcast('thumbMove', {
         el: thumb,
-        offset: newLeft / scaleInnerWidth,
+        offset,
       });
     }
 
     function handleDocumentMouseUp(): void {
       thumb.classList.remove(`${view.className}__thumb_moving`);
-      view.hintEl.remove();
       document.removeEventListener('mousemove', handleDocumentMouseMove);
       document.removeEventListener('mouseup', handleDocumentMouseUp);
     }
@@ -143,13 +139,13 @@ export default class ThumbsTwinsBrothers extends EventObserver {
     function takeStepIntoAccount(x: number, step: number): number {
       return Math.round(x / step) * step;
     }
+  }
 
-    function swapThumbClasses(): void {
-      [view.thumbLeft, view.thumbRight] = [view.thumbRight, view.thumbLeft];
-      view.thumbRight.className =
-        view.thumbRight.className.replace(/left/, 'right');
-      view.thumbLeft.className =
-        view.thumbLeft.className.replace(/right/, 'left');
+  displayThumbRight() {
+    if (this.view.range) {
+      this.view.el.append(this.thumbRight);
+    } else {
+      this.thumbRight.remove();
     }
   }
 }
