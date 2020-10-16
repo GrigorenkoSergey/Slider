@@ -16,12 +16,10 @@ export default class Stretcher extends EventObserver {
     this.el = document.createElement('div');
     this.el.className = `${this.view.className}__stretcher`;
     this.view.el.append(this.el);
+    this.update();
   }
 
   update() {
-    // Да, можно было изначально сделать thumbs в Stratcher,
-    // но я благополучно слажал с самого начала, забыв про цветовое
-    // выделение диапазона.
     if (this.view.range) {
       this.el.style.left =
         parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left) +

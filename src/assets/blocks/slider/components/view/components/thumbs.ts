@@ -26,8 +26,8 @@ export default class Thumbs extends EventObserver {
     this.view.el.append(thumbLeft);
     this.displayThumbRight();
 
-    thumbLeft.addEventListener('mousedown', this.handleThumbClick.bind(this));
-    thumbRight.addEventListener('mousedown', this.handleThumbClick.bind(this));
+    thumbLeft.addEventListener('mousedown', this.handleThumbMousedown.bind(this));
+    thumbRight.addEventListener('mousedown', this.handleThumbMousedown.bind(this));
 
     this.view.addSubscriber('range', this);
   }
@@ -54,7 +54,7 @@ export default class Thumbs extends EventObserver {
     });
   }
 
-  handleThumbClick(e: MouseEvent) {
+  handleThumbMousedown(e: MouseEvent) {
     e.preventDefault();
 
     const thumb = <HTMLElement>e.target;
@@ -93,9 +93,11 @@ export default class Thumbs extends EventObserver {
     thumb.classList.add(`${view.className}__thumb_moving`);
 
     const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
+    const offset = thumb == this.thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
-    this.broadcast('thumbClick', {
+    this.broadcast('thumbMousedown', {
       el: thumb,
+      offset,
     });
 
     const self = this;
@@ -132,6 +134,7 @@ export default class Thumbs extends EventObserver {
 
     function handleDocumentMouseUp(): void {
       thumb.classList.remove(`${view.className}__thumb_moving`);
+      self.broadcast('thumbMouseup', thumb);
       document.removeEventListener('mousemove', handleDocumentMouseMove);
       document.removeEventListener('mouseup', handleDocumentMouseUp);
     }

@@ -34,7 +34,7 @@ class Slider extends EventObserver implements ISubscriber {
     options.step = step / (max - min);
     this._view = new View(options);
 
-    this.hintEl = this._view.hintEl;
+    // this.hintEl = this._view.hint.el;
     // для того, чтобы можно было отвязать и привязать подсказку над бегунком
 
     const [model, view] = [this._model, this._view];
@@ -48,15 +48,15 @@ class Slider extends EventObserver implements ISubscriber {
     model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
 
     // Займемся подсказкой
-    const hint = this._view.hintEl;
-    const fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
-      const res = data.el == 'L' ? leftX : rightX;
-      elem.textContent = '' + Math.round(res);
-    };
+    // const hint = this._view.hint.el;
+    // const fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
+    //   const res = data.el == 'L' ? leftX : rightX;
+    //   elem.textContent = '' + Math.round(res);
+    // };
 
     // Информация в подсказке должна отображаться уже после того,
     // как обработана модель и вид, поэтому она добавлена именно в конце.
-    this.bindWith(hint, this._model.min, this._model.max, fnRes);
+    // this.bindWith(hint, this._model.min, this._model.max, fnRes);
   }
 
   update(eventType: string, data: any): void {

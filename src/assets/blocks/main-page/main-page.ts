@@ -2,7 +2,8 @@ import './main-page.scss';
 import '../helpers/types';
 import '../slider/slider';
 
-import SliderOptionsPalette from './components/slider-options-palette';
+// import SliderOptionsPalette from './components/slider-options-palette';
+/*
 
 let options1 = {
   min: 2,
@@ -140,3 +141,8 @@ let fnResBird: fnResType = (elem, leftX, resLeft) => {
 }
 
 slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
+*/
+
+
+import View from '../slider/components/view/view';
+const view = new View({selector: '.slider', hintAlwaysShow: false});

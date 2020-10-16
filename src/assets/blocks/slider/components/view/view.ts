@@ -2,16 +2,17 @@
 import EventObserver from '../../../helpers/event-observer';
 import {ISubscriber} from '../../../helpers/interfaces';
 
-// import Stretcher from './components/stretcher';
+import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import Thumbs from './components/thumbs';
 
 import '../../../helpers/types';
+import Hint from './components/hint';
 
 // import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class View extends EventObserver implements ISubscriber {
-  el: HTMLDivElement;
+  el: HTMLDivElement = document.createElement('div');
   className: string = 'slider';
 
   step: number = 1/100;
@@ -20,16 +21,15 @@ export default class View extends EventObserver implements ISubscriber {
   selector: string = '';
   hintAboveThumb = true;
 
-  hintEl: HTMLDivElement;
-  hintAlwaysShow: false;
+  hints: Hint[];
+  hintAlwaysShow: boolean = false;
 
   thumbs: Thumbs;
 
   scale: Scale;
   showScale: boolean = true;
-  parts: number = 2;
-  rangeValue: any[] = [];
-  // stretcher: Stretcher; // Ну как назвал, так назвал...
+  partsNum: number = 2;
+  stretcher: Stretcher; // Ну как назвал, так назвал...
 
 
   constructor(options: Obj) { // пока не лезь сюда. Вроде все нормально.
@@ -73,8 +73,7 @@ export default class View extends EventObserver implements ISubscriber {
       'hintAboveThumb',
       'angle', 
       'showScale', 
-      'parts',
-      // 'rangeValue'
+      'partsNum',
     ];
 
     const obj: Obj = {};
@@ -85,31 +84,58 @@ export default class View extends EventObserver implements ISubscriber {
   update(eventType: string, data: any): this { // пока ересь
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
-
     } else if (eventType === 'thumbMove') {
+      this.handleThumbMove(data.el, data.offset);
       this.broadcast('changeView', data);
 
     } else if (eventType === 'anchorClick') {
       this.handleAnchorClick(data);
-    } 
+
+    } else if (eventType === 'thumbMousedown') {
+      this.handleThumbMousedown(data.el, data.offset);
+
+    } else if (eventType === 'thumbMouseup') {
+      this.handleThumbMouseup(data);
+
+    } else if (eventType === 'hintAlwaysShow') {
+      if (this.hintAlwaysShow) {
+        this.hints.forEach(hint => hint.showHint());
+      } else {
+        this.hints.forEach(hint => hint.hideHint());
+      }
+    }
 
     return this;
   }
 
-  render(): this { //отдельно переписать потом вызов хинта                                                                                                                   
+  render(): this {
     const wrapper = document.querySelector(this.selector);
-    [this.el, this.hintEl] = new Array(2).fill(1).map(() => document.createElement('div'));
     wrapper.append(this.el);
 
-    this.hintEl.className = `${this.className}__hint`;
     this.el.style.transform = `rotate(${this.angle}deg)`;
     this.el.classList.add(this.className);
 
     this.thumbs = new Thumbs(this);
     this.thumbs.addSubscriber('thumbMove', this);
+    this.thumbs.addSubscriber('thumbMousedown', this);
+    this.thumbs.addSubscriber('thumbMouseup', this);
+
+    this.hints = [
+      new Hint(
+        this, 
+        this.thumbs.thumbLeft, 
+        String(this.thumbs.thumbLeftOffset.toFixed(2))),
+
+      new Hint(this,
+        this.thumbs.thumbRight, 
+        String(this.thumbs.thumbRightOffset.toFixed(2))),
+    ];
+    this.addSubscriber('hintAlwaysShow', this);
 
     this.scale = new Scale({view: this});
     this.scale.addSubscriber('anchorClick', this);
+
+    this.stretcher = new Stretcher(this);
 
     this.addSubscriber('angle', this);
 
@@ -130,7 +156,34 @@ export default class View extends EventObserver implements ISubscriber {
     } else {
       closestThumb = thumbLeft;
     }
+
     this.thumbs.moveThumbToPos(closestThumb, offset);
+  }
+
+  handleThumbMousedown(thumb: HTMLDivElement, offset: number) {
+    if (!this.hintAboveThumb) return;
+
+    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+
+    hint.setHintValue(offset.toFixed(2));
+    hint.showHint();
+  }
+
+  handleThumbMouseup(thumb: HTMLElement) {
+    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+
+    if (!this.hintAlwaysShow) {
+      hint.hideHint();
+    }
+  }
+
+  handleThumbMove(thumb: HTMLElement, offset: number) {
+    if (!this.hintAboveThumb) return;
+
+    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+
+    hint.setHintValue(offset.toFixed(2));
+    hint.showHint();
   }
 
   private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
@@ -159,14 +212,14 @@ export default class View extends EventObserver implements ISubscriber {
         }
       },
 
-      parts: (val: number) => {
+      partsNum: (val: number) => {
         if (!isFinite(val)) {
-          throw new Error('parts should be a number!');
+          throw new Error('partsNum should be a number!');
         }
 
         let step = expectant.step || this.step;
         if (val * step >= 1 + step) {
-          throw new Error('Either step or number of parts is too large');
+          throw new Error('Either step or number of partsNum is too large');
         }
       }
     }

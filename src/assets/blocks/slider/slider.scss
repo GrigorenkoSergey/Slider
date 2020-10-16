@@ -15,7 +15,7 @@
     box-sizing: content-box;
     background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
     border: 2px solid white;
-    border-radius: 10px;
+    border-radius: 50%;
     position: absolute;
     top: -6px;
     cursor: pointer;
@@ -23,13 +23,27 @@
 
   &__hint {
     position: absolute;
-    top: -20px;
-    left: -3px;
-    font-size: 8px;
+    top: -30px;
+    font-size: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: default;
   }
 
-  &__thumb_moving {
-    transform: scale(2);
+  &__thumb_moving::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    box-sizing: content-box;
+    background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
+    border: 4px solid white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    z-index: 1000;
   }
 
   &__thumb-left {

@@ -10,9 +10,10 @@ export default class Scale extends EventObserver {
   view: View | null = null;
 
   el: HTMLDivElement = document.createElement('div');
-  parts: number;
+  partsNum: number;
   anchors: HTMLDivElement[];
-  values: number[] = [];
+  parts: number[] = [];
+  valuesShown: number[] | string[] = [];
 
   constructor(options: Obj) {
     super();
@@ -24,11 +25,11 @@ export default class Scale extends EventObserver {
   }
 
   init() {
-    const propsToSubscribe = ['showScale', 'rangeValue', 'parts'];
+    const propsToSubscribe = ['showScale', 'rangeValue', 'partsNum'];
     propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
 
     this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
-    this.parts = this.view.parts;
+    this.partsNum = this.view.partsNum;
     this.anchors = [];
 
     this.render();
@@ -40,8 +41,8 @@ export default class Scale extends EventObserver {
       this.displayScale();
     }
 
-    if (prop === 'parts') {
-      this.parts = this.view.parts;
+    if (prop === 'partsNum') {
+      this.partsNum = this.view.partsNum;
       this.render();
     }
 
@@ -58,18 +59,18 @@ export default class Scale extends EventObserver {
     this.view.el.append(this.el);
 
     const {step} = this.view;
-    this.values.length = 0;
+    this.parts.length = 0;
 
-    for (let i = 1; i < this.parts; i++) {
-      let value = Math.round(Math.round(i / this.parts / step) * step * 1000) / 1000;
+    for (let i = 1; i < this.partsNum; i++) {
+      let value = Math.round(Math.round(i / this.partsNum / step) * step * 1000) / 1000;
       value = Math.min(1, value);
 
-      this.values.push(value);
+      this.parts.push(value);
     }
 
-    this.values = [0, ...this.values, 1];
+    this.parts = [0, ...this.parts, 1];
 
-    this.values.forEach(value => {
+    this.parts.forEach(value => {
       const div = document.createElement('div');
       div.className = this.view.el.className + '__scale-points';
 
@@ -83,6 +84,13 @@ export default class Scale extends EventObserver {
 
       this.el.append(div);
       div.addEventListener('click', this.handleMouseClick.bind(this));
+    });
+  }
+
+  setAnchorValues(values: number[] | string[]) {
+    this.valuesShown = values;
+    this.anchors.forEach((div, i) => {
+      div.textContent = String(values[i]);
     });
   }
 
