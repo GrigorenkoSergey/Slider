@@ -2,19 +2,20 @@ import './main-page.scss';
 import '../helpers/types';
 import '../slider/slider';
 
-// import SliderOptionsPalette from './components/slider-options-palette';
-/*
+import SliderOptionsPalette from './components/slider-options-palette';
 
 let options1 = {
   min: 2,
-  max: 6,
-  step: 3,
+  max: 100,
+  step: 2,
   selector: ".slider1",
   angle: 0,
   range: false,
   hintAboveThumb: true,
 }
 let slider1 = $('.slider1').slider(options1);
+
+/*
 
 let options2 = {
   min: 100,
@@ -144,5 +145,5 @@ slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 */
 
 
-import View from '../slider/components/view/view';
-const view = new View({selector: '.slider', hintAboveThumb: false});
+// import View from '../slider/components/view/view';
+// const view = new View({selector: '.slider', hintAboveThumb: false});

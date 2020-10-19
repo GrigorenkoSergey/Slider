@@ -19,24 +19,21 @@ import jQuery from 'jquery';
 class Slider extends EventObserver implements ISubscriber {
   _model: Model;
   _view: View;
-  // Хотел сделать приватными, но для отладки довольно неудобно.
-  // Перенастраивать Karma для js неохота..
 
-  hintEl: HTMLDivElement;
   private bindedElements: Array<ISubscriber & {el: HTMLElement}> = [];
 
   constructor(options: any) {
     super();
     this._model = new Model(options);
-
     //step для View немного отличается
     const {min, max, step} = options;
     options.step = step / (max - min);
     this._view = new View(options);
 
-    // this.hintEl = this._view.hint.el;
-    // для того, чтобы можно было отвязать и привязать подсказку над бегунком
+    this.init();
+  }
 
+  init() {
     const [model, view] = [this._model, this._view];
 
     this.addSubscriber('changeView', model);
@@ -45,33 +42,24 @@ class Slider extends EventObserver implements ISubscriber {
     this.addSubscriber('changeModel', view);
     view.addSubscriber('changeView', this);
 
-    model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
+    view.thumbs.removeSubscriber('thumbMousedown', view);
+    view.thumbs.addSubscriber('thumbMousedown', this);
+    this.addSubscriber('thumbMousedown', view);
 
-    // Займемся подсказкой
-    // const hint = this._view.hint.el;
-    // const fnRes: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
-    //   const res = data.el == 'L' ? leftX : rightX;
-    //   elem.textContent = '' + Math.round(res);
-    // };
-
-    // Информация в подсказке должна отображаться уже после того,
-    // как обработана модель и вид, поэтому она добавлена именно в конце.
-    // this.bindWith(hint, this._model.min, this._model.max, fnRes);
+    // model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
   }
 
   update(eventType: string, data: any): void {
     if (eventType == 'changeModel') {
-      // for View data should be {
-      // "L": {x: number, offset: number}, "R": {x: number, offset: number}
-      // }
-      // data.offset should be in range from 0 to 1
-
       this.broadcast('changeModel', data);
+
     } else if (eventType == 'changeView') {
-      // for Model data should be {el: HTMLDivElement, offset: number}
-      // data.el.className should contain "left" of "right" substrings
       data.el && (data.el = data.el.className.includes('left') ? 'L' : 'R');
       this.broadcast('changeView', data);
+
+    } else if (eventType == 'thumbMousedown') {
+      data.offset = this._model.intempolate(data.offset);
+      this.broadcast(eventType, data);
     }
   }
 
@@ -82,8 +70,8 @@ class Slider extends EventObserver implements ISubscriber {
 
   setOptions(options: Obj): Slider {
     this._model.setOptions.call(this._model, options);
+
     this._view.setOptions.call(this._view, options);
-    // this._view.update('changeModel', this._model.getThumbsOffset());
 
     return this;
   }

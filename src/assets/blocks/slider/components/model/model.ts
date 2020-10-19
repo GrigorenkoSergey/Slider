@@ -53,8 +53,8 @@ export default class Model extends EventObserver
   }
 
   update(eventType: string, data: {el: 'L' | 'R', offset: number}): void {
-    let x = this._intempolate(data.offset);
-    x = this._takeStepIntoAccount(x);
+    let x = this.intempolate(data.offset);
+    // x = this._takeStepIntoAccount(x);
     x = Math.min(this.max, Math.max(this.min, x));
     // Иногда так округляется, что выходим за пределы
 
@@ -179,7 +179,7 @@ export default class Model extends EventObserver
     return Math.round((x - this.min) / this.step) * this.step + this.min;
   }
 
-  private _intempolate(offset: number): number {
+  intempolate(offset: number): number {
     const ticksRange = this._ticksRange;
     const ticksValue = this._ticksValues;
 
@@ -194,7 +194,7 @@ export default class Model extends EventObserver
         const fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
         const fnB = ticksRange[i];
 
-        return (offset - a) * (fnB - fnA) / (b - a) + fnA;
+        return this._takeStepIntoAccount((offset - a) * (fnB - fnA) / (b - a) + fnA);
       }
     }
   }

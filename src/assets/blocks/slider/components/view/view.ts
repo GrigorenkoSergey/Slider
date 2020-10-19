@@ -104,6 +104,7 @@ export default class View extends EventObserver implements ISubscriber {
       }
     }
 
+    this.broadcast(eventType, data);
     return this;
   }
 
@@ -123,11 +124,11 @@ export default class View extends EventObserver implements ISubscriber {
       new Hint(
         this, 
         this.thumbs.thumbLeft, 
-        this.thumbs.thumbLeftOffset.toFixed(2)),
+        this.thumbs.thumbLeftOffset),
       new Hint(
         this, 
         this.thumbs.thumbRight, 
-        this.thumbs.thumbRightOffset.toFixed(2)),
+        this.thumbs.thumbRightOffset),
     ];
 
     this.addSubscriber('hintAlwaysShow', this);
@@ -158,13 +159,14 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     this.thumbs.moveThumbToPos(closestThumb, offset);
+    this.handleThumbMouseup(closestThumb);
   }
 
   handleThumbMousedown(thumb: HTMLDivElement, offset: number) {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-    hint.showHint(offset.toFixed(2));
+    hint.showHint(offset);
   }
 
   handleThumbMouseup(thumb: HTMLElement) {
@@ -179,7 +181,7 @@ export default class View extends EventObserver implements ISubscriber {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-    hint.showHint(offset.toFixed(2));
+    hint.showHint(offset);
   }
 
   private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
