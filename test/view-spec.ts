@@ -251,7 +251,6 @@ describe(`Также присутствует интерактивная шка�
     anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.36');
 
-    // debuggerPoint.start = 1;
     view.setOptions({step: 0.36, partsNum: 3});
     anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.36');

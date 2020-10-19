@@ -145,4 +145,4 @@ slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 
 
 import View from '../slider/components/view/view';
-const view = new View({selector: '.slider', hintAlwaysShow: false});
+const view = new View({selector: '.slider', hintAboveThumb: false});

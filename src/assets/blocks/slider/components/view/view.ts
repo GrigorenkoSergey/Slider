@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import EventObserver from '../../../helpers/event-observer';
 import {ISubscriber} from '../../../helpers/interfaces';
 
@@ -29,7 +28,7 @@ export default class View extends EventObserver implements ISubscriber {
   scale: Scale;
   showScale: boolean = true;
   partsNum: number = 2;
-  stretcher: Stretcher; // Ну как назвал, так назвал...
+  stretcher: Stretcher;
 
 
   constructor(options: Obj) { // пока не лезь сюда. Вроде все нормально.
@@ -81,7 +80,7 @@ export default class View extends EventObserver implements ISubscriber {
     return obj;
   }
 
-  update(eventType: string, data: any): this { // пока ересь
+  update(eventType: string, data: any): this {
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
     } else if (eventType === 'thumbMove') {
@@ -124,12 +123,13 @@ export default class View extends EventObserver implements ISubscriber {
       new Hint(
         this, 
         this.thumbs.thumbLeft, 
-        String(this.thumbs.thumbLeftOffset.toFixed(2))),
-
-      new Hint(this,
+        this.thumbs.thumbLeftOffset.toFixed(2)),
+      new Hint(
+        this, 
         this.thumbs.thumbRight, 
-        String(this.thumbs.thumbRightOffset.toFixed(2))),
+        this.thumbs.thumbRightOffset.toFixed(2)),
     ];
+
     this.addSubscriber('hintAlwaysShow', this);
 
     this.scale = new Scale({view: this});
@@ -164,9 +164,7 @@ export default class View extends EventObserver implements ISubscriber {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-
-    hint.setHintValue(offset.toFixed(2));
-    hint.showHint();
+    hint.showHint(offset.toFixed(2));
   }
 
   handleThumbMouseup(thumb: HTMLElement) {
@@ -181,9 +179,7 @@ export default class View extends EventObserver implements ISubscriber {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-
-    hint.setHintValue(offset.toFixed(2));
-    hint.showHint();
+    hint.showHint(offset.toFixed(2));
   }
 
   private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
