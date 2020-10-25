@@ -14,7 +14,6 @@ export default class Model extends EventObserver
   thumbLeftPos = 0;
   thumbRightPos = 0;
   ticks: {[key: number]: number} = {0: 0};
-  angle = 0;
   range = false;
 
   private _totalItems: number;
@@ -41,7 +40,6 @@ export default class Model extends EventObserver
       ticks: () => {
         return {[options.max]: options.max};
       },
-      angle: () => 0,
       range: () => false,
     };
 
@@ -76,7 +74,7 @@ export default class Model extends EventObserver
 
   getOptions() {
     const publicOtions = ['min', 'max', 'range', 'step',
-      'thumbLeftPos', 'thumbRightPos', 'ticks', 'angle'];
+      'thumbLeftPos', 'thumbRightPos', 'ticks',];
 
     const obj: Obj = {};
     publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
@@ -85,7 +83,7 @@ export default class Model extends EventObserver
 
   setOptions(expectant: Obj): Model {
     const shouldBeNumbers: string[] = ['min', 'max', 'step', 'thumbLeftPos',
-      'thumbRightPos', 'angle'];
+      'thumbRightPos',];
 
     // Проигнорируем лишние свойства
     const commonKeys = Object.keys(expectant)
@@ -113,12 +111,9 @@ export default class Model extends EventObserver
     // if (debuggerPoint.start == 5) debugger; //Для будущей отладки
     if (Object.keys(obj.ticks).length < 2) obj.ticks = {[obj.max]: obj.max};
 
-    let {min, max, step, thumbLeftPos, thumbRightPos, angle, ticks} = obj;
+    let {min, max, step, thumbLeftPos, thumbRightPos, ticks} = obj;
 
     if (max < min) throw new Error('Max should be greater then min!');
-    if (angle < 0 || angle > 90) {
-      throw new Error('Angle should be >= 0 and <= 90');
-    }
     if (step > (max - min)) throw new Error('To large step!');
     if (step <= 0) throw new Error('Step should be >= 0');
 

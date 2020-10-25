@@ -2,57 +2,58 @@ extends ../template/template.pug
 
 
 block content
+  div.slider(style="width: 60%; margin: 50px auto")
   div.slider1(style="width: 60%; margin: 50px auto")
-//- mixin example(num)
-//-   - let wrapper = "example" + num;
-//-   - let containerName = "slider-container" + num;
-//-   - let slider = "slider" + num
+mixin example(num)
+  - let wrapper = "example" + num;
+  - let containerName = "slider-container" + num;
+  - let slider = "slider" + num
 
-//-   div(class= wrapper)
-//-     div(class = slider)
-//-     ul.slider-options
-//-       each val in optionsInputs
-//-         li.slider-options__li= val
-//-           input.slider-options__input(name = val value = val)
-//-       li.slider-options__li_checkbox
-//-         each val in optionsCheckbox
-//-           label.slider-options__label= val[1]
-//-             input.slider-options_checkbox(type="checkbox" name = val[0])
+  div(class= wrapper)
+    div(class = slider)
+    ul.slider-options
+      each val in optionsInputs
+        li.slider-options__li= val
+          input.slider-options__input(name = val value = val)
+      li.slider-options__li_checkbox
+        each val in optionsCheckbox
+          label.slider-options__label= val[1]
+            input.slider-options_checkbox(type="checkbox" name = val[0])
 
-//- block includes
+block includes
 
-//- block variables
-//-   - 
-//-     var titleName = 'SLIDERS'
-//-     var optionsInputs = ["min", "max", "step", "angle",
-//-       "thumbLeftPos", "thumbRightPos", "parts"];
-//-     var optionsCheckbox = [["range", "Диапазон"], ["hintAboveThumb", "Подсказка"], ["showScale", "Покaзать шкалу"]];
+block variables
+  - 
+    var titleName = 'SLIDERS'
+    var optionsInputs = ["min", "max", "step", "angle",
+      "thumbLeftPos", "thumbRightPos", "parts"];
+    var optionsCheckbox = [["range", "Диапазон"], ["hintAboveThumb", "Подсказка"], ["showScale", "Покaзать шкалу"]];
 
 //- block content
 
-//-   .examples
-//-     +example(1)
-//-     +example(2)
-//-     +example(3)
-//-     .div
-//-       p Below is an example of a non-linear scale. Do not experiment with max and min.
-//-       +example(4)
+  //- .examples
+    //- +example(1)
+    //- +example(2)
+    //- +example(3)
+    //- .div
+    //-   p Below is an example of a non-linear scale. Do not experiment with max and min.
+    //-   +example(4)
 
-//-   h1 Usage examples
-//-   .usage-examples
-//-     .slider5-container
-//-       .slider5
-//-       -
-//-         let i = 65;
-//-         let arr = new Array(58).fill(1).map(item => i++);
-//-         let pContent = String.fromCodePoint(...arr);
+  //- h1 Usage examples
+  //- .usage-examples
+  //-   .slider5-container
+  //-     .slider5
+  //-     -
+  //-       let i = 65;
+  //-       let arr = new Array(58).fill(1).map(item => i++);
+  //-       let pContent = String.fromCodePoint(...arr);
 
-//-       p.slider5__p=  pContent 
+  //-     p.slider5__p=  pContent 
 
-//-     .slider6-container
-//-       .slider6
-//-       .slider6-container__text A
+  //-   .slider6-container
+  //-     .slider6
+  //-     .slider6-container__text A
 
-//-     .slider7-container
-//-       .slider7
-//-       .imgSprite
+  //-   .slider7-container
+  //-     .slider7
+  //-     .imgSprite

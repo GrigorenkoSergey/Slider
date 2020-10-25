@@ -8,7 +8,7 @@ import Model from './components/model/model';
 import View from './components/view/view';
 import jQuery from 'jquery';
 
-// import debuggerPoint from './components/helpers/debugger-point';
+// import debuggerPoint from '../helpers/debugger-point';
 
 (function($) {
   $.fn.slider = function(props: any) {
@@ -25,10 +25,12 @@ class Slider extends EventObserver implements ISubscriber {
   constructor(options: any) {
     super();
     this._model = new Model(options);
-    //step для View немного отличается
-    const {min, max, step} = options;
-    options.step = step / (max - min);
-    this._view = new View(options);
+
+    // step для View немного отличается
+    let optionsCopy = Object.assign({}, options);
+    const {min, max, step} = optionsCopy;
+    optionsCopy.step = step / (max - min);
+    this._view = new View(optionsCopy);
 
     this.init();
   }
@@ -46,21 +48,35 @@ class Slider extends EventObserver implements ISubscriber {
     view.thumbs.addSubscriber('thumbMousedown', this);
     this.addSubscriber('thumbMousedown', view);
 
-    // model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
+    view.thumbs.removeSubscriber('thumbMove', view);
+    view.thumbs.addSubscriber('thumbMove', this);
+    this.addSubscriber('thumbMove', view);
+
+    const scaleValues = view.scale.parts.map(value => this._model.intempolate(value));
+    view.scale.setAnchorValues(scaleValues);
+
+    model.setThumbsPos(model.thumbLeftPos, model.thumbRightPos);
   }
 
   update(eventType: string, data: any): void {
-    if (eventType == 'changeModel') {
-      this.broadcast('changeModel', data);
+    let dataCopy = Object.assign({}, data);
 
-    } else if (eventType == 'changeView') {
-      data.el && (data.el = data.el.className.includes('left') ? 'L' : 'R');
-      this.broadcast('changeView', data);
+    if (eventType == 'changeView') {
+      dataCopy.el && (dataCopy.el = dataCopy.el.className.includes('left') ? 'L' : 'R');
+
+    } else if (eventType == 'changeModel') {
+      console.log(eventType);
+      console.log(data);
+
 
     } else if (eventType == 'thumbMousedown') {
-      data.offset = this._model.intempolate(data.offset);
-      this.broadcast(eventType, data);
+      dataCopy.offset = this._model.intempolate(dataCopy.offset);
+
+    } else if (eventType == 'thumbMove') {
+      dataCopy.offset = this._model.intempolate(dataCopy.offset);
     }
+
+    this.broadcast(eventType, dataCopy);
   }
 
   setThumbsPos(leftPos: number, rightPos?: number): Slider {
@@ -69,24 +85,22 @@ class Slider extends EventObserver implements ISubscriber {
   }
 
   setOptions(options: Obj): Slider {
-    this._model.setOptions.call(this._model, options);
+    this._model.setOptions(options);
 
-    this._view.setOptions.call(this._view, options);
+    const optionsCopy = Object.assign(options);
 
+    if ('step' in optionsCopy) {
+      const {min = this._model.min, max = this._model.max, step} = optionsCopy;
+      optionsCopy.step = step / (max - min);
+    }
+
+    this._view.setOptions(optionsCopy);
     return this;
   }
 
   getOptions() {
-    const viewOps = this._view.getOptions.call(this._view);
-    const modelOps = this._model.getOptions.call(this._model);
-    // Сравним, совпадают ли значения общих опций, если нет
-    // (А ВДРУГ????), выкинем ошибку для отладки
-
-    const synchronized = Object.keys(viewOps).every((key) => {
-      return key in modelOps ? viewOps[key] === modelOps[key] : true;
-    });
-
-    if (!synchronized) throw new Error('Model не синхронизирована с View!');
+    const viewOps = this._view.getOptions();
+    const modelOps = this._model.getOptions();
 
     return Object.assign({}, viewOps, modelOps);
   }

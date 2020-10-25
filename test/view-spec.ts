@@ -118,7 +118,7 @@ describe(`Позволяет пользователю взаимодейство
       selector: '.divViewSpec', className: 'slider',
     };
     const view = new View(option);
-    view.setOptions({range: true}).render();
+    view.setOptions({range: true}).init();
 
     const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
     const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
@@ -145,7 +145,7 @@ describe(`Позволяет пользователю взаимодейство
     };
 
     const view = new View(option);
-    view.setOptions({range: true}).render();
+    view.setOptions({range: true}).init();
 
     const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
     const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
@@ -368,6 +368,73 @@ describe(`Также присутствует интерактивная шка�
   });
 });
 
+describe(`Может отображать подсказку\n`, () => {
+  const option = {
+    range: true, selector: '.divViewSpec',
+    className: 'slider', showScale: true,
+    partsNum: 4,
+  };
+
+  const fakeMouseDown = new MouseEvent('mousedown',
+    {bubbles: true, cancelable: true, clientX: 0, clientY: 0});
+
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`При нажатии на левом кругляше отображается подсказка`, () => {
+    const view = new View(option);
+    const thumb = view.thumbs.thumbLeft;
+    thumb.dispatchEvent(fakeMouseDown);
+
+    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+
+    expect(hint.hidden).toBeFalse();
+    expect(hint.textContent).toEqual('hint');
+  });
+
+  it(`При нажатии на правом кругляше отображается подсказка`, () => {
+    const view = new View(option);
+    const thumb = view.thumbs.thumbRight
+    thumb.dispatchEvent(fakeMouseDown);
+
+    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+
+    expect(hint.hidden).toBeFalse();
+    expect(hint.textContent).toEqual('hint');
+  });
+
+
+  it(`Подсказку можно прятать`, () => {
+    const view = new View(option);
+    view.setOptions({hintAboveThumb: false});
+    const thumb = view.thumbs.thumbLeft;
+
+    thumb.dispatchEvent(fakeMouseDown);
+    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    expect(hint.offsetWidth).toEqual(0);
+  });
+
+  it(`Существует опция, при которой подсказка отображается всегда`, () => {
+    const view = new View(option);
+    view.setOptions({hintAlwaysShow: true});
+
+    const thumb = view.thumbs.thumbLeft;
+    let hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    expect(hint.offsetWidth).toBeGreaterThan(0);
+    expect(hint.textContent).toEqual('hint');
+
+    view.setOptions({hintAlwaysShow: false});
+    hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    expect(hint.offsetWidth).toEqual(0);
+  });
+});
+
 function moveThumb(thumb: HTMLDivElement,
   deltaXPx: number, deltaYPx: number = 0): void {
   const startX = Math.abs(deltaXPx);
@@ -389,89 +456,3 @@ function moveThumb(thumb: HTMLDivElement,
   thumb.dispatchEvent(fakeMouseMove);
   thumb.dispatchEvent(fakeMouseUp);
 }
-
-describe(`Может отображать подсказку`, () => {
-  const option = {
-    range: true, selector: '.divViewSpec',
-    className: 'slider', showScale: true,
-    partsNum: 4,
-  };
-
-  const fakeMouseDown = new MouseEvent('mousedown',
-    {bubbles: true, cancelable: true, clientX: 0, clientY: 0});
-
-
-  beforeEach(() => {
-    document.body.append(div);
-  });
-
-  afterEach(() => {
-    div.innerHTML = '';
-    div.remove();
-  });
-
-  it(`При нажатии на левом кругляше отображается подсказка`, () => {
-    const view = new View(option);
-    const thumb = view.thumbs.thumbLeft;
-    thumb.dispatchEvent(fakeMouseDown);
-
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
-
-    expect(hint.hidden).toBeFalse();
-    expect(Number(hint.textContent)).toEqual(0);
-  });
-
-  it(`При нажатии на правом кругляше отображается подсказка`, () => {
-    const view = new View(option);
-    const thumb = view.thumbs.thumbRight
-    thumb.dispatchEvent(fakeMouseDown);
-
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
-
-    expect(hint.hidden).toBeFalse();
-    expect(Number(hint.textContent)).toEqual(1);
-  });
-
-  it(`При движении значение подсказки меняется`, () => {
-    const view = new View(option);
-    const thumb = view.thumbs.thumbLeft;
-
-    thumb.dispatchEvent(fakeMouseDown);
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
-
-    const scaleWidth = div.clientWidth - thumb.offsetWidth;
-
-    const fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true, cancelable: true,
-        clientX: scaleWidth / 2, clientY: 0,
-      });
-
-    thumb.dispatchEvent(fakeMouseMove);
-    expect(Number(hint.textContent)).toEqual(0.5);
-  });
-
-  it(`Подсказку можно прятать`, () => {
-    const view = new View(option);
-    view.setOptions({hintAboveThumb: false});
-    const thumb = view.thumbs.thumbLeft;
-
-    thumb.dispatchEvent(fakeMouseDown);
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
-    expect(hint.offsetWidth).toEqual(0);
-  });
-
-  it(`Существует опция, при которой подсказка отображается всегда`, () => {
-    const view = new View(option);
-    view.setOptions({hintAlwaysShow: true});
-
-    const thumb = view.thumbs.thumbLeft;
-    let hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
-    expect(hint.offsetWidth).toBeGreaterThan(0);
-    expect(hint.textContent).toEqual('0.00');
-
-    view.setOptions({hintAlwaysShow: false});
-    hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
-    expect(hint.offsetWidth).toEqual(0);
-  });
-});

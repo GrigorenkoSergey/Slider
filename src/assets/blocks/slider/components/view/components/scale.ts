@@ -6,14 +6,12 @@ import debuggerPoint from '../../../../helpers/debugger-point';
 import '../../../../helpers/types';
 
 export default class Scale extends EventObserver {
-  width: number = 0;
   view: View | null = null;
 
   el: HTMLDivElement = document.createElement('div');
-  partsNum: number;
+  width: number = 0;
   anchors: HTMLDivElement[];
   parts: number[] = [];
-  valuesShown: number[] | string[] = [];
 
   constructor(options: Obj) {
     super();
@@ -29,20 +27,17 @@ export default class Scale extends EventObserver {
     propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
 
     this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
-    this.partsNum = this.view.partsNum;
     this.anchors = [];
 
     this.render();
   }
 
-  update(prop: string, data: any) { // пока не обработал rangeValue
-    if (debuggerPoint.start == 1) debugger;
+  update(prop: string, data: any) {
     if (prop === 'showScale') {
       this.displayScale();
     }
 
     if (prop === 'partsNum') {
-      this.partsNum = this.view.partsNum;
       this.render();
     }
 
@@ -61,8 +56,8 @@ export default class Scale extends EventObserver {
     const {step} = this.view;
     this.parts.length = 0;
 
-    for (let i = 1; i < this.partsNum; i++) {
-      let value = Math.round(Math.round(i / this.partsNum / step) * step * 1000) / 1000;
+    for (let i = 1; i < this.view.partsNum; i++) {
+      let value = Math.round(Math.round(i / this.view.partsNum / step) * step * 1000) / 1000;
       value = Math.min(1, value);
 
       this.parts.push(value);
@@ -88,7 +83,6 @@ export default class Scale extends EventObserver {
   }
 
   setAnchorValues(values: number[] | string[]) {
-    this.valuesShown = values;
     this.anchors.forEach((div, i) => {
       div.textContent = String(values[i]);
     });

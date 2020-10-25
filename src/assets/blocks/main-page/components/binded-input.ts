@@ -43,6 +43,7 @@ export default class BindedInput extends EventObserver {
     try {
       this.slider.setOptions({[this.prop]: newValue});
       this.broadcast(String(this.prop), newValue);
+      console.log(this.prop);
     } catch {
       this.slider.setOptions({[this.prop]: oldValue});
       this.setValue(oldValue)

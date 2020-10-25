@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import EventObserver from '../../../helpers/event-observer';
 import {ISubscriber} from '../../../helpers/interfaces';
 
@@ -8,7 +9,9 @@ import Thumbs from './components/thumbs';
 import '../../../helpers/types';
 import Hint from './components/hint';
 
-// import debuggerPoint from '../../../helpers/debugger-point';
+import Presenter from '../presenter/presenter';
+import debuggerPoint from '../../../helpers/debugger-point';
+
 
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
@@ -28,8 +31,8 @@ export default class View extends EventObserver implements ISubscriber {
   scale: Scale;
   showScale: boolean = true;
   partsNum: number = 2;
+  parts: number[];
   stretcher: Stretcher;
-
 
   constructor(options: Obj) { // пока не лезь сюда. Вроде все нормально.
     super();
@@ -42,7 +45,41 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     this.setOptions(options);
-    this.render();
+    this.init();
+  }
+
+  init(): this {
+    const wrapper = document.querySelector(this.selector);
+    wrapper.append(this.el);
+
+    this.el.style.transform = `rotate(${this.angle}deg)`;
+    this.el.classList.add(this.className);
+
+    this.thumbs = new Thumbs(this);
+    this.thumbs.addSubscriber('thumbMove', this);
+    this.thumbs.addSubscriber('thumbMousedown', this);
+    this.thumbs.addSubscriber('thumbMouseup', this);
+
+    this.hints = [
+      new Hint(
+        this, 
+        this.thumbs.thumbLeft),
+      new Hint(
+        this, 
+        this.thumbs.thumbRight),
+    ];
+
+    this.addSubscriber('hintAlwaysShow', this);
+
+    this.scale = new Scale({view: this});
+    this.scale.addSubscriber('anchorClick', this);
+    this.parts = this.scale.parts;
+
+    this.stretcher = new Stretcher(this);
+
+    this.addSubscriber('angle', this);
+
+    return this;
   }
 
   setOptions(options: Obj) {// не лезь
@@ -80,21 +117,14 @@ export default class View extends EventObserver implements ISubscriber {
     return obj;
   }
 
+
   update(eventType: string, data: any): this {
+    // если View подписан сам на себя, то он должен выходить из 
+    // функции, иначе получится бесконечный цикл
+
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
-    } else if (eventType === 'thumbMove') {
-      this.handleThumbMove(data.el, data.offset);
-      this.broadcast('changeView', data);
-
-    } else if (eventType === 'anchorClick') {
-      this.handleAnchorClick(data);
-
-    } else if (eventType === 'thumbMousedown') {
-      this.handleThumbMousedown(data.el, data.offset);
-
-    } else if (eventType === 'thumbMouseup') {
-      this.handleThumbMouseup(data);
+      return this;
 
     } else if (eventType === 'hintAlwaysShow') {
       if (this.hintAlwaysShow) {
@@ -102,45 +132,37 @@ export default class View extends EventObserver implements ISubscriber {
       } else {
         this.hints.forEach(hint => hint.hideHint());
       }
+      return this; 
+
+    } else if (eventType === 'thumbMousedown') {
+      const thumb = data.el;
+      this.handleThumbMousedown(thumb);
+
+    } else if (eventType === 'thumbMove') {
+      const thumb = data.el;
+      this.handleThumbMove(thumb);
+
+    } else if (eventType === 'thumbMouseup') {
+      const thumb = data;
+      this.handleThumbMouseup(thumb);
+
+    } else if (eventType === 'anchorClick') {
+      this.handleAnchorClick(data);
     }
 
     this.broadcast(eventType, data);
     return this;
   }
 
-  render(): this {
-    const wrapper = document.querySelector(this.selector);
-    wrapper.append(this.el);
 
-    this.el.style.transform = `rotate(${this.angle}deg)`;
-    this.el.classList.add(this.className);
 
-    this.thumbs = new Thumbs(this);
-    this.thumbs.addSubscriber('thumbMove', this);
-    this.thumbs.addSubscriber('thumbMousedown', this);
-    this.thumbs.addSubscriber('thumbMouseup', this);
+  setAnchorValues(values: number[] | string[]) {
+    this.scale.setAnchorValues(values);
+  }
 
-    this.hints = [
-      new Hint(
-        this, 
-        this.thumbs.thumbLeft, 
-        this.thumbs.thumbLeftOffset),
-      new Hint(
-        this, 
-        this.thumbs.thumbRight, 
-        this.thumbs.thumbRightOffset),
-    ];
-
-    this.addSubscriber('hintAlwaysShow', this);
-
-    this.scale = new Scale({view: this});
-    this.scale.addSubscriber('anchorClick', this);
-
-    this.stretcher = new Stretcher(this);
-
-    this.addSubscriber('angle', this);
-
-    return this;
+  setHintValue(thumb: HTMLDivElement, value: string) {
+    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+    hint.setHintValue(value);
   }
 
   handleAnchorClick(offset: number): void {
@@ -162,11 +184,11 @@ export default class View extends EventObserver implements ISubscriber {
     this.handleThumbMouseup(closestThumb);
   }
 
-  handleThumbMousedown(thumb: HTMLDivElement, offset: number) {
+  handleThumbMousedown(thumb: HTMLDivElement) {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-    hint.showHint(offset);
+    hint.showHint();
   }
 
   handleThumbMouseup(thumb: HTMLElement) {
@@ -177,11 +199,11 @@ export default class View extends EventObserver implements ISubscriber {
     }
   }
 
-  handleThumbMove(thumb: HTMLElement, offset: number) {
+  handleThumbMove(thumb: HTMLElement) {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-    hint.showHint(offset);
+    hint.showHint();
   }
 
   private validateOptions(key: string, value: any, expectant: Obj) { //не трогать

@@ -5,17 +5,17 @@ export default class Hint extends EventObserver {
   el: HTMLDivElement = document.createElement('div');
   view: View;
   value: string = 'hint';
-  alwaysShow = false;
 
-  constructor(view: View, parentNode: HTMLElement, value ?: string | number) {
+  constructor(view: View, parentNode: HTMLElement) {
     super();
     this.view = view;
-    this.value = String(value);
     this.init(parentNode);
   }
 
   init(parent: HTMLElement) {
     this.el.className = `${this.view.className}__hint`;
+    this.el.hidden = true;
+
     parent.append(this.el);
 
     this.el.addEventListener('mousedown', this.handleMousedown);
@@ -30,16 +30,18 @@ export default class Hint extends EventObserver {
     e.stopPropagation();
   }
 
-  showHint(value?: string | number) {
+  setHintValue(value: string) {
+    this.value = value;
+    if (!this.el.hidden) this.el.textContent = this.value;
+  }
+
+  showHint() {
     this.el.hidden = false;
-    if (value) {
-      this.value = String(value);
-    }
     this.el.textContent = this.value;
   }
 
   hideHint() {
-    if (this.alwaysShow) return;
+    if (this.view.hintAlwaysShow) return;
     this.el.hidden = true;
   }
 }

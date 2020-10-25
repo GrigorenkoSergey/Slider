@@ -2,6 +2,8 @@ import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
 import '../../../../helpers/types.ts';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import debuggerPoint from '../../../../helpers/debugger-point';
 
 export default class Thumbs extends EventObserver {
   thumbLeft: HTMLDivElement;
@@ -47,7 +49,7 @@ export default class Thumbs extends EventObserver {
     } else {
       this.thumbRightOffset = offset;
     }
-    
+
     this.broadcast('thumbMove', {
       el: thumb,
       offset: offset,

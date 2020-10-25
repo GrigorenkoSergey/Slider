@@ -3,20 +3,21 @@ import '../helpers/types';
 import '../slider/slider';
 
 import SliderOptionsPalette from './components/slider-options-palette';
+import debuggerPoint from '../helpers/debugger-point';
 
-let options1 = {
-  min: 2,
-  max: 100,
-  step: 2,
-  selector: ".slider1",
-  angle: 0,
-  range: false,
-  hintAboveThumb: true,
-}
-let slider1 = $('.slider1').slider(options1);
-
+// let options1 = {
+//   min: 2,
+//   max: 6,
+//   step: 2,
+//   selector: ".slider1",
+//   angle: 0,
+//   range: false,
+//   hintAboveThumb: true,
+//   hintAlwaysShow: true,
+//   partsNum: 2,
+// }
+// let slider1 = $('.slider1').slider(options1);
 /*
-
 let options2 = {
   min: 100,
   max: 2000,
@@ -66,8 +67,10 @@ let options4 = {
   hintAboveThumb: true
 }
 let slider4 = $('.slider4').slider(options4);
+*/
 
-const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
+// const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
+/*
 const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
 const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
 const palette4 = new SliderOptionsPalette(document.querySelector('.example4'), slider4);
@@ -145,5 +148,7 @@ slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 */
 
 
-// import View from '../slider/components/view/view';
-// const view = new View({selector: '.slider', hintAboveThumb: false});
+import View from '../slider/components/view/view';
+import Presenter from '../slider/components/presenter/presenter';
+const view = new View({selector: '.slider', hintAboveThumb: true});
+const presenter = new Presenter({selector: '.slider1', hintAboveThumb: true, min: 10, max: 100, partsNum: 4,});
