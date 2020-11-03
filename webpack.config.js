@@ -5,12 +5,12 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const entries = {
   index: './index',
-  slider: './assets/blocks/slider/slider',
+  // slider: './assets/blocks/slider/slider',
 };
 
 const outputPaths = {
   index: './index',
-  slider: './slider/slider',
+  // slider: './slider/slider',
 };
 
 module.exports =  {

@@ -1,9 +1,9 @@
 import './main-page.scss';
 import '../helpers/types';
-import '../slider/slider';
+// import '../slider/slider';
 
-import SliderOptionsPalette from './components/slider-options-palette';
-import debuggerPoint from '../helpers/debugger-point';
+// import SliderOptionsPalette from './components/slider-options-palette';
+// import debuggerPoint from '../helpers/debugger-point';
 
 // let options1 = {
 //   min: 2,
@@ -150,5 +150,18 @@ slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 
 import View from '../slider/components/view/view';
 import Presenter from '../slider/components/presenter/presenter';
+let options = {
+  min: 0,
+  max: 20000,
+  // ticks: {500: 100, 10000: 150, 20000: 180},
+  step: 10,
+  selector: ".slider1",
+  angle: 0,
+  range: false,
+  hintAboveThumb: true
+}
 const view = new View({selector: '.slider', hintAboveThumb: true});
-const presenter = new Presenter({selector: '.slider1', hintAboveThumb: true, min: 10, max: 100, partsNum: 4,});
+// const presenter = new Presenter({selector: '.slider1', range: true, hintAboveThumb: true, min: 10, max: 100, partsNum: 4,});
+const presenter = new Presenter(options);
+const model = presenter.model;
+model.setOptions({ticks: {500: 100, 10000: 150, 20000: 180}});

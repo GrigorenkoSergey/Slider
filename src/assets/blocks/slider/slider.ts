@@ -1,3 +1,4 @@
+/*
 import './slider.scss';
 
 import '../helpers/types';
@@ -152,3 +153,4 @@ class Slider extends EventObserver implements ISubscriber {
 }
 
 export {Slider};
+*/

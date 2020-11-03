@@ -43,29 +43,91 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.addSubscriber('thumbMove', this);
     view.addSubscriber('thumbMouseup', this);
 
+    model.addSubscriber('min', this);
+    model.addSubscriber('max', this);
+    model.addSubscriber('step', this);
+    model.addSubscriber('thumbLeftPos', this);
+    model.addSubscriber('thumbRightPos', this);
+    model.addSubscriber('range', this);
+    model.addSubscriber('ticks', this);
+
+    this.handleTicks();
+    this.scaleValues();
+  }
+
+  scaleValues() {
+    const {view, model} = this;
+
     view.setHintValue(
       view.thumbs.thumbLeft, 
-      String(Math.round(model.intempolate(view.thumbs.thumbLeftOffset)
+      String(Math.round(model.findValue(view.thumbs.thumbLeftOffset)
       )));
 
     view.setHintValue(
       view.thumbs.thumbRight, 
-      String(Math.round(model.intempolate(view.thumbs.thumbRightOffset)
+      String(Math.round(model.findValue(view.thumbs.thumbRightOffset)
       )));
 
-    view.setAnchorValues(this.view.parts.map(value => Math.round(model.intempolate(value))));
+    const anchorValues = this.view.scale.parts.map(value => Math.round(model.findValue(value)));
+    view.setAnchorValues(anchorValues);
+
+    const step = model.step / (model.max - model.min);
+    view.setOptions({step});
   }
 
   update(eventType: string, data: any) {
     if (eventType === 'thumbMousedown') {
       const thumb = data.el;
-      let offset = Math.round(this.model.intempolate(data.offset));
+      let offset = Math.round(this.model.findValue(data.offset));
       this.view.setHintValue(thumb, String(offset));
 
     } else if (eventType === 'thumbMove') {
       const thumb = data.el;
-      let offset = Math.round(this.model.intempolate(data.offset));
+      let offset = Math.round(this.model.findValue(data.offset));
       this.view.setHintValue(thumb, String(offset));
+
+      if (thumb === this.view.thumbs.thumbLeft) {
+        this.model.setThumbsPos({left: offset, initiator: this});
+      } else {
+        this.model.setThumbsPos({right: offset, initiator: this});
+      }
+
+    } else if (eventType === 'step') {
+      const step = this.model.step / (this.model.max - this.model.min);
+      this.view.setOptions({step});
+
+    } else if (eventType === 'thumbLeftPos') {
+      if (data.initiator === this) return;
+
+      const {thumbLeft} = this.view.thumbs;
+      this.view.moveThumbToPos(thumbLeft, this.model.findArgument(data.value));
+    } else if (eventType === 'thumbRightPos') {
+      if (data.initiator === this) return;
+
+      const {thumbRight} = this.view.thumbs;
+      this.view.moveThumbToPos(thumbRight, this.model.findArgument(data.value));
+
+    } else if (eventType === 'range') {
+      this.view.setOptions({range: data.range});
+
+    } else if (eventType === 'ticks') {
+      this.handleTicks();
+      this.scaleValues();
+    } else {
+      this.scaleValues();
+    }
+  }
+
+  handleTicks() {
+    const {model, view} = this;
+
+    if (Object.keys(model.ticks).length > 1) {
+      const max = Object.values(model.ticks).slice(-1)[0];
+      const scaleParts = [0];
+      Object.values(model.ticks).forEach(value => {
+        scaleParts.push(value / max);
+      });
+      view.scale.setMilestones(scaleParts);
     }
   }
 }

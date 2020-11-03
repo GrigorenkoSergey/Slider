@@ -339,7 +339,7 @@ describe(`Также присутствует интерактивная шка�
     expect(labelRight.offsetHeight).toBeFalsy();
   });
 
-  it(`Можно задавать значения, отображаемые шкалой`, () => {
+  it(`Можно менять значения, отображаемые шкалой`, () => {
     const option = {
       range: true, selector: '.divViewSpec',
       className: 'slider', showScale: true,
@@ -364,7 +364,28 @@ describe(`Также присутствует интерактивная шка�
     anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[0].textContent).toEqual('Jan');
     expect(anchors[1].textContent).toEqual('Dec');
+  });
 
+  it(`Можно задавать значения, не зависящие от свойства partsNum`, () => {
+    const option = {
+      range: true, selector: '.divViewSpec',
+      className: 'slider', showScale: true,
+      partsNum: 4,
+    };
+
+    const view = new View(option);
+    let anchors = view.scale.el.getElementsByClassName('slider__scale-points');
+
+    expect(() => view.scale.setMilestones([1, 2, 3])).toThrowError();
+    expect(() => view.scale.setMilestones([0, 2, 1])).toThrowError();
+    expect(() => view.scale.setMilestones([0, 0.5, 2])).toThrowError();
+
+    view.scale.setMilestones([0, 0.25, 0.7, 1]);
+
+    expect(anchors[0].textContent).toEqual('0');
+    expect(anchors[1].textContent).toEqual('0.25');
+    expect(anchors[2].textContent).toEqual('0.7');
+    expect(anchors[3].textContent).toEqual('1');
   });
 });
 

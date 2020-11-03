@@ -10,6 +10,7 @@ export default class Stretcher extends EventObserver {
     this.view = view;
     this.render();
     this.view.addSubscriber('thumbMove', this);
+    this.view.addSubscriber('range', this);
   }
 
   render() {

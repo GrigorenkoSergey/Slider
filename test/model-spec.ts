@@ -59,11 +59,11 @@ describe(`Model\n`, () => {
       model.setOptions({thumbRightPos: 200});
       expect(model.thumbRightPos).toEqual(model.max);
 
-      model.setThumbsPos(-100);
+      model.setThumbsPos({left: -100});
       expect(model.thumbLeftPos).toEqual(model.min);
       expect(model.thumbRightPos).toEqual(model.max);
 
-      model.setThumbsPos(-100, 500);
+      model.setThumbsPos({left: -100, right: 500});
       expect(model.thumbLeftPos).toEqual(model.min);
       expect(model.thumbRightPos).toEqual(model.max);
     });
@@ -85,7 +85,7 @@ describe(`Model\n`, () => {
 
     it(`Проверка правильности округления`, () => {
       const model = new Model({min: 2, max: 6, step: 4, rangle: false});
-      expect(model.setThumbsPos(2));
+      expect(model.setThumbsPos({left: 2}));
       expect(model.thumbLeftPos).toEqual(2);
     });
   });
@@ -108,13 +108,12 @@ describe(`Model\n`, () => {
       expect(model.step).toEqual(1);
       expect(model.thumbLeftPos).toEqual(10);
       expect(model.thumbRightPos).toEqual(80);
-      expect(model.angle).toEqual(89);
     });
 
     it(`Выбрасывает ошибку, если хотя бы одно из свойств нельзя 
-    преобразовать в строку`, () => {
+    преобразовать в число`, () => {
       const shouldBeNumbers: string[] = ['min', 'max', 'step', 'thumbLeftPos',
-        'thumbRightPos', 'angle'];
+        'thumbRightPos',];
 
       shouldBeNumbers.map((key) => {
         expect(() => model.setOptions({[key]: '1000x'})).toThrowError();
@@ -127,10 +126,6 @@ describe(`Model\n`, () => {
 
     it(`Значение свойства "max" должно быть больше, чем "min"`, () => {
       expect(() => model.setOptions({min: 100, max: 0})).toThrowError();
-    });
-
-    it(`Значение угла должно находиться в диапазоне 0...90 градусов`, () => {
-      expect(() => model.setOptions({angle: '91'})).toThrowError();
     });
 
     it(`Если заданный шаг слишком большой (больше диапазона), 
@@ -162,6 +157,15 @@ describe(`Model\n`, () => {
       model.max = -10;
       expect(model.min).toEqual(0);
       expect(model.max).toEqual(-10);
+    });
+
+    it(`В любой момент можно узнать значения свойств модели`, () => {
+      const options = model.getOptions();
+      expect(options.min).toEqual(0);
+      expect(options.max).toEqual(100);
+      expect(options.step).toEqual(1);
+      expect(options.thumbLeftPos).toEqual(0);
+      expect(options.thumbRightPos).toEqual(100);
     });
   });
 
@@ -248,53 +252,46 @@ describe(`Model\n`, () => {
     });
 
     it(`Меняет положение левого и правого значений диапазона`, () => {
-      model.setThumbsPos(20, 80);
+      model.setThumbsPos({left: 20, right: 80});
       expect(model.thumbLeftPos).toEqual(20);
       expect(model.thumbRightPos).toEqual(80);
       expect(model.min).toEqual(0);
       expect(model.max).toEqual(100);
 
-      model.setThumbsPos(30, 95);
+      model.setThumbsPos({left: 30, right: 95});
       expect(model.thumbLeftPos).toEqual(30);
       expect(model.thumbRightPos).toEqual(95);
       expect(model.min).toEqual(0);
       expect(model.max).toEqual(100);
-    });
 
-    it(`Если левое значение всегда ближе к началу, а правое к концу, 
-    меняются автоматически`, () => {
-      model.setThumbsPos(90, 20);
-      expect(model.thumbLeftPos).toEqual(20);
-      expect(model.thumbRightPos).toEqual(90);
+      model.setThumbsPos({left: 70, right: 5});
+      expect(model.thumbLeftPos).toEqual(5);
+      expect(model.thumbRightPos).toEqual(70);
+      expect(model.min).toEqual(0);
+      expect(model.max).toEqual(100);
     });
 
     it(`Минимальное значение левого бегунка равно значению свойства 
     "min", ставится автоматически`, () => {
-      model.setThumbsPos(-10);
+      model.setThumbsPos({left: -10});
       expect(model.thumbLeftPos).toEqual(model.min);
     });
 
     it(`Максимальное значение правого диапазона равно значению свойства 
     "max", ставится автоматически`, () => {
-      model.setThumbsPos(model.thumbLeftPos, 101);
+      model.setThumbsPos({left: model.thumbLeftPos, right: 101});
       expect(model.thumbRightPos).toEqual(100);
     });
 
     it(`Допускается задавать только одно минимальное значение 
     диапазона`, () => {
-      expect(() => model.setThumbsPos(-10)).not.toThrowError();
-    });
-
-    it(`Если значение границы диапазона не кратно шагу, 
-    оно округляется`, () => {
-      model.setOptions({step: 10});
-      model.setThumbsPos(6, 94);
-      expect(model.thumbLeftPos).toEqual(10);
-      expect(model.thumbRightPos).toEqual(90);
+      expect(() => model.setThumbsPos({left: -10})).not.toThrowError();
     });
   });
 
-  describe(`Обновление состояния, метод "update"\n`, () => {
+  describe(`Model - это всего лишь функция интерполяции, поэтому она просто 
+    высчитывает значения в зависимости от аргумента, который представляет 
+    собой координату смещения от начала отсчета`, () => {
     let model: Model;
     beforeEach(() => {
       model = new Model({
@@ -303,32 +300,20 @@ describe(`Model\n`, () => {
       });
     });
 
-    it(`Model - это всего лишь функция интерполяции, поэтому она просто 
-    высчитывает значения в зависимости от аргумента, который представляет 
-    собой координату смещения от начала отсчета`, () => {
-      model.update('event', {el: 'L', offset: 0});
-      expect(model.thumbLeftPos).toEqual(0);
-
-      model.update('event', {el: 'L', offset: 0.5});
-      expect(model.thumbLeftPos).toEqual(50);
-
-      model.update('event', {el: 'L', offset: 1});
-      expect(model.thumbLeftPos).toEqual(100);
-
-      model.update('event', {el: 'L', offset: 0});
-      model.update('event', {el: 'R', offset: 0.5});
-      expect(model.thumbRightPos).toEqual(50);
-
-      model.update('event', {el: 'R', offset: 0.7});
-      expect(model.thumbRightPos).toEqual(70);
+    it(`Всегда можем найти значение функции от аргумента`, () => {
+      expect(model.findValue(0)).toEqual(0);
+      expect(model.findValue(0.5)).toEqual(50);
+      expect(model.findValue(1)).toEqual(100);
+      expect(model.findValue(0.5)).toEqual(50);
+      expect(model.findValue(0.7)).toEqual(70);
     });
 
-    it(`ВАЖНО!!! Корректность значений data никак не обрабатывается 
-    при update (для скорости)`, () => {
-      model.update('', {el: 'R', offset: 0.5});
-      model.update('', {el: 'L', offset: 0.9});
-      expect(model.thumbLeftPos).toEqual(90);
-      expect(model.thumbRightPos).toEqual(50);
+    it(`Всегда можем найти значение аргумента в зависимости от значения функции`, () => {
+      expect(model.findArgument(0)).toEqual(0);
+      expect(model.findArgument(50)).toEqual(0.5);
+      expect(model.findArgument(100)).toEqual(1);
+      expect(model.findArgument(50)).toEqual(0.5);
+      expect(model.findArgument(70)).toEqual(0.7);
     });
 
     it(`Корректно вычисляет значения функции для нелинейной шкалы.
@@ -339,72 +324,21 @@ describe(`Model\n`, () => {
       model.setOptions({min: 100, max: 200, step: 1});
       model.setOptions({ticks: {120: 50, 150: 75, 200: 100}});
 
-      model.update('', {el: 'L', offset: 0});
-      expect(model.thumbLeftPos).toEqual(100);
+      expect(model.findValue(0)).toEqual(100);
+      expect(model.findValue(0.25)).toEqual(110);
+      expect(model.findValue(0.5)).toEqual(120);
+      expect(model.findValue((0.5 + 0.75) / 2)).toEqual(135);
+      expect(model.findValue(0.75)).toEqual(150);
+      expect(model.findValue((0.75 + 1) / 2)).toEqual(175);
+      expect(model.findValue(1)).toEqual(200);
 
-      model.update('', {el: 'L', offset: 0.25});
-      expect(model.thumbLeftPos).toEqual(110);
-
-      model.update('', {el: 'L', offset: 0.5});
-      expect(model.thumbLeftPos).toEqual(120);
-
-      model.update('', {el: 'L', offset: (0.5 + 0.75) / 2});
-      expect(model.thumbLeftPos).toEqual(135);
-
-      model.update('', {el: 'L', offset: 0.75});
-      expect(model.thumbLeftPos).toEqual(150);
-
-      model.update('', {el: 'L', offset: (0.75 + 1) / 2});
-      expect(model.thumbLeftPos).toEqual(175);
-
-      model.update('', {el: 'L', offset: 1});
-      expect(model.thumbLeftPos).toEqual(200);
-
-      model.update('', {el: 'L', offset: 0});
-      expect(model.thumbLeftPos).toEqual(100);
-
-      model.update('', {el: 'R', offset: 0.25});
-      expect(model.thumbRightPos).toEqual(110);
-
-      model.update('', {el: 'R', offset: 0.5});
-      expect(model.thumbRightPos).toEqual(120);
-
-      model.update('', {el: 'R', offset: (0.5 + 0.75) / 2});
-      expect(model.thumbRightPos).toEqual(135);
-
-      model.update('', {el: 'R', offset: 0.75});
-      expect(model.thumbRightPos).toEqual(150);
-
-      model.update('', {el: 'R', offset: (0.75 + 1) / 2});
-      expect(model.thumbRightPos).toEqual(175);
-
-      model.update('', {el: 'R', offset: 1});
-      expect(model.thumbRightPos).toEqual(200);
-    });
-  });
-
-  describe(`Метод getThumbsOffset предназначен для получения 
-  положения бегунков\n`, () => {
-    const model = new Model({min: 0, max: 100});
-
-    it(`В любой момент времени можно получить расширенную 
-    информацию о положении бегунков`, () => {
-      expect(model.getThumbsOffset().L.x).toEqual(model.thumbLeftPos);
-      expect(model.getThumbsOffset().R.x).toEqual(model.thumbRightPos);
-      expect(model.getThumbsOffset().L.offset).toEqual(0);
-      expect(model.getThumbsOffset().R.offset).toEqual(1);
-
-      model.update('', {el: 'L', offset: 0.3});
-      expect(model.getThumbsOffset().L.x).toEqual(30);
-      expect(model.getThumbsOffset().R.x).toEqual(100);
-      expect(model.getThumbsOffset().L.offset).toEqual(.3);
-      expect(model.getThumbsOffset().R.offset).toEqual(1);
-
-      model.update('', {el: 'R', offset: 0.7});
-      expect(model.getThumbsOffset().L.x).toEqual(30);
-      expect(model.getThumbsOffset().R.x).toEqual(70);
-      expect(model.getThumbsOffset().L.offset).toEqual(.3);
-      expect(model.getThumbsOffset().R.offset).toEqual(0.7);
+      expect(model.findArgument(100)).toEqual(0);
+      expect(model.findArgument(110)).toEqual(0.25);
+      expect(model.findArgument(120)).toEqual(0.5);
+      expect(model.findArgument(135)).toEqual((0.5 + 0.75) / 2);
+      expect(model.findArgument(150)).toEqual(0.75);
+      expect(model.findArgument(175)).toEqual((0.75 + 1) / 2);
+      expect(model.findArgument(200)).toEqual(1);
     });
   });
 });

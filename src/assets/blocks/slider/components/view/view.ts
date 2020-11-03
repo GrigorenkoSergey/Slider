@@ -19,7 +19,7 @@ export default class View extends EventObserver implements ISubscriber {
 
   step: number = 1/100;
   angle: number = 0;
-  range: boolean = true;
+  range: boolean = false;
   selector: string = '';
   hintAboveThumb = true;
 
@@ -31,7 +31,6 @@ export default class View extends EventObserver implements ISubscriber {
   scale: Scale;
   showScale: boolean = true;
   partsNum: number = 2;
-  parts: number[];
   stretcher: Stretcher;
 
   constructor(options: Obj) { // пока не лезь сюда. Вроде все нормально.
@@ -73,7 +72,6 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.scale = new Scale({view: this});
     this.scale.addSubscriber('anchorClick', this);
-    this.parts = this.scale.parts;
 
     this.stretcher = new Stretcher(this);
 
@@ -138,12 +136,12 @@ export default class View extends EventObserver implements ISubscriber {
       const thumb = data.el;
       this.handleThumbMousedown(thumb);
 
-    } else if (eventType === 'thumbMove') {
+    } else if (eventType === 'thumbMove' && data.initiator !== this) {
       const thumb = data.el;
       this.handleThumbMove(thumb);
 
     } else if (eventType === 'thumbMouseup') {
-      const thumb = data;
+      const thumb = data.thumb;
       this.handleThumbMouseup(thumb);
 
     } else if (eventType === 'anchorClick') {
@@ -154,7 +152,9 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-
+  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+    this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset, this);
+  }
 
   setAnchorValues(values: number[] | string[]) {
     this.scale.setAnchorValues(values);
@@ -180,7 +180,7 @@ export default class View extends EventObserver implements ISubscriber {
       closestThumb = thumbLeft;
     }
 
-    this.thumbs.moveThumbToPos(closestThumb, offset);
+    this.moveThumbToPos(closestThumb, offset);
     this.handleThumbMouseup(closestThumb);
   }
 

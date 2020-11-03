@@ -1,13 +1,11 @@
 import EventObserver from '../../../helpers/event-observer';
-import {ISubscriber} from '../../../helpers/interfaces';
 import isIncreasing from '../../../helpers/functions/is-increasing';
 
 import '../../../helpers/types';
 
 // import debuggerPoint from '../../../helpers/debugger-point';
 
-export default class Model extends EventObserver
-  implements ISubscriber {
+export default class Model extends EventObserver {
   min = 0;
   max = 100;
   step = 1;
@@ -17,8 +15,6 @@ export default class Model extends EventObserver
   range = false;
 
   private _totalItems: number;
-  private _offsetLeft: number = 0;
-  private _offsetRight: number = 1;
   private _ticksRange: number[];
   private _ticksValues: number[];
 
@@ -34,7 +30,7 @@ export default class Model extends EventObserver
     }
 
     const defaultOptions: Obj = {
-      step: () => (options.max - options.min) / 100,
+      step: () => Math.round((options.max - options.min) / 100),
       thumbLeftPos: () => options.min,
       thumbRightPos: () => options.max,
       ticks: () => {
@@ -50,29 +46,7 @@ export default class Model extends EventObserver
     this.setOptions(options);
   }
 
-  update(eventType: string, data: {el: 'L' | 'R', offset: number}): void {
-    let x = this.intempolate(data.offset);
-    // x = this._takeStepIntoAccount(x);
-    x = Math.min(this.max, Math.max(this.min, x));
-    // Иногда так округляется, что выходим за пределы
-
-    if (data.el[0] == 'R') {
-      this.thumbRightPos = x;
-      this._offsetRight = data.offset;
-    } else {
-      this.thumbLeftPos = x;
-      this._offsetLeft = data.offset;
-    }
-  }
-
-  getThumbsOffset(): modelResponse {
-    return {
-      'L': {'x': this.thumbLeftPos, 'offset': this._offsetLeft},
-      'R': {'x': this.thumbRightPos, 'offset': this._offsetRight},
-    };
-  }
-
-  getOptions() {
+  getOptions() { //Нормально
     const publicOtions = ['min', 'max', 'range', 'step',
       'thumbLeftPos', 'thumbRightPos', 'ticks',];
 
@@ -82,12 +56,16 @@ export default class Model extends EventObserver
   }
 
   setOptions(expectant: Obj): Model {
-    const shouldBeNumbers: string[] = ['min', 'max', 'step', 'thumbLeftPos',
-      'thumbRightPos',];
+    const shouldBeNumbers: string[] = [
+      'min', 
+      'max', 
+      'step', 
+      'thumbLeftPos',
+      'thumbRightPos',
+    ];
 
     // Проигнорируем лишние свойства
-    const commonKeys = Object.keys(expectant)
-      .filter((key: string) => key in this);
+    const commonKeys = Object.keys(expectant).filter((key: string) => key in this);
 
     const trimedObj: Obj = {};
     commonKeys.forEach((key) => trimedObj[key] = expectant[key]);
@@ -121,17 +99,13 @@ export default class Model extends EventObserver
       thumbRightPos = max;
     } else {
       thumbRightPos = Math.max(min, Math.min(max, thumbRightPos));
-      // вдруг зададут меньше минимума?
     }
     thumbLeftPos = Math.min(max, Math.max(min, thumbLeftPos));
-    // могут задать больше максимума
 
     if (thumbLeftPos > thumbRightPos) {
       [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
     }
 
-    // Иногда бегунки сливаются. Нехорошо
-    (thumbLeftPos == thumbRightPos) && (thumbRightPos = max);
     Object.assign(obj, {thumbLeftPos, thumbRightPos});
 
     obj._totalItems = Object.values(ticks).pop();
@@ -139,42 +113,36 @@ export default class Model extends EventObserver
     obj._ticksValues = Object.values(ticks);
     this._validateTicks.call(obj);
 
-    obj._offsetLeft = this._findOffset.call(obj, thumbLeftPos);
-    obj._offsetRight = this._findOffset.call(obj, thumbRightPos);
-
     Object.assign(this, obj);
-    this.broadcast('changeModel', this.getThumbsOffset());
+    Object.keys(expectant).forEach(key => {
+      this.broadcast(key, {value: this[<keyof this>key]});
+    });
     return this;
   }
 
-  setThumbsPos(thumbLeftPos: number, thumbRightPos?: number): Model {
-    if (thumbRightPos !== undefined && thumbLeftPos > thumbRightPos) {
-      [thumbLeftPos, thumbRightPos] = [thumbRightPos, thumbLeftPos];
+  setThumbsPos(opts: {left?: number, right?: number, initiator?: any }): Model {
+    let {left = this.thumbLeftPos, right = this.thumbRightPos, initiator = null} = opts;
+
+    if (left > right) {
+      [left, right] = [right, left];
     }
 
-    thumbLeftPos = this._takeStepIntoAccount(thumbLeftPos);
-    if (thumbLeftPos < this.min) thumbLeftPos = this.min;
-    this.thumbLeftPos = thumbLeftPos;
-
-    this._offsetLeft = this._findOffset(thumbLeftPos);
-
-    if (thumbRightPos !== undefined && this.range) {
-      thumbRightPos = this._takeStepIntoAccount(thumbRightPos);
-      if (thumbRightPos > this.max) thumbRightPos = this.max;
-      this.thumbRightPos = thumbRightPos;
-
-      this._offsetRight = this._findOffset(thumbRightPos);
+    if ('left' in opts) {
+      left = Math.max(this.min, left);
+      this.thumbLeftPos = this._takeStepIntoAccount(left);
+      this.broadcast('thumbLeftPos', {value: this.thumbLeftPos, initiator});
     }
 
-    this.broadcast('changeModel', this.getThumbsOffset());
+    if (this.range && 'right' in opts) {
+      right = Math.min(right, this.max);
+      this.thumbRightPos = this._takeStepIntoAccount(right);
+      this.broadcast('thumbRightPos', {value: this.thumbRightPos, initiator});
+    }
+
     return this;
   }
 
-  private _takeStepIntoAccount(x: number): number {
-    return Math.round((x - this.min) / this.step) * this.step + this.min;
-  }
-
-  intempolate(offset: number): number {
+  findValue(offset: number): number { // y = f(x), here we find 'y'
     const ticksRange = this._ticksRange;
     const ticksValue = this._ticksValues;
 
@@ -194,7 +162,7 @@ export default class Model extends EventObserver
     }
   }
 
-  private _findOffset(x: number): number {
+  findArgument(x: number): number { // y = f(x), here we find 'x'
     const ticksRange = this._ticksRange;
     const ticksValue = this._ticksValues;
 
@@ -213,13 +181,17 @@ export default class Model extends EventObserver
     }
   }
 
+  private _takeStepIntoAccount(x: number): number {
+    return Math.round((x - this.min) / this.step) * this.step + this.min;
+  }
+
   private _validateTicks(): never | boolean {
     const ticksRange = this._ticksRange;
     const ticksValue = this._ticksValues;
 
-    if (+ticksRange[ticksRange.length - 1] != this.max) {
+    if (Number(ticksRange[ticksRange.length - 1]) != this.max) {
       throw new Error('last key of ticks should be equal to max!');
-    } else if (+ticksRange[0] < this.min) {
+    } else if (Number(ticksRange[0]) < this.min) {
       throw new Error('First key of ticks should be greater then min!');
     } else if (!isIncreasing(ticksRange) || !isIncreasing(ticksValue)) {
       throw new Error(
