@@ -165,3 +165,4 @@ const view = new View({selector: '.slider', hintAboveThumb: true});
 const presenter = new Presenter(options);
 const model = presenter.model;
 model.setOptions({ticks: {500: 100, 10000: 150, 20000: 180}});
+console.log(presenter.getOptions());

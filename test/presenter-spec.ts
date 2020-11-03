@@ -243,5 +243,38 @@ describe(`Меняет значения шкалы в соответствии �
     expect(thumb.textContent).toEqual('20000');
     thumb.dispatchEvent(fakeMouseUp);
   });
+});
 
+describe(`В любой момент времени можно узнать и задать нужные свойства`, () => {
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  const option = {
+    range: true, selector: '.divPresenterSpec',
+    className: 'slider', showScale: true,
+    min: 20, 
+    max: 200,
+  };
+
+  it('Узнаем свойства слайдера', () => {
+    const presenter = new Presenter(option);
+    const options = presenter.getOptions();
+    debugger;
+    expect(options.angle).toEqual(0);
+    expect(options.hintAboveThumb).toBeTrue();
+    expect(options.min).toEqual(20);
+    expect(options.max).toEqual(200);
+    expect(options.partsNum).toEqual(2);
+    expect(options.range).toBeTrue();
+    expect(options.showScale).toBeTrue();
+    expect(options.thumbLeftPos).toEqual(20);
+    expect(options.thumbRightPos).toEqual(200);
+    expect(options.step).toEqual(2);
+  });
 });

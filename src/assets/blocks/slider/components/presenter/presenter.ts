@@ -55,6 +55,16 @@ export default class Presenter extends EventObserver implements ISubscriber{
     this.scaleValues();
   }
 
+  setOptions(options: Obj) {
+
+  }
+
+  getOptions() {
+    const {model, view} = this;
+    const res = {...view.getOptions(), ...model.getOptions()};
+    return res;
+  }
+
   scaleValues() {
     const {view, model} = this;
 
