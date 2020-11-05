@@ -56,7 +56,16 @@ export default class Presenter extends EventObserver implements ISubscriber{
   }
 
   setOptions(options: Obj) {
+    const {model, view} = this;
+    model.setOptions(options);
 
+    const optionsCopy = {...options};
+    if ('step' in optionsCopy) {
+      const step = model.step / (model.max - model.min);
+      optionsCopy.step = step;
+    }
+
+    view.setOptions(optionsCopy);
   }
 
   getOptions() {

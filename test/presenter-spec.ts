@@ -262,10 +262,10 @@ describe(`В любой момент времени можно узнать и �
     max: 200,
   };
 
-  it('Узнаем свойства слайдера', () => {
+  it('Узнаём свойства слайдера', () => {
     const presenter = new Presenter(option);
     const options = presenter.getOptions();
-    debugger;
+
     expect(options.angle).toEqual(0);
     expect(options.hintAboveThumb).toBeTrue();
     expect(options.min).toEqual(20);
@@ -276,5 +276,45 @@ describe(`В любой момент времени можно узнать и �
     expect(options.thumbLeftPos).toEqual(20);
     expect(options.thumbRightPos).toEqual(200);
     expect(options.step).toEqual(2);
+  });
+
+  it('Задаем свойства слайдера', () => {
+    const presenter = new Presenter(option);
+    const {model, view} = presenter;
+
+    presenter.setOptions({
+      range: false, 
+      showScale: false,
+      min: 0, 
+      max: 100,
+      step: 10,
+      angle: 45,
+      thumbLeftPos: 50,
+    });
+
+    // Для красоты
+    div.style.marginTop = '300px';
+
+    let options = presenter.getOptions();
+    expect(options.range).toEqual(false);
+    expect(options.showScale).toEqual(false);
+    expect(options.min).toEqual(0);
+    expect(options.max).toEqual(100);
+    expect(options.step).toEqual(10);
+
+    options = model.getOptions();
+    expect(options.range).toEqual(false);
+    expect(options.min).toEqual(0);
+    expect(options.max).toEqual(100);
+    expect(options.step).toEqual(10);
+    expect(options.thumbLeftPos).toEqual(50);
+
+    options = view.getOptions();
+    expect(options.angle).toEqual(45);
+    expect(options.range).toEqual(false);
+    expect(options.showScale).toEqual(false);
+    expect(options.step).toEqual(0.1);
+
+    div.style.marginTop = '70px';
   });
 });
