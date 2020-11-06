@@ -15,6 +15,8 @@ export default class SliderOptionsPalette {
   range: BindedInput = null;
   hintAboveThumb: BindedInput = null;
   showScale: BindedInput = null;
+  hintAlwaysShow: BindedInput = null;
+  partsNum: BindedInput = null;
 
   constructor(elem: HTMLDivElement, slider: Presenter) {
     this.el = elem;

@@ -115,7 +115,6 @@ export default class View extends EventObserver implements ISubscriber {
     return obj;
   }
 
-
   update(eventType: string, data: any): this {
     // если View подписан сам на себя, то он должен выходить из 
     // функции, иначе получится бесконечный цикл

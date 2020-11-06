@@ -121,7 +121,7 @@ export default class Model extends EventObserver {
         const fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
         const fnB = ticksRange[i];
 
-        return this._takeStepIntoAccount((offset - a) * (fnB - fnA) / (b - a) + fnA);
+        return (offset - a) * (fnB - fnA) / (b - a) + fnA;
       }
     }
   }
@@ -143,10 +143,6 @@ export default class Model extends EventObserver {
         return (x - fnA) * (b - a) / (fnB - fnA) + a;
       }
     }
-  }
-
-  private _takeStepIntoAccount(x: number): number {
-    return Math.round((x - this.min) / this.step) * this.step + this.min;
   }
 
   private _handleOption(key: string, value: any, expectant: Obj) {

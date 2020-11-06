@@ -51,14 +51,14 @@ describe(`Меняет значения подсказки над бегунко
   });
 
   it(`При нажатии на правом кругляше отображается подсказка`, () => {
-    const presenter = new Presenter(option);
+    const presenter = new Presenter({...option, thumbRightPos: 70});
     const thumb = presenter.view.thumbs.thumbRight
     thumb.dispatchEvent(fakeMouseDown);
 
     const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
 
+    expect(hint.textContent).toEqual('70');
     expect(hint.hidden).toBeFalse();
-    expect(hint.textContent).toEqual('100');
   });
 
   it(`При движении значение подсказки меняется`, () => {
@@ -101,7 +101,7 @@ describe(`Меняет значения подсказки над бегунко
 
 });
 
-describe(`Меняет значения шкалы в соответствии с моделью\n`, () => {
+describe(`Меняет значения шкалы в соответствии с моделью и видом\n`, () => {
   const option = {
     range: true, selector: '.divPresenterSpec',
     className: 'slider', showScale: true,
@@ -245,6 +245,28 @@ describe(`Меняет значения шкалы в соответствии �
     expect(thumb.textContent).toEqual('20000');
     thumb.dispatchEvent(fakeMouseUp);
   });
+
+  it('Реагирует на изменение свойства "partsNum" вида', () => {
+    const presenter = new Presenter(option);
+    let anchors = presenter.view.scale.el.getElementsByClassName('slider__scale-points');
+
+    presenter.setOptions({partsNum: 3});
+    expect(anchors.length).toEqual(4);
+    expect(anchors[0].textContent).toEqual('20');
+    expect(anchors[1].textContent).toEqual('80');
+    expect(anchors[2].textContent).toEqual('140');
+    expect(anchors[3].textContent).toEqual('200');
+
+    presenter.setOptions({partsNum: 4});
+    expect(anchors[1].textContent).toEqual('66');
+    expect(anchors[2].textContent).toEqual('110');
+    expect(anchors[3].textContent).toEqual('156');
+
+    presenter.setOptions({partsNum: 2});
+    expect(anchors[0].textContent).toEqual('20');
+    expect(anchors[1].textContent).toEqual('110');
+    expect(anchors[2].textContent).toEqual('200');
+  });
 });
 
 describe(`В любой момент времени можно узнать и задать нужные свойства`, () => {
@@ -319,4 +341,44 @@ describe(`В любой момент времени можно узнать и �
 
     div.style.marginTop = '70px';
   });
+});
+
+describe(`Проверка поведения подсказки над бегунком`, () => {
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  const option = {
+    range: true, selector: '.divPresenterSpec',
+    className: 'slider', showScale: true,
+    min: 20, 
+    max: 200,
+    thumbLeftPos: 25,
+  };
+
+  it(`При включенной опции "hintAlwaysShow" и при клике на значении шкалы, 
+  значение подсказки над бегунком меняется`, () => {
+    const presenter = new Presenter({...option, hintAlwaysShow: true});
+    const {model, view} = presenter;
+
+    const anchors = div.getElementsByClassName('slider__scale-points');
+    const hints = div.getElementsByClassName('slider__hint')
+    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+
+    expect(hints[0].textContent).toEqual('25');
+
+    thumbLeft.dispatchEvent(fakeMouseDown);
+    expect(hints[0].textContent).toEqual('25');
+    expect(hints[1].textContent).toEqual('200');
+
+    presenter.setOptions({thumbLeftPos: 50});
+    anchors[1].dispatchEvent(fakeClick);
+    debugger;
+  });
+
 });

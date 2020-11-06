@@ -1,4 +1,3 @@
-/*
 import './main-page.scss';
 import '../helpers/types';
 import '../slider/slider';
@@ -24,6 +23,8 @@ let options1 = {
 }
 // let slider1 = $('.slider1').slider(options1);
 let slider1 = new Presenter(options1);
+const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
+console.log(palette1)
 /*
 let options2 = {
   min: 100,
@@ -75,7 +76,6 @@ let options4 = {
 }
 let slider4 = $('.slider4').slider(options4);
 
-const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
 console.log(palette1)
 const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
 const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
@@ -154,6 +154,7 @@ slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
 */
 
 
+/*
 import View from '../slider/components/view/view';
 import Presenter from '../slider/components/presenter/presenter';
 let options = {
@@ -172,3 +173,4 @@ const presenter = new Presenter(options);
 const model = presenter.model;
 debugger;
 model.setOptions({ticks: {500: 100, 10000: 150, 20000: 180}, range: true});
+*/

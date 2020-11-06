@@ -1,9 +1,9 @@
 extends ../template/template.pug
 
 
-block content
-  div.slider(style="width: 60%; margin: 50px auto")
-  div.slider1(style="width: 60%; margin: 50px auto")
+//- block content
+//-   div.slider(style="width: 60%; margin: 50px auto")
+//-   div.slider1(style="width: 60%; margin: 50px auto")
 
 mixin example(num)
   - let wrapper = "example" + num;
@@ -27,10 +27,15 @@ block variables
   - 
     var titleName = 'SLIDERS'
     var optionsInputs = ["min", "max", "step", "angle",
-      "thumbLeftPos", "thumbRightPos", "parts"];
-    var optionsCheckbox = [["range", "Диапазон"], ["hintAboveThumb", "Подсказка"], ["showScale", "Покaзать шкалу"]];
+      "thumbLeftPos", "thumbRightPos", "partsNum"];
+    var optionsCheckbox = [
+      ["range", "Диапазон"], 
+      ["hintAboveThumb", "Подсказка"], 
+      ["showScale", "Покaзать шкалу"],
+      ["hintAlwaysShow", "Всегда показывать подсказку"]
+      ];
 
-//- block content
+block content
 
   .examples
     +example(1)

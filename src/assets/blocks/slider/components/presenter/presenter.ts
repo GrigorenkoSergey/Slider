@@ -42,6 +42,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.addSubscriber('thumbMousedown', this);
     view.addSubscriber('thumbMousemove', this);
     view.addSubscriber('thumbMouseup', this);
+    view.addSubscriber('partsNum', this);
 
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
@@ -51,8 +52,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.addSubscriber('range', this);
     model.addSubscriber('ticks', this);
 
-    this.handleTicks();
-    this.scaleValues();
+    this.setOptions(options);
   }
 
   setOptions(options: Obj) {
@@ -79,13 +79,13 @@ export default class Presenter extends EventObserver implements ISubscriber{
 
     view.setHintValue(
       view.thumbs.thumbLeft, 
-      String(Math.round(model.findValue(view.thumbs.thumbLeftOffset)
-      )));
+      String(model.thumbLeftPos),
+    );
 
     view.setHintValue(
       view.thumbs.thumbRight, 
-      String(Math.round(model.findValue(view.thumbs.thumbRightOffset)
-      )));
+      String(model.thumbRightPos),
+    );
 
     const anchorValues = this.view.scale.parts.map(value => Math.round(model.findValue(value)));
     view.setAnchorValues(anchorValues);

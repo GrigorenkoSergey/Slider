@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../helpers/debugger-point';
 import EventObserver from '../../helpers/event-observer';
 import Presenter from '../../slider/components/presenter/presenter';
@@ -43,9 +44,7 @@ export default class BindedInput extends EventObserver {
 
     try {
       this.slider.setOptions({[this.prop]: newValue});
-      if (debuggerPoint.start == 1 && this.prop === 'thumbLeftPos' && this.slider.getOptions().thumbLeftPos != 50 ) debugger;
       this.broadcast(String(this.prop), newValue);
-      // console.log(this.prop);
     } catch {
       this.slider.setOptions({[this.prop]: oldValue});
       this.setValue(oldValue)
