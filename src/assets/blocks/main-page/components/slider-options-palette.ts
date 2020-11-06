@@ -31,6 +31,7 @@ export default class SliderOptionsPalette {
       const obj: Obj = {};
       obj[prop] = new BindedInput(this.el.querySelector(`[name=${prop}]`), this.slider, prop);
       obj[prop].update();
+
       Object.assign(this, obj);
     });
   }

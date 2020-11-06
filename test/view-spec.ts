@@ -7,7 +7,6 @@ const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.className = 'divViewSpec';
 div.style.marginTop = '70px';
-document.body.append(div);
 
 describe(`Первоначальная минимальная инициализация\n`, () => {
   beforeEach(() => {

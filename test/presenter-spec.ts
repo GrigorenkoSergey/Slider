@@ -48,6 +48,7 @@ describe(`Меняет значения подсказки над бегунко
 
     expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('10');
+    thumb.dispatchEvent(fakeMouseUp);
   });
 
   it(`При нажатии на правом кругляше отображается подсказка`, () => {
@@ -59,6 +60,7 @@ describe(`Меняет значения подсказки над бегунко
 
     expect(hint.textContent).toEqual('70');
     expect(hint.hidden).toBeFalse();
+    thumb.dispatchEvent(fakeMouseUp);
   });
 
   it(`При движении значение подсказки меняется`, () => {
@@ -78,6 +80,7 @@ describe(`Меняет значения подсказки над бегунко
 
     thumb.dispatchEvent(fakeMouseMove);
     expect(hint.textContent).toEqual('55');
+    thumb.dispatchEvent(fakeMouseUp);
   });
 
   it(`При движении значение подсказки меняется`, () => {
@@ -97,6 +100,7 @@ describe(`Меняет значения подсказки над бегунко
 
     thumb.dispatchEvent(fakeMouseMove);
     expect(hint.textContent).toEqual('55');
+    thumb.dispatchEvent(fakeMouseUp);
   });
 
 });
@@ -420,6 +424,7 @@ describe(`Проверка поведения подсказки над бегу
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[0].textContent).toEqual('25');
     expect(hints[1].textContent).toEqual('200');
+    thumbLeft.dispatchEvent(fakeMouseUp);
 
     presenter.setOptions({thumbLeftPos: 50});
     anchors[1].dispatchEvent(fakeClick);

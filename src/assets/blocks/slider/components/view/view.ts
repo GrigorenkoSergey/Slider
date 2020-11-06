@@ -105,6 +105,7 @@ export default class View extends EventObserver implements ISubscriber {
       'className',
       'selector', 
       'hintAboveThumb',
+      'hintAlwaysShow',
       'angle', 
       'showScale', 
       'partsNum',
