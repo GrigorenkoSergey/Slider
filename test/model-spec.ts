@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe(`Model\n`, () => {
@@ -5,6 +7,7 @@ describe(`Model\n`, () => {
     it(`Можно инициализировать с необходимым минимумом аргументов: min, max`, () => {
       const model = new Model({min: 0, max: 100});
       Object.keys(model).forEach((key: keyof Model) => {
+        if (key === 'thumbRightPos') return;
         expect(model[key]).toBeDefined();
       });
     });
@@ -24,7 +27,6 @@ describe(`Model\n`, () => {
     });
 
     it(`Можно задавать начальные положения бегунков`, () => {
-      // debuggerPoint.start = 3;
       const model = new Model({
         min: 0, max: 100, thumbLeftPos: 20, thumbRightPos: 80, range: true,
       });
@@ -39,10 +41,16 @@ describe(`Model\n`, () => {
       expect(model.thumbLeftPos).toEqual(-200);
     });
 
-    it(`По умолчанию свойство "thumbRightPos" всегда определено 
-    (даже если не задано пользователем) и равно максимальному значению`, () => {
-      const model = new Model({min: 0, max: 100, step: 1});
-      expect(model.thumbRightPos).toEqual(model.max);
+    it(`При изменении свойства "range" свойство "thumbRightPos" автоматически
+    становится равным "Infinity"`, () => {
+      const model = new Model({min: -200, max: 100});
+      expect(model.thumbRightPos).toEqual(Infinity);
+
+      model.setOptions({range: true});
+      expect(model.thumbRightPos).toEqual(100);
+
+      model.setOptions({range: false});
+      expect(model.thumbRightPos).toEqual(Infinity);
     });
 
     it(`Свойства "thumbLeftPos" и "thumbRightPos" не могут 
@@ -53,17 +61,12 @@ describe(`Model\n`, () => {
       model.setOptions({thumbLeftPos: -100});
       expect(model.thumbLeftPos).toEqual(model.min);
 
-      model.setOptions({thumbRightPos: -100});
-      expect(model.thumbRightPos).toEqual(model.max);
+      model.setOptions({thumbRightPos: 200, range: true});
 
-      model.setOptions({thumbRightPos: 200});
-      expect(model.thumbRightPos).toEqual(model.max);
-
-      model.setThumbsPos({left: -100});
+      model.setOptions({thumbLeftPos: -100});
       expect(model.thumbLeftPos).toEqual(model.min);
-      expect(model.thumbRightPos).toEqual(model.max);
 
-      model.setThumbsPos({left: -100, right: 500});
+      model.setOptions({range: true, thumbLeftPos: -100, thumbRightPos: 500});
       expect(model.thumbLeftPos).toEqual(model.min);
       expect(model.thumbRightPos).toEqual(model.max);
     });
@@ -76,7 +79,7 @@ describe(`Model\n`, () => {
 
     it(`При некратном шаге достижимые значения слайдера не могут 
     быть меньше min и больше max`, () => {
-      const model = new Model({min: 10, max: 299, step: 3});
+      const model = new Model({min: 10, max: 299, step: 3, range: true});
       expect(model.thumbLeftPos).toBeGreaterThanOrEqual(10);
       expect(model.min).toEqual(10);
       expect(model.thumbRightPos).toBeLessThanOrEqual(299);
@@ -84,13 +87,13 @@ describe(`Model\n`, () => {
     });
 
     it(`Проверка правильности округления`, () => {
-      const model = new Model({min: 2, max: 6, step: 4, rangle: false});
-      expect(model.setThumbsPos({left: 2}));
+      const model = new Model({min: 2, max: 6, step: 4, range: false});
+      expect(model.setOptions({thumbLeftPos: 2}));
       expect(model.thumbLeftPos).toEqual(2);
     });
   });
 
-  describe(`Проверка правильности задания свойств`, () => {
+  describe(`Проверка правильности задания свойств\n`, () => {
     let model: Model;
 
     beforeEach(() => {
@@ -110,16 +113,6 @@ describe(`Model\n`, () => {
       expect(model.thumbRightPos).toEqual(80);
     });
 
-    it(`Выбрасывает ошибку, если хотя бы одно из свойств нельзя 
-    преобразовать в число`, () => {
-      const shouldBeNumbers: string[] = ['min', 'max', 'step', 'thumbLeftPos',
-        'thumbRightPos',];
-
-      shouldBeNumbers.map((key) => {
-        expect(() => model.setOptions({[key]: '1000x'})).toThrowError();
-      });
-    });
-
     it(`Шаг не может быть отрицательным`, () => {
       expect( () => model.setOptions({step: -1})).toThrowError();
     });
@@ -134,7 +127,7 @@ describe(`Model\n`, () => {
     });
 
     it(`Нельзя задать "thumbRightPos" больше максимума`, () => {
-      model.setOptions({thumbRightPos: 1000});
+      model.setOptions({thumbRightPos: 1000, range: true});
       expect(model.thumbRightPos).toEqual(100);
     });
 
@@ -143,12 +136,6 @@ describe(`Model\n`, () => {
       expect(model.thumbLeftPos).toEqual(0);
       model.setOptions({thumbLeftPos: 1});
       expect(model.thumbLeftPos).toEqual(1);
-    });
-
-    it(`Если позиции "thumbRightPos" и "thumbLeftPos" совпали, 
-    "thumbRightPos" становится равным max`, () => {
-      model.setOptions({thumbLeftPos: model.thumbRightPos});
-      expect(model.thumbRightPos).toEqual(model.max);
     });
 
     it(`Технически можно задавать напрямую значения свойств, 
@@ -165,7 +152,6 @@ describe(`Model\n`, () => {
       expect(options.max).toEqual(100);
       expect(options.step).toEqual(1);
       expect(options.thumbLeftPos).toEqual(0);
-      expect(options.thumbRightPos).toEqual(100);
     });
   });
 
@@ -215,13 +201,6 @@ describe(`Model\n`, () => {
       }).toThrowError();
     });
 
-    it(`При попытке изменить max без изменения ticks получим ошибку`, () => {
-      expect(() => {
-        const model = new Model({min: 0, max: 100, ticks: {10: 5, 100: 7}});
-        model.setOptions({max: 150});
-      }).toThrowError();
-    });
-
     it(`При изменении max и соответсвующем изменении 
     ticks все пройдет гладко`, () => {
       const model = new Model({
@@ -231,17 +210,6 @@ describe(`Model\n`, () => {
       expect(() => {
         model.setOptions({max: 150, ticks: {10: 20, 30: 45, 80: 50, 150: 52}});
       }).not.toThrowError();
-    });
-
-    it(`Сброс до обычной линейной шкалы происходит заданием ticks = {}`, () => {
-      const model = new Model({
-        min: 0, max: 100, ticks: {10: 50, 20: 55, 50: 70, 100: 80},
-      });
-
-      model.setOptions({ticks: {}});
-      expect(model.ticks).toEqual({[model.max]: 100});
-      model.setOptions({max: 200});
-      expect(model.max).toEqual(200);
     });
   });
 
@@ -261,12 +229,6 @@ describe(`Model\n`, () => {
       model.setThumbsPos({left: 30, right: 95});
       expect(model.thumbLeftPos).toEqual(30);
       expect(model.thumbRightPos).toEqual(95);
-      expect(model.min).toEqual(0);
-      expect(model.max).toEqual(100);
-
-      model.setThumbsPos({left: 70, right: 5});
-      expect(model.thumbLeftPos).toEqual(5);
-      expect(model.thumbRightPos).toEqual(70);
       expect(model.min).toEqual(0);
       expect(model.max).toEqual(100);
     });
@@ -296,7 +258,7 @@ describe(`Model\n`, () => {
     beforeEach(() => {
       model = new Model({
         min: 0, max: 100, range: true, step: 10,
-        thumbRightPos: 10, thumbLeftPos: 90,
+        thumbRightPos: 90, thumbLeftPos: 10,
       });
     });
 

@@ -55,7 +55,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.el.classList.add(this.className);
 
     this.thumbs = new Thumbs(this);
-    this.thumbs.addSubscriber('thumbMove', this);
+    this.thumbs.addSubscriber('thumbMousemove', this);
     this.thumbs.addSubscriber('thumbMousedown', this);
     this.thumbs.addSubscriber('thumbMouseup', this);
 
@@ -136,9 +136,9 @@ export default class View extends EventObserver implements ISubscriber {
       const thumb = data.el;
       this.handleThumbMousedown(thumb);
 
-    } else if (eventType === 'thumbMove' && data.initiator !== this) {
+    } else if (eventType === 'thumbMousemove') {
       const thumb = data.el;
-      this.handleThumbMove(thumb);
+      this.handleThumbMousemove(thumb);
 
     } else if (eventType === 'thumbMouseup') {
       const thumb = data.thumb;
@@ -154,6 +154,7 @@ export default class View extends EventObserver implements ISubscriber {
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset, this);
+    this.broadcast('thumbProgramMove', offset);
   }
 
   setAnchorValues(values: number[] | string[]) {
@@ -181,7 +182,6 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     this.moveThumbToPos(closestThumb, offset);
-    this.handleThumbMouseup(closestThumb);
   }
 
   handleThumbMousedown(thumb: HTMLDivElement) {
@@ -199,7 +199,7 @@ export default class View extends EventObserver implements ISubscriber {
     }
   }
 
-  handleThumbMove(thumb: HTMLElement) {
+  handleThumbMousemove(thumb: HTMLElement) {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];

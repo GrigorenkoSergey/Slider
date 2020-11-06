@@ -41,7 +41,7 @@ export default class Thumbs extends EventObserver {
     return this;
   }
 
-  moveThumbToPos(thumb: HTMLDivElement, offset: number, initiator: any = null) {
+  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     thumb.style.left = offset * (this.view.el.clientWidth - thumb.offsetWidth) + 'px';
 
     if (thumb == this.thumbLeft) {
@@ -50,10 +50,9 @@ export default class Thumbs extends EventObserver {
       this.thumbRightOffset = offset;
     }
 
-    this.broadcast('thumbMove', {
+    this.broadcast('thumbProgramMove', {
       el: thumb,
       offset: offset,
-      initiator,
     });
   }
 
@@ -101,7 +100,6 @@ export default class Thumbs extends EventObserver {
     this.broadcast('thumbMousedown', {
       el: thumb,
       offset,
-      initiator: 'user',
     });
 
     const self = this;
@@ -130,10 +128,9 @@ export default class Thumbs extends EventObserver {
         self.thumbRightOffset = offset;
       }
 
-      self.broadcast('thumbMove', {
+      self.broadcast('thumbMousemove', {
         el: thumb,
         offset,
-        initiator: 'user',
       });
     }
 
@@ -141,7 +138,6 @@ export default class Thumbs extends EventObserver {
       thumb.classList.remove(`${view.className}__thumb_moving`);
       self.broadcast('thumbMouseup', {
         thumb, 
-        initiator: 'user'
       });
       document.removeEventListener('mousemove', handleDocumentMouseMove);
       document.removeEventListener('mouseup', handleDocumentMouseUp);

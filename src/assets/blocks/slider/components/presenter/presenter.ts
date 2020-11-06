@@ -40,7 +40,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     const view = this.view;
 
     view.addSubscriber('thumbMousedown', this);
-    view.addSubscriber('thumbMove', this);
+    view.addSubscriber('thumbMousemove', this);
     view.addSubscriber('thumbMouseup', this);
 
     model.addSubscriber('min', this);
@@ -100,15 +100,15 @@ export default class Presenter extends EventObserver implements ISubscriber{
       let offset = Math.round(this.model.findValue(data.offset));
       this.view.setHintValue(thumb, String(offset));
 
-    } else if (eventType === 'thumbMove') {
+    } else if (eventType === 'thumbMousemove') {
       const thumb = data.el;
       let offset = Math.round(this.model.findValue(data.offset));
       this.view.setHintValue(thumb, String(offset));
 
       if (thumb === this.view.thumbs.thumbLeft) {
-        this.model.setThumbsPos({left: offset, initiator: this});
+        this.model.setThumbsPos({left: offset})
       } else {
-        this.model.setThumbsPos({right: offset, initiator: this});
+        this.model.setThumbsPos({right: offset});
       }
 
     } else if (eventType === 'step') {
@@ -116,18 +116,15 @@ export default class Presenter extends EventObserver implements ISubscriber{
       this.view.setOptions({step});
 
     } else if (eventType === 'thumbLeftPos') {
-      if (data.initiator === this) return;
-
       const {thumbLeft} = this.view.thumbs;
       this.view.moveThumbToPos(thumbLeft, this.model.findArgument(data.value));
-    } else if (eventType === 'thumbRightPos') {
-      if (data.initiator === this) return;
 
+    } else if (eventType === 'thumbRightPos') {
       const {thumbRight} = this.view.thumbs;
       this.view.moveThumbToPos(thumbRight, this.model.findArgument(data.value));
 
     } else if (eventType === 'range') {
-      this.view.setOptions({range: data.range});
+      this.view.setOptions({range: data.value});
 
     } else if (eventType === 'ticks') {
       this.handleTicks();

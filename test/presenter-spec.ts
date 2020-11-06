@@ -100,6 +100,7 @@ describe(`Меняет значения подсказки над бегунко
   });
 
 });
+
 describe(`Меняет значения шкалы в соответствии с моделью\n`, () => {
   const option = {
     range: true, selector: '.divPresenterSpec',
@@ -162,7 +163,7 @@ describe(`Меняет значения шкалы в соответствии �
     const presenter = new Presenter({...option, ...{min: 0, max: 1000}});
     const {model} = presenter;
 
-    const thumbLeft = document.getElementsByClassName('slider__thumb-left')[0];
+    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
     const leftHint  = <HTMLElement>thumbLeft.querySelector('[class*=hint]');
 
     model.setOptions({thumbLeftPos: 100});
@@ -178,7 +179,7 @@ describe(`Меняет значения шкалы в соответствии �
     const presenter = new Presenter({...option, ...{min: 0, max: 1000}});
     const {model} = presenter;
 
-    const thumbRight = document.getElementsByClassName('slider__thumb-right')[0];
+    const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
     const rightHint  = <HTMLElement>thumbRight.querySelector('[class*=hint]');
 
     model.setOptions({thumbRightPos: 800});
@@ -193,12 +194,13 @@ describe(`Меняет значения шкалы в соответствии �
   it('Реагирует на изменение свойства "range" модели', () => {
     const presenter = new Presenter(option);
     const {model} = presenter;
-    const stretcher = document.getElementsByClassName('slider__stretcher')[0];
+    const stretcher = div.getElementsByClassName('slider__stretcher')[0];
     const style = getComputedStyle(stretcher);
+    const thumb = <HTMLElement>div.querySelector('[class*=thumb]');
 
-    expect(style.left).toEqual('8px');
-    expect(style.right).toEqual('16px');
-
+    expect(parseFloat(style.left)).toEqual(thumb.offsetWidth / 2);
+    
+    expect(parseFloat(style.right)).toEqual(thumb.offsetWidth);
     model.setOptions({range: false, thumbLeftPos: 1000});
     expect(style.left).toEqual('0px');
     expect(style.right).toEqual('16px');

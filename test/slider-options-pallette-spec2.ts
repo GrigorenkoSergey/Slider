@@ -1,13 +1,15 @@
 import '../src/assets/blocks/slider/slider';
 import '../src/assets/blocks/helpers/types';
-import {Slider} from '../src/assets/blocks/slider/slider';
+// import {Slider} from '../src/assets/blocks/slider/slider';
+import Presenter from '../src/assets/blocks/slider/components/presenter/presenter';
 import SliderOptionsPalette from '../src/assets/blocks/main-page/components/slider-options-palette';
 
 import '../src/assets/blocks/main-page/main-page.scss';
 import '../src/assets/blocks/slider/slider.scss';
+import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 
 const div = document.createElement('div');
-div.className = 'slider1';
+div.className = 'sliderPalette';
 document.body.append(div);
 
 describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
@@ -16,13 +18,13 @@ describe('Проверка связи значения инпута со зна�
     min: 2,
     max: 600,
     step: 4,
-    selector: ".slider1",
+    selector: ".sliderPalette",
     angle: 0,
     range: false,
     hintAboveThumb: true,
 
   };
-  let slider: Slider = new Slider(options);
+  let slider: Presenter = new Presenter(options);
 
   let example = document.createElement('div');
 
@@ -88,10 +90,12 @@ describe('Проверка связи значения инпута со зна�
 
   it(`Поменяем значение thumbLeftPos`, () => {
     palette.thumbLeftPos.el.value = '50';
+    debuggerPoint.start = 1;
     palette.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().thumbLeftPos).toEqual(50);
   });
 
+  /*
   it(`Поменяем значение "Диапазон"`, () => {
     palette.range.el.checked = true;
     palette.range.el.dispatchEvent(fakeChange);
@@ -117,4 +121,5 @@ describe('Проверка связи значения инпута со зна�
     palette.showScale.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().showScale).toBeFalse();
   });
+  */
 });

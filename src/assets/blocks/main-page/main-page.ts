@@ -1,22 +1,29 @@
+/*
 import './main-page.scss';
 import '../helpers/types';
-// import '../slider/slider';
+import '../slider/slider';
+// import '../slider/components/presenter/presenter';
+// import '../slider/slider.scss';
 
-// import SliderOptionsPalette from './components/slider-options-palette';
-// import debuggerPoint from '../helpers/debugger-point';
+import SliderOptionsPalette from './components/slider-options-palette';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import debuggerPoint from '../helpers/debugger-point';
+import Presenter from '../slider/components/presenter/presenter';
 
-// let options1 = {
-//   min: 2,
-//   max: 6,
-//   step: 2,
-//   selector: ".slider1",
-//   angle: 0,
-//   range: false,
-//   hintAboveThumb: true,
-//   hintAlwaysShow: true,
-//   partsNum: 2,
-// }
+let options1 = {
+  min: 2,
+  max: 6,
+  step: 2,
+  selector: ".slider1",
+  angle: 0,
+  range: false,
+  hintAboveThumb: true,
+  // hintAlwaysShow: true,
+  hintAlwaysShow: false,
+  partsNum: 2,
+}
 // let slider1 = $('.slider1').slider(options1);
+let slider1 = new Presenter(options1);
 /*
 let options2 = {
   min: 100,
@@ -67,10 +74,9 @@ let options4 = {
   hintAboveThumb: true
 }
 let slider4 = $('.slider4').slider(options4);
-*/
 
-// const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
-/*
+const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
+console.log(palette1)
 const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
 const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
 const palette4 = new SliderOptionsPalette(document.querySelector('.example4'), slider4);
@@ -157,12 +163,12 @@ let options = {
   step: 10,
   selector: ".slider1",
   angle: 0,
-  range: false,
+  range: true,
   hintAboveThumb: true
 }
-const view = new View({selector: '.slider', hintAboveThumb: true});
+const view = new View({selector: '.slider', hintAboveThumb: true, range: true});
 // const presenter = new Presenter({selector: '.slider1', range: true, hintAboveThumb: true, min: 10, max: 100, partsNum: 4,});
 const presenter = new Presenter(options);
 const model = presenter.model;
-model.setOptions({ticks: {500: 100, 10000: 150, 20000: 180}});
-console.log(presenter.getOptions());
+debugger;
+model.setOptions({ticks: {500: 100, 10000: 150, 20000: 180}, range: true});
