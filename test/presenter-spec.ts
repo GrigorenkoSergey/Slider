@@ -269,6 +269,52 @@ describe(`Меняет значения шкалы в соответствии �
   });
 });
 
+describe(`Меняет состояние модели в соответствии с положением бегунков\n`, () => {
+
+  const option = {
+    range: true, selector: '.divPresenterSpec',
+    className: 'slider', showScale: true,
+    partsNum: 4,
+    min: 0,
+    max: 100,
+  };
+
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`При движении левого бегунка меняется значение thumbLeftPos в модели`, () => {
+    const presenter = new Presenter(option);
+    const {model} = presenter;
+    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+    const anchors = div.getElementsByClassName('slider__scale-points');
+    const hints = div.getElementsByClassName('slider__hint')
+
+    anchors[1].dispatchEvent(fakeClick);
+    thumbLeft.dispatchEvent(fakeMouseDown);
+    expect(hints[0].textContent).toEqual('25');
+    expect(model.thumbLeftPos).toEqual(25);
+  });
+
+  it(`При движении правого бегунка меняется значение thumbRightPos в модели`, () => {
+    const presenter = new Presenter(option);
+    const {model} = presenter;
+    const thumbLeft = div.getElementsByClassName('slider__thumb-right')[0];
+    const anchors = div.getElementsByClassName('slider__scale-points');
+    const hints = div.getElementsByClassName('slider__hint')
+
+    anchors[3].dispatchEvent(fakeClick);
+    thumbLeft.dispatchEvent(fakeMouseDown);
+    expect(hints[1].textContent).toEqual('75');
+    expect(model.thumbRightPos).toEqual(75);
+  });
+});
+
 describe(`В любой момент времени можно узнать и задать нужные свойства`, () => {
   beforeEach(() => {
     document.body.append(div);
@@ -364,7 +410,6 @@ describe(`Проверка поведения подсказки над бегу
   it(`При включенной опции "hintAlwaysShow" и при клике на значении шкалы, 
   значение подсказки над бегунком меняется`, () => {
     const presenter = new Presenter({...option, hintAlwaysShow: true});
-    const {model, view} = presenter;
 
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint')
@@ -378,7 +423,7 @@ describe(`Проверка поведения подсказки над бегу
 
     presenter.setOptions({thumbLeftPos: 50});
     anchors[1].dispatchEvent(fakeClick);
-    debugger;
+    expect(hints[0].textContent).toEqual('110');
   });
 
 });

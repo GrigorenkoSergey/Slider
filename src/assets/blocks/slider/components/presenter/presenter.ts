@@ -9,6 +9,8 @@ import View from '../../components/view/view';
 import Model from '../model/model';
 
 import debuggerPoint from '../../../helpers/debugger-point';
+import {event} from 'jquery';
+import Thumbs from '../view/components/thumbs';
 
 export default class Presenter extends EventObserver implements ISubscriber{
   view: View | null = null;
@@ -43,6 +45,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.addSubscriber('thumbMousemove', this);
     view.addSubscriber('thumbMouseup', this);
     view.addSubscriber('partsNum', this);
+    view.addSubscriber('thumbProgramMove', this);
 
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
@@ -116,11 +119,16 @@ export default class Presenter extends EventObserver implements ISubscriber{
       this.view.setOptions({step});
 
     } else if (eventType === 'thumbLeftPos') {
+      if (data.method == 'setThumbsPos') return;
+
       const {thumbLeft} = this.view.thumbs;
       this.view.moveThumbToPos(thumbLeft, this.model.findArgument(data.value));
 
     } else if (eventType === 'thumbRightPos') {
+      if (data.method == 'setThumbsPos') return;
+
       const {thumbRight} = this.view.thumbs;
+      if (this.model.thumbRightPos === Infinity) return;
       this.view.moveThumbToPos(thumbRight, this.model.findArgument(data.value));
 
     } else if (eventType === 'range') {
@@ -129,6 +137,18 @@ export default class Presenter extends EventObserver implements ISubscriber{
     } else if (eventType === 'ticks') {
       this.handleTicks();
       this.scaleValues();
+
+    } else if (eventType === 'thumbProgramMove') {
+      let handledData = null;
+
+      if ('left' in data) {
+        handledData = {left: this.model.findValue(data.left)};
+      } else {
+        handledData = {right: this.model.findValue(data.right)}
+      }
+      this.model.setThumbsPos(handledData);
+      this.scaleValues();
+
     } else {
       this.scaleValues();
     }

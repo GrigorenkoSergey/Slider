@@ -153,7 +153,14 @@ export default class View extends EventObserver implements ISubscriber {
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset, this);
-    this.broadcast('thumbProgramMove', offset);
+
+    let data = null;
+    if(thumb === this.thumbs.thumbLeft) {
+      data = {left: offset};
+    } else {
+      data = {right: offset}
+    }
+    this.broadcast('thumbProgramMove', data);
   }
 
   setAnchorValues(values: number[] | string[]) {

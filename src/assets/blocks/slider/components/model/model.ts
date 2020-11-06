@@ -84,7 +84,7 @@ export default class Model extends EventObserver {
     Object.assign(this, tempObj);
 
     Object.keys(tempObj).forEach(key => {
-      this.broadcast(key, {value: this[<keyof this>key]});
+      this.broadcast(key, {value: this[<keyof this>key], method: 'setOptions'});
     });
 
     return this;
@@ -95,12 +95,12 @@ export default class Model extends EventObserver {
 
     if ('left' in opts) {
       this.thumbLeftPos = this._handleOption('thumbLeftPos', left, this);
-      this.broadcast('thumbLeftPos', {value: this.thumbLeftPos});
+      this.broadcast('thumbLeftPos', {value: this.thumbLeftPos, method: 'setThumbsPos'});
     }
 
     if ('right' in opts) {
       this.thumbRightPos = this._handleOption('thumbRightPos', right, this);
-      this.broadcast('thumbRightPos', {value: this.thumbRightPos});
+      this.broadcast('thumbRightPos', {value: this.thumbRightPos, method: 'setThumbsPos'});
     }
     return this;
   }
@@ -150,6 +150,10 @@ export default class Model extends EventObserver {
       step: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('step should be a number!');
+        }
+
+        if (val != Math.round(val)) {
+          throw new Error('stap should be in integer!');
         }
 
         const {min = this.min, max = this.max} = expectant;
