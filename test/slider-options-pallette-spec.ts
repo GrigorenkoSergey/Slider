@@ -11,88 +11,92 @@ const div = document.createElement('div');
 div.className = 'sliderPalette';
 div.style.marginTop = "100px";
 
-describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
+let options: Obj = {
+  min: 2,
+  max: 600,
+  step: 4,
+  selector: ".sliderPalette",
+  angle: 0,
+  range: true,
+  hintAboveThumb: true,
+};
 
-  let options: Obj = {
-    min: 2,
-    max: 600,
-    step: 4,
-    selector: ".sliderPalette",
-    angle: 0,
-    range: true,
-    hintAboveThumb: true,
-  };
+let example = document.createElement('div');
+example.className = 'example1';
 
-  let example = document.createElement('div');
-  example.className = 'example1';
+const inputTextes = [
+  'min',
+  'max', 
+  'step', 
+  'angle', 
+  'thumbLeftPos', 
+  'thumbRightPos', 
+  'partsNum',
+];
 
-  const inputTextes = [
-    'min',
-    'max', 
-    'step', 
-    'angle', 
-    'thumbLeftPos', 
-    'thumbRightPos', 
-    'partsNum',
-  ];
+const inputCheckboxes = [
+  ["range", "Диапазон"], 
+  ["hintAboveThumb", "Подсказка"], 
+  ["showScale", "Покaзать шкалу"],
+  ["hintAlwaysShow", "Всегда показывать подсказку"],
+];
 
-  const inputCheckboxes = [
-    ["range", "Диапазон"], 
-    ["hintAboveThumb", "Подсказка"], 
-    ["showScale", "Покaзать шкалу"],
-    ["hintAlwaysShow", "Всегда показывать подсказку"],
-  ];
-
-  let str = '';
-  inputTextes.forEach(key => str += `
+let str = '';
+inputTextes.forEach(key => str += `
       <input type="text" name="${key}" value="${options[key]}">${key}
     `);
-  inputCheckboxes.forEach(([key, description]) => str += `
+inputCheckboxes.forEach(([key, description]) => str += `
       <label>
         <input type="checkbox" name="${key}" value="${options[key]}">
         ${description}
       </label>
     `);
 
+example.insertAdjacentHTML('beforeend', str);
 
-  // beforeEach(() => {
-  //   document.body.append(example);
-  //   document.body.append(div);
-  // });
+let slider: Presenter;
+let palette: SliderOptionsPalette;
+let anchors: HTMLCollection; 
+let leftThumb: Element;
+let rightThumb: Element;
+let leftHint: Element;
+let rightHint: Element;
 
-  // afterEach(() => {
-  //   div.innerHTML = '';
-  //   div.remove();
-  //   example.remove();
-  // });
+const fakeChange = new Event('change', {
+  bubbles: true, cancelable: true,
+});
 
-  const fakeChange = new Event('change', {
-    bubbles: true, cancelable: true,
+const fakeMouseDown = new MouseEvent('mousedown',
+  {bubbles: true, cancelable: true, clientX: 0, clientY: 0});
+
+const fakeMouseUp = new MouseEvent('mouseup', {
+  bubbles: true, cancelable: true,
+});
+
+const fakeClick = new MouseEvent('click', {
+  bubbles: true, cancelable: true,
+});
+
+describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
+  beforeEach(() => {
+    document.body.append(example);
+    document.body.append(div);
+
+    slider = new Presenter(options);
+    palette = new SliderOptionsPalette(example, slider);
+
+    anchors = div.getElementsByClassName('slider__scale-points');
+    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
   });
 
-  const fakeMouseDown = new MouseEvent('mousedown',
-    {bubbles: true, cancelable: true, clientX: 0, clientY: 0});
-
-  const fakeMouseUp = new MouseEvent('mouseup', {
-    bubbles: true, cancelable: true,
+  afterEach(() => {
+    example.remove();
+    div.innerHTML = '';
+    div.remove();
   });
-
-  const fakeClick = new MouseEvent('click', {
-    bubbles: true, cancelable: true,
-  })
-
-  example.insertAdjacentHTML('beforeend', str);
-  document.body.append(example);
-  document.body.append(div);
-
-  let slider = new Presenter(options);
-  const palette = new SliderOptionsPalette(example, slider);
-
-  const anchors = div.getElementsByClassName('slider__scale-points');
-  const leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
-  const rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
-  const leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
-  const rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
 
   it(`Поменяем значение min`, () => {
     palette.min.el.value = '4';
@@ -198,6 +202,10 @@ describe('Проверка связи значения инпута со зна�
   it(`Поменяем значение hintAboveThumb`, () => {
     palette.hintAboveThumb.el.checked = false;
     palette.hintAboveThumb.el.dispatchEvent(fakeChange);
+
+    palette.hintAlwaysShow.el.checked = false;
+    palette.hintAlwaysShow.el.dispatchEvent(fakeChange);
+    
     expect(leftHint.clientWidth).toBeFalsy();
     expect(slider.getOptions().hintAboveThumb).toBeFalse();
 
@@ -214,4 +222,9 @@ describe('Проверка связи значения инпута со зна�
     leftThumb.dispatchEvent(fakeMouseUp);
     expect(slider.getOptions().hintAboveThumb).toBeTrue();
   });
+
+});
+
+describe(`При установке значения свойств программно, значения полей меняются автоматически`, () => {
+    
 });

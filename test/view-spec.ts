@@ -182,7 +182,8 @@ describe(`Позволяет пользователю взаимодейство
       range: true, selector: '.divViewSpec',
       className: 'slider', angle: 90,
     };
-    new View(option);
+
+    const view = new View(option);
 
     const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
     const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
