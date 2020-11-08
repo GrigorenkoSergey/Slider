@@ -5,54 +5,9 @@ import SliderOptionsPalette from '../src/assets/blocks/main-page/components/slid
 
 import '../src/assets/blocks/main-page/main-page.scss';
 import '../src/assets/blocks/slider/slider.scss';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 
-const div = document.createElement('div');
-div.className = 'sliderPalette';
-div.style.marginTop = "100px";
-
-let options: Obj = {
-  min: 2,
-  max: 600,
-  step: 4,
-  selector: ".sliderPalette",
-  angle: 0,
-  range: true,
-  hintAboveThumb: true,
-};
-
-let example = document.createElement('div');
-example.className = 'example1';
-
-const inputTextes = [
-  'min',
-  'max', 
-  'step', 
-  'angle', 
-  'thumbLeftPos', 
-  'thumbRightPos', 
-  'partsNum',
-];
-
-const inputCheckboxes = [
-  ["range", "Диапазон"], 
-  ["hintAboveThumb", "Подсказка"], 
-  ["showScale", "Покaзать шкалу"],
-  ["hintAlwaysShow", "Всегда показывать подсказку"],
-];
-
-let str = '';
-inputTextes.forEach(key => str += `
-      <input type="text" name="${key}" value="${options[key]}">${key}
-    `);
-inputCheckboxes.forEach(([key, description]) => str += `
-      <label>
-        <input type="checkbox" name="${key}" value="${options[key]}">
-        ${description}
-      </label>
-    `);
-
-example.insertAdjacentHTML('beforeend', str);
 
 let slider: Presenter;
 let palette: SliderOptionsPalette;
@@ -78,6 +33,22 @@ const fakeClick = new MouseEvent('click', {
 });
 
 describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
+  const div = document.createElement('div');
+  div.className = 'sliderPalette';
+  div.style.marginTop = "100px";
+
+  let options: Obj = {
+    min: 2,
+    max: 600,
+    step: 4,
+    selector: ".sliderPalette",
+    angle: 0,
+    range: true,
+    hintAboveThumb: true,
+  };
+
+  let example = document.createElement('div');
+  example.className = 'example1';
   beforeEach(() => {
     document.body.append(example);
     document.body.append(div);
@@ -93,6 +64,7 @@ describe('Проверка связи значения инпута со зна�
   });
 
   afterEach(() => {
+    example.innerHTML = '';
     example.remove();
     div.innerHTML = '';
     div.remove();
@@ -225,6 +197,143 @@ describe('Проверка связи значения инпута со зна�
 
 });
 
-describe(`При установке значения свойств программно, значения полей меняются автоматически`, () => {
-    
+describe(`При установке значения свойств программно, значения полей меняются автоматически\n`, () => {
+  const div = document.createElement('div');
+  div.className = 'sliderPalette';
+  div.style.marginTop = "100px";
+
+  let options: Obj = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".sliderPalette",
+    angle: 0,
+    range: true,
+    hintAboveThumb: true,
+  };
+
+  let example = document.createElement('div');
+  example.className = 'example2';
+
+  beforeEach(() => {
+    document.body.append(example);
+    document.body.append(div);
+
+    slider = new Presenter({...options});
+    palette = new SliderOptionsPalette(example, slider);
+
+    anchors = div.getElementsByClassName('slider__scale-points');
+    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+  });
+
+  afterEach(() => {
+    example.innerHTML = '';
+    example.remove();
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`Поменяем значение min`, () => {
+    slider.setOptions({min: 0});
+    expect(slider.getOptions().min).toEqual(0);
+    expect(anchors[0].textContent).toEqual('0');
+    expect(palette.min.el.value).toEqual('0');
+  });
+
+  it(`Поменяем значение max`, () => {
+    slider.setOptions({max: 200});
+    expect(slider.getOptions().max).toEqual(200);
+    expect(anchors[anchors.length - 1].textContent).toEqual('200');
+    expect(palette.max.el.value).toEqual('200');
+    //проверить на возможные ошибки
+  });
+
+  it(`Поменяем значение max`, () => {
+    slider.setOptions({max: 100});
+    expect(slider.getOptions().max).toEqual(100);
+    expect(anchors[anchors.length - 1].textContent).toEqual('100');
+    expect(palette.max.el.value).toEqual('100');
+    //проверить на возможные ошибки
+  });
+
+  it(`Поменяем значение step`, () => {
+    slider.setOptions({step: 100});
+    expect(slider.getOptions().max).toEqual(100);
+    expect(anchors[anchors.length - 1].textContent).toEqual('100');
+    expect(palette.max.el.value).toEqual('100');
+  });
+
+  it(`Поменяем значение angle`, () => {
+    slider.setOptions({angle: 45});
+    expect(slider.getOptions().angle).toEqual(45);
+  });
+
+  it(`Поменяем значение thumbLeftPos`, () => {
+    slider.setOptions({thumbLeftPos: 25, range: false});
+    expect(slider.getOptions().thumbLeftPos).toEqual(25);
+    expect(palette.thumbLeftPos.el.value).toEqual('25');
+
+    anchors[0].dispatchEvent(fakeClick);
+    expect(palette.thumbLeftPos.el.value).toEqual('0');
+
+    anchors[1].dispatchEvent(fakeClick);
+    expect(palette.thumbLeftPos.el.value).toEqual('50');
+
+    anchors[2].dispatchEvent(fakeClick);
+    expect(palette.thumbLeftPos.el.value).toEqual('100');
+  });
+
+  it(`Поменяем значение "range"`, () => {
+    slider.setOptions({range: false});
+    expect(palette.range.el.checked).toBeFalse();
+
+    slider.setOptions({range: true});
+    expect(palette.range.el.checked).toBeTrue();
+  });
+
+  it(`Поменяем значение "thumbRightPos"`, () => {
+    slider.setOptions({thumbRightPos: 75});
+    expect(palette.thumbRightPos.el.value).toEqual('75');
+
+    anchors[1].dispatchEvent(fakeClick);
+    expect(palette.thumbRightPos.el.value).toEqual('50');
+
+    anchors[2].dispatchEvent(fakeClick);
+    expect(palette.thumbRightPos.el.value).toEqual('100');
+  });
+
+  it(`Поменяем значение "showScale"`, () => {
+    slider.setOptions({showScale: false});
+    expect(palette.showScale.el.checked).toBeFalse();
+
+    slider.setOptions({showScale: true});
+    expect(palette.showScale.el.checked).toBeTrue();
+  });
+
+  it(`Поменяем значение "hintAlwaysShow"`, () => {
+    slider.setOptions({hintAlwaysShow: true});
+    expect(palette.hintAlwaysShow.el.checked).toBeTrue();
+
+    slider.setOptions({hintAlwaysShow: false});
+    expect(palette.hintAlwaysShow.el.checked).toBeFalse();
+  });
+
+  it(`Поменяем значение "partsNum"`, () => {
+    slider.setOptions({partsNum: 3});
+    expect(palette.partsNum.el.value).toEqual('3');
+
+    slider.setOptions({partsNum: 4});
+    expect(palette.partsNum.el.value).toEqual('4');
+  });
+
+  it(`Поменяем значение "hintAboveThumb"`, () => {
+    slider.setOptions({hintAboveThumb: true});
+    expect(palette.hintAboveThumb.el.checked).toBeTrue();
+
+    slider.setOptions({hintAboveThumb: false});
+    expect(palette.hintAboveThumb.el.checked).toBeFalse();
+  });
 });

@@ -1,6 +1,5 @@
 extends ../template/template.pug
 
-
 //- block content
 //-   div.slider(style="width: 60%; margin: 50px auto")
 //-   div.slider1(style="width: 60%; margin: 50px auto")
@@ -12,28 +11,8 @@ mixin example(num)
 
   div(class= wrapper)
     div(class = slider)
-    ul.slider-options
-      each val in optionsInputs
-        li.slider-options__li= val
-          input.slider-options__input(name = val value = val)
-      li.slider-options__li_checkbox
-        each val in optionsCheckbox
-          label.slider-options__label= val[1]
-            input.slider-options_checkbox(type="checkbox" name = val[0])
 
 block includes
-
-block variables
-  - 
-    var titleName = 'SLIDERS'
-    var optionsInputs = ["min", "max", "step", "angle",
-      "thumbLeftPos", "thumbRightPos", "partsNum"];
-    var optionsCheckbox = [
-        ["range", "Диапазон"], 
-        ["hintAboveThumb", "Подсказка"], 
-        ["showScale", "Покaзать шкалу"],
-        ["hintAlwaysShow", "Всегда показывать подсказку"]
-      ];
 
 block content
 

@@ -21,8 +21,67 @@ export default class SliderOptionsPalette {
   constructor(elem: HTMLDivElement, slider: Presenter) {
     this.el = elem;
     this.slider = slider;
+    this.render();
     this.init();
   }
+
+  render() {
+    const inputTextes = [
+      'min',
+      'max', 
+      'step', 
+      'angle', 
+      'thumbLeftPos', 
+      'thumbRightPos', 
+      'partsNum',
+    ];
+
+    const inputCheckboxes = [
+      ["range", "Диапазон"], 
+      ["hintAboveThumb", "Подсказка"], 
+      ["showScale", "Покaзать шкалу"],
+      ["hintAlwaysShow", "Всегда показывать подсказку"],
+    ];
+
+
+    const ul = document.createElement('ul');
+    ul.className = 'slider-options';
+
+    inputTextes.forEach(inputName => {
+      const li = document.createElement('li');
+      li.className = 'slider-options__li';
+      li.textContent = inputName;
+
+      const input = document.createElement('input');
+      input.className = 'slider-options__input';
+      input.type = 'text';
+      input.name = inputName;
+
+      li.append(input);
+      ul.append(li);
+    });
+
+    const liCheckbox = document.createElement('li');
+    liCheckbox.className = 'slider-options__li slider-options__li_checkbox';
+
+    inputCheckboxes.forEach(([name, alias]) => {
+      const label = document.createElement('label');
+      label.className = 'slider-options__label';
+      label.textContent = alias;
+
+      const input = document.createElement('input');
+      input.className = 'slider-options__checkbox';
+      input.type = 'checkbox';
+      input.name = name;
+
+      label.append(input);
+      liCheckbox.append(label);
+    });
+    ul.append(liCheckbox);
+
+    this.el.append(ul);
+  }
+
 
   init() {
     Object.keys(this).forEach(prop => {

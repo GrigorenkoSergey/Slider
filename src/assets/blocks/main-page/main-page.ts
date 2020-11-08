@@ -1,6 +1,8 @@
-import './main-page.scss';
+import '../template/template';
 import '../helpers/types';
 import '../slider/slider';
+
+import './main-page.scss';
 // import '../slider/components/presenter/presenter';
 // import '../slider/slider.scss';
 

@@ -18,7 +18,7 @@ export default class BindedInput extends EventObserver {
   }
 
   init() {
-    this.slider.addSubscriber('changeView', this);
+    this.slider.addSubscriber(this.prop, this);
     this.el.addEventListener('change', this.handleInputChange.bind(this));
   }
 
