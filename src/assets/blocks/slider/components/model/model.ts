@@ -121,7 +121,8 @@ export default class Model extends EventObserver {
         const fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
         const fnB = ticksRange[i];
 
-        return (offset - a) * (fnB - fnA) / (b - a) + fnA;
+        // return (offset - a) * (fnB - fnA) / (b - a) + fnA;
+        return Math.round((offset - a) * (fnB - fnA) / (b - a) + fnA);
       }
     }
   }
@@ -149,21 +150,21 @@ export default class Model extends EventObserver {
     const handler: Obj = {
       step: (val: number) => {
         if (!isFinite(val)) {
-          throw new Error('step should be a number!');
+          throw new Error('"step" should be a number!');
         }
 
-        if (val != Math.round(val)) {
-          throw new Error('stap should be in integer!');
+        if (!Number.isInteger(+val)) {
+          throw new Error('"step" should be integer!');
         }
 
         const {min = this.min, max = this.max} = expectant;
         
         if (val > max - min) {
-          throw new Error('step is too big!');
+          throw new Error('"step" is too big!');
         } else if (val < 0) {
-          throw new Error('step is negative!');
+          throw new Error('"step" is negative!');
         } else if (val == 0) {
-          throw new Error('step is equal to zero!');
+          throw new Error('"step" is equal to zero!');
         }
         return Number(val);
       },
@@ -171,6 +172,9 @@ export default class Model extends EventObserver {
       min: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('"min" should be a number!');
+        }
+        if (!Number.isInteger(+val)) {
+          throw new Error('"min" should be integer!');
         }
 
         const {max = this.max, step = this.step} = expectant;
@@ -186,6 +190,9 @@ export default class Model extends EventObserver {
       max: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('"max" should be a number!');
+        }
+        if (!Number.isInteger(+val)) {
+          throw new Error('"max" should be integer!');
         }
 
         const {min = this.min, step = this.step} = expectant;
@@ -211,6 +218,9 @@ export default class Model extends EventObserver {
         if (!isFinite(val)) {
           throw new Error('"thumbLeftPos" should be a number!');
         }
+        if (!Number.isInteger(+val)) {
+          throw new Error('"thumbLeftPos" should be  integer!');
+        }
 
         let {thumbRightPos = this.thumbRightPos, min = this.min, max = this.max} = expectant;
 
@@ -224,6 +234,10 @@ export default class Model extends EventObserver {
       thumbRightPos: (val: number) => {
         const {range = this.range, max = this.max} = expectant;
         if (!range) return Infinity;
+
+        if (!Number.isInteger(+val)) {
+          throw new Error('"thumbRightPos" should be integer!');
+        }
 
         if (!isFinite(val)) {
           throw new Error('"thumbRightPos" should be a number!');
@@ -243,12 +257,19 @@ export default class Model extends EventObserver {
         const {max = this.max, min = this.min} = expectant;
 
         if (keys[keys.length - 1] != max) {
-          if (debuggerPoint.start == 8) debugger;
           throw new Error('Last key of ticks should be equal to max!');
+
         } else if (keys[0] < min) {
           throw new Error('First key of ticks should be greater then min!');
+
         } else if (!isIncreasing(vals) || !isIncreasing(keys)) {
           throw new Error('Both keys and values of ticks must be increasing sequenses!');
+
+        } else if (keys.some(value => !Number.isInteger(+value))) {
+          throw new Error('keys should be integer values');
+
+        } else if (vals.some(value => !Number.isInteger(+value))) {
+          throw new Error('vals should be integer values');
         }
 
         return val;

@@ -17,10 +17,11 @@ let options1 = {
   step: 2,
   selector: ".slider1",
   angle: 0,
-  range: false,
+  range: true,
   hintAboveThumb: true,
   // hintAlwaysShow: true,
   hintAlwaysShow: false,
+  thumbRightPos: 4,
   partsNum: 2,
 }
 // let slider1 = $('.slider1').slider(options1);

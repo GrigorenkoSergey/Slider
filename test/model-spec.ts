@@ -117,6 +117,14 @@ describe(`Model\n`, () => {
       expect( () => model.setOptions({step: -1})).toThrowError();
     });
 
+    it(`Свойства "step", "max", "min", "thumbLeftPos", "thumbRightPos" должны быть целочисленными`, () => {
+      expect( () => model.setOptions({step: 0.5})).toThrowError();
+      expect( () => model.setOptions({max: 101.5})).toThrowError();
+      expect( () => model.setOptions({min: 0.5})).toThrowError();
+      expect( () => model.setOptions({thumbLeftPos: 10.5})).toThrowError();
+      expect( () => model.setOptions({thumbRightPos: 80.5, range: true})).toThrowError();
+    });
+
     it(`Значение свойства "max" должно быть больше, чем "min"`, () => {
       expect(() => model.setOptions({min: 100, max: 0})).toThrowError();
     });
@@ -154,7 +162,7 @@ describe(`Model\n`, () => {
       expect(options.thumbLeftPos).toEqual(0);
     });
   });
-
+  
   describe(`Задание нелинейной шкалы\n`, () => {
     it(`При задании нелинейной шкалы последний ключ ticks 
     должен быть равен max, иначе ошибка`, () => {

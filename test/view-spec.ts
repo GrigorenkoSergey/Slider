@@ -65,6 +65,9 @@ describe(`Первоначальная минимальная инициализ
       view.setOptions({partsNum: '1a'});
     }).toThrowError();
     expect(() => {
+      view.setOptions({partsNum: '1.5'});
+    }).toThrowError();
+    expect(() => {
       view.setOptions({step: 0.75, partsNum: 3});
     }).toThrowError();
     expect(() => {
@@ -211,6 +214,58 @@ describe(`Позволяет пользователю взаимодейство
     expect(pos.right).toEqual(rightLimit);
     expect(startTop - pos.top)
       .toEqual(parseFloat(getComputedStyle(leftThumb).left));
+  });
+
+  it(`Бегунки располагаются согласно шагу, и при движении мышкой не выходят за пределы`, () => {
+    const option = {
+      range: true, selector: '.divViewSpec',
+      className: 'slider', angle: 0,
+      step: 0.5,
+    };
+    const view = new View(option);
+    const scaleWidth = view.scale.width;
+    const rightThumb = view.thumbs.thumbRight;
+
+    const fakeMouseDown = new MouseEvent('mousedown', 
+      {
+        bubbles: true, cancelable: true,
+        clientX: 0, clientY: 0,
+      }
+    );
+
+    const fakeMouseUp = new MouseEvent('mouseup',
+      {bubbles: true, cancelable: true});
+
+    let fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: -scaleWidth / 2, clientY: 0,
+      }
+    );
+
+    view.moveThumbToPos(rightThumb, 0.5);
+    let posStart = rightThumb.getBoundingClientRect();
+    rightThumb.dispatchEvent(fakeMouseDown);
+    rightThumb.dispatchEvent(fakeMouseMove);
+    let posEnd = rightThumb.getBoundingClientRect();
+    rightThumb.dispatchEvent(fakeMouseUp);
+
+    expect(posStart.left).toEqual(posEnd.left);
+
+    fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: scaleWidth / 2, clientY: 0,
+      }
+    );
+
+    const leftThumb = view.thumbs.thumbLeft;
+    posStart = leftThumb.getBoundingClientRect();
+    leftThumb.dispatchEvent(fakeMouseDown);
+    leftThumb.dispatchEvent(fakeMouseMove);
+    posEnd = leftThumb.getBoundingClientRect();
+    expect(posStart.left).toEqual(posEnd.left);
+    leftThumb.dispatchEvent(fakeMouseUp);
   });
 });
 

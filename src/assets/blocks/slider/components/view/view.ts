@@ -240,8 +240,12 @@ export default class View extends EventObserver implements ISubscriber {
       },
 
       partsNum: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('partsNum should be a number!');
+        if (!isFinite(val) || val <= 0) {
+          throw new Error('partsNum should be a positive number!');
+        }
+
+        if (Math.round(val) != val) {
+          throw new Error('partsNum should be a integer!');
         }
 
         let step = expectant.step || this.step;

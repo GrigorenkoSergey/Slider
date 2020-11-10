@@ -248,7 +248,6 @@ describe(`При установке значения свойств програ
     expect(slider.getOptions().max).toEqual(200);
     expect(anchors[anchors.length - 1].textContent).toEqual('200');
     expect(palette.max.el.value).toEqual('200');
-    //проверить на возможные ошибки
   });
 
   it(`Поменяем значение max`, () => {
@@ -335,5 +334,270 @@ describe(`При установке значения свойств програ
 
     slider.setOptions({hintAboveThumb: false});
     expect(palette.hintAboveThumb.el.checked).toBeFalse();
+  });
+});
+
+describe('В поля ввода нельза ввести ошибочные данные\n', () => {
+  const div = document.createElement('div');
+  div.className = 'sliderPalette';
+  div.style.marginTop = "100px";
+
+  let options: Obj = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".sliderPalette",
+  };
+
+  let example = document.createElement('div');
+  example.className = 'example3';
+
+  beforeEach(() => {
+    document.body.append(example);
+    document.body.append(div);
+
+    slider = new Presenter({...options});
+    palette = new SliderOptionsPalette(example, slider);
+  });
+
+  afterEach(() => {
+    example.innerHTML = '';
+    example.remove();
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`Попробуем поменять значение min`, () => {
+    const value = palette.min.el.value;
+    palette.min.el.value = 'a';
+    palette.min.el.dispatchEvent(fakeChange);
+
+    expect(palette.min.el.value).toEqual(value);
+
+    palette.min.el.value = '101';
+    palette.min.el.dispatchEvent(fakeChange);
+    expect(palette.min.el.value).toEqual(value);
+
+    palette.min.el.value = 'Infinity';
+    palette.min.el.dispatchEvent(fakeChange);
+    expect(palette.min.el.value).toEqual(value);
+
+    palette.min.el.value = '101a';
+    palette.min.el.dispatchEvent(fakeChange);
+    expect(palette.min.el.value).toEqual(value);
+
+    slider.setOptions({max: 10, min: 0, step: 5});
+    palette.min.el.value = '6';
+    palette.min.el.dispatchEvent(fakeChange);
+    expect(palette.min.el.value).toEqual('0');
+  });
+
+  it(`Попробуем поменять значение max`, () => {
+    const value = palette.max.el.value;
+    palette.max.el.value = 'a';
+    palette.max.el.dispatchEvent(fakeChange);
+
+    expect(palette.max.el.value).toEqual(value);
+
+    palette.max.el.value = '-10';
+    palette.max.el.dispatchEvent(fakeChange);
+    expect(palette.max.el.value).toEqual(value);
+
+    palette.max.el.value = 'Infinity';
+    palette.max.el.dispatchEvent(fakeChange);
+    expect(palette.max.el.value).toEqual(value);
+
+    palette.max.el.value = '101n';
+    palette.max.el.dispatchEvent(fakeChange);
+    expect(palette.max.el.value).toEqual(value);
+
+    slider.setOptions({max: 10, min: 0, step: 5});
+    palette.max.el.value = '4';
+    palette.max.el.dispatchEvent(fakeChange);
+    expect(palette.max.el.value).toEqual('10');
+  });
+
+  it(`Попробуем поменять значение step`, () => {
+    const value = palette.step.el.value;
+    palette.step.el.value = 'a';
+    palette.step.el.dispatchEvent(fakeChange);
+
+    expect(palette.step.el.value).toEqual(value);
+
+    palette.step.el.value = '-1';
+    palette.step.el.dispatchEvent(fakeChange);
+    expect(palette.step.el.value).toEqual(value);
+
+    palette.step.el.value = 'Infinity';
+    palette.step.el.dispatchEvent(fakeChange);
+    expect(palette.step.el.value).toEqual(value);
+
+    palette.step.el.value = '1n';
+    palette.step.el.dispatchEvent(fakeChange);
+    expect(palette.step.el.value).toEqual(value);
+
+    palette.step.el.value = '0';
+    palette.step.el.dispatchEvent(fakeChange);
+    expect(palette.step.el.value).toEqual(value);
+
+    palette.step.el.value = '0.5';
+    palette.step.el.dispatchEvent(fakeChange);
+    expect(palette.step.el.value).toEqual(value);
+  });
+
+  it(`Поменяем значение angle`, () => {
+    const value = palette.angle.el.value;
+    palette.angle.el.value = '-10';
+    palette.angle.el.dispatchEvent(fakeChange);
+    expect(palette.angle.el.value).toEqual(value);
+
+    palette.angle.el.value = '91';
+    palette.angle.el.dispatchEvent(fakeChange);
+    expect(palette.angle.el.value).toEqual(value);
+
+    palette.angle.el.value = '0a';
+    palette.angle.el.dispatchEvent(fakeChange);
+    expect(palette.angle.el.value).toEqual(value);
+  });
+
+  it(`Поменяем значение thumbLeftPos, оно не может выйти за пределы`, () => {
+    palette.range.el.checked = false;
+    palette.range.el.dispatchEvent(fakeChange);
+
+    const value = palette.thumbLeftPos.el.value;
+
+    palette.thumbLeftPos.el.value = '-10';
+    palette.thumbLeftPos.el.dispatchEvent(fakeChange);
+    expect(palette.thumbLeftPos.el.value).toEqual(value);
+
+    palette.thumbLeftPos.el.value = '10a';
+    palette.thumbLeftPos.el.dispatchEvent(fakeChange);
+    expect(palette.thumbLeftPos.el.value).toEqual(value);
+
+    palette.thumbLeftPos.el.value = '1000';
+    palette.thumbLeftPos.el.dispatchEvent(fakeChange);
+    expect(palette.thumbLeftPos.el.value).toEqual('100');
+
+    slider.setOptions({thumbLeftPos: value, thumbRightPos: 50, range: true})
+    palette.thumbLeftPos.el.value = '51';
+    palette.thumbLeftPos.el.dispatchEvent(fakeChange);
+    expect(palette.thumbLeftPos.el.value).toEqual(value);
+  });
+
+  it(`Поменяем значение thumbRighPos, оно не может выйти за пределы`, () => {
+    slider.setOptions({thumbLeftPos: 0, range: true});
+
+    const value = palette.thumbRightPos.el.value;
+    palette.thumbRightPos.el.value = '-10';
+    palette.thumbRightPos.el.dispatchEvent(fakeChange);
+    expect(palette.thumbRightPos.el.value).toEqual(value);
+
+    palette.thumbRightPos.el.value = '1000';
+    palette.thumbRightPos.el.dispatchEvent(fakeChange);
+    expect(palette.thumbRightPos.el.value).toEqual('100');
+  });
+
+  it(`Поменяем значение partsNum`, () => {
+    palette.range.el.dispatchEvent(fakeChange);
+
+    const value = palette.partsNum.el.value;
+    palette.partsNum.el.value = '-10';
+    palette.partsNum.el.dispatchEvent(fakeChange);
+    expect(palette.partsNum.el.value).toEqual(value);
+
+    palette.partsNum.el.value = '0';
+    palette.partsNum.el.dispatchEvent(fakeChange);
+    expect(palette.partsNum.el.value).toEqual(value);
+
+    palette.partsNum.el.value = '101';
+    palette.partsNum.el.dispatchEvent(fakeChange);
+    expect(palette.partsNum.el.value).toEqual(value);
+
+    palette.partsNum.el.value = '1n';
+    palette.partsNum.el.dispatchEvent(fakeChange);
+    expect(palette.partsNum.el.value).toEqual(value);
+
+    palette.partsNum.el.value = 'a';
+    palette.partsNum.el.dispatchEvent(fakeChange);
+    expect(palette.partsNum.el.value).toEqual(value);
+
+    palette.partsNum.el.value = '2.5';
+    palette.partsNum.el.dispatchEvent(fakeChange);
+    expect(palette.partsNum.el.value).toEqual(value);
+  });
+});
+
+describe(`Реагирует на ручное изменение положения бегунков\n`, () => {
+  const div = document.createElement('div');
+  div.className = 'sliderPalette';
+  div.style.marginTop = "100px";
+
+  let options: Obj = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: ".sliderPalette",
+    angle: 0,
+    range: true,
+    hintAboveThumb: true,
+  };
+
+  let example = document.createElement('div');
+  example.className = 'example3';
+
+  beforeEach(() => {
+    document.body.append(example);
+    document.body.append(div);
+
+    slider = new Presenter({...options});
+    palette = new SliderOptionsPalette(example, slider);
+
+    anchors = div.getElementsByClassName('slider__scale-points');
+    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+  });
+
+  afterEach(() => {
+    example.innerHTML = '';
+    example.remove();
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`При перетаскивании бегунков мышкой значение соответствующего поля меняется`, () => {
+    const scaleWidth = slider.view.scale.width;
+
+    for (let i = 0; i < 5; i++) {
+      let fakeMouseMove = new MouseEvent('mousemove',
+        {
+          bubbles: true, cancelable: true,
+          clientX: scaleWidth / 5, clientY: 0,
+        });
+
+      leftThumb.dispatchEvent(fakeMouseDown);
+      expect(leftHint.textContent).toEqual(palette.thumbLeftPos.el.value);
+      leftThumb.dispatchEvent(fakeMouseMove);
+      expect(slider.getOptions().thumbLeftPos).toEqual(Number(palette.thumbLeftPos.el.value));
+      leftThumb.dispatchEvent(fakeMouseUp);
+    }
+
+    for (let i = 0; i < 5; i++) {
+      let fakeMouseMove = new MouseEvent('mousemove', {
+        bubbles: true, cancelable: true,
+        clientX: -scaleWidth / 10, clientY: 0,
+      })
+
+      rightThumb.dispatchEvent(fakeMouseDown);
+      expect(rightHint.textContent).toEqual(palette.thumbRightPos.el.value);
+      rightThumb.dispatchEvent(fakeMouseMove);
+      expect(slider.getOptions().thumbRightPos).toEqual(Number(palette.thumbRightPos.el.value));
+      rightThumb.dispatchEvent(fakeMouseUp);
+    }
+  });
+
+  it(`При щелчке на якоре шкалы, бегунок двигается и значение соответствующего поля меняется`, () => {
+
   });
 });
