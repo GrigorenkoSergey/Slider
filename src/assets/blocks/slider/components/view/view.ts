@@ -146,7 +146,9 @@ export default class View extends EventObserver implements ISubscriber {
       this.handleThumbMouseup(thumb);
 
     } else if (eventType === 'anchorClick') {
+      this.broadcast(eventType, data);
       this.handleAnchorClick(data);
+      return;
     }
 
     this.broadcast(eventType, data);

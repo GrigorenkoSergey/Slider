@@ -103,8 +103,10 @@ export default class Presenter extends EventObserver implements ISubscriber{
       String(model.thumbRightPos),
     );
 
+    const precision = this.model.precision;
     const anchorValues = this.view.scale.parts.map((value, index, parts) => {
-      return Number(model.findValue(value).toFixed(2));
+
+      return Number(model.findValue(value).toFixed(precision));
     });
 
     view.setAnchorValues(anchorValues);

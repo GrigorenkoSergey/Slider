@@ -637,10 +637,20 @@ describe(`Данные баги более не возникают`, () => {
   it('При смене значения "min" c "0.5" на "0" и обратно значения якорей высчитываются правильно', () => {
     expect(anchors[1].textContent).toEqual('100.5')
     palette.min.el.value = '0';
-    // debugger;
     palette.min.el.dispatchEvent(fakeChange);
 
     expect(anchors[1].textContent).toEqual('100');
-  })
+  });
+
+  it('При смене точности до 3 знаков, значения якорей шкалы совпадают со значениями модели', () => {
+    slider.setOptions({min: 0.555, max: 200, precision: 3});
+    expect(anchors[0].textContent).toEqual('0.555');
+    expect(anchors[1].textContent).toEqual('100.555');
+    expect(anchors[2].textContent).toEqual('200');
+    expect(palette.min.el.value).toEqual('0.555');
+
+    anchors[1].dispatchEvent(fakeClick);
+    expect(palette.thumbRightPos.el.value).toEqual('100.555');
+  });
 
 })
