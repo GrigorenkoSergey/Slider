@@ -9,9 +9,7 @@ import Thumbs from './components/thumbs';
 import '../../../helpers/types';
 import Hint from './components/hint';
 
-import Presenter from '../presenter/presenter';
 import debuggerPoint from '../../../helpers/debugger-point';
-
 
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
@@ -33,7 +31,7 @@ export default class View extends EventObserver implements ISubscriber {
   partsNum: number = 2;
   stretcher: Stretcher;
 
-  constructor(options: Obj) { // пока не лезь сюда. Вроде все нормально.
+  constructor(options: Obj) {
     super();
     const argsRequire = ['selector'];
 
@@ -81,7 +79,7 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  setOptions(options: Obj) {// не лезь
+  setOptions(options: Obj) {
     const expectant: Obj = {};
 
     Object.keys(options).filter((prop) => prop in this)
@@ -99,7 +97,7 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  getOptions() { // Не лезь..
+  getOptions() {
     const publicOtions = [
       'step',
       'range', 
@@ -146,9 +144,7 @@ export default class View extends EventObserver implements ISubscriber {
       this.handleThumbMouseup(thumb);
 
     } else if (eventType === 'anchorClick') {
-      this.broadcast(eventType, data);
       this.handleAnchorClick(data);
-      return;
     }
 
     this.broadcast(eventType, data);

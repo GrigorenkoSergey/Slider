@@ -27,7 +27,6 @@ module.exports = function(config) {
             test: /\.tsx?/, // ?
             exclude: /node_modules/,
             use: [
-              // '@jsdevtools/coverage-istanbul-loader',
               // нужно отключать, если собираешься дебажить
               'ts-loader',
             ],

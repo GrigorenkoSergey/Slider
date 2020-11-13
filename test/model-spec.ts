@@ -120,9 +120,30 @@ describe(`Model\n`, () => {
       expect(() => model.setOptions({min: 100, max: 0})).toThrowError();
     });
 
+    it(`Нельзя задать "max" меньше "thumbLeftPos, если "thumbLeftPos" задано в опциях`, () => {
+      expect(() => model.setOptions({thumbLeftPos: 101, max: 100})).toThrowError();
+    });
+
+    it(`Если "max" задан меньше, чем текущее значение "thumbLeftPos", то последнее
+    либо становится минимумом, если опция "range" == true, иначе максимумом`, () => {
+      
+      model.setOptions({thumbLeftPos: 50, range: true, thumbRightPos: 100});
+      model.setOptions({max: 40});
+      expect(model.thumbLeftPos).toEqual(model.min);
+      expect(model.thumbRightPos).toEqual(model.max);
+
+      model.setOptions({max: 100, thumbLeftPos: 50, range: false});
+      model.setOptions({max: 40});
+      expect(model.thumbLeftPos).toEqual(40);
+    });
+
     it(`Если заданный шаг слишком большой (больше диапазона), 
     выбрасываем ошибку`, () => {
       expect(() => model.setOptions({step: 101})).toThrowError();
+    });
+
+    it(`Нельзя задать "max" меньше "thumbRightPos", если "thumbRightPos" задано в опциях`, () => {
+      expect(() => model.setOptions({thumbRightPos: 101, max: 100})).toThrowError();
     });
 
     it(`Нельзя задать "thumbRightPos" больше максимума`, () => {
@@ -136,6 +157,7 @@ describe(`Model\n`, () => {
       model.setOptions({thumbLeftPos: 1});
       expect(model.thumbLeftPos).toEqual(1);
     });
+
 
     it (`При задании свойств "min"/"max" если бегунки оказываются за пределами, \n
           то они разбегаются по краям слайдера`, () => {

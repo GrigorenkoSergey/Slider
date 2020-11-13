@@ -45,7 +45,7 @@ export default class Model extends EventObserver {
     this.setOptions(optionsCopy);
   }
 
-  getOptions() { //Нормально
+  getOptions() {
     const publicOtions = ['min', 'max', 'range', 'step',
       'thumbLeftPos', 'thumbRightPos', 'ticks', 'precision'];
 
@@ -204,7 +204,7 @@ export default class Model extends EventObserver {
             expectantCopy.thumbLeftPos = min;
             expectantCopy.thumbRightPos = +Number(val).toFixed(precision);
           } else {
-            expectantCopy.thumbRightPos = +Number(val).toFixed(precision);
+            expectantCopy.thumbLeftPos = +Number(val).toFixed(precision);
           }
         }
 
