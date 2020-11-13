@@ -24,7 +24,7 @@ export default class Scale extends EventObserver {
   }
 
   init() {
-    const propsToSubscribe = ['showScale', 'rangeValue', 'partsNum'];
+    const propsToSubscribe = ['showScale', 'step', 'partsNum'];
     propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
 
     this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
@@ -42,7 +42,7 @@ export default class Scale extends EventObserver {
       this.setMilestones();
     }
 
-    if(prop === 'step') {
+    if (prop === 'step') {
       this.setMilestones();
     }
   }
@@ -70,7 +70,7 @@ export default class Scale extends EventObserver {
       this.parts.length = 0;
 
       for (let i = 1; i < this.view.partsNum; i++) {
-        let value = Math.round(Math.round(i / this.view.partsNum / step) * step * 1000) / 1000;
+        let value = Math.round(i / this.view.partsNum / step) * step;
         value = Math.min(1, value);
 
         this.parts.push(value);
@@ -97,6 +97,8 @@ export default class Scale extends EventObserver {
       this.el.append(div);
       div.addEventListener('click', this.handleMouseClick.bind(this));
     });
+
+    this.broadcast('rerenderScale', this.anchors);
   }
 
   handleMouseClick(e: MouseEvent) {

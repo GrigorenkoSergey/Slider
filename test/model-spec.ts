@@ -55,8 +55,7 @@ describe(`Model\n`, () => {
 
     it(`Свойства "thumbLeftPos" и "thumbRightPos" не могут 
     выйти за пределы шкалы.`, () => {
-      const model = new Model({min: 0, max: 100, step: 1, thumbLeftPos: 200});
-      expect(model.thumbLeftPos).toEqual(model.max);
+      const model = new Model({min: 0, max: 100, step: 1});
 
       model.setOptions({thumbLeftPos: -100});
       expect(model.thumbLeftPos).toEqual(model.min);
@@ -117,14 +116,6 @@ describe(`Model\n`, () => {
       expect( () => model.setOptions({step: -1})).toThrowError();
     });
 
-    it(`Свойства "step", "max", "min", "thumbLeftPos", "thumbRightPos" должны быть целочисленными`, () => {
-      expect( () => model.setOptions({step: 0.5})).toThrowError();
-      expect( () => model.setOptions({max: 101.5})).toThrowError();
-      expect( () => model.setOptions({min: 0.5})).toThrowError();
-      expect( () => model.setOptions({thumbLeftPos: 10.5})).toThrowError();
-      expect( () => model.setOptions({thumbRightPos: 80.5, range: true})).toThrowError();
-    });
-
     it(`Значение свойства "max" должно быть больше, чем "min"`, () => {
       expect(() => model.setOptions({min: 100, max: 0})).toThrowError();
     });
@@ -146,6 +137,14 @@ describe(`Model\n`, () => {
       expect(model.thumbLeftPos).toEqual(1);
     });
 
+    it (`При задании свойств "min"/"max" если бегунки оказываются за пределами, \n
+          то они разбегаются по краям слайдера`, () => {
+      model.setOptions({range: true, min: 200, max: 300});
+
+      expect(model.thumbLeftPos).toEqual(200);
+      expect(model.thumbRightPos).toEqual(300);
+      
+    });
     it(`Технически можно задавать напрямую значения свойств, 
     но это не рекомендуется т.к. внутренние механизмы проверки 
     правильности свойств не будут работать`, () => {

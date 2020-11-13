@@ -17,6 +17,7 @@ export default class SliderOptionsPalette {
   showScale: BindedInput = null;
   hintAlwaysShow: BindedInput = null;
   partsNum: BindedInput = null;
+  precision: BindedInput = null;
 
   constructor(elem: HTMLDivElement, slider: Presenter) {
     this.el = elem;
@@ -34,6 +35,7 @@ export default class SliderOptionsPalette {
       'thumbLeftPos', 
       'thumbRightPos', 
       'partsNum',
+      'precision'
     ];
 
     const inputCheckboxes = [

@@ -12,8 +12,8 @@ import debuggerPoint from '../helpers/debugger-point';
 import Presenter from '../slider/components/presenter/presenter';
 
 let options1 = {
-  min: 2,
-  max: 6,
+  min: 0.5, //Потом поменяй на 0
+  max: 200,
   step: 2,
   selector: ".slider1",
   angle: 0,
@@ -21,7 +21,6 @@ let options1 = {
   hintAboveThumb: true,
   // hintAlwaysShow: true,
   hintAlwaysShow: false,
-  thumbRightPos: 4,
   partsNum: 2,
 }
 // let slider1 = $('.slider1').slider(options1);

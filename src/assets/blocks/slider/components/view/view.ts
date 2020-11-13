@@ -72,6 +72,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.scale = new Scale({view: this});
     this.scale.addSubscriber('anchorClick', this);
+    this.scale.addSubscriber('rerenderScale', this);
 
     this.stretcher = new Stretcher(this);
 
@@ -244,7 +245,7 @@ export default class View extends EventObserver implements ISubscriber {
           throw new Error('partsNum should be a positive number!');
         }
 
-        if (Math.round(val) != val) {
+        if (!Number.isInteger(val)) {
           throw new Error('partsNum should be a integer!');
         }
 

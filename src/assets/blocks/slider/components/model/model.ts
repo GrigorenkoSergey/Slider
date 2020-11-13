@@ -11,8 +11,9 @@ export default class Model extends EventObserver {
   step = 1;
   thumbLeftPos = 0;
   thumbRightPos: number = Infinity;
-  ticks: {[key: number]: number} = {0: 0};
   range = false;
+  ticks: {[key: number]: number} = {0: 0};
+  precision: number = 1; //?
 
   constructor(options: Obj) {
     super();
@@ -34,6 +35,7 @@ export default class Model extends EventObserver {
       },
       range: () => false,
       thumbRightPos: () => Infinity,
+      precision: () => 1,
     };
 
     Object.keys(defaultOptions).forEach((key) => {
@@ -45,7 +47,7 @@ export default class Model extends EventObserver {
 
   getOptions() { //Нормально
     const publicOtions = ['min', 'max', 'range', 'step',
-      'thumbLeftPos', 'thumbRightPos', 'ticks',];
+      'thumbLeftPos', 'thumbRightPos', 'ticks', 'precision'];
 
     const obj: Obj = {};
     publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
@@ -53,34 +55,14 @@ export default class Model extends EventObserver {
   }
 
   setOptions(expectant: Obj): Model {
-    const tempObj: Obj = {};
-    const expectantCopy = {...expectant};
-
-    if ('range' in expectantCopy) {
-      const {range, thumbRightPos = this.thumbRightPos, max = this.max} = expectantCopy;
-
-      if (range && thumbRightPos === Infinity) {
-        expectantCopy.thumbRightPos = max;
-      } else if (!range) {
-        expectantCopy.thumbRightPos = Infinity;
-      }
-    }
-
-    Object.entries(expectantCopy).forEach(([key, value]) => {
+    let tempObj: Obj = {};
+    Object.entries(expectant).forEach(([key, value]) => {
       if (key in this) {
-        tempObj[key] = this._handleOption(key, value, expectantCopy)
+        tempObj[key] = value;
       }
     });
 
-    if (!('ticks' in tempObj) ) {
-      if (Object.keys(this.ticks).length > 1) {
-        tempObj.ticks = this._handleOption('ticks', this.ticks, expectantCopy);
-      } else {
-        const {max = this.max} = tempObj;
-        tempObj.ticks = {[max]: max};
-      }
-    }
-
+    tempObj = this._handleOptions(tempObj);
     Object.assign(this, tempObj);
 
     Object.keys(tempObj).forEach(key => {
@@ -94,12 +76,12 @@ export default class Model extends EventObserver {
     let {left = this.thumbLeftPos, right = this.thumbRightPos} = opts;
 
     if ('left' in opts) {
-      this.thumbLeftPos = this._handleOption('thumbLeftPos', left, this);
+      this.thumbLeftPos = this._handleOptions({thumbLeftPos: left}).thumbLeftPos;
       this.broadcast('thumbLeftPos', {value: this.thumbLeftPos, method: 'setThumbsPos'});
     }
 
     if ('right' in opts) {
-      this.thumbRightPos = this._handleOption('thumbRightPos', right, this);
+      this.thumbRightPos = this._handleOptions({thumbRightPos: right}).thumbRightPos;
       this.broadcast('thumbRightPos', {value: this.thumbRightPos, method: 'setThumbsPos'});
     }
     return this;
@@ -121,8 +103,8 @@ export default class Model extends EventObserver {
         const fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
         const fnB = ticksRange[i];
 
-        // return (offset - a) * (fnB - fnA) / (b - a) + fnA;
-        return Math.round((offset - a) * (fnB - fnA) / (b - a) + fnA);
+        let result =  (offset - a) * (fnB - fnA) / (b - a) + fnA;
+        return Number(result.toFixed(this.precision));
       }
     }
   }
@@ -146,18 +128,103 @@ export default class Model extends EventObserver {
     }
   }
 
-  private _handleOption(key: string, value: any, expectant: Obj) {
+  private _handleOptions(expectant: Obj) {
+    const expectantCopy = {...expectant};
+
     const handler: Obj = {
+      min: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('"min" should be a number!');
+        }
+
+        const {
+          max = this.max, 
+          step = this.step, 
+          thumbLeftPos = this.thumbLeftPos,
+          thumbRightPos = this.thumbRightPos,
+        } = expectantCopy;
+
+        if (val >= max) {
+          throw new Error('"min" should be <= "max"!');
+        } else if (max - val < step) {
+          throw new Error('"max" - "min" should be >= "step"!');
+        }
+
+        if (val > thumbLeftPos) {
+          if ('thumbLeftPos' in expectant) {
+            throw new Error('"thumbLeftPos" should be >= "min"!');
+          }
+          // expectantCopy.thumbLeftPos = Number(val);
+          expectantCopy.thumbLeftPos = +Number(val).toFixed(this.precision);
+        }
+        if (val > this.thumbRightPos) {
+          if ('thumbRightPos' in expectant) {
+            throw new Error('"thumbRightPos" should be > "min"!');
+          }
+          // expectantCopy.thumbRightPos = Number(max);
+          expectantCopy.thumbRightPos = +Number(max).toFixed(this.precision);
+        }
+
+        // expectantCopy.min = Number(val);
+        expectantCopy.min = +Number(val).toFixed(this.precision);
+      },
+
+      max: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('"max" should be a number!');
+        }
+
+        const {
+          min = this.min, 
+          step = this.step,
+          thumbLeftPos = this.thumbLeftPos,
+          thumbRightPos = this.thumbRightPos,
+        } = expectantCopy;
+
+        if (val <= min) {
+          throw new Error('"max" should be >= "min"!');
+        } else if (val - min < step) {
+          throw new Error('"max" - "min" should be >= "step"!');
+        }
+
+        if (thumbLeftPos > val) {
+          if ('thumbLeftPos' in expectant) {
+            throw new Error('"thumbLeftPos" should be <= "max"!')
+          }
+          if (thumbRightPos !== Infinity) {
+            expectantCopy.thumbLeftPos = min;
+            // expectantCopy.thumbRightPos = val;
+            expectantCopy.thumbRightPos = +Number(val).toFixed(this.precision);
+          } else {
+            // expectantCopy.thumbRightPos = val;
+            expectantCopy.thumbRightPos = +Number(val).toFixed(this.precision);
+          }
+        }
+
+        if (thumbRightPos !== Infinity && thumbRightPos > val) {
+          if ('thumbRightPos' in expectant) {
+            throw new Error('"thumbRightPos should be <= "max"!');
+          }
+          // expectantCopy.thumbRightPos = Number(val);
+          expectantCopy.thumbRightPos = +Number(val).toFixed(this.precision);
+        }
+
+        // expectantCopy.max = Number(val);
+        expectantCopy.max = +Number(val).toFixed(this.precision);
+
+        if (!('ticks' in expectantCopy)) {
+          if (Object.keys(this.ticks).length == 1) {
+            expectantCopy.ticks = {[val]: Number(val)};
+          }
+        }
+      },
+
       step: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('"step" should be a number!');
         }
 
-        if (!Number.isInteger(+val)) {
-          throw new Error('"step" should be integer!');
-        }
-
-        const {min = this.min, max = this.max} = expectant;
+        const {min = this.min, max = this.max} = expectantCopy;
         
         if (val > max - min) {
           throw new Error('"step" is too big!');
@@ -166,44 +233,9 @@ export default class Model extends EventObserver {
         } else if (val == 0) {
           throw new Error('"step" is equal to zero!');
         }
-        return Number(val);
-      },
 
-      min: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"min" should be a number!');
-        }
-        if (!Number.isInteger(+val)) {
-          throw new Error('"min" should be integer!');
-        }
-
-        const {max = this.max, step = this.step} = expectant;
-        if (val >= max) {
-          throw new Error('"min" should be lesser than "max"!');
-        } else if (max - val < step) {
-          throw new Error('"max" - "min" should be >= "step"!');
-        }
-
-        return Number(val);
-      },
-
-      max: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"max" should be a number!');
-        }
-        if (!Number.isInteger(+val)) {
-          throw new Error('"max" should be integer!');
-        }
-
-        const {min = this.min, step = this.step} = expectant;
-
-        if (val <= min) {
-          throw new Error('"max" should be greater than "min"!');
-        } else if (val - min < step) {
-          throw new Error('"max" - "min" should be >= "step"!');
-        }
-
-        return Number(val);
+        // expectantCopy.step = Number(val);
+        expectantCopy.step = +Number(val).toFixed(this.precision);
       },
 
       range: (val: boolean) => {
@@ -211,44 +243,48 @@ export default class Model extends EventObserver {
           throw new Error('"range" should be boolean!');
         }
 
-        return val;
+        const {thumbRightPos = this.thumbRightPos, max = this.max} = expectantCopy;
+
+        if (val && thumbRightPos === Infinity) {
+          expectantCopy.thumbRightPos = max;
+        } else if (!val) {
+          expectantCopy.thumbRightPos = Infinity;
+        }
+
+        expectantCopy.range = val;
       },
 
       thumbLeftPos: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('"thumbLeftPos" should be a number!');
         }
-        if (!Number.isInteger(+val)) {
-          throw new Error('"thumbLeftPos" should be  integer!');
-        }
 
-        let {thumbRightPos = this.thumbRightPos, min = this.min, max = this.max} = expectant;
+        let {thumbRightPos = this.thumbRightPos, min = this.min, max = this.max} = expectantCopy;
 
-        if (thumbRightPos && thumbRightPos <= val) {
+        if (thumbRightPos <= val) {
           throw new Error('"thumbLeftPos" should be lesser than "thumbRightPos"')
         }
 
-        return Math.min(Math.max(min, val), max);
+        // expectantCopy.thumbLeftPos = Math.min(Math.max(min, val), max);
+        expectantCopy.thumbLeftPos = +Math.min(Math.max(min, val), max).toFixed(this.precision);
       },
 
       thumbRightPos: (val: number) => {
-        const {range = this.range, max = this.max} = expectant;
+        const {range = this.range, max = this.max} = expectantCopy;
         if (!range) return Infinity;
-
-        if (!Number.isInteger(+val)) {
-          throw new Error('"thumbRightPos" should be integer!');
-        }
 
         if (!isFinite(val)) {
           throw new Error('"thumbRightPos" should be a number!');
         }
 
-        let {thumbLeftPos = this.thumbLeftPos} = expectant;
+        let {thumbLeftPos = this.thumbLeftPos} = expectantCopy;
 
         if (val <= thumbLeftPos) {
           throw new Error('"thumbRightPos should be greater than "thumbLeftPos"');
         }
-        return Math.min(val, max);
+
+        // expectantCopy.thumbRightPos = Math.min(val, max);
+        expectantCopy.thumbRightPos = +Math.min(val, max).toFixed(this.precision)
       },
 
       ticks: (val: Obj) => {
@@ -264,19 +300,20 @@ export default class Model extends EventObserver {
 
         } else if (!isIncreasing(vals) || !isIncreasing(keys)) {
           throw new Error('Both keys and values of ticks must be increasing sequenses!');
-
-        } else if (keys.some(value => !Number.isInteger(+value))) {
-          throw new Error('keys should be integer values');
-
-        } else if (vals.some(value => !Number.isInteger(+value))) {
-          throw new Error('vals should be integer values');
         }
 
-        return val;
+        expectantCopy.ticks = val;
       },
     }
 
-    if (!(key in handler)) return;
-    return handler[key](value);
+    const order = ['min', 'max', 'step', 'range', 'thumbLeftPos', 'thumbRightPos', 'ticks'];
+
+    order.forEach(prop => {
+      if (prop in expectant) {
+        handler[prop].call(this, expectantCopy[prop]);
+      }
+    });
+
+    return expectantCopy;
   }
 }

@@ -49,6 +49,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.addSubscriber('showScale', this);
     view.addSubscriber('hintAlwaysShow', this);
     view.addSubscriber('hintAboveThumb', this);
+    view.addSubscriber('rerenderScale', this);
 
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
@@ -57,8 +58,14 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.addSubscriber('thumbRightPos', this);
     model.addSubscriber('range', this);
     model.addSubscriber('ticks', this);
+    model.addSubscriber('precision', this);
 
     this.setOptions(options);
+
+    if ('ticks' in options) {
+      this.handleTicks();
+      this.scaleValues();
+    }
   }
 
   setOptions(options: Obj) {
@@ -66,7 +73,10 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.setOptions(options);
 
     const optionsCopy = {...options};
-    if ('step' in optionsCopy) {
+
+    const updateStepOptions = ['min', 'max', 'step'];
+    const shouldUpdateStep = updateStepOptions.some(option => option in optionsCopy);
+    if (shouldUpdateStep) {
       const step = model.step / (model.max - model.min);
       optionsCopy.step = step;
     }
@@ -93,22 +103,22 @@ export default class Presenter extends EventObserver implements ISubscriber{
       String(model.thumbRightPos),
     );
 
-    const anchorValues = this.view.scale.parts.map(value => Math.round(model.findValue(value)));
-    view.setAnchorValues(anchorValues);
+    const anchorValues = this.view.scale.parts.map((value, index, parts) => {
+      return Number(model.findValue(value).toFixed(2));
+    });
 
-    const step = model.step / (model.max - model.min);
-    view.setOptions({step});
+    view.setAnchorValues(anchorValues);
   }
 
   update(eventType: string, data: any) {
     if (eventType === 'thumbMousedown') {
       const thumb = data.el;
-      let offset = Math.round(this.model.findValue(data.offset));
+      let offset = this.model.findValue(data.offset);
       this.view.setHintValue(thumb, String(offset));
 
     } else if (eventType === 'thumbMousemove') {
       const thumb = data.el;
-      let offset = Math.round(this.model.findValue(data.offset));
+      let offset = this.model.findValue(data.offset);
       this.view.setHintValue(thumb, String(offset));
 
       if (thumb === this.view.thumbs.thumbLeft) {
@@ -116,6 +126,16 @@ export default class Presenter extends EventObserver implements ISubscriber{
       } else {
         this.model.setThumbsPos({right: offset});
       }
+
+    } else if (eventType === 'min' || eventType === 'max') {
+      const {thumbLeft} = this.view.thumbs;
+      this.view.moveThumbToPos(thumbLeft, this.model.findArgument(this.model.thumbLeftPos));
+      
+      if (this.model.range) {
+        const {thumbRight} = this.view.thumbs;
+        this.view.moveThumbToPos(thumbRight, this.model.findArgument(this.model.thumbRightPos));
+      }
+      this.scaleValues();
 
     } else if (eventType === 'step') {
       const step = this.model.step / (this.model.max - this.model.min);
@@ -157,6 +177,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
       } else {
         handledData = {right: this.model.findValue(data.right)}
       }
+
       this.model.setThumbsPos(handledData);
       this.scaleValues();
 

@@ -142,6 +142,29 @@ describe(`Меняет значения шкалы в соответствии �
     expect(anchors[1].textContent).toEqual('100');
     expect(anchors[2].textContent).toEqual('200');
 
+    model.setOptions({min: 0.5});
+    expect(anchors[0].textContent).toEqual('0.5');
+  });
+
+  it('При изменении свойства "min" или "max" модели, бегунок бежит к своему старому местоположению', () => {
+    const presenter = new Presenter(option);
+
+    presenter.setOptions({
+      min: 0,
+      max: 100, 
+      range: true,
+      hintAlwaysShow: true,
+      thumbLeftPos: 50,
+      thumbRightPos: 80,
+    });
+
+    presenter.setOptions({min: 50});
+    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+    expect(getComputedStyle(thumbLeft).left).toEqual('0px');
+
+    const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
+    presenter.setOptions({max: 80});
+    expect(getComputedStyle(thumbRight).left).toEqual(presenter.view.scale.width + 'px');
   });
 
   it('Реагирует на изменение свойства "max" модели', () => {
@@ -218,6 +241,7 @@ describe(`Меняет значения шкалы в соответствии �
       step: 10,
       range: false,
     }
+
     const presenter = new Presenter({...option, ...newOpts});
     const {model} = presenter;
 
@@ -418,7 +442,6 @@ describe(`Проверка поведения подсказки над бегу
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint')
     const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
-
     expect(hints[0].textContent).toEqual('25');
 
     thumbLeft.dispatchEvent(fakeMouseDown);

@@ -70,13 +70,6 @@ describe('Проверка связи значения инпута со зна�
     div.remove();
   });
 
-  it(`Поменяем значение min`, () => {
-    palette.min.el.value = '4';
-    palette.min.el.dispatchEvent(fakeChange);
-    expect(slider.getOptions().min).toEqual(4);
-    expect(anchors[0].textContent).toEqual('4');
-  });
-
   it(`Поменяем значение max`, () => {
     palette.max.el.value = '500';
     palette.max.el.dispatchEvent(fakeChange);
@@ -439,10 +432,6 @@ describe('В поля ввода нельза ввести ошибочные д
     palette.step.el.value = '0';
     palette.step.el.dispatchEvent(fakeChange);
     expect(palette.step.el.value).toEqual(value);
-
-    palette.step.el.value = '0.5';
-    palette.step.el.dispatchEvent(fakeChange);
-    expect(palette.step.el.value).toEqual(value);
   });
 
   it(`Поменяем значение angle`, () => {
@@ -598,6 +587,60 @@ describe(`Реагирует на ручное изменение положен
   });
 
   it(`При щелчке на якоре шкалы, бегунок двигается и значение соответствующего поля меняется`, () => {
-
+    slider.setOptions({partsNum: 4})
+    anchors[1].dispatchEvent(fakeClick);
+    expect(palette.thumbLeftPos.el.value).toEqual('25');
+    anchors[3].dispatchEvent(fakeClick);
+    expect(palette.thumbRightPos.el.value).toEqual('75');
   });
 });
+
+describe(`Данные баги более не возникают`, () => {
+  const div = document.createElement('div');
+  div.className = 'sliderPalette';
+  div.style.marginTop = "100px";
+
+  let options: Obj = {
+    min: 0.5,
+    max: 200,
+    step: 2,
+    selector: ".sliderPalette",
+    angle: 0,
+    range: true,
+    hintAboveThumb: true,
+  };
+
+  let example = document.createElement('div');
+  example.className = 'example4';
+
+  beforeEach(() => {
+    document.body.append(example);
+    document.body.append(div);
+
+    slider = new Presenter({...options});
+    palette = new SliderOptionsPalette(example, slider);
+
+    anchors = div.getElementsByClassName('slider__scale-points');
+    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+  });
+
+  afterEach(() => {
+    example.innerHTML = '';
+    example.remove();
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it('При смене значения "min" c "0.5" на "0" и обратно значения якорей высчитываются правильно', () => {
+    expect(anchors[1].textContent).toEqual('100.5')
+    palette.min.el.value = '0';
+    // debugger;
+    palette.min.el.dispatchEvent(fakeChange);
+
+    expect(anchors[1].textContent).toEqual('100');
+  })
+
+})
