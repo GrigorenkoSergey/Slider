@@ -23,11 +23,13 @@ export default class View extends EventObserver implements ISubscriber {
 
   hints: Hint[];
   hintAlwaysShow: boolean = false;
+  rotateHint: boolean = true;
 
   thumbs: Thumbs;
 
   scale: Scale;
   showScale: boolean = true;
+  rotateScale: boolean = true;
   partsNum: number = 2;
   stretcher: Stretcher;
 
@@ -70,7 +72,6 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.scale = new Scale({view: this});
     this.scale.addSubscriber('anchorClick', this);
-    this.scale.addSubscriber('rerenderScale', this);
 
     this.stretcher = new Stretcher(this);
 
@@ -108,6 +109,8 @@ export default class View extends EventObserver implements ISubscriber {
       'angle', 
       'showScale', 
       'partsNum',
+      'rotateHint',
+      'rotateScale',
     ];
 
     const obj: Obj = {};
@@ -121,7 +124,11 @@ export default class View extends EventObserver implements ISubscriber {
 
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
+      this.handleHintAngle(this.angle);
       return this;
+
+    } else if (eventType === 'rerenderScale') {
+      this.handleScaleRerender(this.angle);
 
     } else if (eventType === 'hintAlwaysShow') {
       if (this.hintAlwaysShow) {
@@ -210,6 +217,45 @@ export default class View extends EventObserver implements ISubscriber {
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.showHint();
+  }
+
+  handleScaleRerender(angle: number) {
+    this.scale.anchors.forEach(anchor => {
+      let transformation = `rotate(-${angle}deg)`;
+
+      const anchorWidth = anchor.clientWidth;
+      const fontSize = parseFloat(getComputedStyle(anchor).fontSize);
+
+      let deltaX = anchorWidth / 2;
+      let deltaY = anchorWidth / 2 - fontSize / 2;
+
+      const {sin, PI, abs, tan} = Math;
+      let radAngle = angle * PI / 180;
+
+      transformation += ` translateX(-${
+        deltaX * sin(radAngle)
+        + parseFloat(getComputedStyle(this.scale.el).top) / tan(radAngle)
+      }px)`;
+      transformation += ` translateY(-${abs(deltaY) * sin(radAngle)}px)`;
+
+      anchor.style.transform = transformation;
+    });
+  }
+
+  handleHintAngle(angle: number) {
+    this.hints.map(hint => hint.el).forEach(hint => {
+      let transformation = `rotate(-${angle}deg)`;
+      hint.style.transform = transformation;
+
+      const hintRect = hint.getBoundingClientRect();
+      const {sin, PI} = Math;
+      let radAngle = angle * PI / 180;
+
+      transformation += ` translateX(${-50 + 100 * sin(radAngle)}%)`;
+      transformation += ` translateY(-${hintRect.width / 2 * sin(radAngle)}px)`;
+
+      hint.style.transform = transformation;
+    });
   }
 
   private validateOptions(key: string, value: any, expectant: Obj) { //не трогать

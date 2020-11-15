@@ -12,21 +12,22 @@ import debuggerPoint from '../helpers/debugger-point';
 import Presenter from '../slider/components/presenter/presenter';
 
 let options1 = {
-  min: 0.5, //Потом поменяй на 0
-  max: 200,
+  min: 0, //Потом поменяй на 0
+  max: 2000000,
   step: 2,
   selector: ".slider1",
-  angle: 0,
+  angle: 90,
   range: true,
   hintAboveThumb: true,
-  // hintAlwaysShow: true,
-  hintAlwaysShow: false,
+  hintAlwaysShow: true,
+  // hintAlwaysShow: false,
   partsNum: 2,
 }
 // let slider1 = $('.slider1').slider(options1);
 let slider1 = new Presenter(options1);
 const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
 console.log(palette1)
+debuggerPoint.start = 2;
 /*
 let options2 = {
   min: 100,

@@ -24,7 +24,7 @@ export default class Scale extends EventObserver {
   }
 
   init() {
-    const propsToSubscribe = ['showScale', 'step', 'partsNum'];
+    const propsToSubscribe = ['showScale', 'step', 'partsNum', 'angle'];
     propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
 
     this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
@@ -45,6 +45,10 @@ export default class Scale extends EventObserver {
     if (prop === 'step') {
       this.setMilestones();
     }
+
+    if (prop === 'angle') {
+      this.setMilestones();
+    }
   }
 
   render() {
@@ -61,10 +65,11 @@ export default class Scale extends EventObserver {
   }
 
   setMilestones(values?: number[]) {
+    const {step} = this.view;
+
     this.anchors.forEach(item => item.remove());
     this.anchors.length = 0;
 
-    const {step} = this.view;
 
     if (!values) {
       this.parts.length = 0;
@@ -82,7 +87,7 @@ export default class Scale extends EventObserver {
       this.parts = values;
     }
 
-    this.parts.forEach(value => {
+    this.parts.forEach((value, i) => {
       const div = document.createElement('div');
       div.className = this.view.el.className + '__scale-points';
 
@@ -91,11 +96,10 @@ export default class Scale extends EventObserver {
       div.style.left = left + 'px';
       div.textContent = String(value);
 
-      this.anchors.push(div);
-      div.style.transform = `rotate(-${this.view.angle}deg)`; //?
-
       this.el.append(div);
       div.addEventListener('click', this.handleMouseClick.bind(this));
+
+      this.anchors.push(div);
     });
 
     this.broadcast('rerenderScale', this.anchors);
@@ -103,8 +107,8 @@ export default class Scale extends EventObserver {
 
   handleMouseClick(e: MouseEvent) {
     const el = <HTMLDivElement>e.target;
-    const left = getComputedStyle(el).left;
-    const offset = parseFloat(left) / this.width;
+    const index = this.anchors.indexOf(el);
+    const offset = this.parts[index];
 
     this.broadcast('anchorClick', offset);
   }

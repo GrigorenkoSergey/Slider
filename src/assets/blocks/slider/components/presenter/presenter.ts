@@ -49,7 +49,9 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.addSubscriber('showScale', this);
     view.addSubscriber('hintAlwaysShow', this);
     view.addSubscriber('hintAboveThumb', this);
-    view.addSubscriber('rerenderScale', this);
+
+    view.scale.addSubscriber('rerenderScale', this);
+    this.addSubscriber('rerenderScale', this.view);
 
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
