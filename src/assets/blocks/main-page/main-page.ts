@@ -12,7 +12,7 @@ import debuggerPoint from '../helpers/debugger-point';
 import Presenter from '../slider/components/presenter/presenter';
 
 let options1 = {
-  min: 0, //Потом поменяй на 0
+  min: 0,
   max: 2000000,
   step: 2,
   selector: ".slider1",

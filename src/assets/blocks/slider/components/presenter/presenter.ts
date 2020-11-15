@@ -17,16 +17,6 @@ export default class Presenter extends EventObserver implements ISubscriber{
   model: Model | null = null;
   className: string = 'slider';
 
-  step: number = 1/100;
-  angle: number = 0;
-  range: boolean = true;
-  selector: string = '';
-  hintAboveThumb = true;
-  hintAlwaysShow: boolean = false;
-
-  showScale: boolean = true;
-  partsNum: number = 2;
-
   constructor(options: Obj) {
     super();
     this.init(options);
@@ -41,6 +31,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     this.view = new View(optionsCopy);
     const view = this.view;
 
+    view.addSubscriber('angle', this);
     view.addSubscriber('thumbMousedown', this);
     view.addSubscriber('thumbMousemove', this);
     view.addSubscriber('thumbMouseup', this);
@@ -62,6 +53,14 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.addSubscriber('ticks', this);
     model.addSubscriber('precision', this);
 
+    if (document.readyState !== 'complete') {
+      window.onload = this.handleWindowLoad.bind(this, options);
+    } else {
+      this.handleWindowLoad(options);
+    }
+  }
+
+  handleWindowLoad(options: Obj) {
     this.setOptions(options);
 
     if ('ticks' in options) {
@@ -106,7 +105,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     );
 
     const precision = this.model.precision;
-    const anchorValues = this.view.scale.parts.map((value, index, parts) => {
+    const anchorValues = this.view.scale.parts.map((value) => {
 
       return Number(model.findValue(value).toFixed(precision));
     });

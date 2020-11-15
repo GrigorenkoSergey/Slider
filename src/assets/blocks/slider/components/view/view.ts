@@ -68,13 +68,12 @@ export default class View extends EventObserver implements ISubscriber {
         this.thumbs.thumbRight),
     ];
 
-    this.addSubscriber('hintAlwaysShow', this);
-
     this.scale = new Scale({view: this});
     this.scale.addSubscriber('anchorClick', this);
 
     this.stretcher = new Stretcher(this);
 
+    this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);
 
     return this;
@@ -109,8 +108,6 @@ export default class View extends EventObserver implements ISubscriber {
       'angle', 
       'showScale', 
       'partsNum',
-      'rotateHint',
-      'rotateScale',
     ];
 
     const obj: Obj = {};
@@ -121,7 +118,6 @@ export default class View extends EventObserver implements ISubscriber {
   update(eventType: string, data: any): this {
     // если View подписан сам на себя, то он должен выходить из 
     // функции, иначе получится бесконечный цикл
-
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
       this.handleHintAngle(this.angle);
@@ -177,6 +173,7 @@ export default class View extends EventObserver implements ISubscriber {
   setHintValue(thumb: HTMLDivElement, value: string) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.setHintValue(value);
+    this.handleHintAngle(this.angle);
   }
 
   handleAnchorClick(offset: number): void {
@@ -220,6 +217,11 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   handleScaleRerender(angle: number) {
+    const {sin, PI} = Math;
+    let radAngle = angle * PI / 180;
+
+    this.scale.el.style.transform = ` translateY(${10 * sin(2 * radAngle)}px)`;
+
     this.scale.anchors.forEach(anchor => {
       let transformation = `rotate(-${angle}deg)`;
 
@@ -229,14 +231,8 @@ export default class View extends EventObserver implements ISubscriber {
       let deltaX = anchorWidth / 2;
       let deltaY = anchorWidth / 2 - fontSize / 2;
 
-      const {sin, PI, abs, tan} = Math;
-      let radAngle = angle * PI / 180;
-
-      transformation += ` translateX(-${
-        deltaX * sin(radAngle)
-        + parseFloat(getComputedStyle(this.scale.el).top) / tan(radAngle)
-      }px)`;
-      transformation += ` translateY(-${abs(deltaY) * sin(radAngle)}px)`;
+      transformation += ` translateX(-${deltaX * sin(radAngle)}px)`;
+      transformation += ` translateY(${-(deltaY) * sin(radAngle)}px)`;
 
       anchor.style.transform = transformation;
     });
@@ -247,12 +243,12 @@ export default class View extends EventObserver implements ISubscriber {
       let transformation = `rotate(-${angle}deg)`;
       hint.style.transform = transformation;
 
-      const hintRect = hint.getBoundingClientRect();
+      const hintRect = hint.clientWidth;
       const {sin, PI} = Math;
       let radAngle = angle * PI / 180;
 
       transformation += ` translateX(${-50 + 100 * sin(radAngle)}%)`;
-      transformation += ` translateY(-${hintRect.width / 2 * sin(radAngle)}px)`;
+      transformation += ` translateY(-${hintRect / 2 * sin(radAngle)}px)`;
 
       hint.style.transform = transformation;
     });
