@@ -21,7 +21,7 @@ let options1 = {
   hintAboveThumb: true,
   hintAlwaysShow: true,
   // hintAlwaysShow: false,
-  partsNum: 2,
+  partsNum: 20,
 }
 // let slider1 = $('.slider1').slider(options1);
 let slider1 = new Presenter(options1);

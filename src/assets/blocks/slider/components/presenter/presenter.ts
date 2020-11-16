@@ -35,7 +35,6 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.addSubscriber('thumbMousedown', this);
     view.addSubscriber('thumbMousemove', this);
     view.addSubscriber('thumbMouseup', this);
-    view.addSubscriber('partsNum', this);
     view.addSubscriber('thumbProgramMove', this);
     view.addSubscriber('showScale', this);
     view.addSubscriber('hintAlwaysShow', this);
@@ -44,6 +43,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     view.scale.addSubscriber('rerenderScale', this);
     this.addSubscriber('rerenderScale', this.view);
 
+    model.addSubscriber('partsNum', this);
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
     model.addSubscriber('step', this);
@@ -74,6 +74,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.setOptions(options);
 
     const optionsCopy = {...options};
+    // const optionsCopy = this.model.getOptions();
 
     const updateStepOptions = ['min', 'max', 'step'];
     const shouldUpdateStep = updateStepOptions.some(option => option in optionsCopy);
@@ -143,6 +144,9 @@ export default class Presenter extends EventObserver implements ISubscriber{
     } else if (eventType === 'step') {
       const step = this.model.step / (this.model.max - this.model.min);
       this.view.setOptions({step});
+
+    } else if (eventType === 'partsNum') {
+      this.view.setOptions({partsNum: this.model.partsNum});
 
     } else if (eventType === 'thumbLeftPos') {
 

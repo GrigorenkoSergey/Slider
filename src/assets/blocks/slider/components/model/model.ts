@@ -9,6 +9,7 @@ export default class Model extends EventObserver {
   min = 0;
   max = 100;
   step = 1;
+  partsNum = 1;
   thumbLeftPos = 0;
   thumbRightPos: number = Infinity;
   range = false;
@@ -30,12 +31,13 @@ export default class Model extends EventObserver {
     const defaultOptions: Obj = {
       step: () => Math.round((optionsCopy.max - optionsCopy.min) / 100),
       thumbLeftPos: () => optionsCopy.min,
-      ticks: () => {
-        return {[optionsCopy.max]: optionsCopy.max};
-      },
+      partsNum: () => 1,
       range: () => false,
       thumbRightPos: () => Infinity,
       precision: () => 1,
+      ticks: () => {
+        return {[optionsCopy.max]: optionsCopy.max};
+      },
     };
 
     Object.keys(defaultOptions).forEach((key) => {
@@ -46,7 +48,7 @@ export default class Model extends EventObserver {
   }
 
   getOptions() {
-    const publicOtions = ['min', 'max', 'range', 'step',
+    const publicOtions = ['min', 'max', 'range', 'step', 'partsNum',
       'thumbLeftPos', 'thumbRightPos', 'ticks', 'precision'];
 
     const obj: Obj = {};
@@ -143,6 +145,28 @@ export default class Model extends EventObserver {
         expectantCopy.precision = Number(val);
       },
 
+      partsNum: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('"partsNum" should be a number!');
+        } else if (!Number.isInteger(val)) {
+          throw new Error('"partsNum" should be integer!');
+        } else if (val < 1) {
+          throw new Error('"partsNum" should be >= 1');
+        }
+
+        const {
+          min = this.min, 
+          max = this.max, 
+          step = this.step,
+        } = expectantCopy;
+
+        if (val * step > (max - min)) {
+          throw new Error('"partsNum" is to large!');
+        }
+
+        expectantCopy.partsNum = val;
+      },
+
       min: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('"min" should be a number!');
@@ -151,14 +175,18 @@ export default class Model extends EventObserver {
         const {
           max = this.max, 
           step = this.step, 
+          partsNum = this.partsNum,
           thumbLeftPos = this.thumbLeftPos,
           precision = this.precision,
         } = expectantCopy;
 
         if (val >= max) {
-          throw new Error('"min" should be <= "max"!');
+          throw new Error('"min" should be < "max"!');
         } else if (max - val < step) {
           throw new Error('"max" - "min" should be >= "step"!');
+        } else if (max - val < step * partsNum) {
+          console.log('max - min should be >= partsNum * step!\nSet partsNum = 1');
+          expectantCopy.partsNum = 1;
         }
 
         if (val > thumbLeftPos) {
@@ -185,6 +213,7 @@ export default class Model extends EventObserver {
         const {
           min = this.min, 
           step = this.step,
+          partsNum = this.partsNum,
           thumbLeftPos = this.thumbLeftPos,
           thumbRightPos = this.thumbRightPos,
           precision = this.precision,
@@ -194,6 +223,9 @@ export default class Model extends EventObserver {
           throw new Error('"max" should be >= "min"!');
         } else if (val - min < step) {
           throw new Error('"max" - "min" should be >= "step"!');
+        } else if (val - min < step * partsNum) {
+          console.log('max - min should be >= partsNum * step!\nSet partsNum = 1');
+          expectantCopy.partsNum = 1;
         }
 
         if (thumbLeftPos > val) {
@@ -229,7 +261,12 @@ export default class Model extends EventObserver {
           throw new Error('"step" should be a number!');
         }
 
-        const {min = this.min, max = this.max, precision = this.precision} = expectantCopy;
+        const {
+          min = this.min, 
+          max = this.max, 
+          precision = this.precision,
+          partsNum = this.partsNum,
+        } = expectantCopy;
         
         if (val > max - min) {
           throw new Error('"step" is too big!');
@@ -237,10 +274,14 @@ export default class Model extends EventObserver {
           throw new Error('"step" is negative!');
         } else if (val == 0) {
           throw new Error('"step" is equal to zero!');
+        } else if (val * partsNum > max - min) {
+          console.log('step * partsNum should be <= max - min!\nSet partsNum = 1');
+          expectantCopy.partsNum = 1;
         }
 
         expectantCopy.step = +Number(val).toFixed(precision);
       },
+
 
       range: (val: boolean) => {
         if (typeof val !== 'boolean') {
@@ -311,10 +352,23 @@ export default class Model extends EventObserver {
 
         expectantCopy.ticks = val;
       },
+
+      angle: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('angle should be a number!');
+        }
+
+        if (val < 0 || val > 90) {
+          throw new Error('angle should be >= 0 and <= 90');
+        }
+
+        expectantCopy.angle = +Number(val).toFixed(this.precision);
+      },
     }
 
     const order = [
       'precision', 
+      'partsNum',
       'min', 
       'max', 
       'step', 

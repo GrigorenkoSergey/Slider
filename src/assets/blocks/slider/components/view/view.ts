@@ -15,7 +15,7 @@ export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
   className: string = 'slider';
 
-  step: number = 1/100;
+  step: number = 1/100; // 0 < step <= 1
   angle: number = 0;
   range: boolean = false;
   selector: string = '';
@@ -85,10 +85,6 @@ export default class View extends EventObserver implements ISubscriber {
     Object.keys(options).filter((prop) => prop in this)
       .forEach((prop) => expectant[prop] = options[prop]);
 
-    Object.entries(expectant).forEach(([prop, value]) => {
-      this.validateOptions(prop, value, expectant);
-    });
-
     Object.assign(this, expectant);
     Object.entries(expectant).forEach(([prop, value]) => {
       this.broadcast(prop, value);
@@ -120,7 +116,7 @@ export default class View extends EventObserver implements ISubscriber {
     // функции, иначе получится бесконечный цикл
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
-      this.handleHintAngle(this.angle);
+      this.rotateHints(this.angle);
       return this;
 
     } else if (eventType === 'rerenderScale') {
@@ -173,7 +169,7 @@ export default class View extends EventObserver implements ISubscriber {
   setHintValue(thumb: HTMLDivElement, value: string) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.setHintValue(value);
-    this.handleHintAngle(this.angle);
+    this.rotateHints(this.angle);
   }
 
   handleAnchorClick(offset: number): void {
@@ -238,7 +234,7 @@ export default class View extends EventObserver implements ISubscriber {
     });
   }
 
-  handleHintAngle(angle: number) {
+  rotateHints(angle: number) {
     this.hints.map(hint => hint.el).forEach(hint => {
       let transformation = `rotate(-${angle}deg)`;
       hint.style.transform = transformation;
@@ -252,51 +248,5 @@ export default class View extends EventObserver implements ISubscriber {
 
       hint.style.transform = transformation;
     });
-  }
-
-  private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
-    const validator: Obj = {
-      step: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('step should be a number!');
-        }
-
-        if (val > 1) {
-          throw new Error('step is too big!');
-        } else if (val < 0) {
-          throw new Error('step is negative!');
-        } else if (val == 0) {
-          throw new Error('step is equal to zero!');
-        }
-      },
-
-      angle: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('angle should be a number!');
-        }
-
-        if (val < 0 || val > 90) {
-          throw new Error('angle should be >= 0 and <= 90');
-        }
-      },
-
-      partsNum: (val: number) => {
-        if (!isFinite(val) || val <= 0) {
-          throw new Error('partsNum should be a positive number!');
-        }
-
-        if (!Number.isInteger(val)) {
-          throw new Error('partsNum should be a integer!');
-        }
-
-        let step = expectant.step || this.step;
-        if (val * step >= 1 + step) {
-          throw new Error('Either step or number of partsNum is too large');
-        }
-      }
-    }
-
-    if (!(key in validator)) return;
-    return validator[key](value);
   }
 }
