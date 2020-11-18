@@ -13,7 +13,7 @@ import Presenter from '../slider/components/presenter/presenter';
 
 let options1 = {
   min: 0,
-  max: 2000000,
+  max: 20000,
   step: 2,
   selector: ".slider1",
   angle: 90,
@@ -22,12 +22,12 @@ let options1 = {
   hintAlwaysShow: true,
   // hintAlwaysShow: false,
   partsNum: 20,
+  ticks: {500: 100, 10000: 150, 20000: 180},
 }
 // let slider1 = $('.slider1').slider(options1);
 let slider1 = new Presenter(options1);
 const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
-console.log(palette1)
-debuggerPoint.start = 2;
+
 /*
 let options2 = {
   min: 100,

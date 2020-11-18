@@ -84,6 +84,7 @@ describe('Проверка связи значения инпута со зна�
   });
 
   it(`Поменяем значение angle`, () => {
+    debugger;
     palette.angle.el.value = '45';
     palette.angle.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().angle).toEqual(45);
@@ -435,7 +436,6 @@ describe('В поля ввода нельза ввести ошибочные д
   });
 
   it(`Поменяем значение angle`, () => {
-    debugger;
     const value = palette.angle.el.value;
     palette.angle.el.value = '-10';
     palette.angle.el.dispatchEvent(fakeChange);

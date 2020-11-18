@@ -74,7 +74,6 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.setOptions(options);
 
     const optionsCopy = {...options};
-    // const optionsCopy = this.model.getOptions();
 
     const updateStepOptions = ['min', 'max', 'step'];
     const shouldUpdateStep = updateStepOptions.some(option => option in optionsCopy);

@@ -61,18 +61,6 @@ describe(`Первоначальная минимальная инициализ
     expect(() => {
       view.setOptions({angle: 180});
     }).toThrowError();
-    expect(() => {
-      view.setOptions({partsNum: '1a'});
-    }).toThrowError();
-    expect(() => {
-      view.setOptions({partsNum: '1.5'});
-    }).toThrowError();
-    expect(() => {
-      view.setOptions({step: 0.75, partsNum: 3});
-    }).toThrowError();
-    expect(() => {
-      view.setOptions({partsNum: 103});
-    }).toThrowError();
   });
 });
 

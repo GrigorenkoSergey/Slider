@@ -112,6 +112,25 @@ describe(`Model\n`, () => {
       expect(model.thumbRightPos).toEqual(80);
     });
 
+    it(`Значение свойства "precision" - целое число в пределах [0, 3]`, () => {
+      expect(() => model.setOptions({precision: '1a'})).toThrowError();
+      expect(() => model.setOptions({precision: '-2'})).toThrowError();
+      expect(() => model.setOptions({precision: '4'})).toThrowError();
+      expect(() => model.setOptions({precision: '1.5'})).toThrowError();
+      expect(() => model.setOptions({precision: -0.5})).toThrowError();
+    });
+
+    it (`Значение свойства "partsNum" должно быть целым положительным числом`, () => {
+      expect(() => model.setOptions({partsNum: '1a'})).toThrowError();
+      expect(() => model.setOptions({partsNum: '1.5'})).toThrowError();
+      expect(() => model.setOptions({partsNum: '1.5'})).toThrowError();
+      expect(() => model.setOptions({partsNum: '-1'})).toThrowError();
+    });
+
+    it (`partsNum * step <= max - min`, () => {
+      expect(() => model.setOptions({step: 50, partsNum: '3'})).toThrowError();
+    });
+
     it(`Шаг не может быть отрицательным`, () => {
       expect( () => model.setOptions({step: -1})).toThrowError();
     });
@@ -146,9 +165,17 @@ describe(`Model\n`, () => {
       expect(() => model.setOptions({thumbRightPos: 101, max: 100})).toThrowError();
     });
 
-    it(`Нельзя задать "thumbRightPos" больше максимума`, () => {
+    it(`При задании max меньше, чем значение partsNum * step + min, 
+        значение partsNum сбросится до 1, если оно было установлено до этого`, () => {
+      model.setOptions({partsNum: 20, min: 0});
+      model.setOptions({max: 100, step: 50});
+      expect(model.partsNum).toEqual(1);
+    });
+
+    it(`Нельзя задать "thumbRightPos" больше максимума и минимума`, () => {
       model.setOptions({thumbRightPos: 1000, range: true});
       expect(model.thumbRightPos).toEqual(100);
+      expect(() => {model.setOptions({thumbRightPos: 10, min: 20})}).toThrowError();
     });
 
     it(`Нельзя задать "thumbLeftPos" меньше минимума`, () => {
@@ -156,23 +183,8 @@ describe(`Model\n`, () => {
       expect(model.thumbLeftPos).toEqual(0);
       model.setOptions({thumbLeftPos: 1});
       expect(model.thumbLeftPos).toEqual(1);
+      expect(() => model.setOptions(({thumbLeftPos: 50, min: 51}))).toThrowError();
     });
-
-    it(`Нельзя задать "angle" меньше 0 и больше 90`, () => {
-      expect(() => {
-        model.setOptions({angle: '90deg'});
-      }).toThrowError();
-      expect(() => {
-        model.setOptions({angle: -10});
-      }).toThrowError();
-      expect(() => {
-        model.setOptions({angle: 180});
-      }).toThrowError();
-      expect(() => {
-        model.setOptions({angle: 91});
-      }).toThrowError();
-    });
-
 
     it (`При задании свойств "min"/"max" если бегунки оказываются за пределами, \n
           то они разбегаются по краям слайдера`, () => {
@@ -182,6 +194,7 @@ describe(`Model\n`, () => {
       expect(model.thumbRightPos).toEqual(300);
       
     });
+
     it(`Технически можно задавать напрямую значения свойств, 
     но это не рекомендуется т.к. внутренние механизмы проверки 
     правильности свойств не будут работать`, () => {

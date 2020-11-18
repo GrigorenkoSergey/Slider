@@ -83,6 +83,10 @@ export default class View extends EventObserver implements ISubscriber {
     Object.keys(options).filter((prop) => prop in this)
       .forEach((prop) => expectant[prop] = options[prop]);
 
+    Object.entries(expectant).forEach(([prop, value]) => {
+      this.validateOptions(prop, value, expectant);
+    });
+
     Object.assign(this, expectant);
     Object.entries(expectant).forEach(([prop, value]) => {
       this.broadcast(prop, value);
@@ -246,5 +250,35 @@ export default class View extends EventObserver implements ISubscriber {
 
       hint.style.transform = transformation;
     });
+  }
+  private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
+    const validator: Obj = {
+      step: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('step should be a number!');
+        }
+
+        if (val > 1) {
+          throw new Error('step is too big!');
+        } else if (val < 0) {
+          throw new Error('step is negative!');
+        } else if (val == 0) {
+          throw new Error('step is equal to zero!');
+        }
+      },
+
+      angle: (val: number) => {
+        if (!isFinite(val)) {
+          throw new Error('angle should be a number!');
+        }
+
+        if (val < 0 || val > 90) {
+          throw new Error('angle should be >= 0 and <= 90');
+        }
+      },
+    }
+
+    if (!(key in validator)) return;
+    return validator[key](value);
   }
 }
