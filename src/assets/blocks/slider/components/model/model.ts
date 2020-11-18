@@ -9,10 +9,11 @@ export default class Model extends EventObserver {
   min = 0;
   max = 100;
   step = 1;
-  partsNum = 1;
+  partsNum = 2;
   thumbLeftPos = 0;
   thumbRightPos: number = Infinity;
   range = false;
+  angle = 0;
   ticks: {[key: number]: number} = {0: 0};
   precision: number = 1;
 
@@ -31,10 +32,10 @@ export default class Model extends EventObserver {
     const defaultOptions: Obj = {
       step: () => Math.round((optionsCopy.max - optionsCopy.min) / 100),
       thumbLeftPos: () => optionsCopy.min,
-      partsNum: () => 1,
-      range: () => false,
+      // partsNum: () => 1,
+      // range: () => false,
       thumbRightPos: () => Infinity,
-      precision: () => 1,
+      // precision: () => 1,
       ticks: () => {
         return {[optionsCopy.max]: optionsCopy.max};
       },
@@ -49,7 +50,7 @@ export default class Model extends EventObserver {
 
   getOptions() {
     const publicOtions = ['min', 'max', 'range', 'step', 'partsNum',
-      'thumbLeftPos', 'thumbRightPos', 'ticks', 'precision'];
+      'thumbLeftPos', 'thumbRightPos', 'ticks', 'precision', 'angle'];
 
     const obj: Obj = {};
     publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
@@ -282,7 +283,6 @@ export default class Model extends EventObserver {
         expectantCopy.step = +Number(val).toFixed(precision);
       },
 
-
       range: (val: boolean) => {
         if (typeof val !== 'boolean') {
           throw new Error('"range" should be boolean!');
@@ -375,7 +375,8 @@ export default class Model extends EventObserver {
       'range', 
       'thumbLeftPos', 
       'thumbRightPos', 
-      'ticks'
+      'ticks',
+      'angle',
     ];
 
     order.forEach(prop => {

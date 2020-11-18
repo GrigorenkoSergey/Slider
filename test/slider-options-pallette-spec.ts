@@ -435,6 +435,7 @@ describe('В поля ввода нельза ввести ошибочные д
   });
 
   it(`Поменяем значение angle`, () => {
+    debugger;
     const value = palette.angle.el.value;
     palette.angle.el.value = '-10';
     palette.angle.el.dispatchEvent(fakeChange);

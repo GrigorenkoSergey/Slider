@@ -158,6 +158,21 @@ describe(`Model\n`, () => {
       expect(model.thumbLeftPos).toEqual(1);
     });
 
+    it(`Нельзя задать "angle" меньше 0 и больше 90`, () => {
+      expect(() => {
+        model.setOptions({angle: '90deg'});
+      }).toThrowError();
+      expect(() => {
+        model.setOptions({angle: -10});
+      }).toThrowError();
+      expect(() => {
+        model.setOptions({angle: 180});
+      }).toThrowError();
+      expect(() => {
+        model.setOptions({angle: 91});
+      }).toThrowError();
+    });
+
 
     it (`При задании свойств "min"/"max" если бегунки оказываются за пределами, \n
           то они разбегаются по краям слайдера`, () => {

@@ -343,7 +343,7 @@ describe(`Меняет состояние модели в соответстви
   });
 });
 
-describe(`В любой момент времени можно узнать и задать нужные свойства`, () => {
+describe(`В любой момент времени можно узнать и задать нужные свойства\n`, () => {
   beforeEach(() => {
     document.body.append(div);
   });
@@ -363,7 +363,7 @@ describe(`В любой момент времени можно узнать и �
   it('Узнаём свойства слайдера', () => {
     const presenter = new Presenter(option);
     const options = presenter.getOptions();
-
+debugger;
     expect(options.angle).toEqual(0);
     expect(options.hintAboveThumb).toBeTrue();
     expect(options.min).toEqual(20);

@@ -23,13 +23,11 @@ export default class View extends EventObserver implements ISubscriber {
 
   hints: Hint[];
   hintAlwaysShow: boolean = false;
-  rotateHint: boolean = true;
 
   thumbs: Thumbs;
 
   scale: Scale;
   showScale: boolean = true;
-  rotateScale: boolean = true;
   partsNum: number = 2;
   stretcher: Stretcher;
 
