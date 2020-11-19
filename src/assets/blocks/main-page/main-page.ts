@@ -13,7 +13,7 @@ import Presenter from '../slider/components/presenter/presenter';
 
 let options1 = {
   min: 0,
-  max: 20000,
+  max: 99999999999999999999,
   step: 2,
   selector: ".slider1",
   angle: 90,
@@ -21,8 +21,8 @@ let options1 = {
   hintAboveThumb: true,
   hintAlwaysShow: true,
   // hintAlwaysShow: false,
-  partsNum: 20,
-  ticks: {500: 100, 10000: 150, 20000: 180},
+  partsNum: 2,
+  // ticks: {500: 100, 10000: 150, 20000: 180},
 }
 // let slider1 = $('.slider1').slider(options1);
 let slider1 = new Presenter(options1);

@@ -338,11 +338,17 @@ describe(`Также присутствует интерактивная шка�
         .toEqual(view.scale.width);
 
       anchors[1].dispatchEvent(fakeMouseClick);
-      expect(getComputedStyle(leftThumb).left).toEqual(getComputedStyle(anchors[1]).left);
+      let thumbRect = leftThumb.getBoundingClientRect();
+      let thumbCenter = (thumbRect.right - thumbRect.left) / 2 + thumbRect.left;
+      let anchorRect = anchors[1].getBoundingClientRect();
+      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorRect.right));
       anchors[0].dispatchEvent(fakeMouseClick);
 
       anchors[2].dispatchEvent(fakeMouseClick);
-      expect(getComputedStyle(rightThumb).left).toEqual(getComputedStyle(anchors[2]).left);
+      thumbRect = rightThumb.getBoundingClientRect();
+      thumbCenter = (thumbRect.right - thumbRect.left) / 2 + thumbRect.left;
+      anchorRect = anchors[2].getBoundingClientRect();
+      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorRect.right));
       anchors[3].dispatchEvent(fakeMouseClick);
     }
 

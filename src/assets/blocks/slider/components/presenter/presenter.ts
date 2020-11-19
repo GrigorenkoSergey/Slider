@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import '../../slider.scss';
 
 import '../../../helpers/types';
@@ -8,9 +7,8 @@ import {ISubscriber} from '../../../helpers/interfaces';
 import View from '../../components/view/view';
 import Model from '../model/model';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
-import {event, timers} from 'jquery';
-import Thumbs from '../view/components/thumbs';
 
 export default class Presenter extends EventObserver implements ISubscriber{
   view: View | null = null;
@@ -53,14 +51,6 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.addSubscriber('ticks', this);
     model.addSubscriber('precision', this);
 
-    if (document.readyState !== 'complete') {
-      window.onload = this.handleWindowLoad.bind(this, options);
-    } else {
-      this.handleWindowLoad(options);
-    }
-  }
-
-  handleWindowLoad(options: Obj) {
     this.setOptions(options);
 
     if ('ticks' in options) {

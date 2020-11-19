@@ -218,19 +218,18 @@ export default class View extends EventObserver implements ISubscriber {
     const {sin, PI} = Math;
     let radAngle = angle * PI / 180;
 
-    this.scale.el.style.transform = ` translateY(${10 * sin(2 * radAngle)}px)`;
+    const scaleStyles = getComputedStyle(this.scale.el);
+    let scaleTransform = ` translateY(${parseFloat(scaleStyles.top) * sin(radAngle)}px)`;
+    this.scale.el.style.transform = scaleTransform;
 
     this.scale.anchors.forEach(anchor => {
+      anchor.style.transformOrigin = 'right top';
       let transformation = `rotate(-${angle}deg)`;
 
-      const anchorWidth = anchor.clientWidth;
-      const fontSize = parseFloat(getComputedStyle(anchor).fontSize);
-
-      let deltaX = anchorWidth / 2;
-      let deltaY = anchorWidth / 2 - fontSize / 2;
-
-      transformation += ` translateX(-${deltaX * sin(radAngle)}px)`;
-      transformation += ` translateY(${-(deltaY) * sin(radAngle)}px)`;
+      if (this.angle <= 45) {
+        transformation += ` translateX(${50 * (1 - sin(2 * radAngle))}%)`;
+      }
+      transformation += ` translateY(${-50 * sin(radAngle)}%)`;
 
       anchor.style.transform = transformation;
     });
@@ -240,18 +239,18 @@ export default class View extends EventObserver implements ISubscriber {
     this.hints.map(hint => hint.el).forEach(hint => {
       let transformation = `rotate(-${angle}deg)`;
       hint.style.transform = transformation;
+      hint.style.transformOrigin = 'left';
 
-      const hintRect = hint.clientWidth;
       const {sin, PI} = Math;
       let radAngle = angle * PI / 180;
 
-      transformation += ` translateX(${-50 + 100 * sin(radAngle)}%)`;
-      transformation += ` translateY(-${hintRect / 2 * sin(radAngle)}px)`;
-
-      hint.style.transform = transformation;
+      if (this.angle <= 45) {
+        transformation += ` translateX(${-50 * (1 -  sin(2 * radAngle))}%)`;
+        hint.style.transform = transformation;
+      }
     });
   }
-  private validateOptions(key: string, value: any, expectant: Obj) { //не трогать
+  private validateOptions(key: string, value: any, expectant: Obj) {
     const validator: Obj = {
       step: (val: number) => {
         if (!isFinite(val)) {

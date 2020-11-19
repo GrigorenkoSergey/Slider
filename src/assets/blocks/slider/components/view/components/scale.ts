@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
 import '../../../../helpers/types';
@@ -33,7 +33,7 @@ export default class Scale extends EventObserver {
     this.render();
   }
 
-  update(prop: string, data: any) {
+  update(prop: string) {
     if (prop === 'showScale') {
       this.displayScale();
     }
@@ -87,13 +87,13 @@ export default class Scale extends EventObserver {
       this.parts = values;
     }
 
-    this.parts.forEach((value, i) => {
+    this.parts.forEach((value) => {
       const div = document.createElement('div');
       div.className = this.view.el.className + '__scale-points';
 
-      const pixelStep: number = step * this.width;
-      let left = value * this.width;
-      div.style.left = left + 'px';
+      let right = this.width * (1 - value) + this.view.thumbs.thumbLeft.offsetWidth / 2;
+      div.style.right = right + 'px';
+
       div.textContent = String(value);
 
       this.el.append(div);
