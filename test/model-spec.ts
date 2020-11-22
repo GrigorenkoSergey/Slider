@@ -70,12 +70,6 @@ describe(`Model\n`, () => {
       expect(model.thumbRightPos).toEqual(model.max);
     });
 
-    it(`Свойсто "ticks" всегда определено, даже если
-     не задано пользователем`, () => {
-      const model = new Model({min: 0, max: 100, step: 1});
-      expect(model.ticks).toEqual({100: 100});
-    });
-
     it(`При некратном шаге достижимые значения слайдера не могут 
     быть меньше min и больше max`, () => {
       const model = new Model({min: 10, max: 299, step: 3, range: true});
@@ -211,64 +205,6 @@ describe(`Model\n`, () => {
       expect(options.thumbLeftPos).toEqual(0);
     });
   });
-  
-  describe(`Задание нелинейной шкалы\n`, () => {
-    it(`При задании нелинейной шкалы последний ключ ticks 
-    должен быть равен max, иначе ошибка`, () => {
-      const model = new Model({
-        min: 0, max: 100, ticks: {10: 50, 20: 55, 50: 70, 100: 80},
-      });
-      expect(+Object.keys(model.ticks).pop()).toEqual(model.max);
-
-      expect(() => {
-        new Model({
-          min: 0, max: 1000, ticks: {10: 50, 20: 55, 50: 70, 100: 80},
-        });
-      }).toThrowError();
-
-      expect(() => {
-        new Model({
-          min: 0, max: 100, ticks: {10: 50, 20: 55, 50: 70, 1000: 80},
-        });
-      }).toThrowError();
-    });
-
-    it(`Первый ключ ticks должен быть больше min`, () => {
-      const model = new Model({
-        min: 0, max: 100, ticks: {10: 50, 20: 55, 50: 70, 100: 80},
-      });
-
-      expect(+Object.keys(model.ticks)[0]).toBeGreaterThan(model.min);
-
-      expect(() => {
-        new Model({
-          min: 20, max: 100, ticks: {10: 50, 20: 55, 50: 70, 100: 80},
-        });
-      }).toThrowError();
-    });
-
-    it(`И ключи, и значения ticks должны быть возрастающими 
-    числовыми последовательностями`, () => {
-      expect(() => {
-        new Model({min: 0, max: 100, ticks: {10: 2, 20: 1, 100: 5}});
-      }).toThrowError();
-
-      expect(() => {
-        new Model({min: 0, max: 100, ticks: {1: 2, 30: 4, 20: 5, 100: 20}});
-      }).toThrowError();
-    });
-
-    it(`При изменении max и соответсвующем изменении 
-    ticks все пройдет гладко`, () => {
-      const model = new Model({
-        min: 0, max: 100, ticks: {10: 50, 20: 55, 50: 70, 100: 80},
-      });
-
-      expect(() => {
-        model.setOptions({max: 150, ticks: {10: 20, 30: 45, 80: 50, 150: 52}});
-      }).not.toThrowError();
-    });
-  });
 
   describe(`Метод "setThumbsPos"\n`, () => {
     let model: Model;
@@ -333,31 +269,6 @@ describe(`Model\n`, () => {
       expect(model.findArgument(100)).toEqual(1);
       expect(model.findArgument(50)).toEqual(0.5);
       expect(model.findArgument(70)).toEqual(0.7);
-    });
-
-    it(`Корректно вычисляет значения функции для нелинейной шкалы.
-        К примеру, у нас товары по цене от 100 до 200 рублей. 
-        50% товаров находятся в ценовом диапазоне от 100 до 120 рублей,
-        25% товаров в диапазоне от 120 до 150 рублей,
-        25% товаров в диапазоне от 150 до 200 рублей.`, () => {
-      model.setOptions({min: 100, max: 200, step: 1});
-      model.setOptions({ticks: {120: 50, 150: 75, 200: 100}});
-
-      expect(model.findValue(0)).toEqual(100);
-      expect(model.findValue(0.25)).toEqual(110);
-      expect(model.findValue(0.5)).toEqual(120);
-      expect(model.findValue((0.5 + 0.75) / 2)).toEqual(135);
-      expect(model.findValue(0.75)).toEqual(150);
-      expect(model.findValue((0.75 + 1) / 2)).toEqual(175);
-      expect(model.findValue(1)).toEqual(200);
-
-      expect(model.findArgument(100)).toEqual(0);
-      expect(model.findArgument(110)).toEqual(0.25);
-      expect(model.findArgument(120)).toEqual(0.5);
-      expect(model.findArgument(135)).toEqual((0.5 + 0.75) / 2);
-      expect(model.findArgument(150)).toEqual(0.75);
-      expect(model.findArgument(175)).toEqual((0.75 + 1) / 2);
-      expect(model.findArgument(200)).toEqual(1);
     });
   });
 });

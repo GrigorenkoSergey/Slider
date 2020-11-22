@@ -122,7 +122,6 @@ describe(`Работает в принципе...\n`, () => {
     expect(offsetRight > 0.89 && offsetRight < 0.91).toBeTruthy();
 
     expect(slider.getOptions().thumbRightPos).toEqual(90);
-    expect(slider.getOptions().ticks).toEqual({100: 100});
     expect(slider.getOptions().angle).toEqual(45);
     expect(slider.getOptions().range).toBeTruthy();
 

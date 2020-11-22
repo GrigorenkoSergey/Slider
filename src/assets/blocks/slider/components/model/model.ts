@@ -13,7 +13,6 @@ export default class Model extends EventObserver {
   thumbLeftPos = 0;
   thumbRightPos: number = Infinity;
   range = false;
-  ticks: {[key: number]: number} = {0: 0};
   precision: number = 1;
 
   constructor(options: Obj) {
@@ -32,9 +31,6 @@ export default class Model extends EventObserver {
       step: () => Math.round((optionsCopy.max - optionsCopy.min) / 100),
       thumbLeftPos: () => optionsCopy.min,
       thumbRightPos: () => Infinity,
-      ticks: () => {
-        return {[optionsCopy.max]: optionsCopy.max};
-      },
     };
 
     Object.keys(defaultOptions).forEach((key) => {
@@ -46,7 +42,7 @@ export default class Model extends EventObserver {
 
   getOptions() {
     const publicOtions = ['min', 'max', 'range', 'step', 'partsNum',
-      'thumbLeftPos', 'thumbRightPos', 'ticks', 'precision',];
+      'thumbLeftPos', 'thumbRightPos', 'precision',];
 
     const obj: Obj = {};
     publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
@@ -86,45 +82,13 @@ export default class Model extends EventObserver {
     return this;
   }
 
-  findValue(offset: number): number { // y = f(x), here we find 'y'
-    const ticksRange = Object.keys(this.ticks).map((item) => Number(item));
-    const ticksValues = Object.values(this.ticks);
-    const totalItems = Object.values(this.ticks).pop();
-
-    for (let i = 0; i < ticksRange.length; i++) {
-      // немного бизнес-логики (просто интерполяция)
-      if (ticksValues[i] / totalItems >= offset) {
-        let a = ticksRange[i - 1] ? ticksValues[i - 1] : 0;
-        a /= totalItems;
-        let b = ticksValues[i];
-        b /= totalItems;
-
-        const fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
-        const fnB = ticksRange[i];
-
-        let result =  (offset - a) * (fnB - fnA) / (b - a) + fnA;
-        return Number(result.toFixed(this.precision));
-      }
-    }
+  findValue(x: number): number { // y = f(x), here we find 'y'
+    let result =  x  * (this.max - this.min) + this.min;
+    return Number(result.toFixed(this.precision));
   }
 
-  findArgument(x: number): number { // y = f(x), here we find 'x'
-    const ticksRange = Object.keys(this.ticks).map((item) => Number(item));
-    const ticksValues = Object.values(this.ticks);
-    const totalItems = Object.values(this.ticks).pop();
-
-    for (let i = 0; i < ticksRange.length; i++) {
-      if (ticksRange[i] >= x) {
-        let a = ticksRange[i - 1] ? ticksValues[i - 1] : 0;
-        a /= totalItems;
-        let b = ticksValues[i];
-        b /= totalItems;
-        const fnA = ticksRange[i - 1] ? ticksRange[i - 1] : this.min;
-        const fnB = ticksRange[i];
-
-        return (x - fnA) * (b - a) / (fnB - fnA) + a;
-      }
-    }
+  findArgument(y: number): number { // y = f(x), here we find 'x'
+    return (y - this.min) / (this.max - this.min);
   }
 
   private _handleOptions(expectant: Obj) {
@@ -243,10 +207,6 @@ export default class Model extends EventObserver {
         }
 
         expectantCopy.max = +Number(val).toFixed(precision);
-
-        if (!('ticks' in expectantCopy)) {
-          expectantCopy.ticks = {[val]: Number(val)};
-        }
       },
 
       step: (val: number) => {
@@ -326,24 +286,6 @@ export default class Model extends EventObserver {
 
         expectantCopy.thumbRightPos = +Math.min(val, max).toFixed(precision)
       },
-
-      ticks: (val: Obj) => {
-        const keys = Object.keys(val);
-        const vals = Object.values(val);
-        const {max = this.max, min = this.min} = expectant;
-
-        if (keys[keys.length - 1] != max) {
-          throw new Error('Last key of ticks should be equal to max!');
-
-        } else if (keys[0] < min) {
-          throw new Error('First key of ticks should be greater then min!');
-
-        } else if (!isIncreasing(vals) || !isIncreasing(keys)) {
-          throw new Error('Both keys and values of ticks must be increasing sequenses!');
-        }
-
-        expectantCopy.ticks = val;
-      },
     }
 
     const order = [
@@ -355,7 +297,6 @@ export default class Model extends EventObserver {
       'range', 
       'thumbLeftPos', 
       'thumbRightPos', 
-      'ticks',
     ];
 
     order.forEach(prop => {

@@ -48,15 +48,9 @@ export default class Presenter extends EventObserver implements ISubscriber{
     model.addSubscriber('thumbLeftPos', this);
     model.addSubscriber('thumbRightPos', this);
     model.addSubscriber('range', this);
-    model.addSubscriber('ticks', this);
     model.addSubscriber('precision', this);
 
     this.setOptions(options);
-
-    if ('ticks' in options) {
-      this.handleTicks();
-      this.scaleValues();
-    }
   }
 
   setOptions(options: Obj) {
@@ -67,6 +61,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
 
     const updateStepOptions = ['min', 'max', 'step'];
     const shouldUpdateStep = updateStepOptions.some(option => option in optionsCopy);
+
     if (shouldUpdateStep) {
       const step = model.step / (model.max - model.min);
       optionsCopy.step = step;
@@ -161,10 +156,6 @@ export default class Presenter extends EventObserver implements ISubscriber{
     } else if (eventType === 'range') {
       this.view.setOptions({range: data.value});
 
-    } else if (eventType === 'ticks') {
-      this.handleTicks();
-      this.scaleValues();
-
     } else if (eventType === 'thumbProgramMove') {
       let handledData = null;
 
@@ -182,18 +173,5 @@ export default class Presenter extends EventObserver implements ISubscriber{
     }
 
     this.broadcast(eventType, data);
-  }
-
-  handleTicks() {
-    const {model, view} = this;
-
-    if (Object.keys(model.ticks).length > 1) {
-      const max = Object.values(model.ticks).slice(-1)[0];
-      const scaleParts = [0];
-      Object.values(model.ticks).forEach(value => {
-        scaleParts.push(value / max);
-      });
-      view.scale.setMilestones(scaleParts);
-    }
   }
 }

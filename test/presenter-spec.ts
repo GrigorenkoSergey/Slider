@@ -233,47 +233,6 @@ describe(`Меняет значения шкалы в соответствии �
     expect(style.right).toEqual('16px');
   });
 
-  it('Реагирует на изменение свойства "ticks" модели', () => {
-    let newOpts = {
-      min: 100,
-      max: 20000,
-      ticks: {500: 100, 10000: 150, 20000: 180},
-      step: 10,
-      range: false,
-    }
-
-    const presenter = new Presenter({...option, ...newOpts});
-    const {model} = presenter;
-
-    let anchors = presenter.view.scale.el.getElementsByClassName('slider__scale-points');
-    expect(anchors[0].textContent).toEqual('100');
-    expect(anchors[1].textContent).toEqual('500');
-    expect(anchors[2].textContent).toEqual('10000');
-    expect(anchors[3].textContent).toEqual('20000');
-
-    model.setOptions({ticks: {2000: 200, 3000: 350, 20000: 500}});
-    expect(anchors[1].textContent).toEqual('2000');
-    expect(anchors[2].textContent).toEqual('3000');
-    expect(anchors[3].textContent).toEqual('20000');
-
-    const thumb = presenter.view.thumbs.thumbLeft;
-
-    anchors[1].dispatchEvent(fakeClick);
-    thumb.dispatchEvent(fakeMouseDown);
-    expect(thumb.textContent).toEqual('2000');
-    thumb.dispatchEvent(fakeMouseUp);
-
-    anchors[2].dispatchEvent(fakeClick);
-    thumb.dispatchEvent(fakeMouseDown);
-    expect(thumb.textContent).toEqual('3000');
-    thumb.dispatchEvent(fakeMouseUp);
-
-    anchors[3].dispatchEvent(fakeClick);
-    thumb.dispatchEvent(fakeMouseDown);
-    expect(thumb.textContent).toEqual('20000');
-    thumb.dispatchEvent(fakeMouseUp);
-  });
-
   it('Реагирует на изменение свойства "partsNum" вида', () => {
     const presenter = new Presenter(option);
     let anchors = presenter.view.scale.el.getElementsByClassName('slider__scale-points');

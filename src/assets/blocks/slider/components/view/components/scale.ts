@@ -64,6 +64,8 @@ export default class Scale extends EventObserver {
     });
   }
 
+  
+
   setMilestones(values?: number[]) {
     const {step} = this.view;
 

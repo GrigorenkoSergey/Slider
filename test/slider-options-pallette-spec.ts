@@ -652,5 +652,4 @@ describe(`Данные баги более не возникают`, () => {
     anchors[1].dispatchEvent(fakeClick);
     expect(palette.thumbRightPos.el.value).toEqual('100.555');
   });
-
 })
