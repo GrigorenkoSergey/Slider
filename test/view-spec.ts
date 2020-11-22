@@ -321,12 +321,10 @@ describe(`Также присутствует интерактивная шка�
       bubbles: true, cancelable: true,
     });
 
-    for (let i = 3; i < 8; i++) {
-      const rightThumb: HTMLDivElement =
-        view.el.querySelector('[class*=right]');
-      const leftThumb: HTMLDivElement =
-        view.el.querySelector('[class*=left]');
+    const rightThumb = <HTMLDivElement> view.el.getElementsByClassName('slider__thumb-right')[0];
+    const leftThumb = <HTMLDivElement> view.el.getElementsByClassName('slider__thumb-left')[0];
 
+    for (let i = 3; i < 8; i++) {
       moveThumb(rightThumb, -view.scale.width / i);
       moveThumb(leftThumb, view.scale.width / i);
 
@@ -341,14 +339,16 @@ describe(`Также присутствует интерактивная шка�
       let thumbRect = leftThumb.getBoundingClientRect();
       let thumbCenter = (thumbRect.right - thumbRect.left) / 2 + thumbRect.left;
       let anchorRect = anchors[1].getBoundingClientRect();
-      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorRect.right));
+      let anchorCenter = (anchorRect.right - anchorRect.left) / 2 + anchorRect.left;
+      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorCenter));
       anchors[0].dispatchEvent(fakeMouseClick);
 
       anchors[2].dispatchEvent(fakeMouseClick);
       thumbRect = rightThumb.getBoundingClientRect();
       thumbCenter = (thumbRect.right - thumbRect.left) / 2 + thumbRect.left;
       anchorRect = anchors[2].getBoundingClientRect();
-      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorRect.right));
+      anchorCenter = (anchorRect.right - anchorRect.left) / 2 + anchorRect.left;
+      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorCenter));
       anchors[3].dispatchEvent(fakeMouseClick);
     }
 

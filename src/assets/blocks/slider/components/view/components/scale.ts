@@ -36,17 +36,14 @@ export default class Scale extends EventObserver {
   update(prop: string) {
     if (prop === 'showScale') {
       this.displayScale();
-    }
 
-    if (prop === 'partsNum') {
+    } else if (prop === 'partsNum') {
       this.setMilestones();
-    }
 
-    if (prop === 'step') {
+    } else if (prop === 'step') {
       this.setMilestones();
-    }
 
-    if (prop === 'angle') {
+    } else if (prop === 'angle') {
       this.rotateScale();
     }
   }
