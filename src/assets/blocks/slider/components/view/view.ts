@@ -118,7 +118,6 @@ export default class View extends EventObserver implements ISubscriber {
     // функции, иначе получится бесконечный цикл
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
-      this.rotateHints();
       return this;
 
     } else if (eventType === 'hintAlwaysShow') {
@@ -168,7 +167,6 @@ export default class View extends EventObserver implements ISubscriber {
   setHintValue(thumb: HTMLDivElement, value: string) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.setHintValue(value);
-    this.rotateHints();
   }
 
   handleAnchorClick(offset: number): void {
@@ -211,24 +209,6 @@ export default class View extends EventObserver implements ISubscriber {
     hint.showHint();
   }
 
-  rotateHints() {
-    const {angle} = this;
-
-    this.hints.map(hint => hint.el).forEach(hint => {
-      let transformation = `rotate(-${angle}deg)`;
-      hint.style.transform = transformation;
-      hint.style.transformOrigin = 'left';
-
-      const {sin, PI} = Math;
-      let radAngle = angle * PI / 180;
-
-      if (this.angle <= 45) {
-        transformation += ` translateX(${-50 * (1 -  sin(2 * radAngle))}%)`;
-        hint.style.transform = transformation;
-      }
-    });
-  }
-  
   private validateOptions(key: string, value: any, expectant: Obj) {
     const validator: Obj = {
       step: (val: number) => {
