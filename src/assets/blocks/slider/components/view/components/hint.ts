@@ -1,16 +1,14 @@
 import View from '../view';
-import EventObserver from '../../../../helpers/event-observer';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
-export default class Hint extends EventObserver {
+export default class Hint {
   el: HTMLDivElement = document.createElement('div');
   view: View;
   value: string = 'hint';
 
   constructor(view: View, parentNode: HTMLElement) {
-    super();
     this.view = view;
     this.init(parentNode);
   }

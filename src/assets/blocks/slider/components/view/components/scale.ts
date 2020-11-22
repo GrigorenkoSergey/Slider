@@ -47,7 +47,7 @@ export default class Scale extends EventObserver {
     }
 
     if (prop === 'angle') {
-      this.setMilestones();
+      this.rotateScale();
     }
   }
 
@@ -63,8 +63,6 @@ export default class Scale extends EventObserver {
       div.textContent = String(values[i]);
     });
   }
-
-  
 
   setMilestones(values?: number[]) {
     const {step} = this.view;
@@ -104,6 +102,7 @@ export default class Scale extends EventObserver {
       this.anchors.push(div);
     });
 
+    this.rotateScale();
     this.broadcast('rerenderScale', this.anchors);
   }
 
@@ -121,6 +120,28 @@ export default class Scale extends EventObserver {
     } else {
       this.el.style.display = '';
     }
+  }
+
+  rotateScale() {
+    const {angle} = this.view;
+    const {sin, PI} = Math;
+    let radAngle = angle * PI / 180;
+
+    const scaleStyles = getComputedStyle(this.el);
+    let scaleTransform = ` translateY(${parseFloat(scaleStyles.top) * sin(radAngle)}px)`;
+    this.el.style.transform = scaleTransform;
+
+    this.anchors.forEach(anchor => {
+      anchor.style.transformOrigin = 'right top';
+      let transformation = `rotate(-${angle}deg)`;
+
+      if (angle <= 45) {
+        transformation += ` translateX(${50 * (1 - sin(2 * radAngle))}%)`;
+      }
+      transformation += ` translateY(${-50 * sin(radAngle)}%)`;
+
+      anchor.style.transform = transformation;
+    });
   }
 
   private _validateScaleParts(values: number[]) {
