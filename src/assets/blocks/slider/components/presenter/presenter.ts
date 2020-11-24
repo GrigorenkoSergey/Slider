@@ -42,6 +42,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     this.addSubscriber('rerenderScale', this.view);
 
     model.addSubscriber('partsNum', this);
+    // model.addSubscriber('alternativeRange', this); //не требуется, т.к. автоматически меняются min, max
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
     model.addSubscriber('step', this);
@@ -81,18 +82,18 @@ export default class Presenter extends EventObserver implements ISubscriber{
 
     view.setHintValue(
       view.thumbs.thumbLeft, 
-      String(model.thumbLeftPos),
+      this._recountValue(model.thumbLeftPos),
     );
 
     view.setHintValue(
       view.thumbs.thumbRight, 
-      String(model.thumbRightPos),
+      this._recountValue(model.thumbRightPos),
     );
 
-    const precision = this.model.precision;
+    const precision = model.precision;
     const anchorValues = this.view.scale.parts.map((value) => {
-
-      return Number(model.findValue(value).toFixed(precision));
+      const result = this._recountValue(Number(model.findValue(value).toFixed(precision)));
+      return result;
     });
 
     view.setAnchorValues(anchorValues);
@@ -102,12 +103,13 @@ export default class Presenter extends EventObserver implements ISubscriber{
     if (eventType === 'thumbMousedown') {
       const thumb = data.el;
       let offset = this.model.findValue(data.offset);
-      this.view.setHintValue(thumb, String(offset));
+      this.view.setHintValue(thumb, this._recountValue(offset));
 
     } else if (eventType === 'thumbMousemove') {
       const thumb = data.el;
       let offset = this.model.findValue(data.offset);
-      this.view.setHintValue(thumb, String(offset));
+      this.view.setHintValue(thumb, this._recountValue(offset));
+
 
       if (thumb === this.view.thumbs.thumbLeft) {
         this.model.setThumbsPos({left: offset})
@@ -173,5 +175,33 @@ export default class Presenter extends EventObserver implements ISubscriber{
     }
 
     this.broadcast(eventType, data);
+    this.broadcast('changeSlider', this);
+  }
+
+  onChange(opts: Obj) {
+    const {
+      el, 
+      callback = () => console.log(this),
+    } = opts;
+
+    const elemSubscriber = {
+      update: callback,
+      el,
+    };
+
+    this.addSubscriber('changeSlider', elemSubscriber);
+    this.broadcast('changeSlider', this);
+  }
+
+  _recountValue(val: number) {
+    const {model} = this;
+    let result;
+
+    if (model.alternativeRange.length) {
+      result = model.alternativeRange[Math.round(val)];
+    } else {
+      result = String(val);
+    }
+    return result;
   }
 }

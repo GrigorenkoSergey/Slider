@@ -14,6 +14,7 @@ export default class Model extends EventObserver {
   thumbRightPos: number = Infinity;
   range = false;
   precision: number = 1;
+  alternativeRange: string[] = [];
 
   constructor(options: Obj) {
     super();
@@ -21,15 +22,23 @@ export default class Model extends EventObserver {
     const argsRequire = ['min', 'max'];
 
     if (!argsRequire.every((key) => key in optionsCopy)) {
-      throw new Error(
-        `Not enough values. Should be at least 
-        "${argsRequire.join('", "')}" in options`,
-      );
+      if (!('alternativeRange' in optionsCopy)) {
+        throw new Error(
+          `Not enough values. There must be at least the "min" and "max" options
+            or the "alternativeRange" option must be set`
+        );
+      }
     }
 
     const defaultOptions: Obj = {
-      step: () => Math.round((optionsCopy.max - optionsCopy.min) / 100),
-      thumbLeftPos: () => optionsCopy.min,
+      step: () => {
+        if (!('alternativeRange' in optionsCopy)) {
+          return Math.round((optionsCopy.max - optionsCopy.min) / 100);
+        } else {
+          return 1;
+        }
+      },
+      thumbLeftPos: () => optionsCopy.min || 0,
       thumbRightPos: () => Infinity,
     };
 
@@ -42,7 +51,7 @@ export default class Model extends EventObserver {
 
   getOptions() {
     const publicOtions = ['min', 'max', 'range', 'step', 'partsNum',
-      'thumbLeftPos', 'thumbRightPos', 'precision',];
+      'thumbLeftPos', 'thumbRightPos', 'precision', 'alternativeRange'];
 
     const obj: Obj = {};
     publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
@@ -125,6 +134,23 @@ export default class Model extends EventObserver {
         expectantCopy.partsNum = val;
       },
 
+      alternativeRange: (val: string[]) => {
+        if (val.length  <= 1) {
+          debugger;
+          throw new Error('"alternativeRange" is a string array with more then one value!');
+        }
+
+        if ('min' in expectant) {
+          throw new Error(`You should not set "min" when you set "alternativeRange"`);
+        }
+        if ('max' in expectant) {
+          throw new Error(`You should not set "max" when you set "alternativeRange"`);
+        }
+
+        expectantCopy.min = 0;
+        expectantCopy.max = val.length - 1;
+      },
+
       min: (val: number) => {
         if (!isFinite(val)) {
           throw new Error('"min" should be a number!');
@@ -137,15 +163,24 @@ export default class Model extends EventObserver {
           thumbLeftPos = this.thumbLeftPos,
           thumbRightPos = this.thumbRightPos,
           precision = this.precision,
+          alternativeRange = this.alternativeRange,
         } = expectantCopy;
 
         if (val >= max) {
           throw new Error('"min" should be < "max"!');
+
         } else if (max - val < step) {
           throw new Error('"max" - "min" should be >= "step"!');
+
         } else if (max - val < step * partsNum) {
           console.log('max - min should be >= partsNum * step!\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
+
+        } else if (alternativeRange.length != 0) {
+          if (!('alternativeRange' in expectant)) {
+            console.log('when you set "min" option "alternativeRange" sets to []');
+            expectantCopy.alternativeRange = [];
+          }
         }
 
         if (val > thumbLeftPos) {
@@ -176,15 +211,24 @@ export default class Model extends EventObserver {
           thumbLeftPos = this.thumbLeftPos,
           thumbRightPos = this.thumbRightPos,
           precision = this.precision,
+          alternativeRange = this.alternativeRange,
         } = expectantCopy;
 
         if (val <= min) {
           throw new Error('"max" should be >= "min"!');
+
         } else if (val - min < step) {
           throw new Error('"max" - "min" should be >= "step"!');
+
         } else if (val - min < step * partsNum) {
           console.log('max - min should be >= partsNum * step!\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
+
+        } else if (alternativeRange.length != 0) {
+          if (!('alternativeRange' in expectant)) {
+            console.log('when you set "max" option "alternativeRange" sets to []');
+            expectantCopy.alternativeRange = [];
+          }
         }
 
         if (thumbLeftPos > val) {
@@ -219,6 +263,7 @@ export default class Model extends EventObserver {
           max = this.max, 
           precision = this.precision,
           partsNum = this.partsNum,
+          alternativeRange = this.alternativeRange,
         } = expectantCopy;
         
         if (val > max - min) {
@@ -291,6 +336,7 @@ export default class Model extends EventObserver {
     const order = [
       'precision', 
       'partsNum',
+      'alternativeRange',
       'min', 
       'max', 
       'step', 

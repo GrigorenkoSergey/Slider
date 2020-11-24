@@ -16,7 +16,6 @@ let options1 = {
   max: 20000,
   step: 2,
   selector: ".slider1",
-  angle: 90,
   range: true,
   hintAboveThumb: true,
   hintAlwaysShow: true,
@@ -27,7 +26,6 @@ let options1 = {
 let slider1 = new Presenter(options1);
 const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
 
-/*
 let options2 = {
   min: 100,
   max: 2000,
@@ -38,20 +36,49 @@ let options2 = {
   hintAboveThumb: true,
   thumbLeftPos: 800,
 }
-let slider2 = $().slider(options2);
+let slider2 = new Presenter(options2);
+const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
 
 let options3 = {
-  min: 0,
-  max: 1000,
+  // min: 0,
+  // max: 1000,
+  alternativeRange: ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   step: 1,
-  selector: ".slider3",
+  selector: '.slider3',
   angle: 45,
   range: true,
   hintAboveThumb: true,
-  rangeValue: ["Jan", "Dec"],
+  hintAlwaysShow: true,
 }
-let slider3 = $('.slider3').slider(options3);
+let slider3 = new Presenter(options3);
+const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
 
+// anchors.forEach((anchor: HTMLDivElement) => {
+//   slider3.onChange({
+//     el: anchor,
+//     callback: () => {
+//       let months = ["Jan", "Feb", "March", "Apr", "May", "Jun",
+//         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+//       debuggerPoint.start++;
+//       console.log(debuggerPoint);
+//       if (debuggerPoint.start === 16) debugger;
+//       anchor.textContent = months[Math.round(11 * Number(anchor.dataset.offset))];
+//     },
+//   })
+// });
+
+// anchors.forEach(anchor => {
+//   let months = ["Jan", "Feb", "March", "Apr", "May", "Jun",
+//     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+//   const options = slider3.getOptions();
+//   const {min, max} = options;
+//   const k = months.length / (max - min);
+
+//   anchor.textContent = months[Math.round(k * Number(anchor.textContent))];
+// });
+
+/*
 //Пример задания вообще левых значений
 slider3.unbindFrom(slider3.hintEl);
 let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {
