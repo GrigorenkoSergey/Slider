@@ -82,6 +82,50 @@ describe(`Меняет значения подсказки над бегунко
     expect(hint.textContent).toEqual('55');
     thumb.dispatchEvent(fakeMouseUp);
   });
+});
+
+describe(`Проверка работы "alternativeRange"\n`, () => {
+  const option = {
+    range: true, 
+    selector: '.divPresenterSpec',
+    className: 'slider', 
+    showScale: true,
+    partsNum: 2,
+    alternativeRange: ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  };
+
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`При нажатии на левом кругляше отображается подсказка`, () => {
+    const presenter = new Presenter(option);
+    const thumb = presenter.view.thumbs.thumbLeft;
+    thumb.dispatchEvent(fakeMouseDown);
+
+    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+
+    expect(hint.hidden).toBeFalse();
+    expect(hint.textContent).toEqual('Jan');
+    thumb.dispatchEvent(fakeMouseUp);
+  });
+
+  it(`При нажатии на правом кругляше отображается подсказка`, () => {
+    const presenter = new Presenter({...option, thumbRightPos: 10});
+    const thumb = presenter.view.thumbs.thumbRight
+    thumb.dispatchEvent(fakeMouseDown);
+
+    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+
+    expect(hint.textContent).toEqual('Nov');
+    expect(hint.hidden).toBeFalse();
+    thumb.dispatchEvent(fakeMouseUp);
+  });
 
   it(`При движении значение подсказки меняется`, () => {
     const presenter = new Presenter(option);
@@ -99,10 +143,9 @@ describe(`Меняет значения подсказки над бегунко
       });
 
     thumb.dispatchEvent(fakeMouseMove);
-    expect(hint.textContent).toEqual('55');
+    expect(hint.textContent).toEqual('Jul');
     thumb.dispatchEvent(fakeMouseUp);
   });
-
 });
 
 describe(`Меняет значения шкалы в соответствии с моделью и видом\n`, () => {

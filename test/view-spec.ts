@@ -8,6 +8,9 @@ const div = document.createElement('div');
 div.className = 'divViewSpec';
 div.style.marginTop = '70px';
 
+const fakeMouseUp = new MouseEvent('mouseup',
+  {bubbles: true, cancelable: true});
+
 describe(`Первоначальная минимальная инициализация\n`, () => {
   beforeEach(() => {
     document.body.append(div);
@@ -220,9 +223,6 @@ describe(`Позволяет пользователю взаимодейство
         clientX: 0, clientY: 0,
       }
     );
-
-    const fakeMouseUp = new MouseEvent('mouseup',
-      {bubbles: true, cancelable: true});
 
     let fakeMouseMove = new MouseEvent('mousemove',
       {
@@ -479,7 +479,6 @@ describe(`Может отображать подсказку\n`, () => {
     expect(hint.textContent).toEqual('hint');
   });
 
-
   it(`Подсказку можно прятать`, () => {
     const view = new View(option);
     view.setOptions({hintAboveThumb: false});
@@ -488,6 +487,13 @@ describe(`Может отображать подсказку\n`, () => {
     thumb.dispatchEvent(fakeMouseDown);
     const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
     expect(hint.offsetWidth).toEqual(0);
+
+    const scaleWidth = div.clientWidth - thumb.offsetWidth;
+    const deltaPx: number = scaleWidth / 8;
+
+    moveThumb(thumb, deltaPx);
+    expect(hint.offsetWidth).toEqual(0);
+    thumb.dispatchEvent(fakeMouseUp);
   });
 
   it(`Существует опция, при которой подсказка отображается всегда`, () => {
@@ -498,6 +504,7 @@ describe(`Может отображать подсказку\n`, () => {
     let hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
     expect(hint.offsetWidth).toBeGreaterThan(0);
     expect(hint.textContent).toEqual('hint');
+    expect(hint.offsetWidth).toBeGreaterThan(0);
 
     view.setOptions({hintAlwaysShow: false});
     hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');

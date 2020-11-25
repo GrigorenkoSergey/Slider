@@ -122,12 +122,12 @@ export default class Model extends EventObserver {
         }
 
         const {
-          min = this.min, 
-          max = this.max, 
+          min = this.min,
+          max = this.max,
           step = this.step,
         } = expectantCopy;
 
-        if (val * step > (max - min)) {
+        if ((val - 1) * step >= (max - min)) {
           throw new Error('"partsNum" is to large!');
         }
 
@@ -136,7 +136,6 @@ export default class Model extends EventObserver {
 
       alternativeRange: (val: string[]) => {
         if (val.length  <= 1) {
-          debugger;
           throw new Error('"alternativeRange" is a string array with more then one value!');
         }
 
@@ -177,10 +176,8 @@ export default class Model extends EventObserver {
           expectantCopy.partsNum = 1;
 
         } else if (alternativeRange.length != 0) {
-          if (!('alternativeRange' in expectant)) {
-            console.log('when you set "min" option "alternativeRange" sets to []');
-            expectantCopy.alternativeRange = [];
-          }
+          console.log('when you set "min" option "alternativeRange" sets to []');
+          expectantCopy.alternativeRange = [];
         }
 
         if (val > thumbLeftPos) {
@@ -225,10 +222,8 @@ export default class Model extends EventObserver {
           expectantCopy.partsNum = 1;
 
         } else if (alternativeRange.length != 0) {
-          if (!('alternativeRange' in expectant)) {
-            console.log('when you set "max" option "alternativeRange" sets to []');
-            expectantCopy.alternativeRange = [];
-          }
+          console.log('when you set "max" option "alternativeRange" sets to []');
+          expectantCopy.alternativeRange = [];
         }
 
         if (thumbLeftPos > val) {

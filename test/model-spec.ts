@@ -12,6 +12,25 @@ describe(`Model\n`, () => {
       });
     });
 
+    it(`Альтернативно можно инициализировать с помощью опции "alternativeRange"`, () => {
+      const model = new Model({alternativeRange: ['start', 'end']});
+      Object.keys(model).forEach((key: keyof Model) => {
+        if (key === 'thumbRightPos') return;
+        expect(model[key]).toBeDefined();
+      });
+    });
+
+    it(`В качестве значений опции "alternativeRange" принимается массив,
+        состоящий из по-крайнеме мере двух значений`, () => {
+      expect(() => new Model({alternativeRange: []})).toThrowError();
+    });
+
+    it(`Нельзя одновременно указывать "min"/"max" и "alternativeRange" в опциях`, () => {
+      expect(() => new Model({alternativeRange: ['start', 'end'], min: -10})).toThrowError();
+      expect(() => new Model({alternativeRange: ['start', 'end'], max: 10})).toThrowError();
+      expect(() => new Model({alternativeRange: ['start', 'end'], min: 0, max: 10})).toThrowError();
+    });
+
     it(`Лишние свойства просто будут проигнорированы`, () => {
       const option = {'min': 0, 'max': 100, 'foo': 1, 'bar': 2};
       const model = new Model(option);
@@ -93,7 +112,7 @@ describe(`Model\n`, () => {
       model = new Model({max: 100, min: 0});
     });
 
-    it(`Допустимо задавать свойства в виде строки`, () => {
+    it(`Допустимо задавать свойства в виде строки, которая правильно преобразуется в число`, () => {
       model.setOptions({
         'min': '0', 'max': '100', 'step': 1, 'thumbLeftPos': 10,
         'thumbRightPos': 80, 'angle': '89', 'range': true,
@@ -104,6 +123,11 @@ describe(`Model\n`, () => {
       expect(model.step).toEqual(1);
       expect(model.thumbLeftPos).toEqual(10);
       expect(model.thumbRightPos).toEqual(80);
+      expect(() => model.setOptions({min: '1a'})).toThrowError();
+      expect(() => model.setOptions({max: '110a'})).toThrowError();
+      expect(() => model.setOptions({step: '11a'})).toThrowError();
+      expect(() => model.setOptions({thumbLeftPos: '11a'})).toThrowError();
+      expect(() => model.setOptions({thumbRightPos: '90a'})).toThrowError();
     });
 
     it(`Значение свойства "precision" - целое число в пределах [0, 3]`, () => {
@@ -112,6 +136,11 @@ describe(`Model\n`, () => {
       expect(() => model.setOptions({precision: '4'})).toThrowError();
       expect(() => model.setOptions({precision: '1.5'})).toThrowError();
       expect(() => model.setOptions({precision: -0.5})).toThrowError();
+
+      model.setOptions({precision: 0});
+      expect(model.getOptions().precision).toEqual(0);
+      model.setOptions({precision: 1});
+      expect(model.getOptions().precision).toEqual(1);
     });
 
     it (`Значение свойства "partsNum" должно быть целым положительным числом`, () => {
@@ -119,18 +148,48 @@ describe(`Model\n`, () => {
       expect(() => model.setOptions({partsNum: '1.5'})).toThrowError();
       expect(() => model.setOptions({partsNum: '1.5'})).toThrowError();
       expect(() => model.setOptions({partsNum: '-1'})).toThrowError();
+      expect(() => model.setOptions({partsNum: 0})).toThrowError();
+      expect(() => model.setOptions({partsNum: 3, step: 50})).toThrowError();
     });
 
     it (`partsNum * step <= max - min`, () => {
       expect(() => model.setOptions({step: 50, partsNum: '3'})).toThrowError();
+      model.setOptions({step: 50});
+      expect(() => model.setOptions({min: 51})).toThrowError();
     });
 
-    it(`Шаг не может быть отрицательным`, () => {
+    it (`Когда задано свойство "alternativeRange", потом устанавливается "min" или "max",
+      свойство "alternativeRange" обнуляется (становится равным [])`, () => {
+      model.setOptions({alternativeRange: ['start', 'end']});
+      expect(model.getOptions().alternativeRange).toEqual(['start', 'end']);
+      model.setOptions({min: -10});
+      expect(model.getOptions().min).toEqual(-10);
+      expect(model.getOptions().alternativeRange).toEqual([]);
+
+      model.setOptions({alternativeRange: ['start', 'end']});
+      expect(model.getOptions().alternativeRange).toEqual(['start', 'end']);
+      model.setOptions({max: 100});
+      expect(model.getOptions().max).toEqual(100);
+      expect(model.getOptions().alternativeRange).toEqual([]);
+    });
+
+    it(`Шаг должен быть положительным`, () => {
       expect( () => model.setOptions({step: -1})).toThrowError();
+      expect( () => model.setOptions({step: 0})).toThrowError();
+    });
+
+    it(`Значение опции "range" либо true либо false`, () => {
+      expect(() => model.setOptions({range: true})).not.toThrowError()
+      expect(() => model.setOptions({range: false})).not.toThrowError()
+      expect(() => model.setOptions({range: 0})).toThrowError()
+      expect(() => model.setOptions({range: null})).toThrowError()
+      expect(() => model.setOptions({range: ''})).toThrowError()
+      expect(() => model.setOptions({range: '1'})).toThrowError()
     });
 
     it(`Значение свойства "max" должно быть больше, чем "min"`, () => {
       expect(() => model.setOptions({min: 100, max: 0})).toThrowError();
+      expect(() => model.setOptions({max: 0})).toThrowError();
     });
 
     it(`Нельзя задать "max" меньше "thumbLeftPos, если "thumbLeftPos" задано в опциях`, () => {
@@ -153,6 +212,8 @@ describe(`Model\n`, () => {
     it(`Если заданный шаг слишком большой (больше диапазона), 
     выбрасываем ошибку`, () => {
       expect(() => model.setOptions({step: 101})).toThrowError();
+      model.setOptions({step: 50});
+      expect(() => model.setOptions({max: 49})).toThrowError();
     });
 
     it(`Нельзя задать "max" меньше "thumbRightPos", если "thumbRightPos" задано в опциях`, () => {
@@ -180,21 +241,22 @@ describe(`Model\n`, () => {
       expect(() => model.setOptions(({thumbLeftPos: 50, min: 51}))).toThrowError();
     });
 
+    it(`Нельзя задать "thumbLeftPos" больше чем "thumbRightPos" и наоборот`, () => {
+      expect(() => model.setOptions({range: true, thumbRightPos: 10, thumbLeftPos: 15})).toThrowError();
+
+      model.setOptions({thumbLeftPos: 50, range: true});
+      expect(() => model.setOptions({thumbRightPos: 49})).toThrowError();
+    });
+
     it (`При задании свойств "min"/"max" если бегунки оказываются за пределами, \n
           то они разбегаются по краям слайдера`, () => {
       model.setOptions({range: true, min: 200, max: 300});
 
       expect(model.thumbLeftPos).toEqual(200);
       expect(model.thumbRightPos).toEqual(300);
-      
-    });
-
-    it(`Технически можно задавать напрямую значения свойств, 
-    но это не рекомендуется т.к. внутренние механизмы проверки 
-    правильности свойств не будут работать`, () => {
-      model.max = -10;
-      expect(model.min).toEqual(0);
-      expect(model.max).toEqual(-10);
+      model.setOptions({max: 500});
+      model.setOptions({min: 400});
+      expect(model.thumbRightPos).toEqual(500);
     });
 
     it(`В любой момент можно узнать значения свойств модели`, () => {
@@ -241,6 +303,7 @@ describe(`Model\n`, () => {
     it(`Допускается задавать только одно минимальное значение 
     диапазона`, () => {
       expect(() => model.setThumbsPos({left: -10})).not.toThrowError();
+      expect(() => model.setThumbsPos({right: 90})).not.toThrowError();
     });
   });
 
