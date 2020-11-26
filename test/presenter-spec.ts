@@ -65,22 +65,35 @@ describe(`Меняет значения подсказки над бегунко
 
   it(`При движении значение подсказки меняется`, () => {
     const presenter = new Presenter(option);
-    const thumb = presenter.view.thumbs.thumbLeft;
+    const thumbLeft = presenter.view.thumbs.thumbLeft;
+    const thumbRight = presenter.view.thumbs.thumbRight;
 
-    thumb.dispatchEvent(fakeMouseDown);
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    thumbLeft.dispatchEvent(fakeMouseDown);
+    const hintLeft = <HTMLDivElement>thumbLeft.querySelector('[class*=__hint]');
 
-    const scaleWidth = div.clientWidth - thumb.offsetWidth;
+    const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
 
-    const fakeMouseMove = new MouseEvent('mousemove',
+    let fakeMouseMove = new MouseEvent('mousemove',
       {
         bubbles: true, cancelable: true,
         clientX: scaleWidth / 2, clientY: 0,
       });
 
-    thumb.dispatchEvent(fakeMouseMove);
-    expect(hint.textContent).toEqual('55');
-    thumb.dispatchEvent(fakeMouseUp);
+    thumbLeft.dispatchEvent(fakeMouseMove);
+    expect(hintLeft.textContent).toEqual('55');
+    thumbLeft.dispatchEvent(fakeMouseUp);
+
+    fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: -scaleWidth / 4, clientY: 0,
+      });
+
+    thumbRight.dispatchEvent(fakeMouseDown);
+    const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
+    thumbLeft.dispatchEvent(fakeMouseMove);
+    expect(hintRight.textContent).toEqual('78');
+    thumbLeft.dispatchEvent(fakeMouseUp);
   });
 });
 
@@ -129,22 +142,35 @@ describe(`Проверка работы "alternativeRange"\n`, () => {
 
   it(`При движении значение подсказки меняется`, () => {
     const presenter = new Presenter(option);
-    const thumb = presenter.view.thumbs.thumbLeft;
+    const thumbLeft = presenter.view.thumbs.thumbLeft;
+    const thumbRight = presenter.view.thumbs.thumbRight;
 
-    thumb.dispatchEvent(fakeMouseDown);
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    thumbLeft.dispatchEvent(fakeMouseDown);
+    const hintLeft = <HTMLDivElement>thumbLeft.querySelector('[class*=__hint]');
 
-    const scaleWidth = div.clientWidth - thumb.offsetWidth;
+    const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
 
-    const fakeMouseMove = new MouseEvent('mousemove',
+    let fakeMouseMove = new MouseEvent('mousemove',
       {
         bubbles: true, cancelable: true,
         clientX: scaleWidth / 2, clientY: 0,
       });
 
-    thumb.dispatchEvent(fakeMouseMove);
-    expect(hint.textContent).toEqual('Jul');
-    thumb.dispatchEvent(fakeMouseUp);
+    thumbLeft.dispatchEvent(fakeMouseMove);
+    expect(hintLeft.textContent).toEqual('Jul');
+    thumbLeft.dispatchEvent(fakeMouseUp);
+
+    fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: -scaleWidth / 4, clientY: 0,
+      });
+
+    thumbRight.dispatchEvent(fakeMouseDown);
+    const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
+    thumbLeft.dispatchEvent(fakeMouseMove);
+    expect(hintRight.textContent).toEqual('Sep');
+    thumbLeft.dispatchEvent(fakeMouseUp);
   });
 });
 
@@ -455,5 +481,37 @@ describe(`Проверка поведения подсказки над бегу
     anchors[1].dispatchEvent(fakeClick);
     expect(hints[0].textContent).toEqual('110');
   });
+});
 
+describe(`Проверка оции "onChange`, () => {
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  const option = {
+    range: true, selector: '.divPresenterSpec',
+    className: 'slider', showScale: true,
+    min: 0, 
+    max: 200,
+  };
+
+  it(`Любой элемент можно подписать на изменение нашего слайдера`, () => {
+    const presenter = new Presenter(option);
+    let num = 3;
+
+    const miniObserver = presenter.onChange({el: num});
+    miniObserver.update = () => num = presenter.getOptions().thumbLeftPos;
+
+    presenter.setOptions({thumbLeftPos: 10});
+    expect(num).toEqual(10);
+
+    const anchors = div.getElementsByClassName('slider__scale-points');
+    anchors[1].dispatchEvent(fakeClick);
+    expect(num).toEqual(100);
+  });
 });

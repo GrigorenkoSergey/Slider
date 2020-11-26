@@ -191,6 +191,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
 
     this.addSubscriber('changeSlider', elemSubscriber);
     this.broadcast('changeSlider', this);
+    return elemSubscriber;
   }
 
   _recountValue(val: number) {
