@@ -106,6 +106,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
       this.view.setHintValue(thumb, this._recountValue(offset));
 
     } else if (eventType === 'thumbMousemove') {
+      
       const thumb = data.el;
       let offset = this.model.findValue(data.offset);
       this.view.setHintValue(thumb, this._recountValue(offset));
@@ -175,13 +176,13 @@ export default class Presenter extends EventObserver implements ISubscriber{
     }
 
     this.broadcast(eventType, data);
-    this.broadcast('changeSlider', this);
+    this.broadcast('changeSlider', eventType);
   }
 
   onChange(opts: Obj) {
     const {
       el, 
-      callback = () => console.log(this),
+      callback = (eventType: string, data: any) => console.log(data),
     } = opts;
 
     const elemSubscriber = {
@@ -190,7 +191,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     };
 
     this.addSubscriber('changeSlider', elemSubscriber);
-    this.broadcast('changeSlider', this);
+    this.broadcast('changeSlider', 'onChangeInit');
     return elemSubscriber;
   }
 

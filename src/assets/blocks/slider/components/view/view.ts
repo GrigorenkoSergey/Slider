@@ -25,6 +25,8 @@ export default class View extends EventObserver implements ISubscriber {
   hintAlwaysShow: boolean = false;
 
   thumbs: Thumbs;
+  _thumbLeftOffset: () => number; 
+  _thumbRigthOffset: () => number;
 
   scale: Scale;
   showScale: boolean = true;
@@ -57,6 +59,9 @@ export default class View extends EventObserver implements ISubscriber {
     this.thumbs.addSubscriber('thumbMousedown', this);
     this.thumbs.addSubscriber('thumbMouseup', this);
 
+    this._thumbLeftOffset = () => this.thumbs.thumbLeftOffset;
+    this._thumbRigthOffset = () => this.thumbs.thumbRightOffset;
+
     this.hints = [
       new Hint(
         this, 
@@ -80,7 +85,9 @@ export default class View extends EventObserver implements ISubscriber {
   setOptions(options: Obj) {
     const expectant: Obj = {};
 
-    Object.keys(options).filter((prop) => prop in this)
+    Object.keys(options)
+      .filter(prop => prop in this)
+      .filter(prop => !prop.startsWith('_'))
       .forEach((prop) => expectant[prop] = options[prop]);
 
     Object.entries(expectant).forEach(([prop, value]) => {
@@ -106,6 +113,8 @@ export default class View extends EventObserver implements ISubscriber {
       'angle', 
       'showScale', 
       'partsNum',
+      '_thumbLeftOffset',
+      '_thumbRightOffset',
     ];
 
     const obj: Obj = {};

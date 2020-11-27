@@ -1,5 +1,6 @@
 .examples {
   margin-top: 30px;
+  margin-bottom: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
@@ -20,7 +21,7 @@
     align-items: center;
   }
 }
-@for $i from 1 to 5 {
+@for $i from 1 to 4 {
   .slider#{$i} {
     width: 300px;
     height: 300px;
@@ -83,7 +84,7 @@ p {
   margin-bottom: 50px;
 }
 
-.slider6-container {
+.slider5-container {
   display: flex;
   flex-direction: column;
 
@@ -96,9 +97,9 @@ p {
   }
 }
 
+.slider4,
 .slider5,
-.slider6,
-.slider7 {
+.slider6 {
   padding: 20px;
   padding-top: 50px;
 }

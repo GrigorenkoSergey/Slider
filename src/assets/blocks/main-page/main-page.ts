@@ -53,83 +53,56 @@ let options3 = {
 let slider3 = new Presenter(options3);
 const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
 
-// anchors.forEach((anchor: HTMLDivElement) => {
-//   slider3.onChange({
-//     el: anchor,
-//     callback: () => {
-//       let months = ["Jan", "Feb", "March", "Apr", "May", "Jun",
-//         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-//       debuggerPoint.start++;
-//       console.log(debuggerPoint);
-//       if (debuggerPoint.start === 16) debugger;
-//       anchor.textContent = months[Math.round(11 * Number(anchor.dataset.offset))];
-//     },
-//   })
-// });
-
-// anchors.forEach(anchor => {
-//   let months = ["Jan", "Feb", "March", "Apr", "May", "Jun",
-//     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-//   const options = slider3.getOptions();
-//   const {min, max} = options;
-//   const k = months.length / (max - min);
-
-//   anchor.textContent = months[Math.round(k * Number(anchor.textContent))];
-// });
-
-/*
-//Пример задания вообще левых значений
-slider3.unbindFrom(slider3.hintEl);
-let fnMonths: fnResType = (elem, leftX, scaledLeftX, rightX, scaledRightX, data) => {
-  let months = ["Jan", "Feb", "March", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-  if (data.el == "L") {
-    elem.textContent = months[Math.round(scaledLeftX)];
-  } else {
-    elem.textContent = months[Math.round(scaledRightX)];
-  }
-}
-slider3.bindWith(slider3.hintEl, 0, 11, fnMonths);
 
 let options4 = {
-  min: 100,
-  max: 20000,
-  ticks: {500: 100, 10000: 150, 20000: 180},
-  step: 10,
-  selector: ".slider4",
-  angle: 0,
-  range: false,
-  hintAboveThumb: true
-}
-let slider4 = $('.slider4').slider(options4);
-
-console.log(palette1)
-const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
-const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
-const palette4 = new SliderOptionsPalette(document.querySelector('.example4'), slider4);
-
-let options5 = {
   max: 100,
   min: 0,
   step: 1,
-  selector: ".slider5",
+  selector: ".slider4",
   angle: 0,
   range: true,
   hintAboveThumb: true
 }
 
-let slider5 = $('.slider5').slider(options5);
-let pContent = document.querySelector('.slider5__p').textContent;
+let slider4 = new Presenter(options4)
 
-let fnResLine: fnResType = (elem, leftX, resLeft, rightX, resRight) => {
-  resLeft = Math.round(resLeft);
-  resRight = Math.round(resRight);
-  elem.textContent = pContent.slice(resLeft, resRight);
+let p = document.querySelector('.slider4__p');
+let pContent = p.textContent;
+slider4.setOptions({max: pContent.length});
+
+slider4.onChange({el: p, callback: () => {
+  const options = slider4.getOptions();
+  let resLeft = Math.round(options.thumbLeftPos);
+  let resRight = Math.round(options.thumbRightPos);
+  p.textContent = pContent.slice(resLeft, resRight);
+} });
+
+
+let options5 = {
+  max: 255,
+  min: 0,
+  step: 1,
+  selector: ".slider5",
+  angle: 0,
+  range: false,
+  hintAboveThumb: true
 }
-slider5.bindWith(document.querySelector('.slider5__p'), 0,
-  document.querySelector('.slider5__p').textContent.length, fnResLine);
+
+let slider5 = new Presenter(options5);
+
+const letterA = <HTMLElement>document.querySelector('.slider5-container__text');
+
+slider5.onChange({el: letterA, callback: () => {
+  const options = slider5.getOptions();
+  const offset = options._thumbLeftOffset();
+
+  let resStr = "hsl(" + (offset * 160 + 200) + ", 100%, 50%)";
+  let resShadow = offset * 20;
+
+  letterA.style.color = resStr;
+  letterA.style.textShadow = resShadow + "px 19px 7px grey";
+}});
+
 
 let options6 = {
   max: 1000,
@@ -138,68 +111,31 @@ let options6 = {
   selector: ".slider6",
   angle: 0,
   range: false,
-  hintAboveThumb: true
-}
-
-// let slider6 = new Slider(options6);
-let slider6 = $('.slider6').slider(options6);
-
-let fnResShadow: fnResType = (elem, leftX, resLeft, rightX, resRight, data) => {
-  elem.style.textShadow = resLeft + "px 19px 7px grey";
-}
-let fnResColor: fnResType = (elem, leftX, resLeft) => {
-  resLeft = Math.round(resLeft);
-  let resStr = "hsl(" + resLeft + ", 100%, 50%)";
-  elem.style.color = resStr;
-}
-slider6.bindWith(document.querySelector("[class*=__text]"), 0, 20, fnResShadow);
-slider6.bindWith(document.querySelector('[class*=__text]'), 200, 360, fnResColor);
-
-let options7 = {
-  max: 1000,
-  min: 0,
-  step: 10,
-  selector: ".slider7",
-  angle: 0,
-  range: false,
-  hintAboveThumb: true
+  hintAboveThumb: true,
+  showScale: false,
 }
 
 // let slider7 = new Slider(options7);
-let slider7 = $('.slider7').slider(options7);
-let fnResBird: fnResType = (elem, leftX, resLeft) => {
-  let imgWidth = 918 / 5;
-  let imgHeight = 506 / 3;
-  resLeft = Math.round(resLeft);
+// let slider7 = $('.slider7').slider(options7);
+let slider6 = new Presenter(options6);
 
-  let offsetLeft = imgWidth * (resLeft % 5);
-  let offsetTop = imgHeight * Math.floor(resLeft / 5);
+const birdImg = <HTMLElement>document.querySelector('.imgSprite');
 
-  elem.style.backgroundPositionX = -offsetLeft + "px";
-  elem.style.backgroundPositionY = -offsetTop + "px";
-}
+slider6.onChange({
+  el: birdImg,
+  callback: () => {
+    let imgWidth = 918 / 5;
+    let imgHeight = 506 / 3;
+    let offset = slider6.getOptions()._thumbLeftOffset();
+    
+    // offset == 0 -> 0
+    // offset == 1 -> 13
+    let resLeft = Math.round(offset * 13);
 
-slider7.bindWith(document.querySelector('.imgSprite'), 0, 13, fnResBird);
-*/
+    let offsetLeft = imgWidth * (resLeft % 5);
+    let offsetTop = imgHeight * Math.floor(resLeft / 5);
 
-
-/*
-import View from '../slider/components/view/view';
-import Presenter from '../slider/components/presenter/presenter';
-let options = {
-  min: 0,
-  max: 20000,
-  // ticks: {500: 100, 10000: 150, 20000: 180},
-  step: 10,
-  selector: ".slider1",
-  angle: 0,
-  range: true,
-  hintAboveThumb: true
-}
-const view = new View({selector: '.slider', hintAboveThumb: true, range: true});
-// const presenter = new Presenter({selector: '.slider1', range: true, hintAboveThumb: true, min: 10, max: 100, partsNum: 4,});
-const presenter = new Presenter(options);
-const model = presenter.model;
-debugger;
-model.setOptions({ticks: {500: 100, 10000: 150, 20000: 180}, range: true});
-*/
+    birdImg.style.backgroundPositionX = -offsetLeft + "px";
+    birdImg.style.backgroundPositionY = -offsetTop + "px";
+  },
+})
