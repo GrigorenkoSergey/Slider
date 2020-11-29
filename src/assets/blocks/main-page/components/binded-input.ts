@@ -1,14 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../helpers/debugger-point';
 import EventObserver from '../../helpers/event-observer';
-import Presenter from '../../slider/components/presenter/presenter';
+import {Slider} from '../../slider/slider';
 
 export default class BindedInput extends EventObserver {
   el: HTMLInputElement;
   prop: string;
-  slider: Presenter;
+  slider: Slider;
 
-  constructor(el: HTMLInputElement, slider: Presenter, property: string) {
+  constructor(el: HTMLInputElement, slider: Slider, property: string) {
     super();
     this.el = el;
     this.prop = property;

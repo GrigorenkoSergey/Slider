@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import '../template/template';
 import '../helpers/types';
 import '../slider/slider';
@@ -10,6 +11,7 @@ import SliderOptionsPalette from './components/slider-options-palette';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../helpers/debugger-point';
 import Presenter from '../slider/components/presenter/presenter';
+import {Slider} from '../slider/slider';
 
 let options1 = {
   min: 0,
@@ -19,11 +21,10 @@ let options1 = {
   range: true,
   hintAboveThumb: true,
   hintAlwaysShow: true,
-  // hintAlwaysShow: false,
   partsNum: 2,
-}
-// let slider1 = $('.slider1').slider(options1);
-let slider1 = new Presenter(options1);
+};
+
+  let slider1 = $().slider(options1);
 const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
 
 let options2 = {
@@ -36,12 +37,11 @@ let options2 = {
   hintAboveThumb: true,
   thumbLeftPos: 800,
 }
-let slider2 = new Presenter(options2);
+
+let slider2 = new Slider(options2);
 const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
 
 let options3 = {
-  // min: 0,
-  // max: 1000,
   alternativeRange: ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   step: 1,
   selector: '.slider3',
@@ -50,7 +50,7 @@ let options3 = {
   hintAboveThumb: true,
   hintAlwaysShow: true,
 }
-let slider3 = new Presenter(options3);
+let slider3 = new Slider(options3);
 const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
 
 
@@ -64,7 +64,7 @@ let options4 = {
   hintAboveThumb: true
 }
 
-let slider4 = new Presenter(options4)
+let slider4 = new Slider(options4)
 
 let p = document.querySelector('.slider4__p');
 let pContent = p.textContent;
@@ -88,7 +88,7 @@ let options5 = {
   hintAboveThumb: true
 }
 
-let slider5 = new Presenter(options5);
+let slider5 = new Slider(options5);
 
 const letterA = <HTMLElement>document.querySelector('.slider5-container__text');
 
@@ -96,7 +96,12 @@ slider5.onChange({el: letterA, callback: () => {
   const options = slider5.getOptions();
   const offset = options._thumbLeftOffset();
 
+  // offset == 0 -> 200
+  // offset == 1 -> 360 
   let resStr = "hsl(" + (offset * 160 + 200) + ", 100%, 50%)";
+
+  // offset == 0 -> 0
+  // offset == 1 -> 20 
   let resShadow = offset * 20;
 
   letterA.style.color = resStr;
@@ -115,9 +120,7 @@ let options6 = {
   showScale: false,
 }
 
-// let slider7 = new Slider(options7);
-// let slider7 = $('.slider7').slider(options7);
-let slider6 = new Presenter(options6);
+let slider6 = $('.slider6').slider(options6);
 
 const birdImg = <HTMLElement>document.querySelector('.imgSprite');
 

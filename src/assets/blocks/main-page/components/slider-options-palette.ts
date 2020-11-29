@@ -1,11 +1,11 @@
 import BindedInput from '../components/binded-input';
-import Presenter from '../../slider/components/presenter/presenter';
+import {Slider} from '../../slider/slider';
 
 import '../../helpers/types';
 
 export default class SliderOptionsPalette {
   el: HTMLDivElement = null;
-  slider: Presenter = null;
+  slider: Slider= null;
   min: BindedInput = null;
   max: BindedInput = null;
   step: BindedInput = null;
@@ -19,7 +19,7 @@ export default class SliderOptionsPalette {
   partsNum: BindedInput = null;
   precision: BindedInput = null;
 
-  constructor(elem: HTMLDivElement, slider: Presenter) {
+  constructor(elem: HTMLDivElement, slider: Slider) {
     this.el = elem;
     this.slider = slider;
     this.render();
