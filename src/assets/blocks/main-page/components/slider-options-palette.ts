@@ -1,9 +1,10 @@
+import EventObserver from '../../helpers/event-observer';
 import BindedInput from '../components/binded-input';
 import {Slider} from '../../slider/slider';
 
 import '../../helpers/types';
 
-export default class SliderOptionsPalette {
+export default class SliderOptionsPalette extends EventObserver{
   el: HTMLDivElement = null;
   slider: Slider= null;
   min: BindedInput = null;
@@ -20,6 +21,7 @@ export default class SliderOptionsPalette {
   precision: BindedInput = null;
 
   constructor(elem: HTMLDivElement, slider: Slider) {
+    super();
     this.el = elem;
     this.slider = slider;
     this.render();
@@ -87,7 +89,7 @@ export default class SliderOptionsPalette {
 
   init() {
     Object.keys(this).forEach(prop => {
-      if (prop === 'el' || prop === 'slider') return;
+      if (['el', 'slider', 'observers'].includes(prop)) return;
 
       const obj: Obj = {};
       obj[prop] = new BindedInput(this.el.querySelector(`[name=${prop}]`), this.slider, prop);
@@ -95,5 +97,20 @@ export default class SliderOptionsPalette {
 
       Object.assign(this, obj);
     });
+
+    this.slider.addSubscriber('changeSlider', this);
+  }
+
+  update(eventType: string, originEvent: string) {
+
+    if (originEvent === 'range') {
+      const opts = this.slider.getOptions();
+      if (opts.range === false) {
+        this.thumbRightPos.el.setAttribute('disabled', 'true');
+        this.thumbRightPos.el.value = opts.thumbRightPos;
+      } else {
+        this.thumbRightPos.el.removeAttribute('disabled');
+      }
+    }
   }
 }
