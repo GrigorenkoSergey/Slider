@@ -4,13 +4,9 @@ import '../helpers/types';
 import '../slider/slider';
 
 import './main-page.scss';
-// import '../slider/components/presenter/presenter';
-// import '../slider/slider.scss';
 
 import SliderOptionsPalette from './components/slider-options-palette';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../helpers/debugger-point';
-import Presenter from '../slider/components/presenter/presenter';
 import {Slider} from '../slider/slider';
 
 let options1 = {
@@ -24,7 +20,7 @@ let options1 = {
   partsNum: 2,
 };
 
-  let slider1 = $().slider(options1);
+let slider1 = $().slider(options1);
 const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
 
 let options2 = {
