@@ -70,7 +70,7 @@ export default class Thumbs extends EventObserver {
     const startY: number = sliderCoords.top + slider.clientTop;
 
     const cosA: number = Math.cos(view.angle / 180 * Math.PI);
-    const sinA: number = Math.sin(view.getOptions().angle / 180 * Math.PI);
+    const sinA: number = Math.sin(view.angle / 180 * Math.PI);
 
     const pixelStep: number =
       this.view.step * (slider.clientWidth - thumb.offsetWidth);

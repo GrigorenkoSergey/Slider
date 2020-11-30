@@ -481,6 +481,39 @@ describe(`Проверка поведения подсказки над бегу
     anchors[1].dispatchEvent(fakeClick);
     expect(hints[0].textContent).toEqual('110');
   });
+
+  it(`При нажатии на сам слайдер, значение подсказки над бегунком также меняется`, () => {
+    const presenter = new Presenter({
+      ...option, 
+      min: 0,
+      max: 100, 
+      hintAlwaysShow: true,
+      thumbLeftPos: 0,
+    });
+
+    presenter.setOptions({range: false});
+
+    const leftThumb = <HTMLElement>div.getElementsByClassName('slider__thumb-left')[0];
+    const slider = <HTMLElement>div.getElementsByClassName('slider')[0];
+    const thumbStartX = leftThumb.getBoundingClientRect().left;
+    const hint = <HTMLElement>div.getElementsByClassName('slider__hint')[0];
+
+    let fakeMouseClick = new MouseEvent('click', {
+      bubbles: true, cancelable: true,
+      clientX: thumbStartX + slider.clientWidth,  clientY: 0,
+    });
+
+    slider.dispatchEvent(fakeMouseClick);
+    expect(hint.textContent).toEqual('100');
+
+    fakeMouseClick = new MouseEvent('click', {
+      bubbles: true, cancelable: true,
+      clientX: -thumbStartX - slider.clientWidth,  clientY: 0,
+    });
+
+    slider.dispatchEvent(fakeMouseClick);
+    expect(hint.textContent).toEqual('0');
+  });
 });
 
 describe(`Проверка оции "onChange`, () => {

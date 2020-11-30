@@ -62,6 +62,8 @@ export default class View extends EventObserver implements ISubscriber {
     this._thumbLeftOffset = () => this.thumbs.thumbLeftOffset;
     this._thumbRigthOffset = () => this.thumbs.thumbRightOffset;
 
+    this.el.addEventListener('click', this.handleSliderClick.bind(this));
+
     this.hints = [
       new Hint(
         this, 
@@ -91,7 +93,7 @@ export default class View extends EventObserver implements ISubscriber {
       .forEach((prop) => expectant[prop] = options[prop]);
 
     Object.entries(expectant).forEach(([prop, value]) => {
-      this.validateOptions(prop, value, expectant);
+      this._validateOptions(prop, value, expectant);
     });
 
     Object.assign(this, expectant);
@@ -179,20 +181,7 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   handleAnchorClick(offset: number): void {
-    const {thumbLeft, thumbRight} = this.thumbs;
-
-    let closestThumb;
-
-    if (this.range) {
-      if (offset - this.thumbs.thumbLeftOffset < this.thumbs.thumbRightOffset - offset) {
-        closestThumb = thumbLeft;
-      } else {
-        closestThumb = thumbRight;
-      }
-    } else {
-      closestThumb = thumbLeft;
-    }
-
+    let closestThumb = this._findClosestThumb(offset);
     this.moveThumbToPos(closestThumb, offset);
   }
 
@@ -218,7 +207,40 @@ export default class View extends EventObserver implements ISubscriber {
     hint.showHint();
   }
 
-  private validateOptions(key: string, value: any, expectant: Obj) {
+  handleSliderClick(e: MouseEvent) {
+    const target = <HTMLElement>e.target;
+    const slider = this.el;
+
+    if (target !== this.el && target !== this.stretcher.el) return;
+
+    const sliderCoords: DOMRect = slider.getBoundingClientRect();
+    const startX: number = sliderCoords.left + slider.clientLeft;
+    const startY: number = sliderCoords.top + slider.clientTop;
+
+    const cosA: number = Math.cos(this.angle / 180 * Math.PI);
+    const sinA: number = Math.sin(this.angle / 180 * Math.PI);
+
+    const newLeftX: number = e.clientX - startX;
+    const newLeftY: number = e.clientY - startY;
+
+    let newLeft = newLeftX * cosA + newLeftY * sinA;
+    let offset = newLeft / this.scale.width;
+    let closestThumb = this._findClosestThumb(offset);
+
+    newLeft = Math.max(newLeftX * cosA + newLeftY * sinA);
+    newLeft = Math.min(newLeft, this.scale.width + closestThumb.offsetWidth / 2);
+
+    offset = newLeft / this.scale.width;
+    //да, еще раз, т.к. у меня разные привязки, и я должен предварительно найти closestThumb
+    
+    offset = offset - closestThumb.offsetWidth / this.scale.width / 2;
+    offset = Math.max(0, offset);
+    offset = Math.round(offset / this.step) * this.step;
+
+    this.moveThumbToPos(closestThumb, offset);
+  }
+
+  private _validateOptions(key: string, value: any, expectant: Obj) {
     const validator: Obj = {
       step: (val: number) => {
         if (!isFinite(val)) {
@@ -247,5 +269,23 @@ export default class View extends EventObserver implements ISubscriber {
 
     if (!(key in validator)) return;
     return validator[key](value);
+  }
+
+  private _findClosestThumb(offset: number) {
+    const {thumbLeft, thumbRight} = this.thumbs;
+
+    let closestThumb;
+
+    if (this.range) {
+      if (offset - this.thumbs.thumbLeftOffset < this.thumbs.thumbRightOffset - offset) {
+        closestThumb = thumbLeft;
+      } else {
+        closestThumb = thumbRight;
+      }
+    } else {
+      closestThumb = thumbLeft;
+    }
+
+    return closestThumb;
   }
 }

@@ -255,6 +255,36 @@ describe(`Позволяет пользователю взаимодейство
     expect(posStart.left).toEqual(posEnd.left);
     leftThumb.dispatchEvent(fakeMouseUp);
   });
+
+  it(`При клике на слайдере, бегунок бежит к точке клика`, () => {
+    const option = {
+      range: false, selector: '.divViewSpec',
+      className: 'slider', angle: 0,
+    };
+
+    const view = new View(option);
+    const leftThumb = <HTMLElement>div.getElementsByClassName('slider__thumb-left')[0];
+    const slider = view.el;
+    const thumbStartX = leftThumb.getBoundingClientRect().left;
+
+    let fakeMouseClick = new MouseEvent('click', {
+      bubbles: true, cancelable: true,
+      clientX: thumbStartX + slider.clientWidth,  clientY: 0,
+    });
+    slider.dispatchEvent(fakeMouseClick);
+
+    expect(parseFloat(leftThumb.style.left))
+      .toEqual(slider.clientWidth  - leftThumb.offsetWidth);
+
+    fakeMouseClick = new MouseEvent('click', {
+      bubbles: true, cancelable: true,
+      clientX: -thumbStartX - slider.clientWidth,  clientY: 0,
+    });
+
+    slider.dispatchEvent(fakeMouseClick);
+    expect(parseFloat(leftThumb.style.left))
+      .toEqual(0);
+  });
 });
 
 describe(`Также присутствует интерактивная шкала\n`, () => {
