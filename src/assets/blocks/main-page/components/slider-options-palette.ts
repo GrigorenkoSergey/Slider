@@ -99,18 +99,36 @@ export default class SliderOptionsPalette extends EventObserver{
     });
 
     this.slider.addSubscriber('changeSlider', this);
+    this.handleRangeChange();
+    this.handleHintAlwaysShowChange();
   }
 
   update(eventType: string, originEvent: string) {
 
     if (originEvent === 'range') {
-      const opts = this.slider.getOptions();
-      if (opts.range === false) {
-        this.thumbRightPos.el.setAttribute('disabled', 'true');
-        this.thumbRightPos.el.value = opts.thumbRightPos;
-      } else {
-        this.thumbRightPos.el.removeAttribute('disabled');
-      }
+      this.handleRangeChange();
+    } else if (originEvent === 'hintAlwaysShow') {
+      this.handleHintAlwaysShowChange();
+    }
+
+  }
+
+  handleRangeChange() {
+    const opts = this.slider.getOptions();
+    if (opts.range === false) {
+      this.thumbRightPos.el.setAttribute('disabled', 'true');
+      this.thumbRightPos.el.value = opts.thumbRightPos;
+    } else {
+      this.thumbRightPos.el.removeAttribute('disabled');
+    }
+  }
+
+  handleHintAlwaysShowChange() {
+    const opts = this.slider.getOptions();
+    if (opts.hintAlwaysShow) {
+      this.hintAboveThumb.el.setAttribute('disabled', 'true');
+    } else {
+      this.hintAboveThumb.el.removeAttribute('disabled');
     }
   }
 }

@@ -608,6 +608,7 @@ describe(`Данные баги более не возникают`, () => {
     angle: 0,
     range: true,
     hintAboveThumb: true,
+    hintAlwaysShow: true,
   };
 
   let example = document.createElement('div');
@@ -651,5 +652,20 @@ describe(`Данные баги более не возникают`, () => {
 
     anchors[1].dispatchEvent(fakeClick);
     expect(palette.thumbRightPos.el.value).toEqual('100.555');
+  });
+
+  it(`При установке опции "range=false" значение поля "thumbRightPos" становится недоступным
+    для редактирования`, () => {
+    slider.setOptions({range: false});
+    expect(palette.thumbRightPos.el.disabled).toBeTrue();
+  });
+
+  it(`При выборе опции "hintAlwaysShow" опция "hintAboveThumb" должна быть недоступна для
+    редактирования`, () => {
+    expect(palette.hintAboveThumb.el.disabled).toBeTrue();
+    slider.setOptions({hintAlwaysShow: true});
+    expect(palette.hintAboveThumb.el.disabled).toBeTrue();
+    slider.setOptions({hintAlwaysShow: false});
+    expect(palette.hintAboveThumb.el.disabled).toBeFalse();
   });
 })
