@@ -176,8 +176,10 @@ export default class Model extends EventObserver {
           expectantCopy.partsNum = 1;
 
         } else if (alternativeRange.length != 0) {
-          console.log('when you set "min" option "alternativeRange" sets to []');
-          expectantCopy.alternativeRange = [];
+          if ('min' in expectant) {
+            console.log('when you set "min" option "alternativeRange" sets to []');
+            expectantCopy.alternativeRange = [];
+          }
         }
 
         if (val > thumbLeftPos) {
@@ -186,6 +188,7 @@ export default class Model extends EventObserver {
           }
           expectantCopy.thumbLeftPos = +Number(val).toFixed(precision);
         }
+
         if (val > thumbRightPos) {
           if ('thumbRightPos' in expectant) {
             throw new Error('"thumbRightPos" should be > "min"!');
@@ -222,8 +225,10 @@ export default class Model extends EventObserver {
           expectantCopy.partsNum = 1;
 
         } else if (alternativeRange.length != 0) {
-          console.log('when you set "max" option "alternativeRange" sets to []');
-          expectantCopy.alternativeRange = [];
+          if ('max' in expectant) {
+            console.log('when you set "max" option "alternativeRange" sets to []');
+            expectantCopy.alternativeRange = [];
+          }
         }
 
         if (thumbLeftPos > val) {
@@ -341,7 +346,7 @@ export default class Model extends EventObserver {
     ];
 
     order.forEach(prop => {
-      if (prop in expectant) {
+      if (prop in expectantCopy) {
         handler[prop].call(this, expectantCopy[prop]);
       }
     });

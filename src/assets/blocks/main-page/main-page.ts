@@ -11,8 +11,9 @@ import {Slider} from '../slider/slider';
 
 let options1 = {
   min: 0,
-  max: 20000,
-  step: 2,
+  max: 6,
+  step: 1,
+  thumbRightPos: 1,
   selector: ".slider1",
   range: true,
   hintAboveThumb: true,

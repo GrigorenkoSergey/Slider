@@ -473,7 +473,7 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(palette.thumbLeftPos.el.value).toEqual(value);
   });
 
-  it(`Поменяем значение thumbRighPos, оно не может выйти за пределы`, () => {
+  it(`Поменяем значение thumbRightPos, оно не может выйти за пределы`, () => {
     slider.setOptions({thumbLeftPos: 0, range: true});
 
     const value = palette.thumbRightPos.el.value;
@@ -668,4 +668,21 @@ describe(`Данные баги более не возникают`, () => {
     slider.setOptions({hintAlwaysShow: false});
     expect(palette.hintAboveThumb.el.disabled).toBeFalse();
   });
-})
+
+  it(`При наложении бегунки неправильно отображаются подсказки`, () => {
+    slider.setOptions({min: 0, thumbLeftPos: 0});
+
+    palette.max.el.value = '6';
+    palette.max.el.dispatchEvent(fakeChange);
+    palette.thumbRightPos.el.value = '1';
+    palette.thumbRightPos.el.dispatchEvent(fakeChange);
+    palette.step.el.value = '1';
+    palette.step.el.dispatchEvent(fakeChange);
+    palette.min.el.value = '1';
+    palette.min.el.dispatchEvent(fakeChange);
+
+    expect(palette.min.el.value).toEqual('0');
+    expect(leftHint.textContent).toEqual('0');
+  });
+
+});
