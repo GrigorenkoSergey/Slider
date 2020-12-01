@@ -308,8 +308,8 @@ export default class Model extends EventObserver {
           precision = this.precision,
         } = expectantCopy;
 
-        if (thumbRightPos <= val) {
-          throw new Error('"thumbLeftPos" should be lesser than "thumbRightPos"')
+        if (thumbRightPos < val) {
+          throw new Error('"thumbLeftPos" should be <= than "thumbRightPos"')
         }
 
         expectantCopy.thumbLeftPos = +Math.min(Math.max(min, val), max).toFixed(precision);
@@ -325,7 +325,7 @@ export default class Model extends EventObserver {
 
         let {thumbLeftPos = this.thumbLeftPos, precision = this.precision} = expectantCopy;
 
-        if (val <= thumbLeftPos) {
+        if (val < thumbLeftPos) {
           throw new Error('"thumbRightPos should be greater than "thumbLeftPos"');
         }
 

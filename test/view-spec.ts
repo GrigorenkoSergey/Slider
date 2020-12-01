@@ -1,7 +1,5 @@
-// import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import View from '../src/assets/blocks/slider/components/view/view';
 import '../src/assets/blocks/slider/slider.scss';
-
 
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
@@ -207,7 +205,7 @@ describe(`Позволяет пользователю взаимодейство
       .toEqual(parseFloat(getComputedStyle(leftThumb).left));
   });
 
-  it(`Бегунки располагаются согласно шагу, и при движении мышкой не выходят за пределы`, () => {
+  it(`Бегунки располагаются согласно шагу и могут совпадать`, () => {
     const option = {
       range: true, selector: '.divViewSpec',
       className: 'slider', angle: 0,
@@ -216,6 +214,7 @@ describe(`Позволяет пользователю взаимодейство
     const view = new View(option);
     const scaleWidth = view.scale.width;
     const rightThumb = view.thumbs.thumbRight;
+    const leftThumb = view.thumbs.thumbLeft;
 
     const fakeMouseDown = new MouseEvent('mousedown', 
       {
@@ -227,33 +226,17 @@ describe(`Позволяет пользователю взаимодейство
     let fakeMouseMove = new MouseEvent('mousemove',
       {
         bubbles: true, cancelable: true,
-        clientX: -scaleWidth / 2, clientY: 0,
+        clientX: -scaleWidth * 7 / 8, clientY: 0,
       }
     );
 
-    view.moveThumbToPos(rightThumb, 0.5);
-    let posStart = rightThumb.getBoundingClientRect();
     rightThumb.dispatchEvent(fakeMouseDown);
     rightThumb.dispatchEvent(fakeMouseMove);
-    let posEnd = rightThumb.getBoundingClientRect();
+    let posLeftThumb = leftThumb.getBoundingClientRect();
+    let posRightThumb = rightThumb.getBoundingClientRect();
     rightThumb.dispatchEvent(fakeMouseUp);
 
-    expect(posStart.left).toEqual(posEnd.left);
-
-    fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true, cancelable: true,
-        clientX: scaleWidth / 2, clientY: 0,
-      }
-    );
-
-    const leftThumb = view.thumbs.thumbLeft;
-    posStart = leftThumb.getBoundingClientRect();
-    leftThumb.dispatchEvent(fakeMouseDown);
-    leftThumb.dispatchEvent(fakeMouseMove);
-    posEnd = leftThumb.getBoundingClientRect();
-    expect(posStart.left).toEqual(posEnd.left);
-    leftThumb.dispatchEvent(fakeMouseUp);
+    expect(posLeftThumb.left).toEqual(posRightThumb.left);
   });
 
   it(`При клике на слайдере, бегунок бежит к точке клика`, () => {

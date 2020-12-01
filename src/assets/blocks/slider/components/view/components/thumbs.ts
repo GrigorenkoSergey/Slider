@@ -79,13 +79,13 @@ export default class Thumbs extends EventObserver {
     if (thumb === this.thumbLeft) {
       leftLimit = 0;
     } else {
-      leftLimit = parseFloat(getComputedStyle(this.thumbLeft).left) + this.thumbLeft.offsetWidth;
+      leftLimit = parseFloat(getComputedStyle(this.thumbLeft).left);
       leftLimit = Math.ceil(leftLimit / pixelStep) * pixelStep;
     }
 
     let rightLimit: number;
     if (thumb === this.thumbLeft && this.view.range) {
-      rightLimit = parseFloat(getComputedStyle(this.thumbRight).left)- thumb.offsetWidth;
+      rightLimit = parseFloat(getComputedStyle(this.thumbRight).left);
       rightLimit = Math.floor(rightLimit/ pixelStep) * pixelStep;
     } else {
       rightLimit = slider.clientWidth - thumb.offsetWidth;

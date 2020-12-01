@@ -8,7 +8,6 @@ import '../src/assets/blocks/slider/slider.scss';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 
-
 let slider: Presenter;
 let palette: SliderOptionsPalette;
 let anchors: HTMLCollection; 
@@ -669,7 +668,7 @@ describe(`Данные баги более не возникают`, () => {
     expect(palette.hintAboveThumb.el.disabled).toBeFalse();
   });
 
-  it(`При наложении бегунки неправильно отображаются подсказки`, () => {
+  it(`При наложении бегунков значение подсказок должно быть одинаковым`, () => {
     slider.setOptions({min: 0, thumbLeftPos: 0});
 
     palette.max.el.value = '6';
@@ -681,8 +680,9 @@ describe(`Данные баги более не возникают`, () => {
     palette.min.el.value = '1';
     palette.min.el.dispatchEvent(fakeChange);
 
-    expect(palette.min.el.value).toEqual('0');
-    expect(leftHint.textContent).toEqual('0');
+    expect(palette.min.el.value).toEqual('1');
+    expect(leftHint.textContent).toEqual('1');
+    expect(rightHint.textContent).toEqual('1');
   });
 
 });
