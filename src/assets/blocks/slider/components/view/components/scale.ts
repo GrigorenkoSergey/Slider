@@ -7,15 +7,17 @@ import '../../../../helpers/types';
 import isIncreasing from '../../../../helpers/functions/is-increasing';
 
 export default class Scale extends EventObserver {
-  view: View | null = null;
+  view: View;
 
   el: HTMLDivElement = document.createElement('div');
   width: number = 0;
-  anchors: HTMLDivElement[];
+  anchors!: HTMLDivElement[];
   parts: number[] = [];
 
   constructor(options: Obj) {
     super();
+    this.view = options.view;
+
     Object.keys(options).forEach((key) => {
       if (key in this) this[<keyof this>key] = options[key];
     });

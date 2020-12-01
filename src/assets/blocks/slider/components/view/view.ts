@@ -21,34 +21,32 @@ export default class View extends EventObserver implements ISubscriber {
   selector: string = '';
   hintAboveThumb = true;
 
-  hints: Hint[];
+  hints!: Hint[];
   hintAlwaysShow: boolean = false;
 
-  thumbs: Thumbs;
-  _thumbLeftOffset: () => number; 
-  _thumbRigthOffset: () => number;
+  thumbs!: Thumbs;
+  _thumbLeftOffset!: () => number; 
+  _thumbRigthOffset!: () => number;
 
-  scale: Scale;
+  scale!: Scale;
   showScale: boolean = true;
   partsNum: number = 2;
-  stretcher: Stretcher;
+  stretcher!: Stretcher;
 
   constructor(options: Obj) {
     super();
-    const argsRequire = ['selector'];
 
-    if (!argsRequire.every((key) => key in options)) {
-      throw new Error(
-        `Not enough values. Should be at least 
-        "${argsRequire.join('", "')}" in options`);
+    if (!('selector' in options)) {
+      throw new Error('option "selector" should be in options')
     }
 
+    this.selector = options.selector;
     this.setOptions(options);
     this.init();
   }
 
   init(): this {
-    const wrapper = document.querySelector(this.selector);
+    const wrapper = document.querySelector(this.selector) as HTMLDivElement;
     wrapper.append(this.el);
 
     this.el.style.transform = `rotate(${this.angle}deg)`;
@@ -160,7 +158,7 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
-    this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset, this);
+    this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset);
 
     let data = null;
     if(thumb === this.thumbs.thumbLeft) {

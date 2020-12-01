@@ -279,7 +279,6 @@ describe(`Также присутствует интерактивная шка�
     div.innerHTML = '';
     div.remove();
   });
-
   it(`По умолчанию шкала отображает значения, кратные шагу и зависящие от свойства "partsNum"`, () => {
     const option = {
       range: true, selector: '.divViewSpec',
@@ -367,7 +366,7 @@ describe(`Также присутствует интерактивная шка�
 
     view.setOptions({range: false});
     for (let i = 1; i < 8; i++) {
-      const leftThumb: HTMLDivElement = view.el.querySelector('[class*=left]');
+      const leftThumb = view.el.querySelector('[class*=left]') as HTMLDivElement;
 
       moveThumb(leftThumb, view.scale.width / i);
       anchors[0].dispatchEvent(fakeMouseClick);

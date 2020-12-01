@@ -5,20 +5,20 @@ import {Slider} from '../../slider/slider';
 import '../../helpers/types';
 
 export default class SliderOptionsPalette extends EventObserver{
-  el: HTMLDivElement = null;
-  slider: Slider= null;
-  min: BindedInput = null;
-  max: BindedInput = null;
-  step: BindedInput = null;
-  angle: BindedInput = null;
-  thumbLeftPos: BindedInput = null;
-  thumbRightPos: BindedInput = null;
-  range: BindedInput = null;
-  hintAboveThumb: BindedInput = null;
-  showScale: BindedInput = null;
-  hintAlwaysShow: BindedInput = null;
-  partsNum: BindedInput = null;
-  precision: BindedInput = null;
+  el: HTMLDivElement;
+  slider: Slider;
+  min!: BindedInput;
+  max!: BindedInput;
+  step!: BindedInput;
+  angle!: BindedInput;
+  thumbLeftPos!: BindedInput;
+  thumbRightPos!: BindedInput;
+  range!: BindedInput;
+  hintAboveThumb!: BindedInput;
+  showScale!: BindedInput;
+  hintAlwaysShow!: BindedInput;
+  partsNum!: BindedInput;
+  precision!: BindedInput;
 
   constructor(elem: HTMLDivElement, slider: Slider) {
     super();
@@ -86,13 +86,26 @@ export default class SliderOptionsPalette extends EventObserver{
     this.el.append(ul);
   }
 
-
   init() {
-    Object.keys(this).forEach(prop => {
-      if (['el', 'slider', 'observers'].includes(prop)) return;
+    const inputs = [
+      "min",
+      "max",
+      "step",
+      "angle",
+      "thumbLeftPos",
+      "thumbRightPos",
+      "range",
+      "hintAboveThumb",
+      "showScale",
+      "hintAlwaysShow",
+      "partsNum",
+      "precision",
+    ];
 
+    inputs.forEach(prop => {
       const obj: Obj = {};
-      obj[prop] = new BindedInput(this.el.querySelector(`[name=${prop}]`), this.slider, prop);
+      const input = this.el.querySelector(`[name=${prop}]`) as HTMLInputElement;
+      obj[prop] = new BindedInput(input, this.slider, prop);
       obj[prop].update();
 
       Object.assign(this, obj);

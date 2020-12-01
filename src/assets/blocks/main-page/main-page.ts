@@ -21,7 +21,8 @@ let options1 = {
 };
 
 let slider1 = $().slider(options1);
-const palette1 = new SliderOptionsPalette(document.querySelector('.example1'), slider1);
+const example1 = document.querySelector('.example1') as HTMLDivElement;
+const palette1 = new SliderOptionsPalette(example1, slider1);
 
 let options2 = {
   min: 100,
@@ -35,7 +36,8 @@ let options2 = {
 }
 
 let slider2 = new Slider(options2);
-const palette2 = new SliderOptionsPalette(document.querySelector('.example2'), slider2);
+const example2 = document.querySelector('.example2') as HTMLDivElement;
+const palette2 = new SliderOptionsPalette(example2, slider2);
 
 let options3 = {
   alternativeRange: ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -47,7 +49,8 @@ let options3 = {
   hintAlwaysShow: true,
 }
 let slider3 = new Slider(options3);
-const palette3 = new SliderOptionsPalette(document.querySelector('.example3'), slider3);
+const example3 = document.querySelector('.example3') as HTMLDivElement;
+const palette3 = new SliderOptionsPalette(example3, slider3);
 
 
 let options4 = {
@@ -63,14 +66,14 @@ let options4 = {
 let slider4 = new Slider(options4)
 
 let p = document.querySelector('.slider4__p');
-let pContent = p.textContent;
+let pContent = p!.textContent as string;
 slider4.setOptions({max: pContent.length});
 
 slider4.onChange({el: p, callback: () => {
     const options = slider4.getOptions();
     let resLeft = Math.round(options.thumbLeftPos);
     let resRight = Math.round(options.thumbRightPos);
-    p.textContent = pContent.slice(resLeft, resRight);
+    p!.textContent = pContent.slice(resLeft, resRight);
 }});
   
 

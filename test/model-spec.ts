@@ -6,7 +6,7 @@ describe(`Model\n`, () => {
   describe(`Первоначальная минимальная инициализация\n`, () => {
     it(`Можно инициализировать с необходимым минимумом аргументов: min, max`, () => {
       const model = new Model({min: 0, max: 100});
-      Object.keys(model).forEach((key: keyof Model) => {
+      (Object.keys(model) as (keyof Model)[]).forEach((key: keyof Model) => {
         if (key === 'thumbRightPos') return;
         expect(model[key]).toBeDefined();
       });
@@ -14,7 +14,7 @@ describe(`Model\n`, () => {
 
     it(`Альтернативно можно инициализировать с помощью опции "alternativeRange"`, () => {
       const model = new Model({alternativeRange: ['start', 'end']});
-      Object.keys(model).forEach((key: keyof Model) => {
+      (Object.keys(model) as (keyof Model)[]).forEach((key: keyof Model) => {
         if (key === 'thumbRightPos') return;
         expect(model[key]).toBeDefined();
       });

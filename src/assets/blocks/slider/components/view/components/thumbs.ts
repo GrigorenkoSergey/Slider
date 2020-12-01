@@ -6,11 +6,11 @@ import '../../../../helpers/types.ts';
 import debuggerPoint from '../../../../helpers/debugger-point';
 
 export default class Thumbs extends EventObserver {
-  thumbLeft: HTMLDivElement;
-  thumbRight: HTMLDivElement;
+  thumbLeft!: HTMLDivElement;
+  thumbRight!: HTMLDivElement;
   thumbLeftOffset: number = 0;
   thumbRightOffset: number = 1;
-  view: View | null = null;
+  view!: View;
 
   constructor(view: View) {
     super();

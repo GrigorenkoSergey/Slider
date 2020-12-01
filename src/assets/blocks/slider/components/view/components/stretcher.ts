@@ -2,7 +2,7 @@ import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
 export default class Stretcher extends EventObserver {
-  el: HTMLDivElement;
+  el!: HTMLDivElement;
   view: View;
 
   constructor(view: View) {

@@ -11,8 +11,8 @@ import Model from '../model/model';
 import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class Presenter extends EventObserver implements ISubscriber{
-  view: View | null = null;
-  model: Model | null = null;
+  view!: View;
+  model!: Model;
   className: string = 'slider';
 
   constructor(options: Obj) {

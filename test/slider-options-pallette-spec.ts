@@ -186,7 +186,6 @@ describe('Проверка связи значения инпута со зна�
     leftThumb.dispatchEvent(fakeMouseUp);
     expect(slider.getOptions().hintAboveThumb).toBeTrue();
   });
-
 });
 
 describe(`При установке значения свойств программно, значения полей меняются автоматически\n`, () => {
@@ -247,7 +246,6 @@ describe(`При установке значения свойств програ
     expect(slider.getOptions().max).toEqual(100);
     expect(anchors[anchors.length - 1].textContent).toEqual('100');
     expect(palette.max.el.value).toEqual('100');
-    //проверить на возможные ошибки
   });
 
   it(`Поменяем значение step`, () => {
@@ -692,10 +690,4 @@ describe(`Данные баги более не возникают\n`, () => {
     slider.setOptions({step: 11})
     expect(leftHint.textContent).toEqual('11');
   });
-
-  it(`Корректно отображается значение опции "partsNum"`, () => {
-    // debugger;
-    slider.setOptions({min: 1, max: 6, step: 4, partsNum: 2});
-  });
-
 });
