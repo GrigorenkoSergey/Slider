@@ -86,10 +86,10 @@ export default class Thumbs extends EventObserver {
     let rightLimit: number;
     if (thumb === this.thumbLeft && this.view.range) {
       rightLimit = parseFloat(getComputedStyle(this.thumbRight).left);
-      rightLimit = Math.floor(rightLimit/ pixelStep) * pixelStep;
     } else {
       rightLimit = slider.clientWidth - thumb.offsetWidth;
     } 
+    rightLimit = Math.floor(rightLimit/ pixelStep) * pixelStep;
 
     const shiftX: number = e.clientX - thumbCoords.left;
     const shiftY: number = e.clientY - thumbCoords.top;

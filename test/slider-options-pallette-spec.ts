@@ -119,9 +119,9 @@ describe('Проверка связи значения инпута со зна�
     palette.thumbRightPos.el.value = '400';
     palette.thumbRightPos.el.dispatchEvent(fakeChange);
 
-    expect(slider.getOptions().thumbRightPos).toEqual(400);
+    expect(slider.getOptions().thumbRightPos).toEqual(402);
     rightThumb.dispatchEvent(fakeMouseDown);
-    expect(rightHint.textContent).toEqual('400');
+    expect(rightHint.textContent).toEqual('402');
     rightThumb.dispatchEvent(fakeMouseUp);
   });
 
@@ -594,7 +594,7 @@ describe(`Реагирует на ручное изменение положен
   });
 });
 
-describe(`Данные баги более не возникают`, () => {
+describe(`Данные баги более не возникают\n`, () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
   div.style.marginTop = "100px";
@@ -673,16 +673,29 @@ describe(`Данные баги более не возникают`, () => {
 
     palette.max.el.value = '6';
     palette.max.el.dispatchEvent(fakeChange);
-    palette.thumbRightPos.el.value = '1';
-    palette.thumbRightPos.el.dispatchEvent(fakeChange);
     palette.step.el.value = '1';
     palette.step.el.dispatchEvent(fakeChange);
+    palette.thumbRightPos.el.value = '1';
+    palette.thumbRightPos.el.dispatchEvent(fakeChange);
     palette.min.el.value = '1';
     palette.min.el.dispatchEvent(fakeChange);
 
     expect(palette.min.el.value).toEqual('1');
     expect(leftHint.textContent).toEqual('1');
     expect(rightHint.textContent).toEqual('1');
+  });
+
+  it(`При изменении шага, если бегунок находится в недостижимом
+    положении, он передвигается в ближайшее допустимое положение`, () => {
+    slider.setOptions({min: 0, max: 11, step: 1, thumbLeftPos: 10, range: false});
+    expect(leftHint.textContent).toEqual('10');
+    slider.setOptions({step: 11})
+    expect(leftHint.textContent).toEqual('11');
+  });
+
+  it(`Корректно отображается значение опции "partsNum"`, () => {
+    // debugger;
+    slider.setOptions({min: 1, max: 6, step: 4, partsNum: 2});
   });
 
 });

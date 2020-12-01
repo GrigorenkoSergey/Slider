@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
-import isIncreasing from '../../../helpers/functions/is-increasing';
 
 import '../../../helpers/types';
 
@@ -171,8 +170,8 @@ export default class Model extends EventObserver {
         } else if (max - val < step) {
           throw new Error('"max" - "min" should be >= "step"!');
 
-        } else if (max - val < step * partsNum) {
-          console.log('max - min should be >= partsNum * step!\nSet partsNum = 1');
+        } else if (val + step * partsNum > max + step) {
+          console.log('min + step * partsNum should be > max + step\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
 
         } else if (alternativeRange.length != 0) {
@@ -220,8 +219,8 @@ export default class Model extends EventObserver {
         } else if (val - min < step) {
           throw new Error('"max" - "min" should be >= "step"!');
 
-        } else if (val - min < step * partsNum) {
-          console.log('max - min should be >= partsNum * step!\nSet partsNum = 1');
+        } else if (min + step * partsNum > val + step) {
+          console.log('min + step * partsNum should be > max + step\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
 
         } else if (alternativeRange.length != 0) {
@@ -264,6 +263,8 @@ export default class Model extends EventObserver {
           precision = this.precision,
           partsNum = this.partsNum,
           alternativeRange = this.alternativeRange,
+          thumbLeftPos = this.thumbLeftPos,
+          thumbRightPos = this.thumbRightPos,
         } = expectantCopy;
         
         if (val > max - min) {
@@ -272,12 +273,14 @@ export default class Model extends EventObserver {
           throw new Error('"step" is negative!');
         } else if (val == 0) {
           throw new Error('"step" is equal to zero!');
-        } else if (val * partsNum > max - min) {
-          console.log('step * partsNum should be <= max - min!\nSet partsNum = 1');
+        } else if (min + val * partsNum > max + val) {
+          console.log('min + step * partsNum should be > max + step\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
         }
 
         expectantCopy.step = +Number(val).toFixed(precision);
+        expectantCopy.thumbLeftPos = thumbLeftPos;
+        expectantCopy.thumbRightPos = thumbRightPos;
       },
 
       range: (val: boolean) => {
@@ -306,17 +309,26 @@ export default class Model extends EventObserver {
           min = this.min, 
           max = this.max,
           precision = this.precision,
+          step = this.step,
         } = expectantCopy;
 
         if (thumbRightPos < val) {
           throw new Error('"thumbLeftPos" should be <= than "thumbRightPos"')
         }
 
-        expectantCopy.thumbLeftPos = +Math.min(Math.max(min, val), max).toFixed(precision);
+        const maxValue = Math.floor((max - min) / step) * step + min;
+        const roundedToStep = Math.round((val - min) / step) * step + min;
+        expectantCopy.thumbLeftPos = +Math.min(Math.max(min, roundedToStep), maxValue).toFixed(precision);
       },
 
       thumbRightPos: (val: number) => {
-        const {range = this.range, max = this.max} = expectantCopy;
+        const {
+          range = this.range, 
+          max = this.max, 
+          step = this.step, 
+          min = this.min
+        } = expectantCopy;
+
         if (!range) return Infinity;
 
         if (!isFinite(val)) {
@@ -329,7 +341,9 @@ export default class Model extends EventObserver {
           throw new Error('"thumbRightPos should be greater than "thumbLeftPos"');
         }
 
-        expectantCopy.thumbRightPos = +Math.min(val, max).toFixed(precision)
+        const maxValue = Math.floor((max - min) / step) * step + min;
+        const roundedToStep = Math.round((val - min) / step) * step + min;
+        expectantCopy.thumbRightPos = +Math.min(roundedToStep, maxValue).toFixed(precision)
       },
     }
 

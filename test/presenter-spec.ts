@@ -445,7 +445,7 @@ describe(`В любой момент времени можно узнать и �
   });
 });
 
-describe(`Проверка поведения подсказки над бегунком`, () => {
+describe(`Проверка поведения подсказки над бегунком\n`, () => {
   beforeEach(() => {
     document.body.append(div);
   });
@@ -465,7 +465,7 @@ describe(`Проверка поведения подсказки над бегу
 
   it(`При включенной опции "hintAlwaysShow" и при клике на значении шкалы, 
   значение подсказки над бегунком меняется`, () => {
-    const presenter = new Presenter({...option, hintAlwaysShow: true});
+    const presenter = new Presenter({...option, hintAlwaysShow: true, step: 1});
 
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint')
@@ -516,7 +516,7 @@ describe(`Проверка поведения подсказки над бегу
   });
 });
 
-describe(`Проверка оции "onChange`, () => {
+describe(`Проверка оции "onChange\n`, () => {
   beforeEach(() => {
     document.body.append(div);
   });

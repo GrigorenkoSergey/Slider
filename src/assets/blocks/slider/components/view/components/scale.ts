@@ -77,8 +77,12 @@ export default class Scale extends EventObserver {
 
         this.parts.push(value);
       }
+      this.parts = [0, ...this.parts];
 
-      this.parts = [0, ...this.parts, 1];
+      if (this.parts[this.parts.length - 1] != 1) {
+        this.parts.push(1);
+      }
+
     } else {
       this._validateScaleParts(values);
       this.parts = values;
@@ -106,7 +110,12 @@ export default class Scale extends EventObserver {
   handleMouseClick(e: MouseEvent) {
     const el = <HTMLDivElement>e.target;
     const index = this.anchors.indexOf(el);
-    const offset = this.parts[index];
+    let offset = this.parts[index];
+
+    if (offset === 1) {
+      const {step} = this.view;
+      offset = Math.floor(offset / step) * step;
+    }
 
     this.broadcast('anchorClick', offset);
   }
