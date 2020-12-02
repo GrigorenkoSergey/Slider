@@ -41,7 +41,7 @@ module.exports = function(config) {
                 loader: 'postcss-loader',
                 options: {
                   sourceMap: true, config:
-                    {path: 'src/postcss.config.js'},
+                    {path: 'postcss.config.js'},
                 },
               },
               'sass-loader',

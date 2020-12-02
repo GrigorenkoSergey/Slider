@@ -20,6 +20,8 @@
     `npm run dev`  
     Запуск production build  
     `npm run build`
+    Запуск тестов
+    `npm run test`
 
 2. Использование только файлов непосредственно слайдера, опять с **webpack**.
     Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
@@ -40,6 +42,7 @@
           <div class="slider"></div>
           <script>
             let options = {
+              selector: '.slider',
               //some options here...
             };
 
@@ -55,12 +58,6 @@
 .
 ├── coverage
 ├── dist
-├── karma.conf.js
-├── node_modules
-├── package.json
-├── package-lock.json
-├── postcss.config.js
-├── README.md
 |
 ├── src
 │   ├── assets
@@ -86,11 +83,14 @@
 |   |   |   │   ├── components
 |   |   |   │   │   ├── model
 |   |   |   │   │   │   └── model.ts
+|   |   |   │   │   ├── presenter
+|   |   |   │   │   │   └── presenter.ts
 |   |   |   │   │   └── view
 |   |   |   │   │       ├── components
+|   |   |   │   │       │   ├── hint.ts
 |   |   |   │   │       │   ├── scale.ts
 |   |   |   │   │       │   ├── stretcher.ts
-|   |   |   │   │       │   └── thumbs-twins-brothers.ts
+|   |   |   │   │       │   └── thumbs.ts
 |   |   |   │   │       └── view.ts
 |   |   |   │   ├── jquery.slider.d.ts
 |   |   |   │   ├── slider.pug
@@ -106,16 +106,20 @@
 |   │   └── images
 |   |   
 │   ├── index.pug
-│   ├── index.ts
-│   └── postcss.config.js
+│   └── index.ts 
 |
 ├── test
 │   ├── helpers-spec.ts
 │   ├── model-spec.ts
-│   ├── slider.css
-│   ├── slider.scss
-│   ├── slider-spec.ts
+│   ├── presenter-spec.ts
+│   ├── slider-options-palete-spec.ts
 │   └── view-spec.ts
+|
+├── .eslint.js
+├── karma.conf.js
+├── package.json
+├── postcss.config.js
+├── README.md
 ├── tsconfig.json
 └── webpack.config.js
 ```
