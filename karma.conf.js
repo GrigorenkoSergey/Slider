@@ -53,18 +53,18 @@ module.exports = function(config) {
               {
                 loader: 'file-loader',
                 options: {
-                  name: '[name]/[name].[ext]',
+                  name: '[name]/[name].[contenthash].[ext]',
                 },
               },
             ],
           },
           {
-            test: /\.(png|svg|jpg|gif)$/,
+            test: /\.(png|svg|jpg|gif|webmanifest)$/,
             use: [
               {
                 loader: 'file-loader',
                 options: {
-                  name: 'images/[name].[ext]',
+                  name: 'images/[name].[contenthash].[ext]',
                 },
               },
             ],

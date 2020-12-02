@@ -24,7 +24,7 @@ module.exports =  {
   devtool: 'inline-source-map',
 
   output: {
-    filename: (pathData) => `${outputPaths[pathData.chunk.name]}.js`,
+    filename: (pathData) => `${outputPaths[pathData.chunk.name]}.[contenthash].js`,
     libraryTarget: 'var',
     library: 'Slider',
   },
@@ -92,12 +92,12 @@ module.exports =  {
       ],
     },
     {
-      test: /\.(png|svg|jpg|gif)$/,
+      test: /\.(png|svg|jpg|gif|webmanifest)$/,
       use: [
         {
           loader: 'file-loader',
           options: {
-            name: 'images/[name].[ext]',
+            name: 'images/[name].[contenthash].[ext]',
           },
         },
       ],
@@ -108,7 +108,7 @@ module.exports =  {
         {
           loader: 'file-loader',
           options: {
-            name: '[name]/[name].[ext]',
+            name: '[name]/[name].[contenthash].[ext]',
           },
         },
       ],
@@ -126,7 +126,7 @@ module.exports =  {
     })),
 
     new MiniCssExtractPlugin({
-      moduleFilename: ({ name }) => `${outputPaths[name]}.css`,
+      moduleFilename: ({ name }) => `${outputPaths[name]}.[contenthash].css`,
     }),
   ],
 };
