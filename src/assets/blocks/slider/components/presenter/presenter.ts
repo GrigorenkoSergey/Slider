@@ -69,34 +69,13 @@ export default class Presenter extends EventObserver implements ISubscriber{
     }
 
     view.setOptions(optionsCopy);
+    return this;
   }
 
   getOptions() {
     const {model, view} = this;
     const res = {...view.getOptions(), ...model.getOptions()};
     return res;
-  }
-
-  scaleValues() {
-    const {view, model} = this;
-
-    view.setHintValue(
-      view.thumbs.thumbLeft, 
-      this._recountValue(model.thumbLeftPos),
-    );
-
-    view.setHintValue(
-      view.thumbs.thumbRight, 
-      this._recountValue(model.thumbRightPos),
-    );
-
-    const precision = model.precision;
-    const anchorValues = this.view.scale.parts.map((value) => {
-      const result = this._recountValue(Number(model.findValue(value).toFixed(precision)));
-      return result;
-    });
-
-    view.setAnchorValues(anchorValues);
   }
 
   update(eventType: string, data: any) {
@@ -126,7 +105,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
         const {thumbRight} = this.view.thumbs;
         this.view.moveThumbToPos(thumbRight, this.model.findArgument(this.model.thumbRightPos));
       }
-      this.scaleValues();
+      this._scaleValues();
 
     } else if (eventType === 'step') {
       const step = this.model.step / (this.model.max - this.model.min);
@@ -169,17 +148,17 @@ export default class Presenter extends EventObserver implements ISubscriber{
       }
 
       this.model.setThumbsPos(handledData);
-      this.scaleValues();
+      this._scaleValues();
 
     } else {
-      this.scaleValues();
+      this._scaleValues();
     }
 
     this.broadcast(eventType, data);
     this.broadcast('changeSlider', eventType);
   }
 
-  onChange(opts: Obj) {
+  onChange(opts: onChangeOpts) {
     const {
       el, 
       callback = (eventType: string, data: any) => console.log(data),
@@ -195,7 +174,29 @@ export default class Presenter extends EventObserver implements ISubscriber{
     return elemSubscriber;
   }
 
-  _recountValue(val: number) {
+  private _scaleValues() {
+    const {view, model} = this;
+
+    view.setHintValue(
+      view.thumbs.thumbLeft, 
+      this._recountValue(model.thumbLeftPos),
+    );
+
+    view.setHintValue(
+      view.thumbs.thumbRight, 
+      this._recountValue(model.thumbRightPos),
+    );
+
+    const precision = model.precision;
+    const anchorValues = this.view.scale.parts.map((value) => {
+      const result = this._recountValue(Number(model.findValue(value).toFixed(precision)));
+      return result;
+    });
+
+    view.setAnchorValues(anchorValues);
+  }
+
+  private _recountValue(val: number) {
     const {model} = this;
     let result;
 
