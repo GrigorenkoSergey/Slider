@@ -169,7 +169,7 @@
 ```js
 slider.setOptions({range: true, max: -100});
 ```
-### onChange({el: any, callback?: function})
+### onChange( {el: any, callback?: function} )
 Сам по себе бегунок бесполезен. Он должен быть связан с какими-либо данными и его перемещение должно вызывать какие-то дополнительные  полезные действия. К примеру, пользователь, двигая кругляш, меняет возможные значения срока ипотеки. Какая-то сторонняя функция высчитывает итоговую сумму (которая зависит от положения бегунка), которую он заплатит и отображает в каком-то поле. Таких элементов, привязанных к одному слайдеру, может быть сколько угодно. Данный метод позволяет привязать любой элемент к слайдеру. Параметры и примеры использования смотри ниже. |
 
 ### Параметры onChange
@@ -207,7 +207,7 @@ slider6.onChange({
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
 
-    // т.к. нам неинтересны абсолютные значения положения бегунка
+    // т.к. нам неинтересны абсолютные значения положения бегунка,
     // то мы будем использовать относительные
     let offset = slider6.getOptions()._thumbLeftOffset(); 
     
@@ -218,8 +218,8 @@ slider6.onChange({
     let offsetLeft = imgWidth * (resLeft % 5);
     let offsetTop = imgHeight * Math.floor(resLeft / 5);
 
-    birdImg.style.backgroundPositionX = -offsetLeft + "px";
-    birdImg.style.backgroundPositionY = -offsetTop + "px";
+    birdImg.style.backgroundPositionX = -offsetLeft + 'px';
+    birdImg.style.backgroundPositionY = -offsetTop + 'px';
   },
 })
 ```

@@ -15,7 +15,7 @@ export default class Hint extends EventObserver{
     this.init(parentNode);
   }
 
-  init(parent: HTMLElement) {
+  private init(parent: HTMLElement) {
     this.el.className = `${this.view.className}__hint`;
     this.el.hidden = true;
 
@@ -36,11 +36,6 @@ export default class Hint extends EventObserver{
     }
   }
 
-  handleMousedown(e: Event) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
   setHintValue(value: string) {
     this.value = value;
     if (!this.el.hidden) this.el.textContent = this.value;
@@ -56,7 +51,7 @@ export default class Hint extends EventObserver{
     this.el.hidden = true;
   }
 
-  rotateHint() {
+  private rotateHint() {
     const {angle} = this.view;
     const hint = this.el;
 
@@ -71,5 +66,10 @@ export default class Hint extends EventObserver{
       transformation += ` translateX(${-50 * (1 -  sin(2 * radAngle))}%)`;
       hint.style.transform = transformation;
     }
+  }
+
+  private handleMousedown(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
   }
 }

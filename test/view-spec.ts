@@ -109,7 +109,7 @@ describe(`Позволяет пользователю взаимодейство
       selector: '.divViewSpec', className: 'slider',
     };
     const view = new View(option);
-    view.setOptions({range: true}).init();
+    view.setOptions({range: true});
 
     const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
     const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
@@ -136,7 +136,7 @@ describe(`Позволяет пользователю взаимодейство
     };
 
     const view = new View(option);
-    view.setOptions({range: true}).init();
+    view.setOptions({range: true});
 
     const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
     const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');

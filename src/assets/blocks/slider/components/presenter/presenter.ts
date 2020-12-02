@@ -20,7 +20,7 @@ export default class Presenter extends EventObserver implements ISubscriber{
     this.init(options);
   }
 
-  init(options: Obj) {
+  private init(options: Obj) {
     const optionsCopy = Object.assign({}, options);
     this.model = new Model(options);
     const model = this.model;
@@ -173,6 +173,8 @@ export default class Presenter extends EventObserver implements ISubscriber{
     this.broadcast('changeSlider', 'onChangeInit');
     return elemSubscriber;
   }
+
+  
 
   private _scaleValues() {
     const {view, model} = this;

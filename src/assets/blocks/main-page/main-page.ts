@@ -13,7 +13,7 @@ let options1 = {
   max: 6,
   step: 1,
   thumbRightPos: 1,
-  selector: ".slider1",
+  selector: '.slider1',
   range: true,
   hintAboveThumb: true,
   hintAlwaysShow: true,
@@ -28,7 +28,7 @@ let options2 = {
   min: 100,
   max: 2000,
   step: 1,
-  selector: ".slider2",
+  selector: '.slider2',
   angle: 90,
   range: false,
   hintAboveThumb: true,
@@ -40,7 +40,7 @@ const example2 = document.querySelector('.example2') as HTMLDivElement;
 const palette2 = new SliderOptionsPalette(example2, slider2);
 
 let options3 = {
-  alternativeRange: ["Jan", "Feb", "March", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  alternativeRange: ['Jan', 'Feb', 'March', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   step: 1,
   selector: '.slider3',
   angle: 45,
@@ -57,7 +57,7 @@ let options4 = {
   max: 100,
   min: 0,
   step: 1,
-  selector: ".slider4",
+  selector: '.slider4',
   angle: 0,
   range: true,
   hintAboveThumb: true
@@ -82,7 +82,7 @@ let options5 = {
   max: 255,
   min: 0,
   step: 1,
-  selector: ".slider5",
+  selector: '.slider5',
   angle: 0,
   range: false,
   hintAboveThumb: true
@@ -98,14 +98,14 @@ slider5.onChange({el: letterA, callback: () => {
 
   // offset == 0 -> 200
   // offset == 1 -> 360 
-  let resStr = "hsl(" + (offset * 160 + 200) + ", 100%, 50%)";
+  let resStr = 'hsl(' + (offset * 160 + 200) + ', 100%, 50%)';
 
   // offset == 0 -> 0
   // offset == 1 -> 20 
   let resShadow = offset * 20;
 
   letterA.style.color = resStr;
-  letterA.style.textShadow = resShadow + "px 19px 7px grey";
+  letterA.style.textShadow = resShadow + 'px 19px 7px grey';
 }});
 
 
@@ -113,7 +113,7 @@ let options6 = {
   max: 1000,
   min: 0,
   step: 10,
-  selector: ".slider6",
+  selector: '.slider6',
   angle: 0,
   range: false,
   hintAboveThumb: true,
@@ -138,7 +138,7 @@ slider6.onChange({
     let offsetLeft = imgWidth * (resLeft % 5);
     let offsetTop = imgHeight * Math.floor(resLeft / 5);
 
-    birdImg.style.backgroundPositionX = -offsetLeft + "px";
-    birdImg.style.backgroundPositionY = -offsetTop + "px";
+    birdImg.style.backgroundPositionX = -offsetLeft + 'px';
+    birdImg.style.backgroundPositionY = -offsetTop + 'px';
   },
 })

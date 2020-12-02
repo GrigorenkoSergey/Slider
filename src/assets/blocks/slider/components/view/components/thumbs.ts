@@ -18,7 +18,7 @@ export default class Thumbs extends EventObserver {
     this.render();
   }
 
-  render() {
+  private render() {
     const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
     Object.assign(this, {thumbLeft, thumbRight});
 
@@ -56,7 +56,7 @@ export default class Thumbs extends EventObserver {
     });
   }
 
-  handleThumbMousedown(e: MouseEvent) {
+  private handleThumbMousedown(e: MouseEvent) {
     e.preventDefault();
 
     const thumb = <HTMLElement>e.target;
@@ -150,7 +150,7 @@ export default class Thumbs extends EventObserver {
     }
   }
 
-  displayThumbRight() {
+  private displayThumbRight() {
     if (this.view.range) {
       this.view.el.append(this.thumbRight);
     } else {

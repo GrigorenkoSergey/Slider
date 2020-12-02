@@ -25,7 +25,7 @@ export default class Scale extends EventObserver {
     this.init();
   }
 
-  init() {
+  private init() {
     const propsToSubscribe = ['showScale', 'step', 'partsNum', 'angle'];
     propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
 
@@ -50,7 +50,7 @@ export default class Scale extends EventObserver {
     }
   }
 
-  render() {
+  private render() {
     this.el.className = this.view.el.className + '__scale';
     this.view.el.append(this.el);
 
@@ -109,7 +109,7 @@ export default class Scale extends EventObserver {
     this.broadcast('rerenderScale', this.anchors);
   }
 
-  handleMouseClick(e: MouseEvent) {
+  private handleMouseClick(e: MouseEvent) {
     const el = <HTMLDivElement>e.target;
     const index = this.anchors.indexOf(el);
     let offset = this.parts[index];
@@ -122,7 +122,7 @@ export default class Scale extends EventObserver {
     this.broadcast('anchorClick', offset);
   }
 
-  displayScale() {
+  private displayScale() {
     if (!this.view.showScale) {
       this.el.style.display = 'none';
     } else {
@@ -130,7 +130,7 @@ export default class Scale extends EventObserver {
     }
   }
 
-  rotateScale() {
+  private rotateScale() {
     const {angle} = this.view;
     const {sin, PI} = Math;
     let radAngle = angle * PI / 180;

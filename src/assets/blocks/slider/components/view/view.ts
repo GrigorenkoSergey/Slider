@@ -45,7 +45,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.init();
   }
 
-  init(): this {
+  private init(): this {
     const wrapper = document.querySelector(this.selector) as HTMLDivElement;
     wrapper.append(this.el);
 
@@ -91,7 +91,7 @@ export default class View extends EventObserver implements ISubscriber {
       .forEach((prop) => expectant[prop] = options[prop]);
 
     Object.entries(expectant).forEach(([prop, value]) => {
-      this._validateOptions(prop, value, expectant);
+      this.validateOptions(prop, value, expectant);
     });
 
     Object.assign(this, expectant);
@@ -178,19 +178,19 @@ export default class View extends EventObserver implements ISubscriber {
     hint.setHintValue(value);
   }
 
-  handleAnchorClick(offset: number): void {
-    let closestThumb = this._findClosestThumb(offset);
+  private handleAnchorClick(offset: number): void {
+    let closestThumb = this.findClosestThumb(offset);
     this.moveThumbToPos(closestThumb, offset);
   }
 
-  handleThumbMousedown(thumb: HTMLDivElement) {
+  private handleThumbMousedown(thumb: HTMLDivElement) {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.showHint();
   }
 
-  handleThumbMouseup(thumb: HTMLElement) {
+  private handleThumbMouseup(thumb: HTMLElement) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
 
     if (!this.hintAlwaysShow) {
@@ -198,14 +198,14 @@ export default class View extends EventObserver implements ISubscriber {
     }
   }
 
-  handleThumbMousemove(thumb: HTMLElement) {
+  private handleThumbMousemove(thumb: HTMLElement) {
     if (!this.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.showHint();
   }
 
-  handleSliderClick(e: MouseEvent) {
+  private handleSliderClick(e: MouseEvent) {
     const target = <HTMLElement>e.target;
     const slider = this.el;
 
@@ -223,7 +223,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     let newLeft = newLeftX * cosA + newLeftY * sinA;
     let offset = newLeft / this.scale.width;
-    let closestThumb = this._findClosestThumb(offset);
+    let closestThumb = this.findClosestThumb(offset);
 
     newLeft = Math.max(newLeftX * cosA + newLeftY * sinA);
     newLeft = Math.min(newLeft, this.scale.width + closestThumb.offsetWidth / 2);
@@ -238,7 +238,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.moveThumbToPos(closestThumb, offset);
   }
 
-  private _validateOptions(key: string, value: any, expectant: Obj) {
+  private validateOptions(key: string, value: any, expectant: Obj) {
     const validator: Obj = {
       step: (val: number) => {
         if (!isFinite(val)) {
@@ -269,7 +269,7 @@ export default class View extends EventObserver implements ISubscriber {
     return validator[key](value);
   }
 
-  private _findClosestThumb(offset: number) {
+  private findClosestThumb(offset: number) {
     const {thumbLeft, thumbRight} = this.thumbs;
 
     let closestThumb;
