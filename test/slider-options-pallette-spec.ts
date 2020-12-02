@@ -606,6 +606,7 @@ describe(`Данные баги более не возникают\n`, () => {
     range: true,
     hintAboveThumb: true,
     hintAlwaysShow: true,
+    precision: 1,
   };
 
   let example = document.createElement('div');
@@ -681,13 +682,5 @@ describe(`Данные баги более не возникают\n`, () => {
     expect(palette.min.el.value).toEqual('1');
     expect(leftHint.textContent).toEqual('1');
     expect(rightHint.textContent).toEqual('1');
-  });
-
-  it(`При изменении шага, если бегунок находится в недостижимом
-    положении, он передвигается в ближайшее допустимое положение`, () => {
-    slider.setOptions({min: 0, max: 11, step: 1, thumbLeftPos: 10, range: false});
-    expect(leftHint.textContent).toEqual('10');
-    slider.setOptions({step: 11})
-    expect(leftHint.textContent).toEqual('11');
   });
 });

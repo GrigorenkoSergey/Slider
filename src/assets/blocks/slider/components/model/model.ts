@@ -12,7 +12,7 @@ export default class Model extends EventObserver {
   thumbLeftPos = 0;
   thumbRightPos: number = Infinity;
   range = false;
-  precision: number = 1;
+  precision: number = 0;
   alternativeRange: string[] = [];
 
   constructor(options: Obj) {

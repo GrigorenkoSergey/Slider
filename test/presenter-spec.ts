@@ -180,6 +180,7 @@ describe(`Меняет значения шкалы в соответствии �
     className: 'slider', showScale: true,
     min: 20, 
     max: 200,
+    precision: 1,
   };
 
   beforeEach(() => {
@@ -546,5 +547,64 @@ describe(`Проверка оции "onChange\n`, () => {
     const anchors = div.getElementsByClassName('slider__scale-points');
     anchors[1].dispatchEvent(fakeClick);
     expect(num).toEqual(100);
+  });
+});
+
+describe(`Данные баги более не возникают\n`, () => {
+
+  let options: Obj = {
+    min: 0,
+    max: 100,
+    step: 1,
+    selector: '.divPresenterSpec',
+    angle: 0,
+    range: true,
+    hintAboveThumb: true,
+    hintAlwaysShow: true,
+  };
+
+  let slider: Presenter;
+  let leftThumb: Element;
+  let rightThumb: Element;
+  let leftHint: Element;
+  let rightHint: Element;
+
+  beforeEach(() => {
+    document.body.append(div);
+
+    slider = new Presenter({...options});
+    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`При наложении бегунков значение подсказок должно быть одинаковым`, () => {
+    slider.setOptions({min: 0, thumbLeftPos: 0});
+
+    slider.setOptions({max: 6, step: 1, thumbRightPos: 1, min: 1});
+
+    expect(leftHint.textContent).toEqual('1');
+    expect(rightHint.textContent).toEqual('1');
+  });
+
+  it(`При изменении шага, если бегунок находится в недостижимом
+    положении, он передвигается в ближайшее допустимое положение`, () => {
+    slider.setOptions({min: 0, max: 11, step: 1, thumbLeftPos: 10, range: false});
+    expect(leftHint.textContent).toEqual('10');
+    slider.setOptions({step: 11})
+    expect(leftHint.textContent).toEqual('11');
+  });
+
+  it(`При выключении и включении опции "range" правый бегунок может достичь
+    только максимального значения, кратного шагу`, () => {
+    slider.setOptions({min: 1, max: 6, step: 4, range: false});
+    slider.setOptions({range: true});
+    expect(slider.getOptions().thumbRightPos).toEqual(5);
   });
 });
