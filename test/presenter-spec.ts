@@ -564,8 +564,8 @@ describe(`Данные баги более не возникают\n`, () => {
   };
 
   let slider: Presenter;
-  let leftThumb: Element;
-  let rightThumb: Element;
+  let leftThumb: HTMLDivElement;
+  let rightThumb: HTMLDivElement;
   let leftHint: Element;
   let rightHint: Element;
 
@@ -573,8 +573,8 @@ describe(`Данные баги более не возникают\n`, () => {
     document.body.append(div);
 
     slider = new Presenter({...options});
-    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
     leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
     rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
   });
@@ -600,6 +600,49 @@ describe(`Данные баги более не возникают\n`, () => {
     slider.setOptions({step: 11})
     expect(leftHint.textContent).toEqual('11');
   });
+
+  it(`При изменении шага, бегунок нельзя перетащить за границы слайдера`, () => {
+    slider.setOptions({min: 0, max: 11, step: 4, range: false});
+    leftThumb.dispatchEvent(fakeMouseDown);
+
+    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+
+    let fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: scaleWidth * 2, clientY: 0,
+      });
+
+    leftThumb.dispatchEvent(fakeMouseMove);
+    expect(leftHint.textContent).toEqual('8');
+    leftThumb.dispatchEvent(fakeMouseUp);
+  });
+
+  it(`При любой ширине контейнера, бегунки могут слиться`, () => {
+    div.innerHTML = '';
+    div.remove();
+    div.style.width = '421.33px';
+
+    document.body.appendChild(div);
+    slider = new Presenter({...options});
+    slider.setOptions({min: 0, max: 58, thumbRightPos: 41});
+
+    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+
+    let fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: scaleWidth * 2, clientY: 0,
+      });
+
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    leftThumb.dispatchEvent(fakeMouseDown);
+    leftThumb.dispatchEvent(fakeMouseMove);
+    leftThumb.dispatchEvent(fakeMouseUp);
+    expect(leftThumb.getBoundingClientRect().left).toEqual(rightThumb.getBoundingClientRect().left);
+    div.style.width = '';
+  })
 
   it(`При выключении и включении опции "range" правый бегунок может достичь
     только максимального значения, кратного шагу`, () => {

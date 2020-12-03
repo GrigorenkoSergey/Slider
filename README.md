@@ -35,8 +35,8 @@
     ```html
     <html>
         <head>
-            <link href="../path/to/directory/slider/slider.css" rel="stylesheet" type="text/css">
-            <script src="../path/to/directory/slider/slider.js"></script>
+            <link href="../path/to/directory/slider/slider.[contenthash].css" rel="stylesheet" type="text/css">
+            <script src="../path/to/directory/slider/slider.[contenthash].js"></script>
         </head>
         <body>
           <div class="slider"></div>
