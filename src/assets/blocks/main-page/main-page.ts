@@ -10,9 +10,10 @@ import {Slider} from '../slider/slider';
 
 let options1 = {
   min: 0,
-  max: 6,
+  max: 600,
   step: 1,
-  thumbRightPos: 1,
+  thumbLeftPos: 360,
+  thumbRightPos: 389,
   selector: '.slider1',
   range: true,
   hintAboveThumb: true,
@@ -47,6 +48,7 @@ let options3 = {
   range: true,
   hintAboveThumb: true,
   hintAlwaysShow: true,
+  thumbLeftPos: 8,
 }
 let slider3 = new Slider(options3);
 const example3 = document.querySelector('.example3') as HTMLDivElement;
