@@ -17,7 +17,7 @@ export default class EventObserver {
   broadcast(eventType: string, data: any): void {
     if (!this.observers[eventType]) return;
     this.observers[eventType]
-      .forEach((subscriber) => subscriber &&
-        subscriber.update(eventType, data));
+      .forEach((subscriber) => (subscriber &&
+        subscriber.update(eventType, data)));
   }
 }
