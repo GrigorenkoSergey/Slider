@@ -185,17 +185,17 @@ export default class Model extends EventObserver {
           if ('thumbLeftPos' in expectant) {
             throw new Error('"thumbLeftPos" should be >= "min"!');
           }
-          expectantCopy.thumbLeftPos = +Number(val).toFixed(precision);
+          expectantCopy.thumbLeftPos = Number(Number(val).toFixed(precision));
         }
 
         if (val > thumbRightPos) {
           if ('thumbRightPos' in expectant) {
             throw new Error('"thumbRightPos" should be > "min"!');
           }
-          expectantCopy.thumbRightPos = +Number(max).toFixed(precision);
+          expectantCopy.thumbRightPos = Number(Number(max).toFixed(precision));
         }
 
-        expectantCopy.min = +Number(val).toFixed(precision);
+        expectantCopy.min = Number(Number(val).toFixed(precision));
       },
 
       max: (val: number) => {
@@ -236,9 +236,9 @@ export default class Model extends EventObserver {
           }
           if (thumbRightPos !== Infinity) {
             expectantCopy.thumbLeftPos = min;
-            expectantCopy.thumbRightPos = +Number(val).toFixed(precision);
+            expectantCopy.thumbRightPos = Number(Number(val).toFixed(precision));
           } else {
-            expectantCopy.thumbLeftPos = +Number(val).toFixed(precision);
+            expectantCopy.thumbLeftPos = Number(Number(val).toFixed(precision));
           }
         }
 
@@ -246,10 +246,10 @@ export default class Model extends EventObserver {
           if ('thumbRightPos' in expectant) {
             throw new Error('"thumbRightPos should be <= "max"!');
           }
-          expectantCopy.thumbRightPos = +Number(val).toFixed(precision);
+          expectantCopy.thumbRightPos = Number(Number(val).toFixed(precision));
         }
 
-        expectantCopy.max = +Number(val).toFixed(precision);
+        expectantCopy.max = Number(Number(val).toFixed(precision));
       },
 
       step: (val: number) => {
@@ -278,7 +278,7 @@ export default class Model extends EventObserver {
           expectantCopy.partsNum = 1;
         }
 
-        expectantCopy.step = +Number(val).toFixed(precision);
+        expectantCopy.step = Number(Number(val).toFixed(precision));
         expectantCopy.thumbLeftPos = thumbLeftPos;
         expectantCopy.thumbRightPos = thumbRightPos;
       },
@@ -318,7 +318,9 @@ export default class Model extends EventObserver {
 
         const maxValue = Math.floor((max - min) / step) * step + min;
         const roundedToStep = Math.round((val - min) / step) * step + min;
-        expectantCopy.thumbLeftPos = +Math.min(Math.max(min, roundedToStep), maxValue).toFixed(precision);
+        expectantCopy.thumbLeftPos = Number(
+          Math.min(Math.max(min, roundedToStep), maxValue).toFixed(precision)
+        );
       },
 
       thumbRightPos: (val: number) => {
@@ -343,7 +345,7 @@ export default class Model extends EventObserver {
 
         const maxValue = Math.floor((max - min) / step) * step + min;
         const roundedToStep = Math.round((val - min) / step) * step + min;
-        expectantCopy.thumbRightPos = +Math.min(roundedToStep, maxValue).toFixed(precision)
+        expectantCopy.thumbRightPos = Number(Math.min(roundedToStep, maxValue).toFixed(precision));
       },
     }
 

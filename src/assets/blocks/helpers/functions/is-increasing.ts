@@ -1,13 +1,16 @@
 function isIncreasing(arr: number[] | string[]): boolean {
-  let prev = +arr[0];
-  arr = arr.slice(1);
+  let prev = Number(arr[0]);
+  let arrSliced = arr.slice(1);
+  let result = true;
 
-  for (let i = 0; i < arr.length; i++) {
-    if (+arr[i] <= prev) return false;
-    prev = +arr[i];
-  }
+  arrSliced.forEach((item: number | string) => {
+    let isGreater = Number(item) > prev;
+    prev = Number(item);
 
-  return true;
+    if (!isGreater) result = false;
+  });
+
+  return result;
 }
 
 export default isIncreasing;
