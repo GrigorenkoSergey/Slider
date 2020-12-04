@@ -2,7 +2,7 @@
 import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 
-import '../../../helpers/types';
+import {Obj} from '../../../helpers/types';
 
 export default class Model extends EventObserver {
   min = 0;

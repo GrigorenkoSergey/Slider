@@ -6,7 +6,7 @@ import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import Thumbs from './components/thumbs';
 
-import '../../../helpers/types';
+import {Obj} from '../../../helpers/types';
 import Hint from './components/hint';
 
 import debuggerPoint from '../../../helpers/debugger-point';

@@ -6,6 +6,8 @@ import debuggerPoint from '../../../../helpers/debugger-point';
 import '../../../../helpers/types';
 import isIncreasing from '../../../../helpers/functions/is-increasing';
 
+import {Obj} from '../../../../helpers/types';
+
 export default class Scale extends EventObserver {
   view: View;
 

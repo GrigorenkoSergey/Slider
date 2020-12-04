@@ -1,5 +1,5 @@
 import '../src/assets/blocks/slider/slider';
-import '../src/assets/blocks/helpers/types';
+import {Obj} from '../src/assets/blocks/helpers/types';
 import Presenter from '../src/assets/blocks/slider/components/presenter/presenter';
 import SliderOptionsPalette from '../src/assets/blocks/main-page/components/slider-options-palette';
 

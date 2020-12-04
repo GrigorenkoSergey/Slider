@@ -2,7 +2,7 @@ import EventObserver from '../../helpers/event-observer';
 import BindedInput from '../components/binded-input';
 import {Slider} from '../../slider/slider';
 
-import '../../helpers/types';
+import {Obj} from '../../helpers/types';
 
 export default class SliderOptionsPalette extends EventObserver{
   el: HTMLDivElement;

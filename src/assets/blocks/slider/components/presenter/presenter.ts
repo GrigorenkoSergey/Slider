@@ -1,7 +1,6 @@
 import '../../slider.scss';
 
-import '../../../helpers/types';
-
+import {Obj, onChangeOpts} from '../../../helpers/types';
 import EventObserver from '../../../helpers/event-observer';
 import {ISubscriber} from '../../../helpers/interfaces';
 import View from '../../components/view/view';

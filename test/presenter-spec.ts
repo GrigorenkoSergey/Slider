@@ -3,6 +3,8 @@ import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import Presenter from '../src/assets/blocks/slider/components/presenter/presenter';
 import '../src/assets/blocks/slider/slider.scss';
 
+import {Obj} from '../src/assets/blocks/helpers/types';
+
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.className = 'divPresenterSpec';
