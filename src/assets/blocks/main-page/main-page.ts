@@ -9,11 +9,11 @@ import debuggerPoint from '../helpers/debugger-point';
 import {Slider} from '../slider/slider';
 
 let options1 = {
-  min: 0,
-  max: 600,
+  min: 1000000,
+  max: 6000000,
   step: 1,
-  thumbLeftPos: 360,
-  thumbRightPos: 389,
+  thumbLeftPos: 3322695,
+  thumbRightPos: 4865248,
   selector: '.slider1',
   range: true,
   hintAboveThumb: true,
@@ -31,9 +31,11 @@ let options2 = {
   step: 1,
   selector: '.slider2',
   angle: 90,
-  range: false,
+  range: true,
   hintAboveThumb: true,
+  hintAlwaysShow: true,
   thumbLeftPos: 800,
+  thumbRightPos: 935,
 }
 
 let slider2 = new Slider(options2);
@@ -42,13 +44,14 @@ const palette2 = new SliderOptionsPalette(example2, slider2);
 
 let options3 = {
   alternativeRange: ['Jan', 'Feb', 'March', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  step: 1,
+  step: 0.1,
   selector: '.slider3',
   angle: 45,
   range: true,
   hintAboveThumb: true,
   hintAlwaysShow: true,
   thumbLeftPos: 8,
+  precision: 1,
 }
 let slider3 = new Slider(options3);
 const example3 = document.querySelector('.example3') as HTMLDivElement;

@@ -174,8 +174,6 @@ export default class Presenter extends EventObserver implements ISubscriber{
     return elemSubscriber;
   }
 
-  
-
   private _scaleValues() {
     const {view, model} = this;
 

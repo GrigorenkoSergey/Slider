@@ -3,7 +3,6 @@ import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import Presenter from '../src/assets/blocks/slider/components/presenter/presenter';
 import '../src/assets/blocks/slider/slider.scss';
 
-
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.className = 'divPresenterSpec';
@@ -514,6 +513,82 @@ describe(`Проверка поведения подсказки над бегу
 
     slider.dispatchEvent(fakeMouseClick);
     expect(hint.textContent).toEqual('0');
+  });
+});
+
+describe(`Проверка поведения подсказок при включенной опции "hintAlwaysShow"`, () => {
+  let leftThumb: HTMLDivElement;
+  let rightThumb: HTMLDivElement;
+  let rightHint: HTMLDivElement;
+  let presenter: Presenter;
+
+  const option = {
+    range: true, 
+    selector: '.divPresenterSpec',
+    className: 'slider', 
+    showScale: true,
+    min: 0, 
+    max: 600,
+    step: 1,
+    hintAlwaysShow: true,
+    thumbLeftPos: 360,
+    thumbRightPos: 434,
+  };
+
+  beforeEach(() => {
+    document.body.append(div);
+
+    presenter = new Presenter(option);
+
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    rightHint = <HTMLDivElement>div.getElementsByClassName('slider__hint')[1];
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`При движении подсказки правый бегунок исчезает, 
+    если бегунки находятся слишком близко`, () => {
+    presenter.setOptions({thumbRightPos: 361});
+    expect(rightHint.offsetWidth).toEqual(0);
+
+
+    presenter.setOptions({thumbRightPos: 600});
+    expect(rightHint.offsetWidth).toBeTruthy();
+
+    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+
+    let fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: -scaleWidth * 2, clientY: 0,
+      });
+
+    rightThumb.dispatchEvent(fakeMouseDown);
+    rightThumb.dispatchEvent(fakeMouseMove);
+
+    expect(rightHint.offsetWidth).toEqual(0);
+    rightThumb.dispatchEvent(fakeMouseUp);
+  });
+
+  it(`При нажатии на правый бегунок, если подсказки накладываются друг на друга,
+    он не должен появляться`, () => {
+    presenter.setOptions({thumbRightPos: 361});
+
+    rightThumb.dispatchEvent(fakeMouseDown);
+    expect(rightHint.offsetWidth).toEqual(0);
+    rightThumb.dispatchEvent(fakeMouseUp);
+  });
+
+  it(`При щелчке на якоре, подсказка над правым бегунком должна исчезнуть, если в результате
+  получилось наложение текстов подсказок`, () => {
+    presenter.setOptions({thumbRightPos: 302, thumbLeftPos: 299});
+    const anchors = div.getElementsByClassName('slider__scale-points');
+    anchors[1].dispatchEvent(fakeClick);
+    expect(rightHint.offsetWidth).toEqual(0);
   });
 });
 

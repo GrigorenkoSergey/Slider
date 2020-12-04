@@ -47,7 +47,6 @@ export default class Hint extends EventObserver{
   }
 
   hideHint() {
-    if (this.view.hintAlwaysShow) return;
     this.el.hidden = true;
   }
 
@@ -58,14 +57,6 @@ export default class Hint extends EventObserver{
     let transformation = `rotate(-${angle}deg)`;
     hint.style.transform = transformation;
     hint.style.transformOrigin = 'left';
-
-    const {sin, PI} = Math;
-    let radAngle = angle * PI / 180;
-
-    if (angle <= 45) {
-      transformation += ` translateX(${-50 * (1 -  sin(2 * radAngle))}%)`;
-      hint.style.transform = transformation;
-    }
   }
 
   private handleMousedown(e: Event) {

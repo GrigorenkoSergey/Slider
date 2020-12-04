@@ -57,6 +57,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.thumbs.addSubscriber('thumbMousedown', this);
     this.thumbs.addSubscriber('thumbMouseup', this);
 
+
     this._thumbLeftOffset = () => this.thumbs.thumbLeftOffset;
     this._thumbRigthOffset = () => this.thumbs.thumbRightOffset;
 
@@ -78,6 +79,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);
+    this.addSubscriber('range', this);
 
     return this;
   }
@@ -141,16 +143,16 @@ export default class View extends EventObserver implements ISubscriber {
       const thumb = data.el;
       this.handleThumbMousedown(thumb);
 
-    } else if (eventType === 'thumbMousemove') {
-      const thumb = data.el;
-      this.handleThumbMousemove(thumb);
-
     } else if (eventType === 'thumbMouseup') {
       const thumb = data.thumb;
       this.handleThumbMouseup(thumb);
 
     } else if (eventType === 'anchorClick') {
       this.handleAnchorClick(data);
+
+    } else if (eventType === 'range') {
+      this.handleHintsIntersection();
+      return this;
     }
 
     this.broadcast(eventType, data);
@@ -166,21 +168,25 @@ export default class View extends EventObserver implements ISubscriber {
     } else {
       data = {right: offset}
     }
+    this.handleHintsIntersection();
     this.broadcast('thumbProgramMove', data);
   }
 
   setAnchorValues(values: number[] | string[]) {
     this.scale.setAnchorValues(values);
+    this.handleHintsIntersection();
   }
 
   setHintValue(thumb: HTMLDivElement, value: string) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.setHintValue(value);
+    this.handleHintsIntersection();
   }
 
   private handleAnchorClick(offset: number): void {
     let closestThumb = this.findClosestThumb(offset);
     this.moveThumbToPos(closestThumb, offset);
+    this.handleHintsIntersection();
   }
 
   private handleThumbMousedown(thumb: HTMLDivElement) {
@@ -196,13 +202,6 @@ export default class View extends EventObserver implements ISubscriber {
     if (!this.hintAlwaysShow) {
       hint.hideHint();
     }
-  }
-
-  private handleThumbMousemove(thumb: HTMLElement) {
-    if (!this.hintAboveThumb) return;
-
-    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
-    hint.showHint();
   }
 
   private handleSliderClick(e: MouseEvent) {
@@ -285,5 +284,91 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     return closestThumb;
+  }
+
+  private checkHintsIntersection() {
+    if (!this.hintAlwaysShow || !this.range) return;
+
+    const [leftHint, rightHint] = this.hints.map(hint => hint.el);
+
+    /*
+     Если просто сравнивать границы текста и находить их пересечения, 
+     то для не моноширных шрифтов текст бOльших значений подсказок
+     может иметь меньшую длину, и появится мигание текста
+     при передвижении бегунка (подсказки соединились, разъединились,
+     снова соединились), поэтому унифицируем длину для 
+     всех возможных значений подсказки
+    */
+    const tempTextContent = new Array(leftHint.textContent?.length).fill('0').join(''); 
+    leftHint.textContent = tempTextContent;
+
+    let result = this.findElementsIntersection(leftHint, rightHint);
+
+    leftHint.textContent = this.hints[0].value;
+    return result.intersection;
+  }
+
+  handleHintsIntersection() {
+    if (!this.hintAlwaysShow) return;
+
+    this.hints[0].el.style.left = ``;
+    this.hints[0].el.style.top = ``;
+
+    this.hints.forEach(hint => hint.showHint());
+
+    if (this.checkHintsIntersection()) {
+      const trueIntersectionRect = 
+        this.findElementsIntersection(this.hints[0].el, this.hints[1].el);
+
+      this.hints[1].hideHint();
+
+      let leftValue = this.hints[0].value;
+      let rightValue = this.hints[1].value;
+
+      let textContent = `${leftValue}`;
+
+      if (leftValue !== rightValue) {
+        textContent += `...${rightValue}`;
+
+        this.hints[0].el.textContent = textContent;
+
+        // Пусть теперь центр текста находится посередине между бегунками
+        const leftThumbStyles = getComputedStyle(this.thumbs.thumbLeft);
+        const rightThumbStyles = getComputedStyle(this.thumbs.thumbRight);
+        const diff = parseFloat(rightThumbStyles.left) - parseFloat(leftThumbStyles.left);
+
+        const {cos, PI} = Math;
+        let radAngle = this.angle * PI / 180;
+        let cosA = cos(radAngle);
+
+        this.hints[0].el.style.left = `${
+          -trueIntersectionRect.width * cosA
+          + diff * (0.5 - cosA)
+        }px`;
+      }
+    }
+  }
+
+  private findElementsIntersection(firstEl: HTMLElement, secondEl: HTMLElement) {
+    // firstEl - элемент, расплолженный ближе к началу координат
+    const firstElRect = firstEl.getBoundingClientRect();
+    const secondElRect = secondEl.getBoundingClientRect();
+
+    let width = 0;
+    let height = 0;
+    let intersection = false;
+
+    if (firstEl.offsetWidth && secondEl.offsetWidth) {
+      width = firstElRect.right - secondElRect.left;
+      height = firstElRect.bottom - secondElRect.top;
+      intersection = (width >= 0 && height >= 0);
+
+      if (!intersection) {
+        width = 0;
+        height =  0;
+      } 
+    }
+
+    return {intersection, width, height};
   }
 }
