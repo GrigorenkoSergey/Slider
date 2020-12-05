@@ -4,7 +4,7 @@ function isIncreasing(arr: number[] | string[]): boolean {
   let result = true;
 
   arrSliced.forEach((item: number | string) => {
-    let isGreater = Number(item) > prev;
+    const isGreater = Number(item) > prev;
     prev = Number(item);
 
     if (!isGreater) result = false;

@@ -287,88 +287,46 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private checkHintsIntersection() {
-    if (!this.hintAlwaysShow || !this.range) return;
+    if (!this.hintAlwaysShow || !this.range) return false;
 
     const [leftHint, rightHint] = this.hints.map(hint => hint.el);
 
-    /*
-     Если просто сравнивать границы текста и находить их пересечения, 
-     то для не моноширных шрифтов текст бOльших значений подсказок
-     может иметь меньшую длину, и появится мигание текста
-     при передвижении бегунка (подсказки соединились, разъединились,
-     снова соединились), поэтому унифицируем длину для 
-     всех возможных значений подсказки
-    */
-    const tempTextContent = new Array(leftHint.textContent?.length).fill('0').join(''); 
-    leftHint.textContent = tempTextContent;
+    let result = false;
 
-    let result = this.findElementsIntersection(leftHint, rightHint);
+    if (leftHint.offsetWidth && rightHint.offsetWidth) {
+      const leftHintRect = leftHint.getBoundingClientRect();
+      const rightHintRect = rightHint.getBoundingClientRect();
 
-    leftHint.textContent = this.hints[0].value;
-    return result.intersection;
+      result = (leftHintRect.right >= rightHintRect.left 
+      && leftHintRect.bottom >= rightHintRect.top);
+    }
+
+    return result;
   }
 
   handleHintsIntersection() {
     if (!this.hintAlwaysShow) return;
 
-    this.hints[0].el.style.left = ``;
-    this.hints[0].el.style.top = ``;
-
     this.hints.forEach(hint => hint.showHint());
 
     if (this.checkHintsIntersection()) {
-      const trueIntersectionRect = 
-        this.findElementsIntersection(this.hints[0].el, this.hints[1].el);
-
+      /*
+       добавим модификатор, чтобы можно было потом как-то выбрать с помощью
+       javascript, к примеру, чтобы подвинуть как нужно пользователю
+      */
+      this.hints[0].el.classList.add(`${this.className}__hint_summary`);
       this.hints[1].hideHint();
 
       let leftValue = this.hints[0].value;
       let rightValue = this.hints[1].value;
 
-      let textContent = `${leftValue}`;
-
       if (leftValue !== rightValue) {
-        textContent += `...${rightValue}`;
-
+        let textContent = `${leftValue}...${rightValue}`;
         this.hints[0].el.textContent = textContent;
-
-        // Пусть теперь центр текста находится посередине между бегунками
-        const leftThumbStyles = getComputedStyle(this.thumbs.thumbLeft);
-        const rightThumbStyles = getComputedStyle(this.thumbs.thumbRight);
-        const diff = parseFloat(rightThumbStyles.left) - parseFloat(leftThumbStyles.left);
-
-        const {cos, PI} = Math;
-        let radAngle = this.angle * PI / 180;
-        let cosA = cos(radAngle);
-
-        this.hints[0].el.style.left = `${
-          -trueIntersectionRect.width * cosA
-          + diff * (0.5 - cosA)
-        }px`;
       }
+      
+    } else {
+      this.hints[0].el.classList.remove(`${this.className}__hint_summary`);
     }
-  }
-
-  private findElementsIntersection(firstEl: HTMLElement, secondEl: HTMLElement) {
-    // firstEl - элемент, расплолженный ближе к началу координат
-    const firstElRect = firstEl.getBoundingClientRect();
-    const secondElRect = secondEl.getBoundingClientRect();
-
-    let width = 0;
-    let height = 0;
-    let intersection = false;
-
-    if (firstEl.offsetWidth && secondEl.offsetWidth) {
-      width = firstElRect.right - secondElRect.left;
-      height = firstElRect.bottom - secondElRect.top;
-      intersection = (width >= 0 && height >= 0);
-
-      if (!intersection) {
-        width = 0;
-        height =  0;
-      } 
-    }
-
-    return {intersection, width, height};
   }
 }
