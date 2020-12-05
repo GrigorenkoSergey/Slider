@@ -293,13 +293,33 @@ export default class View extends EventObserver implements ISubscriber {
 
     let result = false;
 
-    if (leftHint.offsetWidth && rightHint.offsetWidth) {
-      const leftHintRect = leftHint.getBoundingClientRect();
-      const rightHintRect = rightHint.getBoundingClientRect();
+    /*
+     Если просто сравнивать границы текста и находить их пересечения, 
+     то для не моноширных шрифтов текст бOльших значений подсказок
+     может иметь меньшую длину, и появится мигание текста
+     при передвижении бегунка (подсказки соединились, разъединились,
+     снова соединились), поэтому унифицируем длину для 
+     всех возможных значений подсказки
+    */
+    const zerosTextContent = new Array(leftHint.textContent?.length).fill('0').join(''); 
+    leftHint.textContent = zerosTextContent;
+    let zerosHintRect = leftHint.getBoundingClientRect();
 
-      result = (leftHintRect.right >= rightHintRect.left 
-      && leftHintRect.bottom >= rightHintRect.top);
+    leftHint.textContent = this.hints[0].value; 
+    let leftHintRect = leftHint.getBoundingClientRect();
+
+    let longestLeftHintRect;
+      
+    if (zerosHintRect.width < leftHintRect.width) {
+      longestLeftHintRect = leftHintRect;
+    } else {
+      longestLeftHintRect = zerosHintRect;
     }
+
+    const rightHintRect = rightHint.getBoundingClientRect();
+
+    result = (longestLeftHintRect.right >= rightHintRect.left 
+      && longestLeftHintRect.bottom >= rightHintRect.top);
 
     return result;
   }

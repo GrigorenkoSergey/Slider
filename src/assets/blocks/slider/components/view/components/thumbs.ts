@@ -42,7 +42,8 @@ export default class Thumbs extends EventObserver {
   }
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
-    thumb.style.left = offset * (this.view.el.clientWidth - thumb.offsetWidth) + 'px';
+    let newLeft = offset * (this.view.el.clientWidth - thumb.offsetWidth);
+    thumb.style.left = newLeft + 'px';
 
     if (thumb == this.thumbLeft) {
       this.thumbLeftOffset = offset;
@@ -121,7 +122,20 @@ export default class Thumbs extends EventObserver {
 
       thumb.style.left = newLeft + 'px';
 
-      const offset = newLeft / scaleInnerWidth;
+      let offset = newLeft / scaleInnerWidth;
+      /* 
+        Вот здесь может возникнуть ошибка из-за механики округления значений left
+        браузером. Он округляет до 1/1000, а наши вычисления гораздо точнее, 
+        поэтому на границах может возникнуть ошибка, например, когда 
+        наши значения left бегунков совпадают, а вычисленные значения offset отличаются.
+        Соответственно не совпадают и значения подсказок над бегунками.
+        Поэтому удостоверимся, что не будет никаких неприятных сюрпризов.
+      */
+      if (newLeft === leftLimit) {
+        offset = self.thumbLeftOffset;
+      } else if(newLeft === rightLimit && self.view.range) {
+        offset = self.thumbRightOffset;
+      }
 
       if (thumb === self.thumbLeft) {
         self.thumbLeftOffset = offset;

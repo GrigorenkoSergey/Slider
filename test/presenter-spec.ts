@@ -678,6 +678,22 @@ describe(`Данные баги более не возникают\n`, () => {
     expect(leftHint.textContent).toEqual('11');
   });
 
+  it(`При следующих значениях ошибка не возникает:`, () => {
+    slider.setOptions({min: 1000000, max: 6000000, step: 1, range: true});
+    slider.setOptions({thumbRightPos: 5112367});
+    leftThumb.dispatchEvent(fakeMouseDown);
+
+    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+    let fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true, cancelable: true,
+        clientX: scaleWidth * 2, clientY: 0,
+      });
+    leftThumb.dispatchEvent(fakeMouseMove);
+    expect(slider.getOptions().thumbLeftPos).toEqual(5112367);
+    expect(leftHint.textContent).toEqual(rightHint.textContent);
+  });
+
   it(`При изменении шага, бегунок нельзя перетащить за границы слайдера`, () => {
     slider.setOptions({min: 0, max: 11, step: 4, range: false});
     leftThumb.dispatchEvent(fakeMouseDown);
@@ -690,6 +706,7 @@ describe(`Данные баги более не возникают\n`, () => {
         clientX: scaleWidth * 2, clientY: 0,
       });
 
+      debugger;
     leftThumb.dispatchEvent(fakeMouseMove);
     expect(leftHint.textContent).toEqual('8');
     leftThumb.dispatchEvent(fakeMouseUp);
