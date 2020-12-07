@@ -1,15 +1,22 @@
+// Потом 2 строки ниже можно убрать
+/* eslint-disable no-shadow */
+/* eslint-disable no-use-before-define */
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
-import '../../../../helpers/types.ts';
+import '../../../../helpers/types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
 export default class Thumbs extends EventObserver {
   thumbLeft!: HTMLDivElement;
+
   thumbRight!: HTMLDivElement;
+
   thumbLeftOffset: number = 0;
+
   thumbRightOffset: number = 1;
+
   view!: View;
 
   constructor(view: View) {
@@ -20,7 +27,7 @@ export default class Thumbs extends EventObserver {
 
   private render() {
     const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
-    Object.assign(this, {thumbLeft, thumbRight});
+    Object.assign(this, { thumbLeft, thumbRight });
 
     thumbLeft.className = `${this.view.className}__thumb-left`;
     thumbRight.className = `${this.view.className}__thumb-right`;
@@ -42,10 +49,11 @@ export default class Thumbs extends EventObserver {
   }
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
-    let newLeft = offset * (this.view.el.clientWidth - thumb.offsetWidth);
-    thumb.style.left = newLeft + 'px';
+    const newLeft = offset * (this.view.el.clientWidth - thumb.offsetWidth);
+    // eslint-disable-next-line no-param-reassign
+    thumb.style.left = `${newLeft}px`;
 
-    if (thumb == this.thumbLeft) {
+    if (thumb === this.thumbLeft) {
       this.thumbLeftOffset = offset;
     } else {
       this.thumbRightOffset = offset;
@@ -53,7 +61,7 @@ export default class Thumbs extends EventObserver {
 
     this.broadcast('thumbProgramMove', {
       el: thumb,
-      offset: offset,
+      offset,
     });
   }
 
@@ -62,7 +70,7 @@ export default class Thumbs extends EventObserver {
 
     const thumb = <HTMLElement>e.target;
     const slider = this.view.el;
-    const {view} = this;
+    const { view } = this;
 
     const sliderCoords: DOMRect = slider.getBoundingClientRect();
     const thumbCoords: DOMRect = thumb.getBoundingClientRect();
@@ -70,13 +78,12 @@ export default class Thumbs extends EventObserver {
     const startX: number = sliderCoords.left + slider.clientLeft;
     const startY: number = sliderCoords.top + slider.clientTop;
 
-    const cosA: number = Math.cos(view.angle / 180 * Math.PI);
-    const sinA: number = Math.sin(view.angle / 180 * Math.PI);
+    const cosA: number = Math.cos((view.angle / 180) * Math.PI);
+    const sinA: number = Math.sin((view.angle / 180) * Math.PI);
 
-    const pixelStep: number =
-      this.view.step * (slider.clientWidth - thumb.offsetWidth);
+    const pixelStep: number = this.view.step * (slider.clientWidth - thumb.offsetWidth);
 
-    let leftLimit: number; 
+    let leftLimit: number;
     if (thumb === this.thumbLeft) {
       leftLimit = 0;
     } else {
@@ -89,7 +96,7 @@ export default class Thumbs extends EventObserver {
     } else {
       const scaleWidth = slider.clientWidth - thumb.offsetWidth;
       rightLimit = Math.floor(scaleWidth / pixelStep) * pixelStep;
-    } 
+    }
 
     const shiftX: number = e.clientX - thumbCoords.left;
     const shiftY: number = e.clientY - thumbCoords.top;
@@ -97,7 +104,7 @@ export default class Thumbs extends EventObserver {
     thumb.classList.add(`${view.className}__thumb_moving`);
 
     const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
-    const offset = thumb == this.thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
+    const offset = thumb === this.thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
     this.broadcast('thumbMousedown', {
       el: thumb,
@@ -110,7 +117,7 @@ export default class Thumbs extends EventObserver {
 
     function handleDocumentMouseMove(e: MouseEvent): void {
       e.preventDefault();
-      thumb.style.zIndex = '' + 1000;
+      thumb.style.zIndex = `${1000}`;
 
       const newLeftX: number = e.clientX - startX - shiftX;
       const newLeftY: number = e.clientY - startY - shiftY;
@@ -120,20 +127,20 @@ export default class Thumbs extends EventObserver {
       newLeft = Math.max(leftLimit, newLeft);
       newLeft = Math.min(newLeft, rightLimit);
 
-      thumb.style.left = newLeft + 'px';
+      thumb.style.left = `${newLeft}px`;
 
       let offset = newLeft / scaleInnerWidth;
-      /* 
+      /*
         Вот здесь может возникнуть ошибка из-за механики округления значений left
-        браузером. Он округляет до 1/1000, а наши вычисления гораздо точнее, 
-        поэтому на границах может возникнуть ошибка, например, когда 
+        браузером. Он округляет до 1/1000, а наши вычисления гораздо точнее,
+        поэтому на границах может возникнуть ошибка, например, когда
         наши значения left бегунков совпадают, а вычисленные значения offset отличаются.
         Соответственно не совпадают и значения подсказок над бегунками.
         Поэтому удостоверимся, что не будет никаких неприятных сюрпризов.
       */
       if (newLeft === leftLimit) {
         offset = self.thumbLeftOffset;
-      } else if(newLeft === rightLimit && self.view.range) {
+      } else if (newLeft === rightLimit && self.view.range) {
         offset = self.thumbRightOffset;
       }
 
@@ -152,7 +159,7 @@ export default class Thumbs extends EventObserver {
     function handleDocumentMouseUp(): void {
       thumb.classList.remove(`${view.className}__thumb_moving`);
       self.broadcast('thumbMouseup', {
-        thumb, 
+        thumb,
       });
       document.removeEventListener('mousemove', handleDocumentMouseMove);
       document.removeEventListener('mouseup', handleDocumentMouseUp);

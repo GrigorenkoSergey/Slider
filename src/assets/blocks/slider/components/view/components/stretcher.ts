@@ -3,6 +3,7 @@ import EventObserver from '../../../../helpers/event-observer';
 
 export default class Stretcher extends EventObserver {
   el!: HTMLDivElement;
+
   view: View;
 
   constructor(view: View) {
@@ -23,19 +24,15 @@ export default class Stretcher extends EventObserver {
 
   update() {
     if (this.view.range) {
-      this.el.style.left =
-        parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left) +
-        this.view.thumbs.thumbLeft.offsetWidth / 2 + 'px';
+      this.el.style.left = `${parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left)
+        + this.view.thumbs.thumbLeft.offsetWidth / 2}px`;
 
-      this.el.style.right =
-        this.view.el.clientWidth -
-        parseFloat(getComputedStyle(this.view.thumbs.thumbRight).left) + 'px';
-
+      this.el.style.right = `${this.view.el.clientWidth
+        - parseFloat(getComputedStyle(this.view.thumbs.thumbRight).left)}px`;
     } else {
       this.el.style.left = '0px';
-      this.el.style.right =
-        this.view.el.clientWidth -
-        parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left) + 'px';
+      this.el.style.right = `${this.view.el.clientWidth
+        - parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left)}px`;
     }
   }
 }

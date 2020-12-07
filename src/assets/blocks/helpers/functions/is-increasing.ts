@@ -1,6 +1,6 @@
 function isIncreasing(arr: number[] | string[]): boolean {
   let prev = Number(arr[0]);
-  let arrSliced = arr.slice(1);
+  const arrSliced = arr.slice(1);
   let result = true;
 
   arrSliced.forEach((item: number | string) => {

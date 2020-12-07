@@ -3,17 +3,15 @@
 const path = require('path');
 const webpackConfig = require('./webpack.config');
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine'],
-
 
     // list of files / patterns to load in the browser
     files: [
@@ -40,8 +38,9 @@ module.exports = function(config) {
               {
                 loader: 'postcss-loader',
                 options: {
-                  sourceMap: true, config:
-                    {path: 'postcss.config.js'},
+                  sourceMap: true,
+                  config:
+                    { path: 'postcss.config.js' },
                 },
               },
               'sass-loader',
@@ -95,11 +94,6 @@ module.exports = function(config) {
       },
     },
 
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
-
     // web server port
     port: 9876,
 
@@ -141,24 +135,24 @@ module.exports = function(config) {
 
     coverageIstanbulReporter: {
       // reports can be any that are listed here: https://github.com/istanbuljs/istanbuljs/tree/73c25ce79f91010d1ff073aa6ff3fd01114f90db/packages/istanbul-reports/lib
-      'reports': ['html', 'lcovonly', 'text-summary'],
+      reports: ['html', 'lcovonly', 'text-summary'],
 
       // base output directory. If you include %browser% in the path
       // it will be replaced with the karma browser name
-      'dir': path.join(__dirname, 'coverage'),
+      dir: path.join(__dirname, 'coverage'),
 
       // Combines coverage information from multiple browsers into one
       // report rather than outputting a report
       // for each browser.
-      'combineBrowserReports': true,
+      combineBrowserReports: true,
 
       // if using webpack and pre-loaders, work around
       // webpack breaking the source path
-      'fixWebpackSourcePaths': true,
+      fixWebpackSourcePaths: true,
 
       // Omit files with no statements, no functions
       // and no branches covered from the report
-      'skipFilesWithNoCoverage': true,
+      skipFilesWithNoCoverage: true,
 
       // Most reporters accept additional config options.
       // You can pass these through the `report-config` option
@@ -170,7 +164,7 @@ module.exports = function(config) {
         },
       },
 
-      'verbose': true, // output config used by istanbul for debugging
+      verbose: true, // output config used by istanbul for debugging
     },
   });
 };

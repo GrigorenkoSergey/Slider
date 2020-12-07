@@ -1,5 +1,5 @@
 import EventObserver from '../src/assets/blocks/helpers/event-observer';
-import {ISubscriber} from '../src/assets/blocks/helpers/interfaces';
+import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
 
 describe('EventObserver\n', () => {
   let observer: EventObserver;
@@ -41,17 +41,17 @@ describe('EventObserver\n', () => {
     });
 
     it('Ничего не делает, если подписчика или события нет', () => {
-      const {...subscriber3} = subscriber1;
+      const { ...subscriber3 } = subscriber1;
       observer.removeSubscriber('mousemove', subscriber1);
       observer.removeSubscriber('mouseup', subscriber3);
 
       expect(observer.observers).toEqual(jasmine.objectContaining({
-        'mousedown': [subscriber1, subscriber2],
-        'mouseup': [subscriber2],
+        mousedown: [subscriber1, subscriber2],
+        mouseup: [subscriber2],
       }));
 
       expect(observer.observers).not.toEqual(jasmine.objectContaining({
-        'mousemove': [subscriber1],
+        mousemove: [subscriber1],
       }));
     });
   });
@@ -71,4 +71,3 @@ describe('EventObserver\n', () => {
     });
   });
 });
-

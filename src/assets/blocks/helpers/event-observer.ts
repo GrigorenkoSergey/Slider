@@ -1,4 +1,4 @@
-import {ISubscriber} from './interfaces';
+import { ISubscriber } from './interfaces';
 
 export default class EventObserver {
   observers: {[key: string]: ISubscriber[]} = {};

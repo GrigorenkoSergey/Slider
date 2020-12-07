@@ -1,6 +1,6 @@
 import '../src/assets/blocks/slider/slider';
-import {Obj} from '../src/assets/blocks/helpers/types';
-import Presenter from '../src/assets/blocks/slider/components/presenter/presenter';
+import { Obj } from '../src/assets/blocks/helpers/types';
+import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
 import SliderOptionsPalette from '../src/assets/blocks/main-page/components/slider-options-palette';
 
 import '../src/assets/blocks/main-page/main-page.scss';
@@ -10,18 +10,20 @@ import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 
 let slider: Presenter;
 let palette: SliderOptionsPalette;
-let anchors: HTMLCollection; 
-let leftThumb: Element;
-let rightThumb: Element;
-let leftHint: Element;
-let rightHint: Element;
+let anchors: HTMLCollection;
+let leftThumb: HTMLDivElement;
+let rightThumb: HTMLDivElement;
+let leftHint: HTMLDivElement;
+let rightHint: HTMLDivElement;
 
 const fakeChange = new Event('change', {
   bubbles: true, cancelable: true,
 });
 
 const fakeMouseDown = new MouseEvent('mousedown',
-  {bubbles: true, cancelable: true, clientX: 0, clientY: 0});
+  {
+    bubbles: true, cancelable: true, clientX: 0, clientY: 0,
+  });
 
 const fakeMouseUp = new MouseEvent('mouseup', {
   bubbles: true, cancelable: true,
@@ -34,19 +36,19 @@ const fakeClick = new MouseEvent('click', {
 describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
-  div.style.marginTop = "100px";
+  div.style.marginTop = '100px';
 
-  let options: Obj = {
+  const options: Obj = {
     min: 2,
     max: 600,
     step: 4,
-    selector: ".sliderPalette",
+    selector: '.sliderPalette',
     angle: 0,
     range: true,
     hintAboveThumb: true,
   };
 
-  let example = document.createElement('div');
+  const example = document.createElement('div');
   example.className = 'example1';
   beforeEach(() => {
     document.body.append(example);
@@ -56,10 +58,10 @@ describe('Проверка связи значения инпута со зна�
     palette = new SliderOptionsPalette(example, slider);
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
   });
 
   afterEach(() => {
@@ -69,20 +71,20 @@ describe('Проверка связи значения инпута со зна�
     div.remove();
   });
 
-  it(`Поменяем значение max`, () => {
+  it('Поменяем значение max', () => {
     palette.max.el.value = '500';
     palette.max.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().max).toEqual(500);
     expect(anchors[anchors.length - 1].textContent).toEqual('500');
   });
 
-  it(`Поменяем значение step`, () => {
+  it('Поменяем значение step', () => {
     palette.step.el.value = '5';
     palette.step.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().step).toEqual(5);
   });
 
-  it(`Поменяем значение angle`, () => {
+  it('Поменяем значение angle', () => {
     palette.angle.el.value = '45';
     palette.angle.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().angle).toEqual(45);
@@ -92,7 +94,7 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().angle).toEqual(0);
   });
 
-  it(`Поменяем значение thumbLeftPos`, () => {
+  it('Поменяем значение thumbLeftPos', () => {
     palette.thumbLeftPos.el.value = '50';
     palette.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().thumbLeftPos).toEqual(50);
@@ -101,7 +103,7 @@ describe('Проверка связи значения инпута со зна�
     leftThumb.dispatchEvent(fakeMouseUp);
   });
 
-  it(`Поменяем значение "range"`, () => {
+  it('Поменяем значение "range"', () => {
     palette.range.el.checked = true;
     palette.range.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().range).toBeTrue();
@@ -113,7 +115,7 @@ describe('Проверка связи значения инпута со зна�
     expect(document.contains(rightThumb)).toBeFalse();
   });
 
-  it(`Поменяем значение thumbRightPos`, () => {
+  it('Поменяем значение thumbRightPos', () => {
     palette.range.el.checked = true;
     palette.range.el.dispatchEvent(fakeChange);
     palette.thumbRightPos.el.value = '400';
@@ -125,19 +127,19 @@ describe('Проверка связи значения инпута со зна�
     rightThumb.dispatchEvent(fakeMouseUp);
   });
 
-  it(`Поменяем значение showScale`, () => {
+  it('Поменяем значение showScale', () => {
     palette.showScale.el.checked = false;
     palette.showScale.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().showScale).toBeFalse();
-    expect(Array.from(anchors).every(item => item.clientWidth == 0)).toBeTrue();;
-    
+    expect(Array.from(anchors).every((item) => item.clientWidth === 0)).toBeTrue();
+
     palette.showScale.el.checked = true;
     palette.showScale.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().showScale).toBeTrue();
-    expect(Array.from(anchors).every(item => item.clientWidth != 0)).toBeTrue();;
+    expect(Array.from(anchors).every((item) => item.clientWidth !== 0)).toBeTrue();
   });
 
-  it(`Поменяем значение hintAlwaysShow`, () => {
+  it('Поменяем значение hintAlwaysShow', () => {
     palette.hintAlwaysShow.el.checked = false;
     palette.hintAlwaysShow.el.dispatchEvent(fakeChange);
     expect(leftHint.clientWidth).toBeFalsy();
@@ -153,7 +155,7 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().hintAlwaysShow).toBeTrue();
   });
 
-  it(`Поменяем значение "partsNum`, () => {
+  it('Поменяем значение "partsNum', () => {
     palette.partsNum.el.value = '3';
     palette.partsNum.el.dispatchEvent(fakeChange);
     expect(anchors.length).toEqual(4);
@@ -163,13 +165,13 @@ describe('Проверка связи значения инпута со зна�
     expect(anchors.length).toEqual(7);
   });
 
-  it(`Поменяем значение hintAboveThumb`, () => {
+  it('Поменяем значение hintAboveThumb', () => {
     palette.hintAboveThumb.el.checked = false;
     palette.hintAboveThumb.el.dispatchEvent(fakeChange);
 
     palette.hintAlwaysShow.el.checked = false;
     palette.hintAlwaysShow.el.dispatchEvent(fakeChange);
-    
+
     expect(leftHint.clientWidth).toBeFalsy();
     expect(slider.getOptions().hintAboveThumb).toBeFalse();
 
@@ -188,36 +190,36 @@ describe('Проверка связи значения инпута со зна�
   });
 });
 
-describe(`При установке значения свойств программно, значения полей меняются автоматически\n`, () => {
+describe('При установке значения свойств программно, значения полей меняются автоматически\n', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
-  div.style.marginTop = "100px";
+  div.style.marginTop = '100px';
 
-  let options: Obj = {
+  const options: Obj = {
     min: 0,
     max: 100,
     step: 1,
-    selector: ".sliderPalette",
+    selector: '.sliderPalette',
     angle: 0,
     range: true,
     hintAboveThumb: true,
   };
 
-  let example = document.createElement('div');
+  const example = document.createElement('div');
   example.className = 'example2';
 
   beforeEach(() => {
     document.body.append(example);
     document.body.append(div);
 
-    slider = new Presenter({...options});
+    slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
   });
 
   afterEach(() => {
@@ -227,41 +229,41 @@ describe(`При установке значения свойств програ
     div.remove();
   });
 
-  it(`Поменяем значение min`, () => {
-    slider.setOptions({min: 0});
+  it('Поменяем значение min', () => {
+    slider.setOptions({ min: 0 });
     expect(slider.getOptions().min).toEqual(0);
     expect(anchors[0].textContent).toEqual('0');
     expect(palette.min.el.value).toEqual('0');
   });
 
-  it(`Поменяем значение max`, () => {
-    slider.setOptions({max: 200});
+  it('Поменяем значение max', () => {
+    slider.setOptions({ max: 200 });
     expect(slider.getOptions().max).toEqual(200);
     expect(anchors[anchors.length - 1].textContent).toEqual('200');
     expect(palette.max.el.value).toEqual('200');
   });
 
-  it(`Поменяем значение max`, () => {
-    slider.setOptions({max: 100});
+  it('Поменяем значение max', () => {
+    slider.setOptions({ max: 100 });
     expect(slider.getOptions().max).toEqual(100);
     expect(anchors[anchors.length - 1].textContent).toEqual('100');
     expect(palette.max.el.value).toEqual('100');
   });
 
-  it(`Поменяем значение step`, () => {
-    slider.setOptions({step: 100});
+  it('Поменяем значение step', () => {
+    slider.setOptions({ step: 100 });
     expect(slider.getOptions().max).toEqual(100);
     expect(anchors[anchors.length - 1].textContent).toEqual('100');
     expect(palette.max.el.value).toEqual('100');
   });
 
-  it(`Поменяем значение angle`, () => {
-    slider.setOptions({angle: 45});
+  it('Поменяем значение angle', () => {
+    slider.setOptions({ angle: 45 });
     expect(slider.getOptions().angle).toEqual(45);
   });
 
-  it(`Поменяем значение thumbLeftPos`, () => {
-    slider.setOptions({thumbLeftPos: 25, range: false});
+  it('Поменяем значение thumbLeftPos', () => {
+    slider.setOptions({ thumbLeftPos: 25, range: false });
     expect(slider.getOptions().thumbLeftPos).toEqual(25);
     expect(palette.thumbLeftPos.el.value).toEqual('25');
 
@@ -275,16 +277,16 @@ describe(`При установке значения свойств програ
     expect(palette.thumbLeftPos.el.value).toEqual('100');
   });
 
-  it(`Поменяем значение "range"`, () => {
-    slider.setOptions({range: false});
+  it('Поменяем значение "range"', () => {
+    slider.setOptions({ range: false });
     expect(palette.range.el.checked).toBeFalse();
 
-    slider.setOptions({range: true});
+    slider.setOptions({ range: true });
     expect(palette.range.el.checked).toBeTrue();
   });
 
-  it(`Поменяем значение "thumbRightPos"`, () => {
-    slider.setOptions({thumbRightPos: 75});
+  it('Поменяем значение "thumbRightPos"', () => {
+    slider.setOptions({ thumbRightPos: 75 });
     expect(palette.thumbRightPos.el.value).toEqual('75');
 
     anchors[1].dispatchEvent(fakeClick);
@@ -294,35 +296,35 @@ describe(`При установке значения свойств програ
     expect(palette.thumbRightPos.el.value).toEqual('100');
   });
 
-  it(`Поменяем значение "showScale"`, () => {
-    slider.setOptions({showScale: false});
+  it('Поменяем значение "showScale"', () => {
+    slider.setOptions({ showScale: false });
     expect(palette.showScale.el.checked).toBeFalse();
 
-    slider.setOptions({showScale: true});
+    slider.setOptions({ showScale: true });
     expect(palette.showScale.el.checked).toBeTrue();
   });
 
-  it(`Поменяем значение "hintAlwaysShow"`, () => {
-    slider.setOptions({hintAlwaysShow: true});
+  it('Поменяем значение "hintAlwaysShow"', () => {
+    slider.setOptions({ hintAlwaysShow: true });
     expect(palette.hintAlwaysShow.el.checked).toBeTrue();
 
-    slider.setOptions({hintAlwaysShow: false});
+    slider.setOptions({ hintAlwaysShow: false });
     expect(palette.hintAlwaysShow.el.checked).toBeFalse();
   });
 
-  it(`Поменяем значение "partsNum"`, () => {
-    slider.setOptions({partsNum: 3});
+  it('Поменяем значение "partsNum"', () => {
+    slider.setOptions({ partsNum: 3 });
     expect(palette.partsNum.el.value).toEqual('3');
 
-    slider.setOptions({partsNum: 4});
+    slider.setOptions({ partsNum: 4 });
     expect(palette.partsNum.el.value).toEqual('4');
   });
 
-  it(`Поменяем значение "hintAboveThumb"`, () => {
-    slider.setOptions({hintAboveThumb: true});
+  it('Поменяем значение "hintAboveThumb"', () => {
+    slider.setOptions({ hintAboveThumb: true });
     expect(palette.hintAboveThumb.el.checked).toBeTrue();
 
-    slider.setOptions({hintAboveThumb: false});
+    slider.setOptions({ hintAboveThumb: false });
     expect(palette.hintAboveThumb.el.checked).toBeFalse();
   });
 });
@@ -330,23 +332,23 @@ describe(`При установке значения свойств програ
 describe('В поля ввода нельза ввести ошибочные данные\n', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
-  div.style.marginTop = "100px";
+  div.style.marginTop = '100px';
 
-  let options: Obj = {
+  const options: Obj = {
     min: 0,
     max: 100,
     step: 1,
-    selector: ".sliderPalette",
+    selector: '.sliderPalette',
   };
 
-  let example = document.createElement('div');
+  const example = document.createElement('div');
   example.className = 'example3';
 
   beforeEach(() => {
     document.body.append(example);
     document.body.append(div);
 
-    slider = new Presenter({...options});
+    slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
   });
 
@@ -357,8 +359,8 @@ describe('В поля ввода нельза ввести ошибочные д
     div.remove();
   });
 
-  it(`Попробуем поменять значение min`, () => {
-    const value = palette.min.el.value;
+  it('Попробуем поменять значение min', () => {
+    const { value } = palette.min.el;
     palette.min.el.value = 'a';
     palette.min.el.dispatchEvent(fakeChange);
 
@@ -376,14 +378,14 @@ describe('В поля ввода нельза ввести ошибочные д
     palette.min.el.dispatchEvent(fakeChange);
     expect(palette.min.el.value).toEqual(value);
 
-    slider.setOptions({max: 10, min: 0, step: 5});
+    slider.setOptions({ max: 10, min: 0, step: 5 });
     palette.min.el.value = '6';
     palette.min.el.dispatchEvent(fakeChange);
     expect(palette.min.el.value).toEqual('0');
   });
 
-  it(`Попробуем поменять значение max`, () => {
-    const value = palette.max.el.value;
+  it('Попробуем поменять значение max', () => {
+    const { value } = palette.max.el;
     palette.max.el.value = 'a';
     palette.max.el.dispatchEvent(fakeChange);
 
@@ -401,14 +403,14 @@ describe('В поля ввода нельза ввести ошибочные д
     palette.max.el.dispatchEvent(fakeChange);
     expect(palette.max.el.value).toEqual(value);
 
-    slider.setOptions({max: 10, min: 0, step: 5});
+    slider.setOptions({ max: 10, min: 0, step: 5 });
     palette.max.el.value = '4';
     palette.max.el.dispatchEvent(fakeChange);
     expect(palette.max.el.value).toEqual('10');
   });
 
-  it(`Попробуем поменять значение step`, () => {
-    const value = palette.step.el.value;
+  it('Попробуем поменять значение step', () => {
+    const { value } = palette.step.el;
     palette.step.el.value = 'a';
     palette.step.el.dispatchEvent(fakeChange);
 
@@ -431,8 +433,8 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(palette.step.el.value).toEqual(value);
   });
 
-  it(`Поменяем значение angle`, () => {
-    const value = palette.angle.el.value;
+  it('Поменяем значение angle', () => {
+    const { value } = palette.angle.el;
     palette.angle.el.value = '-10';
     palette.angle.el.dispatchEvent(fakeChange);
     expect(palette.angle.el.value).toEqual(value);
@@ -446,11 +448,11 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(palette.angle.el.value).toEqual(value);
   });
 
-  it(`Поменяем значение thumbLeftPos, оно не может выйти за пределы`, () => {
+  it('Поменяем значение thumbLeftPos, оно не может выйти за пределы', () => {
     palette.range.el.checked = false;
     palette.range.el.dispatchEvent(fakeChange);
 
-    const value = palette.thumbLeftPos.el.value;
+    const { value } = palette.thumbLeftPos.el;
 
     palette.thumbLeftPos.el.value = '-10';
     palette.thumbLeftPos.el.dispatchEvent(fakeChange);
@@ -464,16 +466,16 @@ describe('В поля ввода нельза ввести ошибочные д
     palette.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(palette.thumbLeftPos.el.value).toEqual('100');
 
-    slider.setOptions({thumbLeftPos: value, thumbRightPos: 50, range: true})
+    slider.setOptions({ thumbLeftPos: value, thumbRightPos: 50, range: true });
     palette.thumbLeftPos.el.value = '51';
     palette.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(palette.thumbLeftPos.el.value).toEqual(value);
   });
 
-  it(`Поменяем значение thumbRightPos, оно не может выйти за пределы`, () => {
-    slider.setOptions({thumbLeftPos: 0, range: true});
+  it('Поменяем значение thumbRightPos, оно не может выйти за пределы', () => {
+    slider.setOptions({ thumbLeftPos: 0, range: true });
 
-    const value = palette.thumbRightPos.el.value;
+    const { value } = palette.thumbRightPos.el;
     palette.thumbRightPos.el.value = '-10';
     palette.thumbRightPos.el.dispatchEvent(fakeChange);
     expect(palette.thumbRightPos.el.value).toEqual(value);
@@ -483,10 +485,10 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(palette.thumbRightPos.el.value).toEqual('100');
   });
 
-  it(`Поменяем значение partsNum`, () => {
+  it('Поменяем значение partsNum', () => {
     palette.range.el.dispatchEvent(fakeChange);
 
-    const value = palette.partsNum.el.value;
+    const { value } = palette.partsNum.el;
     palette.partsNum.el.value = '-10';
     palette.partsNum.el.dispatchEvent(fakeChange);
     expect(palette.partsNum.el.value).toEqual(value);
@@ -513,36 +515,36 @@ describe('В поля ввода нельза ввести ошибочные д
   });
 });
 
-describe(`Реагирует на ручное изменение положения бегунков\n`, () => {
+describe('Реагирует на ручное изменение положения бегунков\n', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
-  div.style.marginTop = "100px";
+  div.style.marginTop = '100px';
 
-  let options: Obj = {
+  const options: Obj = {
     min: 0,
     max: 100,
     step: 1,
-    selector: ".sliderPalette",
+    selector: '.sliderPalette',
     angle: 0,
     range: true,
     hintAboveThumb: true,
   };
 
-  let example = document.createElement('div');
+  const example = document.createElement('div');
   example.className = 'example3';
 
   beforeEach(() => {
     document.body.append(example);
     document.body.append(div);
 
-    slider = new Presenter({...options});
+    slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
   });
 
   afterEach(() => {
@@ -552,14 +554,16 @@ describe(`Реагирует на ручное изменение положен
     div.remove();
   });
 
-  it(`При перетаскивании бегунков мышкой значение соответствующего поля меняется`, () => {
+  it('При перетаскивании бегунков мышкой значение соответствующего поля меняется', () => {
     const scaleWidth = slider.view.scale.width;
 
-    for (let i = 0; i < 5; i++) {
-      let fakeMouseMove = new MouseEvent('mousemove',
+    for (let i = 0; i < 5; i += 1) {
+      const fakeMouseMove = new MouseEvent('mousemove',
         {
-          bubbles: true, cancelable: true,
-          clientX: scaleWidth / 5, clientY: 0,
+          bubbles: true,
+          cancelable: true,
+          clientX: scaleWidth / 5,
+          clientY: 0,
         });
 
       leftThumb.dispatchEvent(fakeMouseDown);
@@ -569,11 +573,13 @@ describe(`Реагирует на ручное изменение положен
       leftThumb.dispatchEvent(fakeMouseUp);
     }
 
-    for (let i = 0; i < 5; i++) {
-      let fakeMouseMove = new MouseEvent('mousemove', {
-        bubbles: true, cancelable: true,
-        clientX: -scaleWidth / 10, clientY: 0,
-      })
+    for (let i = 0; i < 5; i += 1) {
+      const fakeMouseMove = new MouseEvent('mousemove', {
+        bubbles: true,
+        cancelable: true,
+        clientX: -scaleWidth / 10,
+        clientY: 0,
+      });
 
       rightThumb.dispatchEvent(fakeMouseDown);
       expect(rightHint.textContent).toEqual(palette.thumbRightPos.el.value);
@@ -583,8 +589,8 @@ describe(`Реагирует на ручное изменение положен
     }
   });
 
-  it(`При щелчке на якоре шкалы, бегунок двигается и значение соответствующего поля меняется`, () => {
-    slider.setOptions({partsNum: 4})
+  it('При щелчке на якоре шкалы, бегунок двигается и значение соответствующего поля меняется', () => {
+    slider.setOptions({ partsNum: 4 });
     anchors[1].dispatchEvent(fakeClick);
     expect(palette.thumbLeftPos.el.value).toEqual('25');
     anchors[3].dispatchEvent(fakeClick);
@@ -592,16 +598,16 @@ describe(`Реагирует на ручное изменение положен
   });
 });
 
-describe(`Данные баги более не возникают\n`, () => {
+describe('Данные баги более не возникают\n', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
-  div.style.marginTop = "100px";
+  div.style.marginTop = '100px';
 
-  let options: Obj = {
+  const options: Obj = {
     min: 0.5,
     max: 200,
     step: 2,
-    selector: ".sliderPalette",
+    selector: '.sliderPalette',
     angle: 0,
     range: true,
     hintAboveThumb: true,
@@ -609,21 +615,21 @@ describe(`Данные баги более не возникают\n`, () => {
     precision: 1,
   };
 
-  let example = document.createElement('div');
+  const example = document.createElement('div');
   example.className = 'example4';
 
   beforeEach(() => {
     document.body.append(example);
     document.body.append(div);
 
-    slider = new Presenter({...options});
+    slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = rightThumb.getElementsByClassName('slider__hint')[0];
+    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
+    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
+    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
   });
 
   afterEach(() => {
@@ -634,7 +640,7 @@ describe(`Данные баги более не возникают\n`, () => {
   });
 
   it('При смене значения "min" c "0.5" на "0" и обратно значения якорей высчитываются правильно', () => {
-    expect(anchors[1].textContent).toEqual('100.5')
+    expect(anchors[1].textContent).toEqual('100.5');
     palette.min.el.value = '0';
     palette.min.el.dispatchEvent(fakeChange);
 
@@ -642,7 +648,7 @@ describe(`Данные баги более не возникают\n`, () => {
   });
 
   it('При смене точности до 3 знаков, значения якорей шкалы совпадают со значениями модели', () => {
-    slider.setOptions({min: 0.555, max: 200, precision: 3});
+    slider.setOptions({ min: 0.555, max: 200, precision: 3 });
     expect(anchors[0].textContent).toEqual('0.555');
     expect(anchors[1].textContent).toEqual('100.555');
     expect(anchors[2].textContent).toEqual('200');
@@ -654,21 +660,21 @@ describe(`Данные баги более не возникают\n`, () => {
 
   it(`При установке опции "range=false" значение поля "thumbRightPos" становится недоступным
     для редактирования`, () => {
-    slider.setOptions({range: false});
+    slider.setOptions({ range: false });
     expect(palette.thumbRightPos.el.disabled).toBeTrue();
   });
 
   it(`При выборе опции "hintAlwaysShow" опция "hintAboveThumb" должна быть недоступна для
     редактирования`, () => {
     expect(palette.hintAboveThumb.el.disabled).toBeTrue();
-    slider.setOptions({hintAlwaysShow: true});
+    slider.setOptions({ hintAlwaysShow: true });
     expect(palette.hintAboveThumb.el.disabled).toBeTrue();
-    slider.setOptions({hintAlwaysShow: false});
+    slider.setOptions({ hintAlwaysShow: false });
     expect(palette.hintAboveThumb.el.disabled).toBeFalse();
   });
 
-  it(`При наложении бегунков значение подсказок должно быть одинаковым`, () => {
-    slider.setOptions({min: 0, thumbLeftPos: 0});
+  it('При наложении бегунков значение подсказок должно быть одинаковым', () => {
+    slider.setOptions({ min: 0, thumbLeftPos: 0 });
 
     palette.max.el.value = '6';
     palette.max.el.dispatchEvent(fakeChange);

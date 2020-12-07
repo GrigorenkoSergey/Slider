@@ -4,9 +4,11 @@ import EventObserver from '../../../../helpers/event-observer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
-export default class Hint extends EventObserver{
+export default class Hint extends EventObserver {
   el: HTMLDivElement = document.createElement('div');
+
   view: View;
+
   value: string = 'hint';
 
   constructor(view: View, parentNode: HTMLElement) {
@@ -51,10 +53,10 @@ export default class Hint extends EventObserver{
   }
 
   private rotateHint() {
-    const {angle} = this.view;
+    const { angle } = this.view;
     const hint = this.el;
 
-    let transformation = `rotate(-${angle}deg)`;
+    const transformation = `rotate(-${angle}deg)`;
     hint.style.transform = transformation;
     hint.style.transformOrigin = 'left';
   }

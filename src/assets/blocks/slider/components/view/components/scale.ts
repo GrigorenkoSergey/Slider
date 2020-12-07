@@ -1,19 +1,21 @@
+/* eslint-disable no-param-reassign */
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
-import '../../../../helpers/types';
+import { Obj } from '../../../../helpers/types';
 import isIncreasing from '../../../../helpers/functions/is-increasing';
-
-import {Obj} from '../../../../helpers/types';
 
 export default class Scale extends EventObserver {
   view: View;
 
   el: HTMLDivElement = document.createElement('div');
+
   width: number = 0;
+
   anchors!: HTMLDivElement[];
+
   parts: number[] = [];
 
   constructor(options: Obj) {
@@ -29,7 +31,7 @@ export default class Scale extends EventObserver {
 
   private init() {
     const propsToSubscribe = ['showScale', 'step', 'partsNum', 'angle'];
-    propsToSubscribe.forEach(prop => this.view.addSubscriber(prop, this));
+    propsToSubscribe.forEach((prop) => this.view.addSubscriber(prop, this));
 
     this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
     this.anchors = [];
@@ -40,20 +42,17 @@ export default class Scale extends EventObserver {
   update(prop: string) {
     if (prop === 'showScale') {
       this.displayScale();
-
     } else if (prop === 'partsNum') {
       this.setMilestones();
-
     } else if (prop === 'step') {
       this.setMilestones();
-
     } else if (prop === 'angle') {
       this.rotateScale();
     }
   }
 
   private render() {
-    this.el.className = this.view.el.className + '__scale';
+    this.el.className = `${this.view.el.className}__scale`;
     this.view.el.append(this.el);
 
     this.setMilestones();
@@ -66,16 +65,15 @@ export default class Scale extends EventObserver {
   }
 
   setMilestones(values?: number[]) {
-    const {step} = this.view;
+    const { step } = this.view;
 
-    this.anchors.forEach(item => item.remove());
+    this.anchors.forEach((item) => item.remove());
     this.anchors.length = 0;
-
 
     if (!values) {
       this.parts.length = 0;
 
-      for (let i = 1; i < this.view.partsNum; i++) {
+      for (let i = 1; i < this.view.partsNum; i += 1) {
         let value = Math.round(i / this.view.partsNum / step) * step;
         value = Math.min(1, value);
 
@@ -83,21 +81,20 @@ export default class Scale extends EventObserver {
       }
       this.parts = [0, ...this.parts];
 
-      if (this.parts[this.parts.length - 1] != 1) {
+      if (this.parts[this.parts.length - 1] !== 1) {
         this.parts.push(1);
       }
-
     } else {
-      this._validateScaleParts(values);
+      this.validateScaleParts(values);
       this.parts = values;
     }
 
     this.parts.forEach((value) => {
       const div = document.createElement('div');
-      div.className = this.view.el.className + '__scale-points';
+      div.className = `${this.view.el.className}__scale-points`;
 
-      let right = this.width * (1 - value) + this.view.thumbs.thumbLeft.offsetWidth / 2;
-      div.style.right = right + 'px';
+      const right = this.width * (1 - value) + this.view.thumbs.thumbLeft.offsetWidth / 2;
+      div.style.right = `${right}px`;
 
       div.textContent = String(value);
 
@@ -117,7 +114,7 @@ export default class Scale extends EventObserver {
     let offset = this.parts[index];
 
     if (offset === 1) {
-      const {step} = this.view;
+      const { step } = this.view;
       offset = Math.floor(offset / step) * step;
     }
 
@@ -133,15 +130,15 @@ export default class Scale extends EventObserver {
   }
 
   private rotateScale() {
-    const {angle} = this.view;
-    const {sin, PI} = Math;
-    let radAngle = angle * PI / 180;
+    const { angle } = this.view;
+    const { sin, PI } = Math;
+    const radAngle = (angle * PI) / 180;
 
     const scaleStyles = getComputedStyle(this.el);
-    let scaleTransform = ` translateY(${parseFloat(scaleStyles.top) * sin(radAngle)}px)`;
+    const scaleTransform = ` translateY(${parseFloat(scaleStyles.top) * sin(radAngle)}px)`;
     this.el.style.transform = scaleTransform;
 
-    this.anchors.forEach(anchor => {
+    this.anchors.forEach((anchor) => {
       anchor.style.transformOrigin = 'right top';
       let transformation = `rotate(-${angle}deg)`;
 
@@ -154,7 +151,7 @@ export default class Scale extends EventObserver {
     });
   }
 
-  private _validateScaleParts(values: number[]) {
+  private validateScaleParts(values: number[]) {
     if (values[0] !== 0) {
       throw new Error('First value of scalePoint should be zero');
     } else if (values[values.length - 1] !== 1) {

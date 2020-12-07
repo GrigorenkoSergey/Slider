@@ -14,7 +14,7 @@ const outputPaths = {
   slider: './slider/slider',
 };
 
-module.exports =  {
+module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: entries,
 
@@ -67,7 +67,7 @@ module.exports =  {
         'css-loader',
         {
           loader: 'postcss-loader',
-          options: {sourceMap: true, config: {path: 'postcss.config.js'}},
+          options: { sourceMap: true, config: { path: 'postcss.config.js' } },
         },
       ],
     },
@@ -78,7 +78,7 @@ module.exports =  {
         'css-loader',
         {
           loader: 'postcss-loader',
-          options: {sourceMap: true, config: {path: 'postcss.config.js'}},
+          options: { sourceMap: true, config: { path: 'postcss.config.js' } },
         },
         'sass-loader',
       ],

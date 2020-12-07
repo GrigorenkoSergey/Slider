@@ -1,12 +1,13 @@
+/* eslint-disable no-param-reassign */
 import './slider.scss';
 
 import jQuery from 'jquery';
-import Presenter from './components/presenter/presenter';
+import { Presenter as Slider } from './components/presenter/presenter';
 
-(function($) {
-  $.fn.slider = function(props: any) {
-    return new Presenter(props);
+(function ($) {
+  $.fn.slider = function (props: any) {
+    return new Slider(props);
   };
-})(jQuery);
+}(jQuery));
 
-export {Presenter as Slider};
+export { Slider };

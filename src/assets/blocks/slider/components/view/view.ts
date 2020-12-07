@@ -1,43 +1,56 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import EventObserver from '../../../helpers/event-observer';
-import {ISubscriber} from '../../../helpers/interfaces';
+import { ISubscriber } from '../../../helpers/interfaces';
 
 import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import Thumbs from './components/thumbs';
 
-import {Obj} from '../../../helpers/types';
+import { Obj } from '../../../helpers/types';
 import Hint from './components/hint';
 
 import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
+
   className: string = 'slider';
 
-  step: number = 1/100; // 0 < step <= 1
+  step: number = 1 / 100; // 0 < step <= 1
+
   angle: number = 0;
+
   range: boolean = false;
+
   selector: string = '';
+
   hintAboveThumb = true;
 
   hints!: Hint[];
+
   hintAlwaysShow: boolean = false;
 
   thumbs!: Thumbs;
-  _thumbLeftOffset!: () => number; 
+
+  _thumbLeftOffset!: () => number;
+
   _thumbRigthOffset!: () => number;
 
   scale!: Scale;
+
   showScale: boolean = true;
+
   partsNum: number = 2;
+
   stretcher!: Stretcher;
 
   constructor(options: Obj) {
     super();
 
     if (!('selector' in options)) {
-      throw new Error('option "selector" should be in options')
+      throw new Error('option "selector" should be in options');
     }
 
     this.selector = options.selector;
@@ -57,7 +70,6 @@ export default class View extends EventObserver implements ISubscriber {
     this.thumbs.addSubscriber('thumbMousedown', this);
     this.thumbs.addSubscriber('thumbMouseup', this);
 
-
     this._thumbLeftOffset = () => this.thumbs.thumbLeftOffset;
     this._thumbRigthOffset = () => this.thumbs.thumbRightOffset;
 
@@ -65,14 +77,16 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.hints = [
       new Hint(
-        this, 
-        this.thumbs.thumbLeft),
+        this,
+        this.thumbs.thumbLeft,
+      ),
       new Hint(
-        this, 
-        this.thumbs.thumbRight),
+        this,
+        this.thumbs.thumbRight,
+      ),
     ];
 
-    this.scale = new Scale({view: this});
+    this.scale = new Scale({ view: this });
     this.scale.addSubscriber('anchorClick', this);
 
     this.stretcher = new Stretcher(this);
@@ -88,9 +102,9 @@ export default class View extends EventObserver implements ISubscriber {
     const expectant: Obj = {};
 
     Object.keys(options)
-      .filter(prop => prop in this)
-      .filter(prop => !prop.startsWith('_'))
-      .forEach((prop) => expectant[prop] = options[prop]);
+      .filter((prop) => prop in this)
+      .filter((prop) => !prop.startsWith('_'))
+      .forEach((prop) => { expectant[prop] = options[prop]; });
 
     Object.entries(expectant).forEach(([prop, value]) => {
       this.validateOptions(prop, value, expectant);
@@ -107,49 +121,44 @@ export default class View extends EventObserver implements ISubscriber {
   getOptions() {
     const publicOtions = [
       'step',
-      'range', 
+      'range',
       'className',
-      'selector', 
+      'selector',
       'hintAboveThumb',
       'hintAlwaysShow',
-      'angle', 
-      'showScale', 
+      'angle',
+      'showScale',
       'partsNum',
       '_thumbLeftOffset',
       '_thumbRightOffset',
     ];
 
     const obj: Obj = {};
-    publicOtions.forEach((key) => obj[key] = this[<keyof this>key]);
+    publicOtions.forEach((key) => { obj[key] = this[<keyof this>key]; });
     return obj;
   }
 
   update(eventType: string, data: any): this {
-    // если View подписан сам на себя, то он должен выходить из 
+    // если View подписан сам на себя, то он должен выходить из
     // функции, иначе получится бесконечный цикл
     if (eventType === 'angle') {
       this.el.style.transform = `rotate(${this.angle}deg)`;
       return this;
-
-    } else if (eventType === 'hintAlwaysShow') {
+    } if (eventType === 'hintAlwaysShow') {
       if (this.hintAlwaysShow) {
-        this.hints.forEach(hint => hint.showHint());
+        this.hints.forEach((hint) => hint.showHint());
       } else {
-        this.hints.forEach(hint => hint.hideHint());
+        this.hints.forEach((hint) => hint.hideHint());
       }
-      return this; 
-
-    } else if (eventType === 'thumbMousedown') {
+      return this;
+    } if (eventType === 'thumbMousedown') {
       const thumb = data.el;
       this.handleThumbMousedown(thumb);
-
     } else if (eventType === 'thumbMouseup') {
-      const thumb = data.thumb;
+      const { thumb } = data;
       this.handleThumbMouseup(thumb);
-
     } else if (eventType === 'anchorClick') {
       this.handleAnchorClick(data);
-
     } else if (eventType === 'range') {
       this.handleHintsIntersection();
       return this;
@@ -163,10 +172,10 @@ export default class View extends EventObserver implements ISubscriber {
     this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset);
 
     let data = null;
-    if(thumb === this.thumbs.thumbLeft) {
-      data = {left: offset};
+    if (thumb === this.thumbs.thumbLeft) {
+      data = { left: offset };
     } else {
-      data = {right: offset}
+      data = { right: offset };
     }
     this.handleHintsIntersection();
     this.broadcast('thumbProgramMove', data);
@@ -184,7 +193,7 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private handleAnchorClick(offset: number): void {
-    let closestThumb = this.findClosestThumb(offset);
+    const closestThumb = this.findClosestThumb(offset);
     this.moveThumbToPos(closestThumb, offset);
     this.handleHintsIntersection();
   }
@@ -214,23 +223,23 @@ export default class View extends EventObserver implements ISubscriber {
     const startX: number = sliderCoords.left + slider.clientLeft;
     const startY: number = sliderCoords.top + slider.clientTop;
 
-    const cosA: number = Math.cos(this.angle / 180 * Math.PI);
-    const sinA: number = Math.sin(this.angle / 180 * Math.PI);
+    const cosA: number = Math.cos((this.angle / 180) * Math.PI);
+    const sinA: number = Math.sin((this.angle / 180) * Math.PI);
 
     const newLeftX: number = e.clientX - startX;
     const newLeftY: number = e.clientY - startY;
 
     let newLeft = newLeftX * cosA + newLeftY * sinA;
     let offset = newLeft / this.scale.width;
-    let closestThumb = this.findClosestThumb(offset);
+    const closestThumb = this.findClosestThumb(offset);
 
     newLeft = Math.max(newLeftX * cosA + newLeftY * sinA);
     newLeft = Math.min(newLeft, this.scale.width + closestThumb.offsetWidth / 2);
 
     offset = newLeft / this.scale.width;
-    //да, еще раз, т.к. у меня разные привязки, и я должен предварительно найти closestThumb
-    
-    offset = offset - closestThumb.offsetWidth / this.scale.width / 2;
+    // да, еще раз, т.к. у меня разные привязки, и я должен предварительно найти closestThumb
+
+    offset -= closestThumb.offsetWidth / this.scale.width / 2;
     offset = Math.max(0, offset);
     offset = Math.round(offset / this.step) * this.step;
 
@@ -248,7 +257,7 @@ export default class View extends EventObserver implements ISubscriber {
           throw new Error('step is too big!');
         } else if (val < 0) {
           throw new Error('step is negative!');
-        } else if (val == 0) {
+        } else if (val === 0) {
           throw new Error('step is equal to zero!');
         }
       },
@@ -262,14 +271,14 @@ export default class View extends EventObserver implements ISubscriber {
           throw new Error('angle should be >= 0 and <= 90');
         }
       },
-    }
+    };
 
     if (!(key in validator)) return;
     return validator[key](value);
   }
 
   private findClosestThumb(offset: number) {
-    const {thumbLeft, thumbRight} = this.thumbs;
+    const { thumbLeft, thumbRight } = this.thumbs;
 
     let closestThumb;
 
@@ -289,27 +298,27 @@ export default class View extends EventObserver implements ISubscriber {
   private checkHintsIntersection() {
     if (!this.hintAlwaysShow || !this.range) return false;
 
-    const [leftHint, rightHint] = this.hints.map(hint => hint.el);
+    const [leftHint, rightHint] = this.hints.map((hint) => hint.el);
 
     let result = false;
 
     /*
-     Если просто сравнивать границы текста и находить их пересечения, 
+     Если просто сравнивать границы текста и находить их пересечения,
      то для не моноширных шрифтов текст бOльших значений подсказок
      может иметь меньшую длину, и появится мигание текста
      при передвижении бегунка (подсказки соединились, разъединились,
-     снова соединились), поэтому унифицируем длину для 
+     снова соединились), поэтому унифицируем длину для
      всех возможных значений подсказки
     */
-    const zerosTextContent = new Array(leftHint.textContent?.length).fill('0').join(''); 
+    const zerosTextContent = new Array(leftHint.textContent?.length).fill('0').join('');
     leftHint.textContent = zerosTextContent;
-    let zerosHintRect = leftHint.getBoundingClientRect();
+    const zerosHintRect = leftHint.getBoundingClientRect();
 
-    leftHint.textContent = this.hints[0].value; 
-    let leftHintRect = leftHint.getBoundingClientRect();
+    leftHint.textContent = this.hints[0].value;
+    const leftHintRect = leftHint.getBoundingClientRect();
 
     let longestLeftHintRect;
-      
+
     if (zerosHintRect.width < leftHintRect.width) {
       longestLeftHintRect = leftHintRect;
     } else {
@@ -318,7 +327,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     const rightHintRect = rightHint.getBoundingClientRect();
 
-    result = (longestLeftHintRect.right >= rightHintRect.left 
+    result = (longestLeftHintRect.right >= rightHintRect.left
       && longestLeftHintRect.bottom >= rightHintRect.top);
 
     return result;
@@ -327,7 +336,7 @@ export default class View extends EventObserver implements ISubscriber {
   handleHintsIntersection() {
     if (!this.hintAlwaysShow) return;
 
-    this.hints.forEach(hint => hint.showHint());
+    this.hints.forEach((hint) => hint.showHint());
 
     if (this.checkHintsIntersection()) {
       /*
@@ -337,14 +346,13 @@ export default class View extends EventObserver implements ISubscriber {
       this.hints[0].el.classList.add(`${this.className}__hint_summary`);
       this.hints[1].hideHint();
 
-      let leftValue = this.hints[0].value;
-      let rightValue = this.hints[1].value;
+      const leftValue = this.hints[0].value;
+      const rightValue = this.hints[1].value;
 
       if (leftValue !== rightValue) {
-        let textContent = `${leftValue}...${rightValue}`;
+        const textContent = `${leftValue}...${rightValue}`;
         this.hints[0].el.textContent = textContent;
       }
-      
     } else {
       this.hints[0].el.classList.remove(`${this.className}__hint_summary`);
     }
