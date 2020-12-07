@@ -1,28 +1,47 @@
 module.exports = {
-  'env': {
-    'browser': true,
-    'es6': true,
+  env: {
+    browser: true,
+    es6: true,
+    jasmine: true,
   },
-  'extends': [
+
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
+
+  extends: [
+    'airbnb-base',
     'plugin:fsd/all',
   ],
-  'globals': {
-    'Atomics': 'readonly',
-    'SharedArrayBuffer': 'readonly',
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
   },
-  'parser': '@typescript-eslint/parser',
-  'parserOptions': {
-    'ecmaVersion': 11,
-    'sourceType': 'module',
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 11,
+    sourceType: 'module',
   },
-  'plugins': [
+  plugins: [
     '@typescript-eslint',
     'fsd',
   ],
-  'rules': {
-    'indent': [2, 2],
-    'no-unused-vars': 'off', // проблема при импорте типов
-    '@typescript-eslint/no-unused-vars': 'error', // для импорта типов
+
+  rules: {
+    'import/prefer-default-export': 'off',
+    'consistent-return': 'off',
+    'no-console': 'off',
+    'func-names': ['error', 'never'],
+    'class-methods-use-this': 'off',
+    'import/extensions': ['error', 'never'],
+    'lines-between-class-members': ['error', 'always'],
+    indent: [2, 2],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
     'require-jsdoc': 0,
     'fsd/hof-name-prefix': 'error',
     'fsd/no-heavy-constructor': 'error',
