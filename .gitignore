@@ -1,0 +1,9 @@
+cribs/
+toDo
+vim_keys
+node_modules
+.vscode
+трудозатраты
+package-lock.json
+coverage/
+dist/
