@@ -8,13 +8,13 @@ import { Obj } from '../../../../helpers/types';
 import isIncreasing from '../../../../helpers/functions/is-increasing';
 
 export default class Scale extends EventObserver {
-  public view: View;
+  view: View;
 
-  public el: HTMLDivElement = document.createElement('div');
+  el: HTMLDivElement = document.createElement('div');
 
-  public width: number = 0;
+  width: number = 0;
 
-  public parts: number[] = [];
+  parts: number[] = [];
 
   private anchors!: HTMLDivElement[];
 
@@ -39,7 +39,7 @@ export default class Scale extends EventObserver {
     this.render();
   }
 
-  public update(prop: string) {
+  update(prop: string) {
     if (prop === 'showScale') {
       this.displayScale();
     } else if (prop === 'partsNum') {
@@ -58,13 +58,13 @@ export default class Scale extends EventObserver {
     this.setMilestones();
   }
 
-  public setAnchorValues(values: number[] | string[]) {
+  setAnchorValues(values: number[] | string[]) {
     this.anchors.forEach((div, i) => {
       div.textContent = String(values[i]);
     });
   }
 
-  public setMilestones(values?: number[]) {
+  setMilestones(values?: number[]) {
     const { step, partsNum } = this.view.getOptions();
 
     this.anchors.forEach((item) => item.remove());

@@ -10,9 +10,9 @@ import Model from '../model/model';
 import debuggerPoint from '../../../helpers/debugger-point';
 
 export class Presenter extends EventObserver implements ISubscriber {
- public view!: View;
+ view!: View;
 
- public model!: Model;
+ model!: Model;
 
  constructor(options: Obj) {
    super();
@@ -55,7 +55,7 @@ export class Presenter extends EventObserver implements ISubscriber {
    this.setOptions(options);
  }
 
- public setOptions(options: Obj) {
+ setOptions(options: Obj) {
    const { model, view } = this;
    model.setOptions(options);
 
@@ -74,20 +74,20 @@ export class Presenter extends EventObserver implements ISubscriber {
    return this;
  }
 
- public getOptions() {
+ getOptions() {
    const { model, view } = this;
    const res = { ...view.getOptions(), ...model.getOptions() };
    return res;
  }
 
- public getOffsets() {
+ getOffsets() {
    return {
      left: this.view.thumbs.thumbLeftOffset,
      right: this.view.thumbs.thumbRightOffset,
    };
  }
 
- public update(eventType: string, data: any) {
+ update(eventType: string, data: any) {
    const modelOptions = this.model.getOptions();
 
    if (eventType === 'thumbMousedown') {
@@ -159,7 +159,7 @@ export class Presenter extends EventObserver implements ISubscriber {
    this.broadcast('changeSlider', eventType);
  }
 
- public onChange(opts: onChangeOpts) {
+ onChange(opts: onChangeOpts) {
    const {
      el,
      callback = (eventType: string, data: any) => console.log(data),

@@ -50,12 +50,12 @@ export default class Model extends EventObserver {
     this.setOptions(optionsCopy);
   }
 
-  public getOptions() {
+  getOptions() {
     const obj = { ...this.options };
     return obj;
   }
 
-  public setOptions(expectant: Obj): Model {
+  setOptions(expectant: Obj): Model {
     let tempObj: Obj = {};
 
     Object.entries(expectant).forEach(([key, value]) => {
@@ -74,7 +74,7 @@ export default class Model extends EventObserver {
     return this;
   }
 
-  public setThumbsPos(opts: {left?: number, right?: number}): Model {
+  setThumbsPos(opts: {left?: number, right?: number}): Model {
     const {
       left = this.options.thumbLeftPos,
       right = this.options.thumbRightPos,
@@ -99,13 +99,13 @@ export default class Model extends EventObserver {
     return this;
   }
 
-  public findValue(x: number): number { // y = f(x), here we find 'y'
+  findValue(x: number): number { // y = f(x), here we find 'y'
     const { max, min, precision } = this.options;
     const result = x * (max - min) + min;
     return Number(result.toFixed(precision));
   }
 
-  public findArgument(y: number): number { // y = f(x), here we find 'x'
+  findArgument(y: number): number { // y = f(x), here we find 'x'
     const { min, max } = this.options;
     return (y - min) / (max - min);
   }

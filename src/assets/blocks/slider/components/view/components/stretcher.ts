@@ -2,9 +2,9 @@ import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
 export default class Stretcher extends EventObserver {
-  public el!: HTMLDivElement;
+  el!: HTMLDivElement;
 
-  public view: View;
+  view: View;
 
   constructor(view: View) {
     super();
@@ -22,7 +22,7 @@ export default class Stretcher extends EventObserver {
     this.update();
   }
 
-  public update() {
+  update() {
     const { range } = this.view.getOptions();
     const { thumbs } = this.view;
     if (range) {

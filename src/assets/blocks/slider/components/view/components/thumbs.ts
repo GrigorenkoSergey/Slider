@@ -9,15 +9,15 @@ import '../../../../helpers/types';
 import debuggerPoint from '../../../../helpers/debugger-point';
 
 export default class Thumbs extends EventObserver {
-  public thumbLeft!: HTMLDivElement;
+  thumbLeft!: HTMLDivElement;
 
-  public thumbRight!: HTMLDivElement;
+  thumbRight!: HTMLDivElement;
 
-  public thumbLeftOffset: number = 0;
+  thumbLeftOffset: number = 0;
 
-  public thumbRightOffset: number = 1;
+  thumbRightOffset: number = 1;
 
-  public view!: View;
+  view!: View;
 
   constructor(view: View) {
     super();
@@ -42,14 +42,14 @@ export default class Thumbs extends EventObserver {
     this.view.addSubscriber('range', this);
   }
 
-  public update(eventType: string): this {
+  update(eventType: string): this {
     if (eventType === 'range') {
       this.displayThumbRight();
     }
     return this;
   }
 
-  public moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     const newLeft = offset * (this.view.el.clientWidth - thumb.offsetWidth);
     // eslint-disable-next-line no-param-reassign
     thumb.style.left = `${newLeft}px`;

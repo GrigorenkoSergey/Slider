@@ -5,11 +5,11 @@ import EventObserver from '../../../../helpers/event-observer';
 import debuggerPoint from '../../../../helpers/debugger-point';
 
 export default class Hint extends EventObserver {
-  public el: HTMLDivElement = document.createElement('div');
+  el: HTMLDivElement = document.createElement('div');
 
   private view: View;
 
-  public value: string = 'hint';
+  value: string = 'hint';
 
   constructor(view: View, parentNode: HTMLElement) {
     super();
@@ -32,23 +32,23 @@ export default class Hint extends EventObserver {
     this.view.addSubscriber('angle', this);
   }
 
-  public update(eventType: string) {
+  update(eventType: string) {
     if (eventType === 'angle') {
       this.rotateHint();
     }
   }
 
-  public setHintValue(value: string) {
+  setHintValue(value: string) {
     this.value = value;
     if (!this.el.hidden) this.el.textContent = this.value;
   }
 
-  public showHint() {
+  showHint() {
     this.el.hidden = false;
     this.el.textContent = this.value;
   }
 
-  public hideHint() {
+  hideHint() {
     this.el.hidden = true;
   }
 

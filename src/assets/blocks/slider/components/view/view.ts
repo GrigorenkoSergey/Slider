@@ -14,7 +14,7 @@ import Hint from './components/hint';
 import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class View extends EventObserver implements ISubscriber {
-  public el: HTMLDivElement = document.createElement('div');
+  el: HTMLDivElement = document.createElement('div');
 
   private options = {
     className: 'slider',
@@ -28,13 +28,13 @@ export default class View extends EventObserver implements ISubscriber {
     partsNum: 2,
   }
 
-  public hints!: Hint[];
+  hints!: Hint[];
 
-  public thumbs!: Thumbs;
+  thumbs!: Thumbs;
 
-  public scale!: Scale;
+  scale!: Scale;
 
-  public stretcher!: Stretcher;
+  stretcher!: Stretcher;
 
   constructor(options: Obj) {
     super();
@@ -85,7 +85,7 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  public setOptions(options: Obj) {
+  setOptions(options: Obj) {
     const expectant: Obj = {};
 
     Object.keys(options)
@@ -104,12 +104,12 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  public getOptions() {
+  getOptions() {
     const obj = { ...this.options };
     return obj;
   }
 
-  public update(eventType: string, data: any): this {
+  update(eventType: string, data: any): this {
     // если View подписан сам на себя, то он должен выходить из
     // функции, иначе получится бесконечный цикл
     if (eventType === 'angle') {
@@ -143,7 +143,7 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  public moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset);
 
     let data = null;
@@ -158,12 +158,12 @@ export default class View extends EventObserver implements ISubscriber {
     this.broadcast('thumbProgramMove', data);
   }
 
-  public setAnchorValues(values: number[] | string[]) {
+  setAnchorValues(values: number[] | string[]) {
     this.scale.setAnchorValues(values);
     this.handleHintsIntersection();
   }
 
-  public setHintValue(thumb: HTMLDivElement, value: string) {
+  setHintValue(thumb: HTMLDivElement, value: string) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.setHintValue(value);
     this.handleHintsIntersection();
