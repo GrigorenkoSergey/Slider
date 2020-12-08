@@ -1,3 +1,3 @@
 export interface ISubscriber {
-  update: (eventType: string, data: any) => void;
+  update: <T>(eventType: string, data: T) => void;
 }
