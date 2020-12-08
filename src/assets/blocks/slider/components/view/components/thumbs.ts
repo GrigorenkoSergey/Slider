@@ -140,8 +140,10 @@ export default class Thumbs extends EventObserver {
         Соответственно не совпадают и значения подсказок над бегунками.
         Поэтому удостоверимся, что не будет никаких неприятных сюрпризов.
       */
-      if (newLeft === leftLimit) {
-        offset = self.thumbLeftOffset;
+      if (thumb === self.thumbRight) {
+        if (newLeft === leftLimit) {
+          offset = self.thumbLeftOffset;
+        }
       } else if (newLeft === rightLimit && self.view.getOptions().range) {
         offset = self.thumbRightOffset;
       }

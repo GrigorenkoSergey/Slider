@@ -128,14 +128,12 @@ export default class SliderOptionsPalette extends EventObserver {
     this.handleHintAlwaysShowChange();
   }
 
-  update(eventType: string, originEvent: string) {
-
+  update(eventType: string, originEvent: any) {
     if (originEvent === 'range') {
       this.handleRangeChange();
     } else if (originEvent === 'hintAlwaysShow') {
       this.handleHintAlwaysShowChange();
     }
-
   }
 
   handleRangeChange() {

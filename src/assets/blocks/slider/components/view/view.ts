@@ -326,7 +326,7 @@ export default class View extends EventObserver implements ISubscriber {
       const rightValue = this.hints[1].value;
 
       if (leftValue !== rightValue) {
-        const textContent = `${leftValue}...${rightValue}`;
+        const textContent = `${leftValue} ― ${rightValue}`;
         this.hints[0].el.textContent = textContent;
       }
     } else {

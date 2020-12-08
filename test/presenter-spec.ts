@@ -11,6 +11,13 @@ div.className = 'divPresenterSpec';
 div.style.marginTop = '70px';
 document.body.append(div);
 
+const fakeMouseMove = (x: number = 0, y: number = 0) => new MouseEvent('mousemove', {
+  bubbles: true,
+  cancelable: true,
+  clientX: x,
+  clientY: y,
+});
+
 const fakeMouseDown = new MouseEvent('mousedown',
   {
     bubbles: true, cancelable: true, clientX: 0, clientY: 0,
@@ -78,29 +85,13 @@ describe('Меняет значения подсказки над бегунко
 
     const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
 
-    let fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: scaleWidth / 2,
-        clientY: 0,
-      });
-
-    thumbLeft.dispatchEvent(fakeMouseMove);
+    thumbLeft.dispatchEvent(fakeMouseMove(scaleWidth / 2));
     expect(hintLeft.textContent).toEqual('55');
     thumbLeft.dispatchEvent(fakeMouseUp);
 
-    fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: -scaleWidth / 4,
-        clientY: 0,
-      });
-
     thumbRight.dispatchEvent(fakeMouseDown);
     const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
-    thumbRight.dispatchEvent(fakeMouseMove);
+    thumbRight.dispatchEvent(fakeMouseMove(-scaleWidth / 4));
     expect(hintRight.textContent).toEqual('78');
     thumbRight.dispatchEvent(fakeMouseUp);
   });
@@ -156,32 +147,15 @@ describe('Проверка работы "alternativeRange"\n', () => {
 
     thumbLeft.dispatchEvent(fakeMouseDown);
     const hintLeft = <HTMLDivElement>thumbLeft.querySelector('[class*=__hint]');
-
     const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
 
-    let fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: scaleWidth / 2,
-        clientY: 0,
-      });
-
-    thumbLeft.dispatchEvent(fakeMouseMove);
+    thumbLeft.dispatchEvent(fakeMouseMove(scaleWidth / 2));
     expect(hintLeft.textContent).toEqual('Jul');
     thumbLeft.dispatchEvent(fakeMouseUp);
 
-    fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: -scaleWidth / 4,
-        clientY: 0,
-      });
-
     thumbRight.dispatchEvent(fakeMouseDown);
     const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
-    thumbLeft.dispatchEvent(fakeMouseMove);
+    thumbLeft.dispatchEvent(fakeMouseMove(-scaleWidth / 4));
     expect(hintRight.textContent).toEqual('Sep');
     thumbLeft.dispatchEvent(fakeMouseUp);
   });
@@ -585,16 +559,8 @@ describe('Проверка поведения подсказок при вклю
 
     const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
 
-    const fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: -scaleWidth * 2,
-        clientY: 0,
-      });
-
     rightThumb.dispatchEvent(fakeMouseDown);
-    rightThumb.dispatchEvent(fakeMouseMove);
+    rightThumb.dispatchEvent(fakeMouseMove(-scaleWidth * 2));
 
     expect(rightHint.offsetWidth).toEqual(0);
     rightThumb.dispatchEvent(fakeMouseUp);
@@ -670,6 +636,7 @@ describe('Данные баги более не возникают\n', () => {
   let rightThumb: HTMLDivElement;
   let leftHint: HTMLDivElement;
   let rightHint: HTMLDivElement;
+  let scaleWidth: number;
 
   beforeEach(() => {
     document.body.append(div);
@@ -679,6 +646,7 @@ describe('Данные баги более не возникают\n', () => {
     rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
     leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
     rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
+    scaleWidth = div.clientWidth - leftThumb.offsetWidth;
   });
 
   afterEach(() => {
@@ -714,15 +682,7 @@ describe('Данные баги более не возникают\n', () => {
     slider.setOptions({ thumbRightPos: 5112367 });
     leftThumb.dispatchEvent(fakeMouseDown);
 
-    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
-    const fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: scaleWidth * 2,
-        clientY: 0,
-      });
-    leftThumb.dispatchEvent(fakeMouseMove);
+    leftThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
     expect(slider.getOptions().thumbLeftPos).toEqual(5112367);
     expect(leftHint.textContent).toEqual(rightHint.textContent);
   });
@@ -733,17 +693,7 @@ describe('Данные баги более не возникают\n', () => {
     });
     leftThumb.dispatchEvent(fakeMouseDown);
 
-    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
-
-    const fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: scaleWidth * 2,
-        clientY: 0,
-      });
-
-    leftThumb.dispatchEvent(fakeMouseMove);
+    leftThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
     expect(leftHint.textContent).toEqual('8');
     leftThumb.dispatchEvent(fakeMouseUp);
   });
@@ -757,20 +707,10 @@ describe('Данные баги более не возникают\n', () => {
     slider = new Presenter({ ...options });
     slider.setOptions({ min: 0, max: 58, thumbRightPos: 41 });
 
-    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
-
-    const fakeMouseMove = new MouseEvent('mousemove',
-      {
-        bubbles: true,
-        cancelable: true,
-        clientX: scaleWidth * 2,
-        clientY: 0,
-      });
-
     leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
     rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
     leftThumb.dispatchEvent(fakeMouseDown);
-    leftThumb.dispatchEvent(fakeMouseMove);
+    leftThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
     leftThumb.dispatchEvent(fakeMouseUp);
     expect(leftThumb.getBoundingClientRect().left).toEqual(rightThumb.getBoundingClientRect().left);
     div.style.width = '';
@@ -783,5 +723,23 @@ describe('Данные баги более не возникают\n', () => {
     });
     slider.setOptions({ range: true });
     expect(slider.getOptions().thumbRightPos).toEqual(5);
+  });
+
+  it('Так и не придумал, что написать в названии теста.. ', () => {
+    slider.setOptions({
+      min: 0,
+      max: 6,
+      thumbLeftPos: 0,
+      thumbRightPos: 0,
+      range: true,
+      step: 1,
+    });
+
+    slider.setOptions({ partsNum: 3 });
+    slider.setOptions({ step: 4 });
+
+    rightThumb.dispatchEvent(fakeMouseDown);
+    rightThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
+    expect(rightHint.textContent).toEqual('4');
   });
 });
