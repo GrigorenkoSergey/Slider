@@ -1,13 +1,16 @@
 import EventObserver from '../src/assets/blocks/helpers/event-observer';
 import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
 
+// EventObserver is abstract class so let us create some derived class
+class EventObserverChild extends EventObserver {}
+
 describe('EventObserver\n', () => {
   let observer: EventObserver;
   let subscriber1: ISubscriber;
   let subscriber2: ISubscriber;
 
   beforeEach(() => {
-    observer = new EventObserver();
+    observer = new EventObserverChild();
 
     subscriber1 = {
       update(eventType: string) {
