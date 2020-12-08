@@ -7,51 +7,19 @@
 `git clone git@github.com:GrigorenkoSergey/Slider.git`  
 Или просто скачай [ZIP архив](https://github.com/GrigorenkoSergey/Slider/archive/master.zip).
 
-Далее 3 возможных варианта подключения.
-1. Полный проект с использованием **webpack**.    
-    Развертывание.  
-    Зайди в установленную директорию (*Slider*) и выполни команду
-    `npm install`  
-    Если выдаст ошибку, попробуй переустановить ***babel-loader*** командами  
-    `npm uninstall babel-loader @babel/core @babel/preset-env`  
-    `npm install -D babel-loader @babel/core @babel/preset-env`
+## Развертывание.  
+Зайди в установленную директорию (*Slider*) и выполни команду
+`npm install`  
+Если выдаст ошибку, попробуй переустановить ***babel-loader*** командами  
+`npm uninstall babel-loader @babel/core @babel/preset-env`  
+`npm install -D babel-loader @babel/core @babel/preset-env`
 
-    Запуск webpack-dev-server  
-    `npm run dev`  
-    Запуск production build  
-    `npm run build`
-    Запуск тестов
-    `npm run test`
-
-2. Использование только файлов непосредственно слайдера, опять с **webpack**.
-    Скопируй куда тебе удобно содержимое папки ***dist/slider*** и импортируй из нее файлы slider.js и slider.css (slider.html трогать не нужно).
-    ```js
-    // твой js-файл
-    import {Slider} from '../path/to/directory/slider/slider.js';
-    import '../path/to/directory/slider/slider.css';
-    ```
-
-3. По старинке. Добавь стили **slider.css**  и **slider.js** в тэг *head* в конце тега *body* подключи скрипт, который будет его использовать. Доступ только через *jquery* (отдельно подключать нет необходимости).
-    ```html
-    <html>
-        <head>
-            <link href="../path/to/directory/slider/slider.[contenthash].css" rel="stylesheet" type="text/css">
-            <script src="../path/to/directory/slider/slider.[contenthash].js"></script>
-        </head>
-        <body>
-          <div class="slider"></div>
-          <script>
-            let options = {
-              selector: '.slider',
-              //some options here...
-            };
-
-            let slider = $('.slider').slider(options);
-          </script>
-        </body>
-    </html>
-    ```
-Исходники js-кода и стилей лежат в ***src/assets/blocks/slider***.
+Запуск webpack-dev-server  
+`npm run dev`  
+Запуск production build  
+`npm run build`  
+Запуск тестов
+`npm run test`
 
 ## Структура проекта
 ```
@@ -155,9 +123,6 @@
 | `hintAlwaysShow: boolean ` | По умолчанию `false`. Если установлено в `true`, подсказка показывается всегда. При этом значение `hintAboveThumb` игнорируется. |
 | `angle: number` | По умолчанию 0. Поворот слайдера. Принимает значения от 0 до 90. При этом размер самого слайдера всегда будет зависить только от ширины его контейнера. |
 | `showScale: boolean` | По умолчанию `true`. Под слайдером отображаются значения шкалы, кратные шагу. Их количество зависит от свойства `partsNum`. При щелчке по ним ближайший кругляш бежит к этому значению, кроме крайнего правого - здесь кругляш остановится на максимальном кратном шагу значении. При желании можно поменять отображение значений с помощью свойства `alternativeRange`. |
-| `_thumbLeftOffset: () => number` | Только для чтения. Позволяет узнать расположение левого бегунка относительно длины шкалы. Принимает значения от 0 до 1. Полезно при привязке других элементов, когда мы хотим масштабировать другой диапазон к значению нашего диапазона (см. примеры использования). |
-| `_thumbRightOffset: () => number` | Аналогично `_thumbLeftOffset`, но для правого бегунка. |
-
 
 ## API
 ### getOptions()
@@ -169,6 +134,10 @@
 ```js
 slider.setOptions({range: true, max: -100});
 ```
+
+### getOffsets()
+Возвращает объект `{ left: number, right: number }`, где указаны относительные расположения левого и правого бегунков относительно шкалы (0 - начало шкалы, 1 - конец шкалы). При отсутствии правого бегунка значение `right == Infinity`. Полезно при привязке других элементов, когда мы хотим масштабировать другой диапазон к значению нашего диапазона (см. примеры использования).
+
 ### onChange( {el: any, callback?: function} )
 Сам по себе бегунок бесполезен. Он должен быть связан с какими-либо данными и его перемещение должно вызывать какие-то дополнительные  полезные действия. К примеру, пользователь, двигая кругляш, меняет возможные значения срока ипотеки. Какая-то сторонняя функция высчитывает итоговую сумму (которая зависит от положения бегунка), которую он заплатит и отображает в каком-то поле. Таких элементов, привязанных к одному слайдеру, может быть сколько угодно. Данный метод позволяет привязать любой элемент к слайдеру. Параметры и примеры использования смотри ниже. |
 
@@ -209,7 +178,7 @@ slider6.onChange({
 
     // т.к. нам неинтересны абсолютные значения положения бегунка,
     // то мы будем использовать относительные
-    let offset = slider6.getOptions()._thumbLeftOffset(); 
+    let offset = slider6.getOffsets().left;
     
     // offset == 0 -> 0
     // offset == 1 -> 13
