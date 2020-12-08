@@ -4,26 +4,19 @@ import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 
 import { Obj } from '../../../helpers/types';
-import { ModelOpts } from './modelOptions';
 
 export default class Model extends EventObserver {
-  min = 0;
-
-  max = 100;
-
-  step = 1;
-
-  partsNum = 2;
-
-  thumbLeftPos = 0;
-
-  thumbRightPos: number = Infinity;
-
-  range = false;
-
-  precision: number = 0;
-
-  alternativeRange: string[] = [];
+  private options = {
+    min: 0,
+    max: 100,
+    step: 1,
+    partsNum: 2,
+    thumbLeftPos: 0,
+    thumbRightPos: Infinity,
+    range: false,
+    precision: 0,
+    alternativeRange: [] as string[],
+  }
 
   constructor(options: Obj) {
     super();
@@ -57,55 +50,64 @@ export default class Model extends EventObserver {
     this.setOptions(optionsCopy);
   }
 
-  getOptions() {
-    const publicOtions = ['min', 'max', 'range', 'step', 'partsNum',
-      'thumbLeftPos', 'thumbRightPos', 'precision', 'alternativeRange'];
-
-    const obj: Obj = {};
-    publicOtions.forEach((key) => { obj[key] = this[<keyof this>key]; });
+  public getOptions() {
+    const obj = { ...this.options };
     return obj;
   }
 
-  setOptions(expectant: Obj): Model {
+  public setOptions(expectant: Obj): Model {
     let tempObj: Obj = {};
+
     Object.entries(expectant).forEach(([key, value]) => {
-      if (key in this) {
+      if (key in this.options) {
         tempObj[key] = value;
       }
     });
 
     tempObj = this.handleOptions(tempObj);
-    Object.assign(this, tempObj);
+    Object.assign(this.options, tempObj);
 
     Object.keys(tempObj).forEach((key) => {
-      this.broadcast(key, { value: this[<keyof this>key], method: 'setOptions' });
+      this.broadcast(key, { value: tempObj[key], method: 'setOptions' });
     });
 
     return this;
   }
 
-  setThumbsPos(opts: {left?: number, right?: number}): Model {
-    const { left = this.thumbLeftPos, right = this.thumbRightPos } = opts;
+  public setThumbsPos(opts: {left?: number, right?: number}): Model {
+    const {
+      left = this.options.thumbLeftPos,
+      right = this.options.thumbRightPos,
+    } = opts;
 
     if ('left' in opts) {
-      this.thumbLeftPos = this.handleOptions({ thumbLeftPos: left }).thumbLeftPos;
-      this.broadcast('thumbLeftPos', { value: this.thumbLeftPos, method: 'setThumbsPos' });
+      this.options.thumbLeftPos = this.handleOptions({ thumbLeftPos: left }).thumbLeftPos;
+
+      this.broadcast('thumbLeftPos', {
+        value: this.options.thumbLeftPos,
+        method: 'setThumbsPos',
+      });
     }
 
     if ('right' in opts) {
-      this.thumbRightPos = this.handleOptions({ thumbRightPos: right }).thumbRightPos;
-      this.broadcast('thumbRightPos', { value: this.thumbRightPos, method: 'setThumbsPos' });
+      this.options.thumbRightPos = this.handleOptions({ thumbRightPos: right }).thumbRightPos;
+      this.broadcast('thumbRightPos', {
+        value: this.options.thumbRightPos,
+        method: 'setThumbsPos',
+      });
     }
     return this;
   }
 
-  findValue(x: number): number { // y = f(x), here we find 'y'
-    const result = x * (this.max - this.min) + this.min;
-    return Number(result.toFixed(this.precision));
+  public findValue(x: number): number { // y = f(x), here we find 'y'
+    const { max, min, precision } = this.options;
+    const result = x * (max - min) + min;
+    return Number(result.toFixed(precision));
   }
 
-  findArgument(y: number): number { // y = f(x), here we find 'x'
-    return (y - this.min) / (this.max - this.min);
+  public findArgument(y: number): number { // y = f(x), here we find 'x'
+    const { min, max } = this.options;
+    return (y - min) / (max - min);
   }
 
   private handleOptions(expectant: Obj) {
@@ -129,11 +131,7 @@ export default class Model extends EventObserver {
           throw new Error('"partsNum" should be >= 1');
         }
 
-        const {
-          min = this.min,
-          max = this.max,
-          step = this.step,
-        } = expectantCopy;
+        const { min, max, step } = { ...this.options, ...expectantCopy };
 
         if ((val - 1) * step >= (max - min)) {
           throw new Error('"partsNum" is to large!');
@@ -146,7 +144,6 @@ export default class Model extends EventObserver {
         if (val.length <= 1) {
           throw new Error('"alternativeRange" is a string array with more then one value!');
         }
-
         if ('min' in expectant) {
           throw new Error('You should not set "min" when you set "alternativeRange"');
         }
@@ -164,14 +161,14 @@ export default class Model extends EventObserver {
         }
 
         const {
-          max = this.max,
-          step = this.step,
-          partsNum = this.partsNum,
-          thumbLeftPos = this.thumbLeftPos,
-          thumbRightPos = this.thumbRightPos,
-          precision = this.precision,
-          alternativeRange = this.alternativeRange,
-        } = expectantCopy;
+          max,
+          step,
+          partsNum,
+          thumbLeftPos,
+          thumbRightPos,
+          precision,
+          alternativeRange,
+        } = { ...this.options, ...expectantCopy };
 
         if (val >= max) {
           throw new Error('"min" should be < "max"!');
@@ -210,14 +207,14 @@ export default class Model extends EventObserver {
         }
 
         const {
-          min = this.min,
-          step = this.step,
-          partsNum = this.partsNum,
-          thumbLeftPos = this.thumbLeftPos,
-          thumbRightPos = this.thumbRightPos,
-          precision = this.precision,
-          alternativeRange = this.alternativeRange,
-        } = expectantCopy;
+          min,
+          step,
+          partsNum,
+          thumbLeftPos,
+          thumbRightPos,
+          precision,
+          alternativeRange,
+        } = { ...this.options, ...expectantCopy };
 
         if (val <= min) {
           throw new Error('"max" should be >= "min"!');
@@ -261,14 +258,13 @@ export default class Model extends EventObserver {
         }
 
         const {
-          min = this.min,
-          max = this.max,
-          precision = this.precision,
-          partsNum = this.partsNum,
-          alternativeRange = this.alternativeRange,
-          thumbLeftPos = this.thumbLeftPos,
-          thumbRightPos = this.thumbRightPos,
-        } = expectantCopy;
+          min,
+          max,
+          precision,
+          partsNum,
+          thumbLeftPos,
+          thumbRightPos,
+        } = { ...this.options, ...expectantCopy };
 
         if (val > max - min) {
           throw new Error('"step" is too big!');
@@ -291,7 +287,7 @@ export default class Model extends EventObserver {
           throw new Error('"range" should be boolean!');
         }
 
-        const { thumbRightPos = this.thumbRightPos, max = this.max } = expectantCopy;
+        const { thumbRightPos, max } = { ...this.options, ...expectantCopy };
 
         if (val && thumbRightPos === Infinity) {
           expectantCopy.thumbRightPos = max;
@@ -308,12 +304,8 @@ export default class Model extends EventObserver {
         }
 
         const {
-          thumbRightPos = this.thumbRightPos,
-          min = this.min,
-          max = this.max,
-          precision = this.precision,
-          step = this.step,
-        } = expectantCopy;
+          thumbRightPos, min, max, precision, step,
+        } = { ...this.options, ...expectantCopy };
 
         if (thumbRightPos < val) {
           throw new Error('"thumbLeftPos" should be <= than "thumbRightPos"');
@@ -328,11 +320,8 @@ export default class Model extends EventObserver {
 
       thumbRightPos: (val: number) => {
         const {
-          range = this.range,
-          max = this.max,
-          step = this.step,
-          min = this.min,
-        } = expectantCopy;
+          range, max, step, min,
+        } = { ...this.options, ...expectantCopy };
 
         if (!range) return Infinity;
 
@@ -340,7 +329,7 @@ export default class Model extends EventObserver {
           throw new Error('"thumbRightPos" should be a number!');
         }
 
-        const { thumbLeftPos = this.thumbLeftPos, precision = this.precision } = expectantCopy;
+        const { thumbLeftPos, precision } = { ...this.options, ...expectantCopy };
 
         if (val < thumbLeftPos) {
           throw new Error('"thumbRightPos should be greater than "thumbLeftPos"');
@@ -366,7 +355,7 @@ export default class Model extends EventObserver {
 
     order.forEach((prop) => {
       if (prop in expectantCopy) {
-        handler[prop].call(this, expectantCopy[prop]);
+        handler[prop].call(this.options, expectantCopy[prop]);
       }
     });
 

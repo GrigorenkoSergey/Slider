@@ -1,11 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../helpers/debugger-point';
 import EventObserver from '../../helpers/event-observer';
-import {Slider} from '../../slider/slider';
+import { Slider } from '../../slider/slider';
+import { Obj } from '../../helpers/types';
 
 export default class BindedInput extends EventObserver {
   el: HTMLInputElement;
+
   prop: string;
+
   slider: Slider;
 
   constructor(el: HTMLInputElement, slider: Slider, property: string) {
@@ -23,37 +26,39 @@ export default class BindedInput extends EventObserver {
   }
 
   update(): void {
-    const propValue = this.slider.getOptions()[this.prop];
+    const sliderOptions = this.slider.getOptions() as Obj;
+    const propValue = sliderOptions[this.prop];
     this.setValue(propValue);
   }
 
   handleInputChange() {
     let newValue;
-    
+
     if (this.el.type === 'checkbox') {
       newValue = this.el.checked;
     } else {
       newValue = this.el.value;
     }
 
-    const oldValue = this.slider.getOptions()[this.prop];
+    const sliderOptions = this.slider.getOptions() as Obj;
+    const oldValue = sliderOptions[this.prop];
 
     if (typeof oldValue === 'number') {
       newValue = Number(newValue);
     }
 
     try {
-      this.slider.setOptions({[this.prop]: newValue});
-    } catch(e) {
+      this.slider.setOptions({ [this.prop]: newValue });
+    } catch (e) {
       console.log(e.message);
-      this.slider.setOptions({[this.prop]: oldValue});
-      this.setValue(oldValue)
+      this.slider.setOptions({ [this.prop]: oldValue });
+      this.setValue(oldValue);
     }
   }
 
   setValue(value: string | boolean) {
     if (this.el.type === 'text') {
-      this.el.value = <string>value
+      this.el.value = <string>value;
     } else if (this.el.type === 'checkbox') {
       this.el.checked = <boolean>value;
     }

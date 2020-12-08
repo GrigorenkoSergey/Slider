@@ -9,15 +9,15 @@ import '../../../../helpers/types';
 import debuggerPoint from '../../../../helpers/debugger-point';
 
 export default class Thumbs extends EventObserver {
-  thumbLeft!: HTMLDivElement;
+  public thumbLeft!: HTMLDivElement;
 
-  thumbRight!: HTMLDivElement;
+  public thumbRight!: HTMLDivElement;
 
-  thumbLeftOffset: number = 0;
+  public thumbLeftOffset: number = 0;
 
-  thumbRightOffset: number = 1;
+  public thumbRightOffset: number = 1;
 
-  view!: View;
+  public view!: View;
 
   constructor(view: View) {
     super();
@@ -29,8 +29,9 @@ export default class Thumbs extends EventObserver {
     const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
     Object.assign(this, { thumbLeft, thumbRight });
 
-    thumbLeft.className = `${this.view.className}__thumb-left`;
-    thumbRight.className = `${this.view.className}__thumb-right`;
+    const { className } = this.view.getOptions();
+    thumbLeft.className = `${className}__thumb-left`;
+    thumbRight.className = `${className}__thumb-right`;
 
     this.view.el.append(thumbLeft);
     this.displayThumbRight();
@@ -41,14 +42,14 @@ export default class Thumbs extends EventObserver {
     this.view.addSubscriber('range', this);
   }
 
-  update(eventType: string): this {
+  public update(eventType: string): this {
     if (eventType === 'range') {
       this.displayThumbRight();
     }
     return this;
   }
 
-  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+  public moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     const newLeft = offset * (this.view.el.clientWidth - thumb.offsetWidth);
     // eslint-disable-next-line no-param-reassign
     thumb.style.left = `${newLeft}px`;
@@ -78,10 +79,11 @@ export default class Thumbs extends EventObserver {
     const startX: number = sliderCoords.left + slider.clientLeft;
     const startY: number = sliderCoords.top + slider.clientTop;
 
-    const cosA: number = Math.cos((view.angle / 180) * Math.PI);
-    const sinA: number = Math.sin((view.angle / 180) * Math.PI);
+    const { angle, step, range } = view.getOptions();
+    const cosA: number = Math.cos((angle / 180) * Math.PI);
+    const sinA: number = Math.sin((angle / 180) * Math.PI);
 
-    const pixelStep: number = this.view.step * (slider.clientWidth - thumb.offsetWidth);
+    const pixelStep: number = step * (slider.clientWidth - thumb.offsetWidth);
 
     let leftLimit: number;
     if (thumb === this.thumbLeft) {
@@ -91,7 +93,7 @@ export default class Thumbs extends EventObserver {
     }
 
     let rightLimit: number;
-    if (thumb === this.thumbLeft && this.view.range) {
+    if (thumb === this.thumbLeft && range) {
       rightLimit = parseFloat(getComputedStyle(this.thumbRight).left);
     } else {
       const scaleWidth = slider.clientWidth - thumb.offsetWidth;
@@ -101,7 +103,7 @@ export default class Thumbs extends EventObserver {
     const shiftX: number = e.clientX - thumbCoords.left;
     const shiftY: number = e.clientY - thumbCoords.top;
 
-    thumb.classList.add(`${view.className}__thumb_moving`);
+    thumb.classList.add(`${view.getOptions().className}__thumb_moving`);
 
     const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
     const offset = thumb === this.thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
@@ -140,7 +142,7 @@ export default class Thumbs extends EventObserver {
       */
       if (newLeft === leftLimit) {
         offset = self.thumbLeftOffset;
-      } else if (newLeft === rightLimit && self.view.range) {
+      } else if (newLeft === rightLimit && self.view.getOptions().range) {
         offset = self.thumbRightOffset;
       }
 
@@ -157,7 +159,7 @@ export default class Thumbs extends EventObserver {
     }
 
     function handleDocumentMouseUp(): void {
-      thumb.classList.remove(`${view.className}__thumb_moving`);
+      thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
       self.broadcast('thumbMouseup', {
         thumb,
       });
@@ -171,7 +173,7 @@ export default class Thumbs extends EventObserver {
   }
 
   private displayThumbRight() {
-    if (this.view.range) {
+    if (this.view.getOptions().range) {
       this.view.el.append(this.thumbRight);
     } else {
       this.thumbRight.remove();

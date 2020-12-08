@@ -1,23 +1,36 @@
 import EventObserver from '../../helpers/event-observer';
-import BindedInput from '../components/binded-input';
-import {Slider} from '../../slider/slider';
+import BindedInput from './binded-input';
+import { Slider } from '../../slider/slider';
 
-import {Obj} from '../../helpers/types';
+import { Obj } from '../../helpers/types';
 
-export default class SliderOptionsPalette extends EventObserver{
+export default class SliderOptionsPalette extends EventObserver {
   el: HTMLDivElement;
+
   slider: Slider;
+
   min!: BindedInput;
+
   max!: BindedInput;
+
   step!: BindedInput;
+
   angle!: BindedInput;
+
   thumbLeftPos!: BindedInput;
+
   thumbRightPos!: BindedInput;
+
   range!: BindedInput;
+
   hintAboveThumb!: BindedInput;
+
   showScale!: BindedInput;
+
   hintAlwaysShow!: BindedInput;
+
   partsNum!: BindedInput;
+
   precision!: BindedInput;
 
   constructor(elem: HTMLDivElement, slider: Slider) {
@@ -31,27 +44,26 @@ export default class SliderOptionsPalette extends EventObserver{
   render() {
     const inputTextes = [
       'min',
-      'max', 
-      'step', 
-      'angle', 
-      'thumbLeftPos', 
-      'thumbRightPos', 
+      'max',
+      'step',
+      'angle',
+      'thumbLeftPos',
+      'thumbRightPos',
       'partsNum',
-      'precision'
+      'precision',
     ];
 
     const inputCheckboxes = [
-      ["range", "Диапазон"], 
-      ["hintAboveThumb", "Подсказка"], 
-      ["showScale", "Покaзать шкалу"],
-      ["hintAlwaysShow", "Всегда показывать подсказку"],
+      ['range', 'Диапазон'],
+      ['hintAboveThumb', 'Подсказка'],
+      ['showScale', 'Покaзать шкалу'],
+      ['hintAlwaysShow', 'Всегда показывать подсказку'],
     ];
-
 
     const ul = document.createElement('ul');
     ul.className = 'slider-options';
 
-    inputTextes.forEach(inputName => {
+    inputTextes.forEach((inputName) => {
       const li = document.createElement('li');
       li.className = 'slider-options__li';
       li.textContent = inputName;
@@ -88,21 +100,21 @@ export default class SliderOptionsPalette extends EventObserver{
 
   init() {
     const inputs = [
-      "min",
-      "max",
-      "step",
-      "angle",
-      "thumbLeftPos",
-      "thumbRightPos",
-      "range",
-      "hintAboveThumb",
-      "showScale",
-      "hintAlwaysShow",
-      "partsNum",
-      "precision",
+      'min',
+      'max',
+      'step',
+      'angle',
+      'thumbLeftPos',
+      'thumbRightPos',
+      'range',
+      'hintAboveThumb',
+      'showScale',
+      'hintAlwaysShow',
+      'partsNum',
+      'precision',
     ];
 
-    inputs.forEach(prop => {
+    inputs.forEach((prop) => {
       const obj: Obj = {};
       const input = this.el.querySelector(`[name=${prop}]`) as HTMLInputElement;
       obj[prop] = new BindedInput(input, this.slider, prop);
@@ -130,7 +142,7 @@ export default class SliderOptionsPalette extends EventObserver{
     const opts = this.slider.getOptions();
     if (opts.range === false) {
       this.thumbRightPos.el.setAttribute('disabled', 'true');
-      this.thumbRightPos.el.value = opts.thumbRightPos;
+      this.thumbRightPos.el.value = String(opts.thumbRightPos);
     } else {
       this.thumbRightPos.el.removeAttribute('disabled');
     }

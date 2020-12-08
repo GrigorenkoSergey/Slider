@@ -100,9 +100,9 @@ describe('Меняет значения подсказки над бегунко
 
     thumbRight.dispatchEvent(fakeMouseDown);
     const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
-    thumbLeft.dispatchEvent(fakeMouseMove);
+    thumbRight.dispatchEvent(fakeMouseMove);
     expect(hintRight.textContent).toEqual('78');
-    thumbLeft.dispatchEvent(fakeMouseUp);
+    thumbRight.dispatchEvent(fakeMouseUp);
   });
 });
 
@@ -279,7 +279,7 @@ describe('Меняет значения шкалы в соответствии �
     const leftHint = <HTMLElement>thumbLeft.querySelector('[class*=hint]');
 
     model.setOptions({ thumbLeftPos: 100 });
-    expect(model.thumbLeftPos).toEqual(100);
+    expect(model.getOptions().thumbLeftPos).toEqual(100);
     expect(leftHint.offsetHeight).toEqual(0);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(leftHint.textContent).toEqual('100');
@@ -295,7 +295,7 @@ describe('Меняет значения шкалы в соответствии �
     const rightHint = <HTMLElement>thumbRight.querySelector('[class*=hint]');
 
     model.setOptions({ thumbRightPos: 800 });
-    expect(model.thumbRightPos).toEqual(800);
+    expect(model.getOptions().thumbRightPos).toEqual(800);
     expect(rightHint.offsetHeight).toEqual(0);
     thumbRight.dispatchEvent(fakeMouseDown);
     expect(thumbRight.textContent).toEqual('800');
@@ -371,7 +371,7 @@ describe('Меняет состояние модели в соответстви
     anchors[1].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[0].textContent).toEqual('25');
-    expect(model.thumbLeftPos).toEqual(25);
+    expect(model.getOptions().thumbLeftPos).toEqual(25);
   });
 
   it('При движении правого бегунка меняется значение thumbRightPos в модели', () => {
@@ -384,7 +384,7 @@ describe('Меняет состояние модели в соответстви
     anchors[3].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[1].textContent).toEqual('75');
-    expect(model.thumbRightPos).toEqual(75);
+    expect(model.getOptions().thumbRightPos).toEqual(75);
   });
 });
 
@@ -440,25 +440,25 @@ describe('В любой момент времени можно узнать и �
     // Для красоты
     div.style.marginTop = '300px';
 
-    let options = presenter.getOptions();
+    const options = presenter.getOptions();
     expect(options.range).toEqual(false);
     expect(options.showScale).toEqual(false);
     expect(options.min).toEqual(0);
     expect(options.max).toEqual(100);
     expect(options.step).toEqual(10);
 
-    options = model.getOptions();
-    expect(options.range).toEqual(false);
-    expect(options.min).toEqual(0);
-    expect(options.max).toEqual(100);
-    expect(options.step).toEqual(10);
-    expect(options.thumbLeftPos).toEqual(50);
+    const modelOptions = model.getOptions();
+    expect(modelOptions.range).toEqual(false);
+    expect(modelOptions.min).toEqual(0);
+    expect(modelOptions.max).toEqual(100);
+    expect(modelOptions.step).toEqual(10);
+    expect(modelOptions.thumbLeftPos).toEqual(50);
 
-    options = view.getOptions();
-    expect(options.angle).toEqual(45);
-    expect(options.range).toEqual(false);
-    expect(options.showScale).toEqual(false);
-    expect(options.step).toEqual(0.1);
+    const viewOptions = view.getOptions();
+    expect(viewOptions.angle).toEqual(45);
+    expect(viewOptions.range).toEqual(false);
+    expect(viewOptions.showScale).toEqual(false);
+    expect(viewOptions.step).toEqual(0.1);
 
     div.style.marginTop = '70px';
   });
@@ -618,7 +618,7 @@ describe('Проверка поведения подсказок при вклю
   });
 });
 
-describe('Проверка оции "onChange\n', () => {
+describe('Проверка опции "onChange\n', () => {
   beforeEach(() => {
     document.body.append(div);
   });

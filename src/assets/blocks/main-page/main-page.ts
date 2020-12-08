@@ -97,8 +97,7 @@ let slider5 = new Slider(options5);
 const letterA = <HTMLElement>document.querySelector('.slider5-container__text');
 
 slider5.onChange({el: letterA, callback: () => {
-  const options = slider5.getOptions();
-  const offset = options._thumbLeftOffset();
+  const offset = slider5.getOffsets().left;
 
   // offset == 0 -> 200
   // offset == 1 -> 360 
@@ -133,7 +132,7 @@ slider6.onChange({
   callback: () => {
     let imgWidth = 918 / 5;
     let imgHeight = 506 / 3;
-    let offset = slider6.getOptions()._thumbLeftOffset();
+    let offset = slider6.getOffsets().left;
     
     // offset == 0 -> 0
     // offset == 1 -> 13

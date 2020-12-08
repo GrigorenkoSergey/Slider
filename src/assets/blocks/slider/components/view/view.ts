@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import EventObserver from '../../../helpers/event-observer';
 import { ISubscriber } from '../../../helpers/interfaces';
 
@@ -11,40 +10,31 @@ import Thumbs from './components/thumbs';
 import { Obj } from '../../../helpers/types';
 import Hint from './components/hint';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class View extends EventObserver implements ISubscriber {
-  el: HTMLDivElement = document.createElement('div');
+  public el: HTMLDivElement = document.createElement('div');
 
-  className: string = 'slider';
+  private options = {
+    className: 'slider',
+    selector: '',
+    angle: 0,
+    step: 1 / 100, // 0 < step <= 1
+    range: false,
+    hintAboveThumb: true,
+    hintAlwaysShow: false,
+    showScale: true,
+    partsNum: 2,
+  }
 
-  step: number = 1 / 100; // 0 < step <= 1
+  public hints!: Hint[];
 
-  angle: number = 0;
+  public thumbs!: Thumbs;
 
-  range: boolean = false;
+  public scale!: Scale;
 
-  selector: string = '';
-
-  hintAboveThumb = true;
-
-  hints!: Hint[];
-
-  hintAlwaysShow: boolean = false;
-
-  thumbs!: Thumbs;
-
-  _thumbLeftOffset!: () => number;
-
-  _thumbRigthOffset!: () => number;
-
-  scale!: Scale;
-
-  showScale: boolean = true;
-
-  partsNum: number = 2;
-
-  stretcher!: Stretcher;
+  public stretcher!: Stretcher;
 
   constructor(options: Obj) {
     super();
@@ -53,25 +43,22 @@ export default class View extends EventObserver implements ISubscriber {
       throw new Error('option "selector" should be in options');
     }
 
-    this.selector = options.selector;
+    this.options.selector = options.selector;
     this.setOptions(options);
     this.init();
   }
 
   private init(): this {
-    const wrapper = document.querySelector(this.selector) as HTMLDivElement;
+    const wrapper = document.querySelector(this.options.selector) as HTMLDivElement;
     wrapper.append(this.el);
 
-    this.el.style.transform = `rotate(${this.angle}deg)`;
-    this.el.classList.add(this.className);
+    this.el.style.transform = `rotate(${this.options.angle}deg)`;
+    this.el.classList.add(this.options.className);
 
     this.thumbs = new Thumbs(this);
     this.thumbs.addSubscriber('thumbMousemove', this);
     this.thumbs.addSubscriber('thumbMousedown', this);
     this.thumbs.addSubscriber('thumbMouseup', this);
-
-    this._thumbLeftOffset = () => this.thumbs.thumbLeftOffset;
-    this._thumbRigthOffset = () => this.thumbs.thumbRightOffset;
 
     this.el.addEventListener('click', this.handleSliderClick.bind(this));
 
@@ -98,19 +85,18 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  setOptions(options: Obj) {
+  public setOptions(options: Obj) {
     const expectant: Obj = {};
 
     Object.keys(options)
-      .filter((prop) => prop in this)
-      .filter((prop) => !prop.startsWith('_'))
+      .filter((prop) => prop in this.options)
       .forEach((prop) => { expectant[prop] = options[prop]; });
 
     Object.entries(expectant).forEach(([prop, value]) => {
-      this.validateOptions(prop, value, expectant);
+      this.validateOptions(prop, value);
     });
 
-    Object.assign(this, expectant);
+    Object.assign(this.options, expectant);
     Object.entries(expectant).forEach(([prop, value]) => {
       this.broadcast(prop, value);
     });
@@ -118,40 +104,29 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  getOptions() {
-    const publicOtions = [
-      'step',
-      'range',
-      'className',
-      'selector',
-      'hintAboveThumb',
-      'hintAlwaysShow',
-      'angle',
-      'showScale',
-      'partsNum',
-      '_thumbLeftOffset',
-      '_thumbRightOffset',
-    ];
-
-    const obj: Obj = {};
-    publicOtions.forEach((key) => { obj[key] = this[<keyof this>key]; });
+  public getOptions() {
+    const obj = { ...this.options };
     return obj;
   }
 
-  update(eventType: string, data: any): this {
+  public update(eventType: string, data: any): this {
     // если View подписан сам на себя, то он должен выходить из
     // функции, иначе получится бесконечный цикл
     if (eventType === 'angle') {
-      this.el.style.transform = `rotate(${this.angle}deg)`;
+      this.el.style.transform = `rotate(${this.options.angle}deg)`;
       return this;
-    } if (eventType === 'hintAlwaysShow') {
-      if (this.hintAlwaysShow) {
+    }
+
+    if (eventType === 'hintAlwaysShow') {
+      if (this.options.hintAlwaysShow) {
         this.hints.forEach((hint) => hint.showHint());
       } else {
         this.hints.forEach((hint) => hint.hideHint());
       }
       return this;
-    } if (eventType === 'thumbMousedown') {
+    }
+
+    if (eventType === 'thumbMousedown') {
       const thumb = data.el;
       this.handleThumbMousedown(thumb);
     } else if (eventType === 'thumbMouseup') {
@@ -168,25 +143,27 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+  public moveThumbToPos(thumb: HTMLDivElement, offset: number) {
     this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset);
 
     let data = null;
+
     if (thumb === this.thumbs.thumbLeft) {
       data = { left: offset };
     } else {
       data = { right: offset };
     }
+
     this.handleHintsIntersection();
     this.broadcast('thumbProgramMove', data);
   }
 
-  setAnchorValues(values: number[] | string[]) {
+  public setAnchorValues(values: number[] | string[]) {
     this.scale.setAnchorValues(values);
     this.handleHintsIntersection();
   }
 
-  setHintValue(thumb: HTMLDivElement, value: string) {
+  public setHintValue(thumb: HTMLDivElement, value: string) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.setHintValue(value);
     this.handleHintsIntersection();
@@ -199,7 +176,7 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private handleThumbMousedown(thumb: HTMLDivElement) {
-    if (!this.hintAboveThumb) return;
+    if (!this.options.hintAboveThumb) return;
 
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
     hint.showHint();
@@ -208,7 +185,7 @@ export default class View extends EventObserver implements ISubscriber {
   private handleThumbMouseup(thumb: HTMLElement) {
     const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
 
-    if (!this.hintAlwaysShow) {
+    if (!this.options.hintAlwaysShow) {
       hint.hideHint();
     }
   }
@@ -223,8 +200,8 @@ export default class View extends EventObserver implements ISubscriber {
     const startX: number = sliderCoords.left + slider.clientLeft;
     const startY: number = sliderCoords.top + slider.clientTop;
 
-    const cosA: number = Math.cos((this.angle / 180) * Math.PI);
-    const sinA: number = Math.sin((this.angle / 180) * Math.PI);
+    const cosA: number = Math.cos((this.options.angle / 180) * Math.PI);
+    const sinA: number = Math.sin((this.options.angle / 180) * Math.PI);
 
     const newLeftX: number = e.clientX - startX;
     const newLeftY: number = e.clientY - startY;
@@ -241,12 +218,12 @@ export default class View extends EventObserver implements ISubscriber {
 
     offset -= closestThumb.offsetWidth / this.scale.width / 2;
     offset = Math.max(0, offset);
-    offset = Math.round(offset / this.step) * this.step;
+    offset = Math.round(offset / this.options.step) * this.options.step;
 
     this.moveThumbToPos(closestThumb, offset);
   }
 
-  private validateOptions(key: string, value: any, expectant: Obj) {
+  private validateOptions(key: string, value: any) {
     const validator: Obj = {
       step: (val: number) => {
         if (!isFinite(val)) {
@@ -282,7 +259,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     let closestThumb;
 
-    if (this.range) {
+    if (this.options.range) {
       if (offset - this.thumbs.thumbLeftOffset < this.thumbs.thumbRightOffset - offset) {
         closestThumb = thumbLeft;
       } else {
@@ -296,10 +273,9 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private checkHintsIntersection() {
-    if (!this.hintAlwaysShow || !this.range) return false;
+    if (!this.options.hintAlwaysShow || !this.options.range) return false;
 
     const [leftHint, rightHint] = this.hints.map((hint) => hint.el);
-
     let result = false;
 
     /*
@@ -333,17 +309,17 @@ export default class View extends EventObserver implements ISubscriber {
     return result;
   }
 
-  handleHintsIntersection() {
-    if (!this.hintAlwaysShow) return;
+  private handleHintsIntersection() {
+    if (!this.options.hintAlwaysShow) return;
 
     this.hints.forEach((hint) => hint.showHint());
 
     if (this.checkHintsIntersection()) {
       /*
        добавим модификатор, чтобы можно было потом как-то выбрать с помощью
-       javascript, к примеру, чтобы подвинуть как нужно пользователю
+       javascript, к примеру, чтобы подвинуть подсказку как нужно пользователю
       */
-      this.hints[0].el.classList.add(`${this.className}__hint_summary`);
+      this.hints[0].el.classList.add(`${this.options.className}__hint_summary`);
       this.hints[1].hideHint();
 
       const leftValue = this.hints[0].value;
@@ -354,7 +330,7 @@ export default class View extends EventObserver implements ISubscriber {
         this.hints[0].el.textContent = textContent;
       }
     } else {
-      this.hints[0].el.classList.remove(`${this.className}__hint_summary`);
+      this.hints[0].el.classList.remove(`${this.options.className}__hint_summary`);
     }
   }
 }

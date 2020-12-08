@@ -2,9 +2,9 @@ import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
 export default class Stretcher extends EventObserver {
-  el!: HTMLDivElement;
+  public el!: HTMLDivElement;
 
-  view: View;
+  public view: View;
 
   constructor(view: View) {
     super();
@@ -17,22 +17,24 @@ export default class Stretcher extends EventObserver {
 
   private render() {
     this.el = document.createElement('div');
-    this.el.className = `${this.view.className}__stretcher`;
+    this.el.className = `${this.view.getOptions().className}__stretcher`;
     this.view.el.append(this.el);
     this.update();
   }
 
-  update() {
-    if (this.view.range) {
-      this.el.style.left = `${parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left)
-        + this.view.thumbs.thumbLeft.offsetWidth / 2}px`;
+  public update() {
+    const { range } = this.view.getOptions();
+    const { thumbs } = this.view;
+    if (range) {
+      this.el.style.left = `${parseFloat(getComputedStyle(thumbs.thumbLeft).left)
+        + thumbs.thumbLeft.offsetWidth / 2}px`;
 
       this.el.style.right = `${this.view.el.clientWidth
-        - parseFloat(getComputedStyle(this.view.thumbs.thumbRight).left)}px`;
+        - parseFloat(getComputedStyle(thumbs.thumbRight).left)}px`;
     } else {
       this.el.style.left = '0px';
       this.el.style.right = `${this.view.el.clientWidth
-        - parseFloat(getComputedStyle(this.view.thumbs.thumbLeft).left)}px`;
+        - parseFloat(getComputedStyle(thumbs.thumbLeft).left)}px`;
     }
   }
 }

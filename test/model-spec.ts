@@ -6,17 +6,19 @@ describe('Model\n', () => {
   describe('Первоначальная минимальная инициализация\n', () => {
     it('Можно инициализировать с необходимым минимумом аргументов: min, max', () => {
       const model = new Model({ min: 0, max: 100 });
-      (Object.keys(model) as (keyof Model)[]).forEach((key: keyof Model) => {
-        if (key === 'thumbRightPos') return;
-        expect(model[key]).toBeDefined();
+
+      const modelOptions = model.getOptions() as {[key: string]: any};
+      Object.keys(modelOptions).forEach((key) => {
+        expect(modelOptions[key]).toBeDefined();
       });
     });
 
     it('Альтернативно можно инициализировать с помощью опции "alternativeRange"', () => {
       const model = new Model({ alternativeRange: ['start', 'end'] });
-      (Object.keys(model) as (keyof Model)[]).forEach((key: keyof Model) => {
-        if (key === 'thumbRightPos') return;
-        expect(model[key]).toBeDefined();
+
+      const modelOptions = model.getOptions() as {[key: string]: any};
+      Object.keys(modelOptions).forEach((key) => {
+        expect(modelOptions[key]).toBeDefined();
       });
     });
 
@@ -53,26 +55,26 @@ describe('Model\n', () => {
         min: 0, max: 100, thumbLeftPos: 20, thumbRightPos: 80, range: true,
       });
 
-      expect(model.thumbLeftPos).toEqual(20);
-      expect(model.thumbRightPos).toEqual(80);
+      expect(model.getOptions().thumbLeftPos).toEqual(20);
+      expect(model.getOptions().thumbRightPos).toEqual(80);
     });
 
     it(`Если не задано положение левого бегунка, 
     он становится равными минимуму`, () => {
       const model = new Model({ min: -200, max: 100 });
-      expect(model.thumbLeftPos).toEqual(-200);
+      expect(model.getOptions().thumbLeftPos).toEqual(-200);
     });
 
     it(`При изменении свойства "range" свойство "thumbRightPos" автоматически
     становится равным "Infinity"`, () => {
       const model = new Model({ min: -200, max: 100 });
-      expect(model.thumbRightPos).toEqual(Infinity);
+      expect(model.getOptions().thumbRightPos).toEqual(Infinity);
 
       model.setOptions({ range: true });
-      expect(model.thumbRightPos).toEqual(100);
+      expect(model.getOptions().thumbRightPos).toEqual(100);
 
       model.setOptions({ range: false });
-      expect(model.thumbRightPos).toEqual(Infinity);
+      expect(model.getOptions().thumbRightPos).toEqual(Infinity);
     });
 
     it(`Свойства "thumbLeftPos" и "thumbRightPos" не могут 
@@ -80,16 +82,16 @@ describe('Model\n', () => {
       const model = new Model({ min: 0, max: 100, step: 1 });
 
       model.setOptions({ thumbLeftPos: -100 });
-      expect(model.thumbLeftPos).toEqual(model.min);
+      expect(model.getOptions().thumbLeftPos).toEqual(model.getOptions().min);
 
       model.setOptions({ thumbRightPos: 200, range: true });
 
       model.setOptions({ thumbLeftPos: -100 });
-      expect(model.thumbLeftPos).toEqual(model.min);
+      expect(model.getOptions().thumbLeftPos).toEqual(model.getOptions().min);
 
       model.setOptions({ range: true, thumbLeftPos: -100, thumbRightPos: 500 });
-      expect(model.thumbLeftPos).toEqual(model.min);
-      expect(model.thumbRightPos).toEqual(model.max);
+      expect(model.getOptions().thumbLeftPos).toEqual(model.getOptions().min);
+      expect(model.getOptions().thumbRightPos).toEqual(model.getOptions().max);
     });
 
     it(`При некратном шаге достижимые значения слайдера не могут 
@@ -97,10 +99,10 @@ describe('Model\n', () => {
       const model = new Model({
         min: 10, max: 299, step: 3, range: true,
       });
-      expect(model.thumbLeftPos).toBeGreaterThanOrEqual(10);
-      expect(model.min).toEqual(10);
-      expect(model.thumbRightPos).toBeLessThanOrEqual(299);
-      expect(model.max).toEqual(299);
+      expect(model.getOptions().thumbLeftPos).toBeGreaterThanOrEqual(10);
+      expect(model.getOptions().min).toEqual(10);
+      expect(model.getOptions().thumbRightPos).toBeLessThanOrEqual(299);
+      expect(model.getOptions().max).toEqual(299);
     });
 
     it('Проверка правильности округления', () => {
@@ -108,7 +110,7 @@ describe('Model\n', () => {
         min: 2, max: 6, step: 4, range: false,
       });
       expect(model.setOptions({ thumbLeftPos: 2 }));
-      expect(model.thumbLeftPos).toEqual(2);
+      expect(model.getOptions().thumbLeftPos).toEqual(2);
     });
   });
 
@@ -130,11 +132,11 @@ describe('Model\n', () => {
         range: true,
       });
 
-      expect(model.max).toEqual(100);
-      expect(model.min).toEqual(0);
-      expect(model.step).toEqual(1);
-      expect(model.thumbLeftPos).toEqual(10);
-      expect(model.thumbRightPos).toEqual(80);
+      expect(model.getOptions().max).toEqual(100);
+      expect(model.getOptions().min).toEqual(0);
+      expect(model.getOptions().step).toEqual(1);
+      expect(model.getOptions().thumbLeftPos).toEqual(10);
+      expect(model.getOptions().thumbRightPos).toEqual(80);
       expect(() => model.setOptions({ min: '1a' })).toThrowError();
       expect(() => model.setOptions({ max: '110a' })).toThrowError();
       expect(() => model.setOptions({ step: '11a' })).toThrowError();
@@ -212,12 +214,12 @@ describe('Model\n', () => {
     либо становится минимумом, если опция "range" == true, иначе максимумом`, () => {
       model.setOptions({ thumbLeftPos: 50, range: true, thumbRightPos: 100 });
       model.setOptions({ max: 40 });
-      expect(model.thumbLeftPos).toEqual(model.min);
-      expect(model.thumbRightPos).toEqual(model.max);
+      expect(model.getOptions().thumbLeftPos).toEqual(model.getOptions().min);
+      expect(model.getOptions().thumbRightPos).toEqual(model.getOptions().max);
 
       model.setOptions({ max: 100, thumbLeftPos: 50, range: false });
       model.setOptions({ max: 40 });
-      expect(model.thumbLeftPos).toEqual(40);
+      expect(model.getOptions().thumbLeftPos).toEqual(40);
     });
 
     it(`Если заданный шаг слишком большой (больше диапазона), 
@@ -235,20 +237,20 @@ describe('Model\n', () => {
         значение partsNum сбросится до 1, если оно было установлено до этого`, () => {
       model.setOptions({ partsNum: 20, min: 0 });
       model.setOptions({ max: 100, step: 50 });
-      expect(model.partsNum).toEqual(1);
+      expect(model.getOptions().partsNum).toEqual(1);
     });
 
     it('Нельзя задать "thumbRightPos" больше максимума и минимума', () => {
       model.setOptions({ thumbRightPos: 1000, range: true });
-      expect(model.thumbRightPos).toEqual(100);
+      expect(model.getOptions().thumbRightPos).toEqual(100);
       expect(() => { model.setOptions({ thumbRightPos: 10, min: 20 }); }).toThrowError();
     });
 
     it('Нельзя задать "thumbLeftPos" меньше минимума', () => {
       model.setOptions({ thumbLeftPos: -1000 });
-      expect(model.thumbLeftPos).toEqual(0);
+      expect(model.getOptions().thumbLeftPos).toEqual(0);
       model.setOptions({ thumbLeftPos: 1 });
-      expect(model.thumbLeftPos).toEqual(1);
+      expect(model.getOptions().thumbLeftPos).toEqual(1);
       expect(() => model.setOptions(({ thumbLeftPos: 50, min: 51 }))).toThrowError();
     });
 
@@ -267,11 +269,11 @@ describe('Model\n', () => {
           то они разбегаются по краям слайдера`, () => {
       model.setOptions({ range: true, min: 200, max: 300 });
 
-      expect(model.thumbLeftPos).toEqual(200);
-      expect(model.thumbRightPos).toEqual(300);
+      expect(model.getOptions().thumbLeftPos).toEqual(200);
+      expect(model.getOptions().thumbRightPos).toEqual(300);
       model.setOptions({ max: 500 });
       model.setOptions({ min: 400 });
-      expect(model.thumbRightPos).toEqual(500);
+      expect(model.getOptions().thumbRightPos).toEqual(500);
     });
 
     it('В любой момент можно узнать значения свойств модели', () => {
@@ -291,28 +293,28 @@ describe('Model\n', () => {
 
     it('Меняет положение левого и правого значений диапазона', () => {
       model.setThumbsPos({ left: 20, right: 80 });
-      expect(model.thumbLeftPos).toEqual(20);
-      expect(model.thumbRightPos).toEqual(80);
-      expect(model.min).toEqual(0);
-      expect(model.max).toEqual(100);
+      expect(model.getOptions().thumbLeftPos).toEqual(20);
+      expect(model.getOptions().thumbRightPos).toEqual(80);
+      expect(model.getOptions().min).toEqual(0);
+      expect(model.getOptions().max).toEqual(100);
 
       model.setThumbsPos({ left: 30, right: 95 });
-      expect(model.thumbLeftPos).toEqual(30);
-      expect(model.thumbRightPos).toEqual(95);
-      expect(model.min).toEqual(0);
-      expect(model.max).toEqual(100);
+      expect(model.getOptions().thumbLeftPos).toEqual(30);
+      expect(model.getOptions().thumbRightPos).toEqual(95);
+      expect(model.getOptions().min).toEqual(0);
+      expect(model.getOptions().max).toEqual(100);
     });
 
     it(`Минимальное значение левого бегунка равно значению свойства 
     "min", ставится автоматически`, () => {
       model.setThumbsPos({ left: -10 });
-      expect(model.thumbLeftPos).toEqual(model.min);
+      expect(model.getOptions().thumbLeftPos).toEqual(model.getOptions().min);
     });
 
     it(`Максимальное значение правого диапазона равно значению свойства 
     "max", ставится автоматически`, () => {
-      model.setThumbsPos({ left: model.thumbLeftPos, right: 101 });
-      expect(model.thumbRightPos).toEqual(100);
+      model.setThumbsPos({ left: model.getOptions().thumbLeftPos, right: 101 });
+      expect(model.getOptions().thumbRightPos).toEqual(100);
     });
 
     it(`Допускается задавать только одно минимальное значение 

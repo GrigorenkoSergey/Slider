@@ -8,15 +8,15 @@ import { Obj } from '../../../../helpers/types';
 import isIncreasing from '../../../../helpers/functions/is-increasing';
 
 export default class Scale extends EventObserver {
-  view: View;
+  public view: View;
 
-  el: HTMLDivElement = document.createElement('div');
+  public el: HTMLDivElement = document.createElement('div');
 
-  width: number = 0;
+  public width: number = 0;
 
-  anchors!: HTMLDivElement[];
+  public parts: number[] = [];
 
-  parts: number[] = [];
+  private anchors!: HTMLDivElement[];
 
   constructor(options: Obj) {
     super();
@@ -39,7 +39,7 @@ export default class Scale extends EventObserver {
     this.render();
   }
 
-  update(prop: string) {
+  public update(prop: string) {
     if (prop === 'showScale') {
       this.displayScale();
     } else if (prop === 'partsNum') {
@@ -58,14 +58,14 @@ export default class Scale extends EventObserver {
     this.setMilestones();
   }
 
-  setAnchorValues(values: number[] | string[]) {
+  public setAnchorValues(values: number[] | string[]) {
     this.anchors.forEach((div, i) => {
       div.textContent = String(values[i]);
     });
   }
 
-  setMilestones(values?: number[]) {
-    const { step } = this.view;
+  public setMilestones(values?: number[]) {
+    const { step, partsNum } = this.view.getOptions();
 
     this.anchors.forEach((item) => item.remove());
     this.anchors.length = 0;
@@ -73,8 +73,8 @@ export default class Scale extends EventObserver {
     if (!values) {
       this.parts.length = 0;
 
-      for (let i = 1; i < this.view.partsNum; i += 1) {
-        let value = Math.round(i / this.view.partsNum / step) * step;
+      for (let i = 1; i < this.view.getOptions().partsNum; i += 1) {
+        let value = Math.round(i / partsNum / step) * step;
         value = Math.min(1, value);
 
         this.parts.push(value);
@@ -114,7 +114,7 @@ export default class Scale extends EventObserver {
     let offset = this.parts[index];
 
     if (offset === 1) {
-      const { step } = this.view;
+      const { step } = this.view.getOptions();
       offset = Math.floor(offset / step) * step;
     }
 
@@ -122,7 +122,7 @@ export default class Scale extends EventObserver {
   }
 
   private displayScale() {
-    if (!this.view.showScale) {
+    if (!this.view.getOptions().showScale) {
       this.el.style.display = 'none';
     } else {
       this.el.style.display = '';
@@ -130,7 +130,7 @@ export default class Scale extends EventObserver {
   }
 
   private rotateScale() {
-    const { angle } = this.view;
+    const { angle } = this.view.getOptions();
     const { sin, PI } = Math;
     const radAngle = (angle * PI) / 180;
 
