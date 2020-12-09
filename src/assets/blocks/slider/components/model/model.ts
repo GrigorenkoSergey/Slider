@@ -4,9 +4,10 @@ import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 
 import { Obj } from '../../../helpers/types';
+import { ModelType, ModelOptions } from './model-types';
 
 export default class Model extends EventObserver {
-  private options = {
+  private options: ModelType = {
     min: 0,
     max: 100,
     step: 1,
@@ -18,33 +19,41 @@ export default class Model extends EventObserver {
     alternativeRange: [] as string[],
   }
 
-  constructor(options: Obj) {
+  constructor(options: ModelOptions) {
     super();
     const optionsCopy = { ...options };
-    const argsRequire = ['min', 'max'];
+    // const argsRequire = ['min', 'max'];
 
-    if (!argsRequire.every((key) => key in optionsCopy)) {
-      if (!('alternativeRange' in optionsCopy)) {
-        throw new Error(
-          `Not enough values. There must be at least the "min" and "max" options
-            or the "alternativeRange" option must be set`,
-        );
-      }
-    }
+    // if (!argsRequire.every((key) => key in optionsCopy)) {
+    //   if (!('alternativeRange' in optionsCopy)) {
+    //     throw new Error(
+    //       `Not enough values. There must be at least the "min" and "max" options
+    //         or the "alternativeRange" option must be set`,
+    //     );
+    //   }
+    // }
 
-    const defaultOptions: Obj = {
+    const defaultDependentOptions = {
       step: () => {
         if (!('alternativeRange' in optionsCopy)) {
-          return Math.round((optionsCopy.max - optionsCopy.min) / 100);
+          return Math.round((optionsCopy.max! - optionsCopy.min!) / 100);
         }
         return 1;
       },
-      thumbLeftPos: () => optionsCopy.min || 0,
+      thumbLeftPos: () => {
+        let result = 0;
+        if ('min' in optionsCopy) {
+          result = optionsCopy.min!;
+        }
+        return result;
+      },
       thumbRightPos: () => Infinity,
     };
 
-    Object.keys(defaultOptions).forEach((key) => {
-      if (!(key in options)) optionsCopy[key] = defaultOptions[key]();
+    Object.keys(defaultDependentOptions).forEach((key) => {
+      if (key in options) return;
+
+      (<Obj>optionsCopy)[key] = (defaultDependentOptions as Obj)[key]();
     });
 
     this.setOptions(optionsCopy);
@@ -55,7 +64,7 @@ export default class Model extends EventObserver {
     return obj;
   }
 
-  setOptions(expectant: Obj): Model {
+  setOptions(expectant: ModelOptions): Model {
     let tempObj: Obj = {};
 
     Object.entries(expectant).forEach(([key, value]) => {
@@ -123,9 +132,7 @@ export default class Model extends EventObserver {
       },
 
       partsNum: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"partsNum" should be a number!');
-        } else if (!Number.isInteger(val)) {
+        if (!Number.isInteger(val)) {
           throw new Error('"partsNum" should be integer!');
         } else if (val < 1) {
           throw new Error('"partsNum" should be >= 1');
@@ -156,10 +163,6 @@ export default class Model extends EventObserver {
       },
 
       min: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"min" should be a number!');
-        }
-
         const {
           max,
           step,
@@ -202,10 +205,6 @@ export default class Model extends EventObserver {
       },
 
       max: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"max" should be a number!');
-        }
-
         const {
           min,
           step,
@@ -253,10 +252,6 @@ export default class Model extends EventObserver {
       },
 
       step: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"step" should be a number!');
-        }
-
         const {
           min,
           max,
@@ -283,10 +278,6 @@ export default class Model extends EventObserver {
       },
 
       range: (val: boolean) => {
-        if (typeof val !== 'boolean') {
-          throw new Error('"range" should be boolean!');
-        }
-
         const { thumbRightPos, max } = { ...this.options, ...expectantCopy };
 
         if (val && thumbRightPos === Infinity) {
@@ -299,10 +290,6 @@ export default class Model extends EventObserver {
       },
 
       thumbLeftPos: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('"thumbLeftPos" should be a number!');
-        }
-
         const {
           thumbRightPos, min, max, precision, step,
         } = { ...this.options, ...expectantCopy };
@@ -324,10 +311,6 @@ export default class Model extends EventObserver {
         } = { ...this.options, ...expectantCopy };
 
         if (!range) return Infinity;
-
-        if (!isFinite(val)) {
-          throw new Error('"thumbRightPos" should be a number!');
-        }
 
         const { thumbLeftPos, precision } = { ...this.options, ...expectantCopy };
 

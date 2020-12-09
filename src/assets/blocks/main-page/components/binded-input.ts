@@ -43,10 +43,6 @@ export default class BindedInput extends EventObserver {
     const sliderOptions = this.slider.getOptions() as Obj;
     const oldValue = sliderOptions[this.prop];
 
-    if (typeof oldValue === 'number') {
-      newValue = Number(newValue);
-    }
-
     try {
       this.slider.setOptions({ [this.prop]: newValue });
     } catch (e) {

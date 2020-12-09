@@ -459,6 +459,7 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(palette.thumbLeftPos.el.value).toEqual(value);
 
     palette.thumbLeftPos.el.value = '10a';
+    debuggerPoint.start = 12;
     palette.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(palette.thumbLeftPos.el.value).toEqual(value);
 

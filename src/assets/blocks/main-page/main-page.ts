@@ -5,7 +5,7 @@ import './main-page.scss';
 
 import SliderOptionsPalette from './components/slider-options-palette';
 import debuggerPoint from '../helpers/debugger-point';
-import {Slider} from '../slider/slider';
+import { Slider } from '../slider/slider';
 
 let options1 = {
   min: 1000000,

@@ -7,8 +7,10 @@ import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import Thumbs from './components/thumbs';
 
-import { Obj } from '../../../helpers/types';
 import Hint from './components/hint';
+
+import { Obj } from '../../../helpers/types';
+import { ViewType, ViewOptions } from './view-types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
@@ -16,7 +18,7 @@ import debuggerPoint from '../../../helpers/debugger-point';
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
 
-  private options = {
+  private options: ViewType = {
     className: 'slider',
     selector: '',
     angle: 0,
@@ -36,14 +38,14 @@ export default class View extends EventObserver implements ISubscriber {
 
   stretcher!: Stretcher;
 
-  constructor(options: Obj) {
+  constructor(options: ViewOptions) {
     super();
 
     if (!('selector' in options)) {
       throw new Error('option "selector" should be in options');
     }
 
-    this.options.selector = options.selector;
+    this.options.selector = options.selector!;
     this.setOptions(options);
     this.init();
   }
@@ -85,12 +87,12 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  setOptions(options: Obj) {
-    const expectant: Obj = {};
+  setOptions(options: ViewOptions) {
+    const expectant: ViewOptions = {};
 
     Object.keys(options)
       .filter((prop) => prop in this.options)
-      .forEach((prop) => { expectant[prop] = options[prop]; });
+      .forEach((prop) => { (expectant as Obj)[prop] = (options as Obj)[prop]; });
 
     Object.entries(expectant).forEach(([prop, value]) => {
       this.validateOptions(prop, value);
