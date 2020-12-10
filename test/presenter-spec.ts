@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
@@ -29,6 +30,148 @@ const fakeMouseUp = new MouseEvent('mouseup', {
 
 const fakeClick = new MouseEvent('click', {
   bubbles: true, cancelable: true,
+});
+
+describe('Первоначальная минимальная реализация', () => {
+  const selector = '.divPresenterSpec';
+  beforeEach(() => {
+    document.body.append(div);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+    div.remove();
+  });
+
+  it(`Если аргументов для инициализации не достаточно,
+    выкидывает ошибку`, () => {
+    expect(() => {
+      new Presenter({ min: 0, max: 100 });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({ min: 0, max: 100, selector });
+    }).not.toThrowError();
+    expect(() => {
+      new Presenter({ alternativeRange: ['first', 'second'] });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({ alternativeRange: ['first', 'second'], selector });
+    }).not.toThrowError();
+    expect(() => {
+      new Presenter({ selector });
+    }).toThrowError();
+  });
+
+  it(`Если аргументы не тех типов (кроме типа number),
+   которые принимают модель или вью, при инициализации вывалит ошибку`, () => {
+    expect(() => { new Presenter('3'); }).toThrowError();
+    expect(() => {
+      new Presenter({
+        className: 1, selector, min: 0, max: 100,
+      });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({
+        range: 1, selector, min: 0, max: 100,
+      });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({
+        hintAboveThumb: 1, selector, min: 0, max: 100,
+      });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({
+        hintAlwaysShow: 1, selector, min: 0, max: 100,
+      });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({
+        showScale: 1, selector, min: 0, max: 100,
+      });
+    }).toThrowError();
+    expect(() => {
+      new Presenter({
+        alternativeRange: 1, selector, min: 0, max: 100,
+      });
+    }).toThrowError();
+  });
+
+  it(`Если аргументы не тех типов (кроме типа number),
+   которые принимают модель или вью, при присваивании вывалит ошибку`, () => {
+    const presenter = new Presenter({
+      min: 0,
+      max: 100,
+      step: 1,
+      thumbLeftPos: 10,
+      selector,
+      thumbRightPos: 80,
+      angle: 90,
+      range: true,
+      precision: 0,
+    });
+
+    expect(() => {
+      presenter.setOptions({ className: 1 });
+    }).toThrowError();
+    expect(() => {
+      presenter.setOptions({ range: 1 });
+    }).toThrowError();
+    expect(() => {
+      presenter.setOptions({ hintAboveThumb: 1 });
+    }).toThrowError();
+    expect(() => {
+      presenter.setOptions({ hintAlwaysShow: 1 });
+    }).toThrowError();
+    expect(() => {
+      presenter.setOptions({ showScale: 1 });
+    }).toThrowError();
+    expect(() => {
+      presenter.setOptions({ alternativeRange: [1, 2, 3] });
+    }).toThrowError();
+  });
+
+  it('Допустимо задавать свойства в виде строки, которая правильно преобразуется в число', () => {
+    const presenter = new Presenter({
+      min: '0',
+      max: '100',
+      step: 1,
+      thumbLeftPos: 10,
+      selector,
+      thumbRightPos: 80,
+      angle: '89',
+      range: true,
+      precision: 0,
+    });
+
+    expect(presenter.getOptions().max).toEqual(100);
+    expect(presenter.getOptions().min).toEqual(0);
+
+    expect(() => presenter.setOptions({ min: '' })).not.toThrowError();
+
+    expect(() => presenter.setOptions({ max: '110' })).not.toThrowError();
+    expect(() => presenter.setOptions({ max: '110a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ min: '1' })).not.toThrowError();
+    expect(() => presenter.setOptions({ min: '1a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ step: '11' })).not.toThrowError();
+    expect(() => presenter.setOptions({ step: '11a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ thumbLeftPos: '11' })).not.toThrowError();
+    expect(() => presenter.setOptions({ thumbLeftPos: '11a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ thumbRightPos: '90' })).not.toThrowError();
+    expect(() => presenter.setOptions({ thumbRightPos: '90a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ precision: '1' })).not.toThrowError();
+    expect(() => presenter.setOptions({ precision: '1a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ partsNum: '1' })).not.toThrowError();
+    expect(() => presenter.setOptions({ partsNum: '1a' })).toThrowError();
+
+    expect(() => presenter.setOptions({ angle: '90deg' })).toThrowError();
+  });
 });
 
 describe('Меняет значения подсказки над бегунком, берет данные из модели\n', () => {
@@ -397,6 +540,20 @@ describe('В любой момент времени можно узнать и �
     expect(options.step).toEqual(2);
   });
 
+  it('Можем узнать относительные смещения бегунков (метод getOffset)', () => {
+    const presenter = new Presenter(option);
+    const offsets = presenter.getOffsets();
+
+    expect(offsets.left).toEqual(0);
+    expect(offsets.right).toEqual(1);
+
+    presenter.setOptions({ thumbLeftPos: 40, min: 0 });
+    expect(presenter.getOffsets().left).toEqual(0.2);
+
+    presenter.setOptions({ thumbRightPos: 160, min: 0 });
+    expect(presenter.getOffsets().right).toEqual(0.8);
+  });
+
   it('Задаем свойства слайдера', () => {
     const presenter = new Presenter(option);
     const { model, view } = presenter;
@@ -654,7 +811,7 @@ describe('Данные баги более не возникают\n', () => {
     div.remove();
   });
 
-  it('При наложении бегунков значение подсказок должно быть одинаковым', () => {
+  it('При наложении бегунков значение подсказок разное', () => {
     slider.setOptions({ min: 0, thumbLeftPos: 0 });
 
     slider.setOptions({
@@ -665,8 +822,7 @@ describe('Данные баги более не возникают\n', () => {
     expect(rightHint.textContent).toEqual('1');
   });
 
-  it(`При изменении шага, если бегунок находится в недостижимом
-    положении, он передвигается в ближайшее допустимое положение`, () => {
+  it('При изменении шага, бегунки остаются в недопустимом положении', () => {
     slider.setOptions({
       min: 0, max: 11, step: 1, thumbLeftPos: 10, range: false,
     });
@@ -675,7 +831,7 @@ describe('Данные баги более не возникают\n', () => {
     expect(leftHint.textContent).toEqual('11');
   });
 
-  it('При следующих значениях ошибка не возникает:', () => {
+  it('Ошибка при перетаскивании бегунка к границам при слишком малом шаге', () => {
     slider.setOptions({
       min: 1000000, max: 6000000, step: 1, range: true,
     });
@@ -687,7 +843,7 @@ describe('Данные баги более не возникают\n', () => {
     expect(leftHint.textContent).toEqual(rightHint.textContent);
   });
 
-  it('При изменении шага, бегунок нельзя перетащить за границы слайдера', () => {
+  it('При изменении шага, бегунок можно перетащить за границы слайдера', () => {
     slider.setOptions({
       min: 0, max: 11, step: 4, range: false,
     });
@@ -698,7 +854,7 @@ describe('Данные баги более не возникают\n', () => {
     leftThumb.dispatchEvent(fakeMouseUp);
   });
 
-  it('При любой ширине контейнера, бегунки могут слиться', () => {
+  it('При некоторой ширине блока, бегунки не могут слиться', () => {
     div.innerHTML = '';
     div.remove();
     div.style.width = '421.33px';
@@ -717,7 +873,7 @@ describe('Данные баги более не возникают\n', () => {
   });
 
   it(`При выключении и включении опции "range" правый бегунок может достичь
-    только максимального значения, кратного шагу`, () => {
+    некратных шагу значений`, () => {
     slider.setOptions({
       min: 1, max: 6, step: 4, range: false,
     });

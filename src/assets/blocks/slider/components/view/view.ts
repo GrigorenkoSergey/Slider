@@ -40,11 +40,6 @@ export default class View extends EventObserver implements ISubscriber {
 
   constructor(options: ViewOptions) {
     super();
-
-    if (!('selector' in options)) {
-      throw new Error('option "selector" should be in options');
-    }
-
     this.options.selector = options.selector!;
     this.setOptions(options);
     this.init();
@@ -228,10 +223,6 @@ export default class View extends EventObserver implements ISubscriber {
   private validateOptions(key: string, value: any) {
     const validator: Obj = {
       step: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('step should be a number!');
-        }
-
         if (val > 1) {
           throw new Error('step is too big!');
         } else if (val < 0) {
@@ -242,10 +233,6 @@ export default class View extends EventObserver implements ISubscriber {
       },
 
       angle: (val: number) => {
-        if (!isFinite(val)) {
-          throw new Error('angle should be a number!');
-        }
-
         if (val < 0 || val > 90) {
           throw new Error('angle should be >= 0 and <= 90');
         }

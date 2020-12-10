@@ -4,23 +4,23 @@ import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe('Model\n', () => {
   describe('Первоначальная минимальная инициализация\n', () => {
-    // it('Можно инициализировать с необходимым минимумом аргументов: min, max', () => {
-    //   const model = new Model({ min: 0, max: 100 });
+    it('Можно инициализировать с необходимым минимумом аргументов: min, max', () => {
+      const model = new Model({ min: 0, max: 100 });
 
-    //   const modelOptions = model.getOptions() as {[key: string]: any};
-    //   Object.keys(modelOptions).forEach((key) => {
-    //     expect(modelOptions[key]).toBeDefined();
-    //   });
-    // });
+      const modelOptions = model.getOptions() as {[key: string]: any};
+      Object.keys(modelOptions).forEach((key) => {
+        expect(modelOptions[key]).toBeDefined();
+      });
+    });
 
-    // it('Альтернативно можно инициализировать с помощью опции "alternativeRange"', () => {
-    //   const model = new Model({ alternativeRange: ['start', 'end'] });
+    it('Альтернативно можно инициализировать с помощью опции "alternativeRange"', () => {
+      const model = new Model({ alternativeRange: ['start', 'end'] });
 
-    //   const modelOptions = model.getOptions() as {[key: string]: any};
-    //   Object.keys(modelOptions).forEach((key) => {
-    //     expect(modelOptions[key]).toBeDefined();
-    //   });
-    // });
+      const modelOptions = model.getOptions() as {[key: string]: any};
+      Object.keys(modelOptions).forEach((key) => {
+        expect(modelOptions[key]).toBeDefined();
+      });
+    });
 
     it(`В качестве значений опции "alternativeRange" принимается массив,
         состоящий из по-крайнеме мере двух значений`, () => {
@@ -41,14 +41,6 @@ describe('Model\n', () => {
       expect('foo' in model).toBeFalse();
       expect('bar' in model).toBeFalse();
     });
-
-    // it(`Если аргументов для инициализации не достаточно,
-    // выкидывает ошибку`, () => {
-    //   expect(() => {
-    //     // eslint-disable-next-line no-new
-    //     new Model({ min: 0 });
-    //   }).toThrowError();
-    // });
 
     it('Можно задавать начальные положения бегунков', () => {
       const model = new Model({
@@ -121,36 +113,7 @@ describe('Model\n', () => {
       model = new Model({ max: 100, min: 0 });
     });
 
-    /*
-    it('Допустимо задавать свойства в виде строки, которая правильно преобразуется в число', () => {
-      model.setOptions({
-        min: '0',
-        max: '100',
-        step: 1,
-        thumbLeftPos: 10,
-        thumbRightPos: 80,
-        angle: '89',
-        range: true,
-      });
-
-      expect(model.getOptions().max).toEqual(100);
-      expect(model.getOptions().min).toEqual(0);
-      expect(model.getOptions().step).toEqual(1);
-      expect(model.getOptions().thumbLeftPos).toEqual(10);
-      expect(model.getOptions().thumbRightPos).toEqual(80);
-      expect(() => model.setOptions({ min: '1a' })).toThrowError();
-      expect(() => model.setOptions({ max: '110a' })).toThrowError();
-      expect(() => model.setOptions({ step: '11a' })).toThrowError();
-      expect(() => model.setOptions({ thumbLeftPos: '11a' })).toThrowError();
-      expect(() => model.setOptions({ thumbRightPos: '90a' })).toThrowError();
-    });
-    */
-
     it('Значение свойства "precision" - целое число в пределах [0, 3]', () => {
-      // expect(() => model.setOptions({ precision: '1a' })).toThrowError();
-      // expect(() => model.setOptions({ precision: '-2' })).toThrowError();
-      // expect(() => model.setOptions({ precision: '4' })).toThrowError();
-      // expect(() => model.setOptions({ precision: '1.5' })).toThrowError();
       expect(() => model.setOptions({ precision: -0.5 })).toThrowError();
 
       model.setOptions({ precision: 0 });
@@ -160,18 +123,19 @@ describe('Model\n', () => {
     });
 
     it('Значение свойства "partsNum" должно быть целым положительным числом', () => {
-      // expect(() => model.setOptions({ partsNum: '1a' })).toThrowError();
-      // expect(() => model.setOptions({ partsNum: '1.5' })).toThrowError();
-      // expect(() => model.setOptions({ partsNum: '1.5' })).toThrowError();
-      // expect(() => model.setOptions({ partsNum: '-1' })).toThrowError();
       expect(() => model.setOptions({ partsNum: 0 })).toThrowError();
       expect(() => model.setOptions({ partsNum: 3, step: 50 })).toThrowError();
     });
 
-    it('partsNum * step <= max - min', () => {
+    it('min + step * partsNum should be > max + step', () => {
       expect(() => model.setOptions({ step: 50, partsNum: 3 })).toThrowError();
+      model.setOptions({ partsNum: 3 });
       model.setOptions({ step: 50 });
-      expect(() => model.setOptions({ min: 51 })).toThrowError();
+      expect(model.getOptions().partsNum).toEqual(1);
+
+      model.setOptions({ step: 40, partsNum: 3 });
+      model.setOptions({ min: 21 });
+      expect(model.getOptions().partsNum).toEqual(1);
     });
 
     it(`Когда задано свойство "alternativeRange", потом устанавливается "min" или "max",
@@ -193,15 +157,6 @@ describe('Model\n', () => {
       expect(() => model.setOptions({ step: -1 })).toThrowError();
       expect(() => model.setOptions({ step: 0 })).toThrowError();
     });
-
-    // it('Значение опции "range" либо true либо false', () => {
-    //   expect(() => model.setOptions({ range: true })).not.toThrowError();
-    //   expect(() => model.setOptions({ range: false })).not.toThrowError();
-    //   expect(() => model.setOptions({ range: 0 })).toThrowError();
-    //   expect(() => model.setOptions({ range: null })).toThrowError();
-    //   expect(() => model.setOptions({ range: '' })).toThrowError();
-    //   expect(() => model.setOptions({ range: '1' })).toThrowError();
-    // });
 
     it('Значение свойства "max" должно быть больше, чем "min"', () => {
       expect(() => model.setOptions({ min: 100, max: 0 })).toThrowError();

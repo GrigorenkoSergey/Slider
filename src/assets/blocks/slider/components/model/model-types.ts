@@ -23,8 +23,6 @@ export type ModelOptions = {
 }
 
 export type ModelInitType =
-// { min: number, max: number, [key: string]: any } |
-// { alternativeRange: string[], [key: string]: any };
 { min: number, max: number} |
 { alternativeRange: string[] };
 

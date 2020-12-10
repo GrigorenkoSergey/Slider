@@ -22,16 +22,6 @@ export default class Model extends EventObserver {
   constructor(options: ModelOptions) {
     super();
     const optionsCopy = { ...options };
-    // const argsRequire = ['min', 'max'];
-
-    // if (!argsRequire.every((key) => key in optionsCopy)) {
-    //   if (!('alternativeRange' in optionsCopy)) {
-    //     throw new Error(
-    //       `Not enough values. There must be at least the "min" and "max" options
-    //         or the "alternativeRange" option must be set`,
-    //     );
-    //   }
-    // }
 
     const defaultDependentOptions = {
       step: () => {
@@ -65,11 +55,13 @@ export default class Model extends EventObserver {
   }
 
   setOptions(expectant: ModelOptions): Model {
-    let tempObj: Obj = {};
+    let tempObj: ModelOptions = {};
+    // Поскольку гарантированно нам пришел объект типа ModelOptions
+    // можно отключить проверки при присвоении значений.
 
     Object.entries(expectant).forEach(([key, value]) => {
       if (key in this.options) {
-        tempObj[key] = value;
+        (tempObj as Obj)[key] = value;
       }
     });
 
@@ -77,7 +69,7 @@ export default class Model extends EventObserver {
     Object.assign(this.options, tempObj);
 
     Object.keys(tempObj).forEach((key) => {
-      this.broadcast(key, { value: tempObj[key], method: 'setOptions' });
+      this.broadcast(key, { value: (<Obj>tempObj)[key], method: 'setOptions' });
     });
 
     return this;
@@ -177,8 +169,8 @@ export default class Model extends EventObserver {
           throw new Error('"min" should be < "max"!');
         } else if (max - val < step) {
           throw new Error('"max" - "min" should be >= "step"!');
-        } else if (val + step * partsNum > max + step) {
-          console.log('min + step * partsNum should be > max + step\nSet partsNum = 1');
+        } else if (val + step * partsNum >= max + step) {
+          console.log('min + step * partsNum should be < max + step\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
         } else if (alternativeRange.length !== 0) {
           if ('min' in expectant) {
@@ -219,8 +211,8 @@ export default class Model extends EventObserver {
           throw new Error('"max" should be >= "min"!');
         } else if (val - min < step) {
           throw new Error('"max" - "min" should be >= "step"!');
-        } else if (min + step * partsNum > val + step) {
-          console.log('min + step * partsNum should be > max + step\nSet partsNum = 1');
+        } else if (min + step * partsNum >= val + step) {
+          console.log('min + step * partsNum should be < max + step\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
         } else if (alternativeRange.length !== 0) {
           if ('max' in expectant) {
@@ -267,8 +259,8 @@ export default class Model extends EventObserver {
           throw new Error('"step" is negative!');
         } else if (val === 0) {
           throw new Error('"step" is equal to zero!');
-        } else if (min + val * partsNum > max + val) {
-          console.log('min + step * partsNum should be > max + step\nSet partsNum = 1');
+        } else if (min + val * partsNum >= max + val) {
+          console.log('min + step * partsNum should be < max + step\nSet partsNum = 1');
           expectantCopy.partsNum = 1;
         }
 

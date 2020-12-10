@@ -25,23 +25,24 @@ export class Presenter extends EventObserver implements ISubscriber {
  }
 
  private init(options: unknown) {
-   if (typeof options !== 'object' || options === null) {
+   const isObject = Object.prototype.toString.call(options) === '[object Object]';
+   if (!isObject) {
      throw new Error('Options should be an object!');
    }
+   // Вот теперь у нас гарантирован объект, хотя компилятор этого не видит.
 
    if (!isModelInitType(options) || !isViewInitType(options)) {
-     throw new Error('Not enough options to initializtion!');
+     throw new Error('Not enough options to initialization!');
    }
 
    const normalizedToModel = this.normalizeModelOptions(options);
-
    this.model = new Model(normalizedToModel);
    const { model } = this;
 
-   const normalizedToView = this.normalizeViewOptions(normalizedToModel);
+   // step у View относительный, поэтому переделаем его
    const { step, max, min } = model.getOptions();
-   normalizedToView.step = step / (max - min);
-
+   const ViewStep = step / (max - min);
+   const normalizedToView = this.normalizeViewOptions({ ...options, step: ViewStep });
    this.view = new View(normalizedToView);
    const { view } = this;
 
@@ -71,10 +72,16 @@ export class Presenter extends EventObserver implements ISubscriber {
    this.setOptions(options);
  }
 
- setOptions(options: ViewOptions | ModelOptions) {
-   const { model, view } = this;
+ setOptions(options: unknown) {
+   const isObject = Object.prototype.toString.call(options) === '[object Object]';
+   if (!isObject) {
+     throw new Error('Options should be an object!');
+   }
 
-   const normalizedToModel = this.normalizeModelOptions(options);
+   const { model, view } = this;
+   const optionsCopy: Obj = { ...options as Obj };
+
+   const normalizedToModel = this.normalizeModelOptions(optionsCopy);
    model.setOptions(normalizedToModel);
 
    const updateStepOptions = ['min', 'max', 'step'];
@@ -83,10 +90,10 @@ export class Presenter extends EventObserver implements ISubscriber {
    if (shouldUpdateStep) {
      const { step, max, min } = model.getOptions();
      const viewStep = step / (max - min);
-     normalizedToModel.step = viewStep;
+     optionsCopy.step = viewStep;
    }
 
-   const normalizedToView = this.normalizeViewOptions(normalizedToModel);
+   const normalizedToView = this.normalizeViewOptions(optionsCopy);
    view.setOptions(normalizedToView);
    return this;
  }
@@ -228,58 +235,75 @@ export class Presenter extends EventObserver implements ISubscriber {
    return result;
  }
 
- private normalizeModelOptions(options: ModelOptions): ModelOptions {
-   const opts = { ...options };
+ private normalizeModelOptions(opts: Obj): ModelOptions {
+   const result: ModelOptions = {};
    /*
      Я так понимаю, что существующий механизм проверки индексной
-     сигнатуры не даст мне сократить длину этого метода
+     сигнатуры не даст мне сократить длину этого метода.
+     Какая-то беда с вычислимыми свойствами..
    */
 
    if ('min' in opts) {
-     opts.min = this.handleNumberTypeProp('min', opts);
+     result.min = this.handleNumberTypeProp('min', opts);
    }
    if ('max' in opts) {
-     opts.max = this.handleNumberTypeProp('max', opts);
+     result.max = this.handleNumberTypeProp('max', opts);
    }
    if ('step' in opts) {
-     opts.step = this.handleNumberTypeProp('step', opts);
+     result.step = this.handleNumberTypeProp('step', opts);
    }
    if ('partsNum' in opts) {
-     opts.partsNum = this.handleNumberTypeProp('partsNum', opts);
+     result.partsNum = this.handleNumberTypeProp('partsNum', opts);
    }
    if ('thumbLeftPos' in opts) {
-     opts.thumbLeftPos = this.handleNumberTypeProp('thumbLeftPos', opts);
+     result.thumbLeftPos = this.handleNumberTypeProp('thumbLeftPos', opts);
    }
    if ('thumbRightPos' in opts) {
-     opts.thumbRightPos = this.handleNumberTypeProp('thumbRightPos', opts);
+     result.thumbRightPos = this.handleNumberTypeProp('thumbRightPos', opts);
    }
    if ('range' in opts) {
-     if (typeof opts.range !== 'boolean') {
-       throw new Error('"range" should be boolean!');
-     }
+     result.range = this.handleBooleanTypeProp('range', opts);
    }
    if ('precision' in opts) {
-     opts.precision = this.handleNumberTypeProp('precision', opts);
+     result.precision = this.handleNumberTypeProp('precision', opts);
    }
    if ('alternativeRange' in opts) {
-     const arr = opts.alternativeRange || [];
-     const isArray = Array.isArray(arr);
-     const stringArray = arr.every((item) => typeof item === 'string');
-
-     if (!isArray && !stringArray) {
-       throw new Error('alternativeRange should be a string[]!');
-     }
+     result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
    }
 
-   return opts;
+   return result;
  }
 
- private normalizeViewOptions(options: ViewOptions): ViewOptions {
-   const opts = { ...options };
-   if ('angle' in opts) {
-     opts.angle = this.handleNumberTypeProp('angle', opts);
+ private normalizeViewOptions(opts: Obj): ViewOptions {
+   const result: ViewOptions = {};
+   if ('className' in opts) {
+     result.className = this.handleStringTypeProp('className', opts);
    }
-   return opts;
+   if ('selector' in opts) {
+     result.selector = this.handleStringTypeProp('selector', opts);
+   }
+   if ('angle' in opts) {
+     result.angle = this.handleNumberTypeProp('angle', opts);
+   }
+   if ('step' in opts) {
+     result.step = this.handleNumberTypeProp('step', opts);
+   }
+   if ('range' in opts) {
+     result.range = this.handleBooleanTypeProp('range', opts);
+   }
+   if ('hintAboveThumb' in opts) {
+     result.hintAboveThumb = this.handleBooleanTypeProp('hintAboveThumb', opts);
+   }
+   if ('hintAlwaysShow' in opts) {
+     result.hintAlwaysShow = this.handleBooleanTypeProp('hintAlwaysShow', opts);
+   }
+   if ('showScale' in opts) {
+     result.showScale = this.handleBooleanTypeProp('showScale', opts);
+   }
+   if ('partsNum' in opts) {
+     result.partsNum = this.handleNumberTypeProp('partsNum', opts);
+   }
+   return result;
  }
 
  private handleNumberTypeProp(prop: string, obj: Obj): number {
@@ -287,7 +311,36 @@ export class Presenter extends EventObserver implements ISubscriber {
    value = Number(value);
 
    if (!Number.isFinite(value)) {
-     throw new Error(`"${prop} should be a number!`);
+     throw new Error(`"${prop}" should be a number!`);
+   }
+   return value;
+ }
+
+ private handleStringTypeProp(prop: string, obj: Obj): string {
+   const value = obj[prop];
+   if (typeof value !== 'string') {
+     throw new Error(`"${prop}" should be a string!`);
+   }
+   return value;
+ }
+
+ private handleBooleanTypeProp(prop: string, obj: Obj): boolean {
+   const value = obj[prop];
+   if (typeof value !== 'boolean') {
+     throw new Error(`"${prop}" should be a boolean!`);
+   }
+   return value;
+ }
+
+ private handleStringArrayTypeProp(prop: string, obj: Obj): string[] {
+   const value = obj[prop];
+   if (!(Array.isArray(value))) {
+     throw new Error(`"${prop}" should be a string[]!`);
+   }
+
+   const stringArray = value.every((item: any) => typeof item === 'string');
+   if (!stringArray) {
+     throw new Error('alternativeRange should be a string[]!');
    }
    return value;
  }
