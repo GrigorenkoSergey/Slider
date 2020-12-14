@@ -61,7 +61,6 @@
 |   |   |   │   │       │   └── thumbs.ts
 |   |   |   │   │       └── view.ts
 |   |   |   │   ├── jquery.slider.d.ts
-|   |   |   │   ├── slider.pug
 |   |   |   │   ├── slider.scss
 |   |   |   │   └── slider.ts
 |   |   |   |

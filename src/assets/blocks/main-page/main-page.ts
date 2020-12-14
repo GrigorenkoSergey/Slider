@@ -74,10 +74,10 @@ let pContent = p!.textContent as string;
 slider4.setOptions({max: pContent.length});
 
 slider4.onChange({el: p, callback: () => {
-    const options = slider4.getOptions();
-    let resLeft = Math.round(options.thumbLeftPos);
-    let resRight = Math.round(options.thumbRightPos);
-    p!.textContent = pContent.slice(resLeft, resRight);
+  const options = slider4.getOptions();
+  let resLeft = Math.round(options.thumbLeftPos);
+  let resRight = Math.round(options.thumbRightPos);
+  p!.textContent = pContent.slice(resLeft, resRight);
 }});
   
 
