@@ -2,33 +2,39 @@
 import debuggerPoint from '../../helpers/debugger-point';
 import EventObserver from '../../helpers/event-observer';
 import { Slider } from '../../slider/slider';
-import { Obj } from '../../helpers/types';
+
+type propertyType = keyof ReturnType<Slider['getOptions']>;
 
 export default class BindedInput extends EventObserver {
   el: HTMLInputElement;
 
-  prop: string;
+  prop: propertyType;
 
   slider: Slider;
 
-  constructor(el: HTMLInputElement, slider: Slider, property: string) {
+  constructor(el: HTMLInputElement, slider: Slider, property: propertyType) {
     super();
     this.el = el;
     this.prop = property;
     this.slider = slider;
-
     this.init();
   }
 
   init() {
-    this.slider.addSubscriber(this.prop, this);
+    this.slider.addSubscriber(String(this.prop), this);
     this.el.addEventListener('change', this.handleInputChange.bind(this));
   }
 
   update(): void {
-    const sliderOptions = this.slider.getOptions() as Obj;
-    const propValue = sliderOptions[this.prop];
-    this.setValue(propValue);
+    const sliderOptions = this.slider.getOptions();
+    const key = this.prop;
+    const propValue = sliderOptions[key];
+
+    if (typeof propValue === 'number') {
+      this.setValue(String(propValue));
+    } else if (typeof propValue === 'string' || typeof propValue === 'boolean') {
+      this.setValue(propValue);
+    }
   }
 
   handleInputChange() {
@@ -40,7 +46,7 @@ export default class BindedInput extends EventObserver {
       newValue = this.el.value;
     }
 
-    const sliderOptions = this.slider.getOptions() as Obj;
+    const sliderOptions = this.slider.getOptions();
     const oldValue = sliderOptions[this.prop];
 
     try {
@@ -48,15 +54,24 @@ export default class BindedInput extends EventObserver {
     } catch (e) {
       console.log(e.message);
       this.slider.setOptions({ [this.prop]: oldValue });
-      this.setValue(oldValue);
+
+      if (typeof oldValue === 'number') {
+        this.setValue(String(oldValue));
+      } else if (typeof oldValue === 'string' || typeof oldValue === 'boolean') {
+        this.setValue(oldValue);
+      }
     }
   }
 
   setValue(value: string | boolean) {
     if (this.el.type === 'text') {
-      this.el.value = <string>value;
+      if (typeof value === 'string') {
+        this.el.value = value;
+      }
     } else if (this.el.type === 'checkbox') {
-      this.el.checked = <boolean>value;
+      if (typeof value === 'boolean') {
+        this.el.checked = value;
+      }
     }
     this.broadcast(String(this.prop), value);
   }

@@ -2,7 +2,8 @@ import EventObserver from '../../helpers/event-observer';
 import BindedInput from './binded-input';
 import { Slider } from '../../slider/slider';
 
-import { Obj } from '../../helpers/types';
+type options = ReturnType<Slider['getOptions']>;
+type optionsKeys = Exclude<keyof options, 'alternativeRange' | 'className' | 'selector'>;
 
 export default class SliderOptionsPalette extends EventObserver {
   el: HTMLDivElement;
@@ -114,13 +115,19 @@ export default class SliderOptionsPalette extends EventObserver {
       'precision',
     ];
 
-    inputs.forEach((prop) => {
-      const obj: Obj = {};
-      const input = this.el.querySelector(`[name=${prop}]`) as HTMLInputElement;
-      obj[prop] = new BindedInput(input, this.slider, prop);
-      obj[prop].update();
+    const optionsExample = this.slider.getOptions();
 
-      Object.assign(this, obj);
+    inputs.forEach((prop) => {
+      const input: HTMLInputElement | null = this.el.querySelector(`[name=${prop}]`);
+
+      if (input === null) {
+        throw new Error(`There is no input with name "${prop}" in current palette!`);
+      }
+
+      if (this.isOptionsKey(prop, optionsExample)) {
+        this[prop] = new BindedInput(input, this.slider, prop);
+        this[prop].update();
+      }
     });
 
     this.slider.addSubscriber('changeSlider', this);
@@ -153,5 +160,9 @@ export default class SliderOptionsPalette extends EventObserver {
     } else {
       this.hintAboveThumb.el.removeAttribute('disabled');
     }
+  }
+
+  isOptionsKey(key: string, obj: options): key is optionsKeys {
+    return key in obj;
   }
 }
