@@ -6,12 +6,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const entries = {
   index: './index',
-  slider: './assets/blocks/slider/slider',
 };
 
 const outputPaths = {
   index: './index',
-  slider: './slider/slider',
 };
 
 module.exports = {
