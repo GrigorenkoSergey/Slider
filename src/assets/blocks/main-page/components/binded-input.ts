@@ -3,16 +3,16 @@ import debuggerPoint from '../../helpers/debugger-point';
 import EventObserver from '../../helpers/event-observer';
 import { Slider } from '../../slider/slider';
 
-type propertyType = keyof ReturnType<Slider['getOptions']>;
+type propertyKey = keyof ReturnType<Slider['getOptions']>;
 
 export default class BindedInput extends EventObserver {
   el: HTMLInputElement;
 
-  prop: propertyType;
+  prop: propertyKey;
 
   slider: Slider;
 
-  constructor(el: HTMLInputElement, slider: Slider, property: propertyType) {
+  constructor(el: HTMLInputElement, slider: Slider, property: propertyKey) {
     super();
     this.el = el;
     this.prop = property;

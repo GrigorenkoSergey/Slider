@@ -6,7 +6,7 @@ import EventObserver from '../../../helpers/event-observer';
 import { ISubscriber } from '../../../helpers/interfaces';
 
 import Model from '../model/model';
-import { ModelOptions, isModelInitType } from '../model/model-types';
+import { ModelOptions, isModelInitType } from '../model/components/model-types';
 
 import View from '../view/view';
 import { ViewOptions, isViewInitType } from '../view/view-types';
