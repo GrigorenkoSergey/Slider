@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
-import { isKey } from '../../../helpers/functions/is-key';
+import { isObjKey } from '../../../helpers/functions/is-obj-key';
 import { setOption } from '../../../helpers/functions/set-option';
 import { ModelValidator } from './components/model-validator';
 
@@ -51,8 +51,8 @@ export default class Model extends EventObserver {
     Object.keys(defaultDependentOptions).forEach((key) => {
       if (key in options) return;
 
-      if (isKey<ModelOptions>(key)) {
-        if (isKey<typeof defaultDependentOptions>(key)) {
+      if (isObjKey(this.options, key)) {
+        if (isObjKey(defaultDependentOptions, key)) {
           optionsCopy[key] = defaultDependentOptions[key]();
         }
       }
@@ -71,10 +71,8 @@ export default class Model extends EventObserver {
     let tempObj: ModelOptions = {};
 
     Object.entries(expectant).forEach(([key, value]) => {
-      if (key in this.options) {
-        if (isKey<ModelOptions>(key)) {
-          tempObj = setOption(tempObj, key, value);
-        }
+      if (isObjKey(this.options, key)) {
+        tempObj = setOption(tempObj, key, value);
       }
     });
 
@@ -82,7 +80,7 @@ export default class Model extends EventObserver {
     Object.assign(this.options, tempObj);
 
     Object.keys(tempObj).forEach((key) => {
-      if (isKey<ModelOptions>(key)) {
+      if (isObjKey(this.options, key)) {
         this.broadcast(key, { value: tempObj[key], method: 'setOptions' });
       }
     });

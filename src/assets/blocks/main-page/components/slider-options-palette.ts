@@ -1,7 +1,7 @@
 import EventObserver from '../../helpers/event-observer';
 import BindedInput from './binded-input';
 import { Slider } from '../../slider/slider';
-import { isKey } from '../../helpers/functions/is-key';
+import { isObjKey } from '../../helpers/functions/is-obj-key';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;
 type OptionsKeys = Exclude<keyof SliderOptions, 'alternativeRange' | 'className' | 'selector'>;
@@ -102,29 +102,29 @@ export default class SliderOptionsPalette extends EventObserver implements Input
   }
 
   private init() {
-    const inputs = [
-      'min',
-      'max',
-      'step',
-      'angle',
-      'thumbLeftPos',
-      'thumbRightPos',
-      'range',
-      'hintAboveThumb',
-      'showScale',
-      'hintAlwaysShow',
-      'partsNum',
-      'precision',
-    ];
+    const inputs = {
+      min: true,
+      max: true,
+      step: true,
+      angle: true,
+      thumbLeftPos: true,
+      thumbRightPos: true,
+      range: true,
+      hintAboveThumb: true,
+      showScale: true,
+      hintAlwaysShow: true,
+      partsNum: true,
+      precision: true,
+    };
 
-    inputs.forEach((prop) => {
+    Object.keys(inputs).forEach((prop) => {
       const input: HTMLInputElement | null = this.el.querySelector(`[name=${prop}]`);
 
       if (input === null) {
         throw new Error(`There is no input with name "${prop}" in current palette!`);
       }
 
-      if (isKey<Inputs>(prop)) {
+      if (isObjKey(inputs, prop)) {
         this[prop] = new BindedInput(input, this.slider, prop);
         this[prop].update();
       }

@@ -1,5 +1,6 @@
 import EventObserver from '../src/assets/blocks/helpers/event-observer';
 import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
+import { isObjKey } from '../src/assets/blocks/helpers/functions/is-obj-key';
 
 // EventObserver is abstract class so let us create some derived class
 class EventObserverChild extends EventObserver {}
@@ -72,5 +73,19 @@ describe('EventObserver\n', () => {
     it('Ничего не делает, если обработчиков на событие нет', () => {
       expect(observer.broadcast('mousemove', 'MOUSEMOVE!')).toBeUndefined();
     });
+  });
+});
+
+describe('Function isObjKey\n', () => {
+  it('Выдает верные результаты, если строка является ключом объекта', () => {
+    const person = {
+      name: 'Sergey',
+      age: '999',
+      character: 'nasty',
+    };
+
+    expect(isObjKey(person, 'name')).toBeTrue();
+    expect(isObjKey(person, 'age')).toBeTrue();
+    expect(isObjKey(person, 'height')).toBeFalse();
   });
 });

@@ -39,7 +39,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'import/extensions': ['error', 'never'],
     'lines-between-class-members': ['error', 'always'],
-    indent: [2, 2],
+    indent: ['error', 2, { SwitchCase: 1 }],
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     'require-jsdoc': 0,
