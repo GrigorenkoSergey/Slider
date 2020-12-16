@@ -1,15 +1,3 @@
-export type ViewType = {
-  className: string,
-  selector: string,
-  angle: number,
-  step: number,
-  range: boolean,
-  hintAboveThumb: boolean,
-  hintAlwaysShow: boolean,
-  showScale: boolean,
-  partsNum: number,
-}
-
 export type ViewOptions = {
   className?: string,
   selector?: string,

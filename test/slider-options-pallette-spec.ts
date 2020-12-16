@@ -1,5 +1,4 @@
 import '../src/assets/blocks/slider/slider';
-import { Obj } from '../src/assets/blocks/helpers/types';
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
 import SliderOptionsPalette from '../src/assets/blocks/main-page/components/slider-options-palette';
 
@@ -38,7 +37,7 @@ describe('Проверка связи значения инпута со зна�
   div.className = 'sliderPalette';
   div.style.marginTop = '100px';
 
-  const options: Obj = {
+  const options = {
     min: 2,
     max: 600,
     step: 4,
@@ -195,7 +194,7 @@ describe('При установке значения свойств програ
   div.className = 'sliderPalette';
   div.style.marginTop = '100px';
 
-  const options: Obj = {
+  const options = {
     min: 0,
     max: 100,
     step: 1,
@@ -334,7 +333,7 @@ describe('В поля ввода нельза ввести ошибочные д
   div.className = 'sliderPalette';
   div.style.marginTop = '100px';
 
-  const options: Obj = {
+  const options = {
     min: 0,
     max: 100,
     step: 1,
@@ -521,7 +520,7 @@ describe('Реагирует на ручное изменение положен
   div.className = 'sliderPalette';
   div.style.marginTop = '100px';
 
-  const options: Obj = {
+  const options = {
     min: 0,
     max: 100,
     step: 1,
@@ -604,7 +603,7 @@ describe('Данные баги более не возникают\n', () => {
   div.className = 'sliderPalette';
   div.style.marginTop = '100px';
 
-  const options: Obj = {
+  const options = {
     min: 0.5,
     max: 200,
     step: 2,

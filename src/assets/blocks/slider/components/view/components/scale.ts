@@ -4,7 +4,6 @@ import EventObserver from '../../../../helpers/event-observer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
-import { Obj } from '../../../../helpers/types';
 import isIncreasing from '../../../../helpers/functions/is-increasing';
 
 export default class Scale extends EventObserver {
@@ -18,14 +17,9 @@ export default class Scale extends EventObserver {
 
   private anchors!: HTMLDivElement[];
 
-  constructor(options: Obj) {
+  constructor(options: {view: View}) {
     super();
     this.view = options.view;
-
-    Object.keys(options).forEach((key) => {
-      if (key in this) this[<keyof this>key] = options[key];
-    });
-
     this.init();
   }
 

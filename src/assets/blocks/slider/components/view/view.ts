@@ -9,8 +9,9 @@ import Thumbs from './components/thumbs';
 
 import Hint from './components/hint';
 
-import { Obj } from '../../../helpers/types';
-import { ViewType, ViewOptions } from './view-types';
+import { ViewOptions } from './components/view-types';
+import { isObjKey } from '../../../helpers/functions/is-obj-key';
+import { setOption } from '../../../helpers/functions/set-option';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
@@ -18,7 +19,7 @@ import debuggerPoint from '../../../helpers/debugger-point';
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
 
-  private options: ViewType = {
+  private options: Required<ViewOptions> = {
     className: 'slider',
     selector: '',
     angle: 0,
@@ -46,7 +47,13 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private init(): this {
-    const wrapper = document.querySelector(this.options.selector) as HTMLDivElement;
+    const { selector } = this.options;
+    const wrapper = document.querySelector(selector);
+
+    if (wrapper === null) {
+      throw new Error(`There is no element with class ${selector}`);
+    }
+
     wrapper.append(this.el);
 
     this.el.style.transform = `rotate(${this.options.angle}deg)`;
@@ -83,11 +90,14 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   setOptions(options: ViewOptions) {
-    const expectant: ViewOptions = {};
+    let expectant: ViewOptions = {};
 
     Object.keys(options)
-      .filter((prop) => prop in this.options)
-      .forEach((prop) => { (expectant as Obj)[prop] = (options as Obj)[prop]; });
+      .forEach((prop) => {
+        if (isObjKey(options, prop)) {
+          expectant = setOption(expectant, prop, options[prop]);
+        }
+      });
 
     Object.entries(expectant).forEach(([prop, value]) => {
       this.validateOptions(prop, value);
@@ -221,7 +231,7 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private validateOptions(key: string, value: any) {
-    const validator: Obj = {
+    const validator = {
       step: (val: number) => {
         if (val > 1) {
           throw new Error('step is too big!');
@@ -239,8 +249,9 @@ export default class View extends EventObserver implements ISubscriber {
       },
     };
 
-    if (!(key in validator)) return;
-    return validator[key](value);
+    if (isObjKey(validator, key)) {
+      return validator[key](value);
+    }
   }
 
   private findClosestThumb(offset: number) {

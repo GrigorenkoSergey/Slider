@@ -9,7 +9,7 @@ import Model from '../model/model';
 import { ModelOptions, isModelInitType } from '../model/components/model-types';
 
 import View from '../view/view';
-import { ViewOptions, isViewInitType } from '../view/view-types';
+import { ViewOptions, isViewInitType } from '../view/components/view-types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
