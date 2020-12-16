@@ -19,3 +19,19 @@ export function isViewInitType(options: any): options is ViewInitType {
 
   return typeof options.selector === 'string';
 }
+
+export function isViewOptionsType(options: Object): options is ViewOptions {
+  const example: ViewOptions = {
+    className: '',
+    selector: '',
+    angle: 0,
+    step: 0,
+    range: true,
+    hintAboveThumb: true,
+    hintAlwaysShow: true,
+    showScale: true,
+    partsNum: 0,
+  };
+
+  return Object.keys(options).some((key) => key in example);
+}

@@ -21,7 +21,10 @@ let options1 = {
 };
 
 let slider1 = $().slider(options1);
-const example1 = document.querySelector('.example1') as HTMLDivElement;
+const example1: HTMLDivElement | null = document.querySelector('.example1');
+if (example1 === null ) {
+  throw new Error('No class "example1" in document!');
+}
 const palette1 = new SliderOptionsPalette(example1, slider1);
 
 let options2 = {
@@ -38,7 +41,10 @@ let options2 = {
 }
 
 let slider2 = new Slider(options2);
-const example2 = document.querySelector('.example2') as HTMLDivElement;
+const example2: HTMLDivElement | null = document.querySelector('.example2');
+if (example2 === null ) {
+  throw new Error('No class "example2" in document!');
+}
 const palette2 = new SliderOptionsPalette(example2, slider2);
 
 let options3 = {
@@ -53,7 +59,10 @@ let options3 = {
   precision: 1,
 }
 let slider3 = new Slider(options3);
-const example3 = document.querySelector('.example3') as HTMLDivElement;
+const example3: HTMLDivElement | null = document.querySelector('.example3');
+if (example3 === null ) {
+  throw new Error('No class "example3" in document!');
+}
 const palette3 = new SliderOptionsPalette(example3, slider3);
 
 
@@ -70,14 +79,18 @@ let options4 = {
 let slider4 = new Slider(options4)
 
 let p = document.querySelector('.slider4__p');
-let pContent = p!.textContent as string;
-slider4.setOptions({max: pContent.length});
+if (p === null) {
+  throw new Error('No element with class "slider4_p" in document!');
+}
+
+let pContent = p.textContent;
+slider4.setOptions({max: pContent!.length});
 
 slider4.onChange({el: p, callback: () => {
   const options = slider4.getOptions();
   let resLeft = Math.round(options.thumbLeftPos);
   let resRight = Math.round(options.thumbRightPos);
-  p!.textContent = pContent.slice(resLeft, resRight);
+  p!.textContent = pContent!.slice(resLeft, resRight);
 }});
   
 
@@ -144,4 +157,4 @@ slider6.onChange({
     birdImg.style.backgroundPositionX = -offsetLeft + 'px';
     birdImg.style.backgroundPositionY = -offsetTop + 'px';
   },
-})
+});

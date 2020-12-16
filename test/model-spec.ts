@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
+import { isObjKey } from '../src/assets/blocks/helpers/functions/is-obj-key';
 import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe('Model\n', () => {
@@ -7,18 +8,22 @@ describe('Model\n', () => {
     it('Можно инициализировать с необходимым минимумом аргументов: min, max', () => {
       const model = new Model({ min: 0, max: 100 });
 
-      const modelOptions = model.getOptions() as {[key: string]: any};
+      const modelOptions = model.getOptions();
       Object.keys(modelOptions).forEach((key) => {
-        expect(modelOptions[key]).toBeDefined();
+        if (isObjKey(modelOptions, key)) {
+          expect(modelOptions[key]).toBeDefined();
+        }
       });
     });
 
     it('Альтернативно можно инициализировать с помощью опции "alternativeRange"', () => {
       const model = new Model({ alternativeRange: ['start', 'end'] });
 
-      const modelOptions = model.getOptions() as {[key: string]: any};
+      const modelOptions = model.getOptions();
       Object.keys(modelOptions).forEach((key) => {
-        expect(modelOptions[key]).toBeDefined();
+        if (isObjKey(modelOptions, key)) {
+          expect(modelOptions[key]).toBeDefined();
+        }
       });
     });
 

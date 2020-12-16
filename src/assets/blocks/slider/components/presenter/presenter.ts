@@ -1,23 +1,31 @@
 import '../../slider.scss';
 
-import { Obj, onChangeOpts } from '../../../helpers/types';
-
 import EventObserver from '../../../helpers/event-observer';
 import { ISubscriber } from '../../../helpers/interfaces';
+import { isObject } from '../../../helpers/functions/is-object';
 
 import Model from '../model/model';
-import { ModelOptions, isModelInitType } from '../model/components/model-types';
+import { isModelInitType, isModelOptionsType } from '../model/components/model-types';
 
 import View from '../view/view';
-import { ViewOptions, isViewInitType } from '../view/components/view-types';
+import { isViewInitType, isViewOptionsType } from '../view/components/view-types';
+
+import { PresenterNormalizer } from './components/presenter-normalizer';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
+
+type onChangeOpts = {
+  el: any,
+  callback?: <T>(eventType: string, data: T) => any,
+};
 
 export class Presenter extends EventObserver implements ISubscriber {
   view!: View;
 
   model!: Model;
+
+  normalizer = new PresenterNormalizer();
 
   constructor(options: unknown) {
     super();
@@ -25,24 +33,24 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   private init(options: unknown) {
-    const isObject = Object.prototype.toString.call(options) === '[object Object]';
-    if (!isObject) {
+    if (!isObject(options)) {
       throw new Error('Options should be an object!');
     }
-    // Вот теперь у нас гарантирован объект, хотя компилятор этого не видит.
 
     if (!isModelInitType(options) || !isViewInitType(options)) {
       throw new Error('Not enough options to initialization!');
     }
 
-    const normalizedToModel = this.normalizeModelOptions(options);
+    const normalizedToModel = this.normalizer.normalizeModelOptions(options);
+
     this.model = new Model(normalizedToModel);
     const { model } = this;
 
     // step у View относительный, поэтому переделаем его
     const { step, max, min } = model.getOptions();
     const ViewStep = step / (max - min);
-    const normalizedToView = this.normalizeViewOptions({ ...options, step: ViewStep });
+    const normalizedToView = this.normalizer.normalizeViewOptions({ ...options, step: ViewStep });
+
     this.view = new View(normalizedToView);
     const { view } = this;
 
@@ -73,15 +81,18 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   setOptions(options: unknown) {
-    const isObject = Object.prototype.toString.call(options) === '[object Object]';
-    if (!isObject) {
+    if (!isObject(options)) {
       throw new Error('Options should be an object!');
     }
 
-    const { model, view } = this;
-    const optionsCopy: Obj = { ...options as Obj };
+    if (!isModelOptionsType(options) && !isViewOptionsType(options)) {
+      throw new Error('No slider options!');
+    }
 
-    const normalizedToModel = this.normalizeModelOptions(optionsCopy);
+    const { model, view } = this;
+    const optionsCopy = { ...options };
+
+    const normalizedToModel = this.normalizer.normalizeModelOptions(options);
     model.setOptions(normalizedToModel);
 
     const updateStepOptions = ['min', 'max', 'step'];
@@ -93,7 +104,7 @@ export class Presenter extends EventObserver implements ISubscriber {
       optionsCopy.step = viewStep;
     }
 
-    const normalizedToView = this.normalizeViewOptions(optionsCopy);
+    const normalizedToView = this.normalizer.normalizeViewOptions(optionsCopy);
     view.setOptions(normalizedToView);
     return this;
   }
@@ -233,115 +244,5 @@ export class Presenter extends EventObserver implements ISubscriber {
       result = String(val);
     }
     return result;
-  }
-
-  private normalizeModelOptions(opts: Obj): ModelOptions {
-    const result: ModelOptions = {};
-    /*
-     Я так понимаю, что существующий механизм проверки индексной
-     сигнатуры не даст мне сократить длину этого метода.
-     Какая-то беда с вычислимыми свойствами..
-   */
-
-    if ('min' in opts) {
-      result.min = this.handleNumberTypeProp('min', opts);
-    }
-    if ('max' in opts) {
-      result.max = this.handleNumberTypeProp('max', opts);
-    }
-    if ('step' in opts) {
-      result.step = this.handleNumberTypeProp('step', opts);
-    }
-    if ('partsNum' in opts) {
-      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
-    }
-    if ('thumbLeftPos' in opts) {
-      result.thumbLeftPos = this.handleNumberTypeProp('thumbLeftPos', opts);
-    }
-    if ('thumbRightPos' in opts) {
-      result.thumbRightPos = this.handleNumberTypeProp('thumbRightPos', opts);
-    }
-    if ('range' in opts) {
-      result.range = this.handleBooleanTypeProp('range', opts);
-    }
-    if ('precision' in opts) {
-      result.precision = this.handleNumberTypeProp('precision', opts);
-    }
-    if ('alternativeRange' in opts) {
-      result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
-    }
-
-    return result;
-  }
-
-  private normalizeViewOptions(opts: Obj): ViewOptions {
-    const result: ViewOptions = {};
-    if ('className' in opts) {
-      result.className = this.handleStringTypeProp('className', opts);
-    }
-    if ('selector' in opts) {
-      result.selector = this.handleStringTypeProp('selector', opts);
-    }
-    if ('angle' in opts) {
-      result.angle = this.handleNumberTypeProp('angle', opts);
-    }
-    if ('step' in opts) {
-      result.step = this.handleNumberTypeProp('step', opts);
-    }
-    if ('range' in opts) {
-      result.range = this.handleBooleanTypeProp('range', opts);
-    }
-    if ('hintAboveThumb' in opts) {
-      result.hintAboveThumb = this.handleBooleanTypeProp('hintAboveThumb', opts);
-    }
-    if ('hintAlwaysShow' in opts) {
-      result.hintAlwaysShow = this.handleBooleanTypeProp('hintAlwaysShow', opts);
-    }
-    if ('showScale' in opts) {
-      result.showScale = this.handleBooleanTypeProp('showScale', opts);
-    }
-    if ('partsNum' in opts) {
-      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
-    }
-    return result;
-  }
-
-  private handleNumberTypeProp(prop: string, obj: Obj): number {
-    let value = obj[prop];
-    value = Number(value);
-
-    if (!Number.isFinite(value)) {
-      throw new Error(`"${prop}" should be a number!`);
-    }
-    return value;
-  }
-
-  private handleStringTypeProp(prop: string, obj: Obj): string {
-    const value = obj[prop];
-    if (typeof value !== 'string') {
-      throw new Error(`"${prop}" should be a string!`);
-    }
-    return value;
-  }
-
-  private handleBooleanTypeProp(prop: string, obj: Obj): boolean {
-    const value = obj[prop];
-    if (typeof value !== 'boolean') {
-      throw new Error(`"${prop}" should be a boolean!`);
-    }
-    return value;
-  }
-
-  private handleStringArrayTypeProp(prop: string, obj: Obj): string[] {
-    const value = obj[prop];
-    if (!(Array.isArray(value))) {
-      throw new Error(`"${prop}" should be a string[]!`);
-    }
-
-    const stringArray = value.every((item: any) => typeof item === 'string');
-    if (!stringArray) {
-      throw new Error('alternativeRange should be a string[]!');
-    }
-    return value;
   }
 }
