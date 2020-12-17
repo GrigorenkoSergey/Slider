@@ -17,7 +17,7 @@ import debuggerPoint from '../../../helpers/debugger-point';
 
 type onChangeOpts = {
   el: any,
-  callback?: <T>(eventType: string, data: T) => any,
+  callback?: <T>(eventType: string, data: T) => unknown,
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
@@ -116,75 +116,77 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   getOffsets() {
+    const { view } = this;
     return {
-      left: this.view.thumbs.thumbLeftOffset,
-      right: this.view.thumbs.thumbRightOffset,
+      left: view.thumbs.thumbLeftOffset,
+      right: view.thumbs.thumbRightOffset,
     };
   }
 
   update(eventType: string, data: any) {
     const modelOptions = this.model.getOptions();
+    const { model, view } = this;
 
     if (eventType === 'thumbMousedown') {
       const thumb = data.el;
-      const offset = this.model.findValue(data.offset);
-      this.view.setHintValue(thumb, this.recountValue(offset));
+      const offset = model.findValue(data.offset);
+      view.setHintValue(thumb, this.recountValue(offset));
     } else if (eventType === 'thumbMousemove') {
       const thumb = data.el;
-      const offset = this.model.findValue(data.offset);
-      this.view.setHintValue(thumb, this.recountValue(offset));
+      const offset = model.findValue(data.offset);
+      view.setHintValue(thumb, this.recountValue(offset));
 
-      if (thumb === this.view.thumbs.thumbLeft) {
-        this.model.setThumbsPos({ left: offset });
+      if (thumb === view.thumbs.thumbLeft) {
+        model.setThumbsPos({ left: offset });
       } else {
-        this.model.setThumbsPos({ right: offset });
+        model.setThumbsPos({ right: offset });
       }
     } else if (eventType === 'min' || eventType === 'max') {
-      const { thumbLeft } = this.view.thumbs;
-      this.view.moveThumbToPos(
+      const { thumbLeft } = view.thumbs;
+      view.moveThumbToPos(
         thumbLeft,
-        this.model.findArgument(modelOptions.thumbLeftPos),
+        model.findArgument(modelOptions.thumbLeftPos),
       );
 
-      if (this.model.getOptions().range) {
-        const { thumbRight } = this.view.thumbs;
-        this.view.moveThumbToPos(thumbRight, this.model.findArgument(modelOptions.thumbRightPos));
+      if (model.getOptions().range) {
+        const { thumbRight } = view.thumbs;
+        view.moveThumbToPos(thumbRight, model.findArgument(modelOptions.thumbRightPos));
       }
       this.scaleValues();
     } else if (eventType === 'step') {
       const step = modelOptions.step / (modelOptions.max - modelOptions.min);
-      this.view.setOptions({ step });
+      view.setOptions({ step });
     } else if (eventType === 'partsNum') {
-      this.view.setOptions({ partsNum: modelOptions.partsNum });
+      view.setOptions({ partsNum: modelOptions.partsNum });
     } else if (eventType === 'thumbLeftPos') {
       if (data.method === 'setThumbsPos') {
         this.broadcast(eventType, data);
         return;
       }
 
-      const { thumbLeft } = this.view.thumbs;
-      this.view.moveThumbToPos(thumbLeft, this.model.findArgument(data.value));
+      const { thumbLeft } = view.thumbs;
+      view.moveThumbToPos(thumbLeft, model.findArgument(data.value));
     } else if (eventType === 'thumbRightPos') {
       if (data.method === 'setThumbsPos') {
         this.broadcast(eventType, data);
         return;
       }
 
-      const { thumbRight } = this.view.thumbs;
+      const { thumbRight } = view.thumbs;
       if (modelOptions.thumbRightPos === Infinity) return;
-      this.view.moveThumbToPos(thumbRight, this.model.findArgument(data.value));
+      view.moveThumbToPos(thumbRight, model.findArgument(data.value));
     } else if (eventType === 'range') {
-      this.view.setOptions({ range: data.value });
+      view.setOptions({ range: data.value });
     } else if (eventType === 'thumbProgramMove') {
       let handledData = null;
 
       if ('left' in data) {
-        handledData = { left: this.model.findValue(data.left) };
+        handledData = { left: model.findValue(data.left) };
       } else {
-        handledData = { right: this.model.findValue(data.right) };
+        handledData = { right: model.findValue(data.right) };
       }
 
-      this.model.setThumbsPos(handledData);
+      model.setThumbsPos(handledData);
       this.scaleValues();
     } else {
       this.scaleValues();
@@ -225,7 +227,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     );
 
     const { precision } = modelOptions;
-    const anchorValues = this.view.scale.parts.map((value) => {
+    const anchorValues = view.scale.parts.map((value) => {
       const result = this.recountValue(Number(model.findValue(value).toFixed(precision)));
       return result;
     });

@@ -4,7 +4,7 @@ import EventObserver from '../../../../helpers/event-observer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
-import { isIncreasing } from '../../../../helpers/functions/is-increasing';
+import { isIncreasingSequence } from '../../../../helpers/functions/is-increasing-sequence';
 
 export default class Scale extends EventObserver {
   view: View;
@@ -21,13 +21,15 @@ export default class Scale extends EventObserver {
     super();
     this.view = options.view;
     this.init();
+    return this;
   }
 
   private init() {
+    const { view } = this;
     const propsToSubscribe = ['showScale', 'step', 'partsNum', 'angle'];
-    propsToSubscribe.forEach((prop) => this.view.addSubscriber(prop, this));
+    propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
 
-    this.width = this.view.el.clientWidth - this.view.thumbs.thumbLeft.offsetWidth;
+    this.width = view.el.clientWidth - view.thumbs.thumbLeft.offsetWidth;
     this.anchors = [];
 
     this.render();
@@ -46,8 +48,9 @@ export default class Scale extends EventObserver {
   }
 
   private render() {
-    this.el.className = `${this.view.el.className}__scale`;
-    this.view.el.append(this.el);
+    const { view, el } = this;
+    el.className = `${view.el.className}__scale`;
+    view.el.append(el);
 
     this.setMilestones();
   }
@@ -59,56 +62,65 @@ export default class Scale extends EventObserver {
   }
 
   setMilestones(values?: number[]) {
-    const { step, partsNum } = this.view.getOptions();
+    const { view, anchors, el } = this;
+    /*
+      Не стоит, наверное, деструктурировать объекты, которые
+      мы собираемся менять, а то получается как-то неоднозначно
+    */
+    let { parts } = this;
+    const { step, partsNum } = view.getOptions();
 
-    this.anchors.forEach((item) => item.remove());
-    this.anchors.length = 0;
+    anchors.forEach((item) => item.remove());
+    anchors.length = 0;
 
     if (!values) {
-      this.parts.length = 0;
+      parts.length = 0;
 
-      for (let i = 1; i < this.view.getOptions().partsNum; i += 1) {
+      for (let i = 1; i < view.getOptions().partsNum; i += 1) {
         let value = Math.round(i / partsNum / step) * step;
         value = Math.min(1, value);
 
-        this.parts.push(value);
+        parts.push(value);
       }
-      this.parts = [0, ...this.parts];
+      this.parts = [0, ...parts];
+      parts = this.parts;
 
-      if (this.parts[this.parts.length - 1] !== 1) {
-        this.parts.push(1);
+      if (parts[parts.length - 1] !== 1) {
+        parts.push(1);
       }
     } else {
       this.validateScaleParts(values);
       this.parts = values;
+      parts = this.parts;
     }
 
-    this.parts.forEach((value) => {
+    parts.forEach((value) => {
       const div = document.createElement('div');
-      div.className = `${this.view.el.className}__scale-points`;
+      div.className = `${view.el.className}__scale-points`;
 
-      const right = this.width * (1 - value) + this.view.thumbs.thumbLeft.offsetWidth / 2;
+      const right = this.width * (1 - value) + view.thumbs.thumbLeft.offsetWidth / 2;
       div.style.right = `${right}px`;
 
       div.textContent = String(value);
 
-      this.el.append(div);
+      el.append(div);
       div.addEventListener('click', this.handleMouseClick.bind(this));
 
-      this.anchors.push(div);
+      anchors.push(div);
     });
 
     this.rotateScale();
-    this.broadcast('rerenderScale', this.anchors);
+    this.broadcast('rerenderScale', anchors);
   }
 
   private handleMouseClick(e: MouseEvent) {
+    const { view, anchors, parts } = this;
     const el = <HTMLDivElement>e.target;
-    const index = this.anchors.indexOf(el);
-    let offset = this.parts[index];
+    const index = anchors.indexOf(el);
+    let offset = parts[index];
 
     if (offset === 1) {
-      const { step } = this.view.getOptions();
+      const { step } = view.getOptions();
       offset = Math.floor(offset / step) * step;
     }
 
@@ -116,23 +128,25 @@ export default class Scale extends EventObserver {
   }
 
   private displayScale() {
-    if (!this.view.getOptions().showScale) {
-      this.el.style.display = 'none';
+    const { view, el } = this;
+    if (!view.getOptions().showScale) {
+      el.style.display = 'none';
     } else {
-      this.el.style.display = '';
+      el.style.display = '';
     }
   }
 
   private rotateScale() {
-    const { angle } = this.view.getOptions();
+    const { view, anchors, el } = this;
+    const { angle } = view.getOptions();
     const { sin, PI } = Math;
     const radAngle = (angle * PI) / 180;
 
-    const scaleStyles = getComputedStyle(this.el);
+    const scaleStyles = getComputedStyle(el);
     const scaleTransform = ` translateY(${parseFloat(scaleStyles.top) * sin(radAngle)}px)`;
-    this.el.style.transform = scaleTransform;
+    el.style.transform = scaleTransform;
 
-    this.anchors.forEach((anchor) => {
+    anchors.forEach((anchor) => {
       anchor.style.transformOrigin = 'right top';
       let transformation = `rotate(-${angle}deg)`;
 
@@ -150,7 +164,7 @@ export default class Scale extends EventObserver {
       throw new Error('First value of scalePoint should be zero');
     } else if (values[values.length - 1] !== 1) {
       throw new Error('Last value of scalePoint should be equal to "1"');
-    } else if (!isIncreasing(values)) {
+    } else if (!isIncreasingSequence(values)) {
       throw new Error('Scale points should be increasing sequence');
     }
   }

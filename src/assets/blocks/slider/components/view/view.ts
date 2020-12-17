@@ -47,24 +47,26 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private init(): this {
-    const { selector } = this.options;
+    const { options, el } = this;
+    const { selector } = options;
     const wrapper = document.querySelector(selector);
 
     if (wrapper === null) {
       throw new Error(`There is no element with class ${selector}`);
     }
 
-    wrapper.append(this.el);
+    wrapper.append(el);
 
-    this.el.style.transform = `rotate(${this.options.angle}deg)`;
-    this.el.classList.add(this.options.className);
+    el.style.transform = `rotate(${options.angle}deg)`;
+    el.classList.add(options.className);
 
     this.thumbs = new Thumbs(this);
-    this.thumbs.addSubscriber('thumbMousemove', this);
-    this.thumbs.addSubscriber('thumbMousedown', this);
-    this.thumbs.addSubscriber('thumbMouseup', this);
+    const { thumbs } = this;
+    thumbs.addSubscriber('thumbMousemove', this);
+    thumbs.addSubscriber('thumbMousedown', this);
+    thumbs.addSubscriber('thumbMouseup', this);
 
-    this.el.addEventListener('click', this.handleSliderClick.bind(this));
+    el.addEventListener('click', this.handleSliderClick.bind(this));
 
     this.hints = [
       new Hint(
@@ -103,7 +105,8 @@ export default class View extends EventObserver implements ISubscriber {
       this.validateOptions(prop, value);
     });
 
-    Object.assign(this.options, expectant);
+    this.options = { ...this.options, ...expectant };
+
     Object.entries(expectant).forEach(([prop, value]) => {
       this.broadcast(prop, value);
     });
@@ -125,10 +128,11 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     if (eventType === 'hintAlwaysShow') {
-      if (this.options.hintAlwaysShow) {
-        this.hints.forEach((hint) => hint.showHint());
+      const { options, hints } = this;
+      if (options.hintAlwaysShow) {
+        hints.forEach((hint) => hint.showHint());
       } else {
-        this.hints.forEach((hint) => hint.hideHint());
+        hints.forEach((hint) => hint.hideHint());
       }
       return this;
     }
@@ -151,11 +155,12 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
-    this.thumbs.moveThumbToPos.call(this.thumbs, thumb, offset);
+    const { thumbs } = this;
+    thumbs.moveThumbToPos.call(thumbs, thumb, offset);
 
     let data = null;
 
-    if (thumb === this.thumbs.thumbLeft) {
+    if (thumb === thumbs.thumbLeft) {
       data = { left: offset };
     } else {
       data = { right: offset };
@@ -171,7 +176,8 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   setHintValue(thumb: HTMLDivElement, value: string) {
-    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+    const { thumbs, hints } = this;
+    const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
     hint.setHintValue(value);
     this.handleHintsIntersection();
   }
@@ -183,49 +189,53 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private handleThumbMousedown(thumb: HTMLDivElement) {
-    if (!this.options.hintAboveThumb) return;
+    const { thumbs, hints, options } = this;
+    if (!options.hintAboveThumb) return;
 
-    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+    const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
     hint.showHint();
   }
 
   private handleThumbMouseup(thumb: HTMLElement) {
-    const hint = (thumb === this.thumbs.thumbLeft) ? this.hints[0] : this.hints[1];
+    const { thumbs, hints, options } = this;
+    const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
 
-    if (!this.options.hintAlwaysShow) {
+    if (!options.hintAlwaysShow) {
       hint.hideHint();
     }
   }
 
   private handleSliderClick(e: MouseEvent) {
     const target = <HTMLElement>e.target;
-    const slider = this.el;
+    const {
+      options, el: slider, stretcher, scale,
+    } = this;
 
-    if (target !== this.el && target !== this.stretcher.el) return;
+    if (target !== slider && target !== stretcher.el) return;
 
     const sliderCoords: DOMRect = slider.getBoundingClientRect();
     const startX: number = sliderCoords.left + slider.clientLeft;
     const startY: number = sliderCoords.top + slider.clientTop;
 
-    const cosA: number = Math.cos((this.options.angle / 180) * Math.PI);
-    const sinA: number = Math.sin((this.options.angle / 180) * Math.PI);
+    const cosA: number = Math.cos((options.angle / 180) * Math.PI);
+    const sinA: number = Math.sin((options.angle / 180) * Math.PI);
 
     const newLeftX: number = e.clientX - startX;
     const newLeftY: number = e.clientY - startY;
 
     let newLeft = newLeftX * cosA + newLeftY * sinA;
-    let offset = newLeft / this.scale.width;
+    let offset = newLeft / scale.width;
     const closestThumb = this.findClosestThumb(offset);
 
     newLeft = Math.max(newLeftX * cosA + newLeftY * sinA);
-    newLeft = Math.min(newLeft, this.scale.width + closestThumb.offsetWidth / 2);
+    newLeft = Math.min(newLeft, scale.width + closestThumb.offsetWidth / 2);
 
-    offset = newLeft / this.scale.width;
+    offset = newLeft / scale.width;
     // да, еще раз, т.к. у меня разные привязки, и я должен предварительно найти closestThumb
 
-    offset -= closestThumb.offsetWidth / this.scale.width / 2;
+    offset -= closestThumb.offsetWidth / scale.width / 2;
     offset = Math.max(0, offset);
-    offset = Math.round(offset / this.options.step) * this.options.step;
+    offset = Math.round(offset / options.step) * options.step;
 
     this.moveThumbToPos(closestThumb, offset);
   }
@@ -255,12 +265,13 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private findClosestThumb(offset: number) {
-    const { thumbLeft, thumbRight } = this.thumbs;
+    const { thumbs, options } = this;
+    const { thumbLeft, thumbRight } = thumbs;
 
     let closestThumb;
 
-    if (this.options.range) {
-      if (offset - this.thumbs.thumbLeftOffset < this.thumbs.thumbRightOffset - offset) {
+    if (options.range) {
+      if (offset - thumbs.thumbLeftOffset < thumbs.thumbRightOffset - offset) {
         closestThumb = thumbLeft;
       } else {
         closestThumb = thumbRight;
@@ -273,9 +284,10 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private checkHintsIntersection() {
-    if (!this.options.hintAlwaysShow || !this.options.range) return false;
+    const { options, hints } = this;
+    if (!options.hintAlwaysShow || !options.range) return false;
 
-    const [leftHint, rightHint] = this.hints.map((hint) => hint.el);
+    const [leftHint, rightHint] = hints.map((hint) => hint.el);
     let result = false;
 
     /*
@@ -290,7 +302,7 @@ export default class View extends EventObserver implements ISubscriber {
     leftHint.textContent = zerosTextContent;
     const zerosHintRect = leftHint.getBoundingClientRect();
 
-    leftHint.textContent = this.hints[0].value;
+    leftHint.textContent = hints[0].value;
     const leftHintRect = leftHint.getBoundingClientRect();
 
     let longestLeftHintRect;
@@ -312,6 +324,7 @@ export default class View extends EventObserver implements ISubscriber {
   private handleHintsIntersection() {
     if (!this.options.hintAlwaysShow) return;
 
+    const { hints, options } = this;
     this.hints.forEach((hint) => hint.showHint());
 
     if (this.checkHintsIntersection()) {
@@ -319,18 +332,18 @@ export default class View extends EventObserver implements ISubscriber {
        добавим модификатор, чтобы можно было потом как-то выбрать с помощью
        javascript, к примеру, чтобы подвинуть подсказку как нужно пользователю
       */
-      this.hints[0].el.classList.add(`${this.options.className}__hint_summary`);
-      this.hints[1].hideHint();
+      hints[0].el.classList.add(`${options.className}__hint_summary`);
+      hints[1].hideHint();
 
-      const leftValue = this.hints[0].value;
-      const rightValue = this.hints[1].value;
+      const leftValue = hints[0].value;
+      const rightValue = hints[1].value;
 
       if (leftValue !== rightValue) {
         const textContent = `${leftValue} ― ${rightValue}`;
-        this.hints[0].el.textContent = textContent;
+        hints[0].el.textContent = textContent;
       }
     } else {
-      this.hints[0].el.classList.remove(`${this.options.className}__hint_summary`);
+      hints[0].el.classList.remove(`${options.className}__hint_summary`);
     }
   }
 }

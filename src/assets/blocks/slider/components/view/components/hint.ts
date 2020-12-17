@@ -18,18 +18,19 @@ export default class Hint extends EventObserver {
   }
 
   private init(parent: HTMLElement) {
-    this.el.className = `${this.view.getOptions().className}__hint`;
-    this.el.hidden = true;
+    const { view, el } = this;
+    el.className = `${view.getOptions().className}__hint`;
+    el.hidden = true;
 
-    parent.append(this.el);
+    parent.append(el);
 
-    this.el.addEventListener('mousedown', this.handleMousedown);
+    el.addEventListener('mousedown', this.handleMousedown);
 
-    if (this.view.getOptions().hintAlwaysShow) {
+    if (view.getOptions().hintAlwaysShow) {
       this.showHint();
     }
 
-    this.view.addSubscriber('angle', this);
+    view.addSubscriber('angle', this);
   }
 
   update(eventType: string) {
@@ -39,13 +40,15 @@ export default class Hint extends EventObserver {
   }
 
   setHintValue(value: string) {
+    const { el } = this;
     this.value = value;
-    if (!this.el.hidden) this.el.textContent = this.value;
+    if (!el.hidden) el.textContent = value;
   }
 
   showHint() {
-    this.el.hidden = false;
-    this.el.textContent = this.value;
+    const { el } = this;
+    el.hidden = false;
+    el.textContent = this.value;
   }
 
   hideHint() {

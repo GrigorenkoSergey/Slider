@@ -21,13 +21,15 @@ export default class BindedInput extends EventObserver {
   }
 
   init() {
-    this.slider.addSubscriber(String(this.prop), this);
-    this.el.addEventListener('change', this.handleInputChange.bind(this));
+    const { slider, el, prop } = this;
+    slider.addSubscriber(String(prop), this);
+    el.addEventListener('change', this.handleInputChange.bind(this));
   }
 
   update(): void {
-    const sliderOptions = this.slider.getOptions();
-    const key = this.prop;
+    const { slider, prop } = this;
+    const sliderOptions = slider.getOptions();
+    const key = prop;
     const propValue = sliderOptions[key];
 
     if (typeof propValue === 'number') {
@@ -39,21 +41,22 @@ export default class BindedInput extends EventObserver {
 
   handleInputChange() {
     let newValue;
+    const { el, slider, prop } = this;
 
-    if (this.el.type === 'checkbox') {
-      newValue = this.el.checked;
+    if (el.type === 'checkbox') {
+      newValue = el.checked;
     } else {
-      newValue = this.el.value;
+      newValue = el.value;
     }
 
-    const sliderOptions = this.slider.getOptions();
-    const oldValue = sliderOptions[this.prop];
+    const sliderOptions = slider.getOptions();
+    const oldValue = sliderOptions[prop];
 
     try {
-      this.slider.setOptions({ [this.prop]: newValue });
+      slider.setOptions({ [prop]: newValue });
     } catch (e) {
       console.log(e.message);
-      this.slider.setOptions({ [this.prop]: oldValue });
+      slider.setOptions({ [prop]: oldValue });
 
       if (typeof oldValue === 'number') {
         this.setValue(String(oldValue));
@@ -64,15 +67,16 @@ export default class BindedInput extends EventObserver {
   }
 
   setValue(value: string | boolean) {
-    if (this.el.type === 'text') {
+    const { el, prop } = this;
+    if (el.type === 'text') {
       if (typeof value === 'string') {
-        this.el.value = value;
+        el.value = value;
       }
-    } else if (this.el.type === 'checkbox') {
+    } else if (el.type === 'checkbox') {
       if (typeof value === 'boolean') {
-        this.el.checked = value;
+        el.checked = value;
       }
     }
-    this.broadcast(String(this.prop), value);
+    this.broadcast(String(prop), value);
   }
 }

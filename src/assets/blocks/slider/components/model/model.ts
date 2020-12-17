@@ -69,18 +69,19 @@ export default class Model extends EventObserver {
 
   setOptions(expectant: ModelOptions): Model {
     let tempObj: ModelOptions = {};
+    const { options } = this;
 
     Object.entries(expectant).forEach(([key, value]) => {
-      if (isObjKey(this.options, key)) {
+      if (isObjKey(options, key)) {
         tempObj = setOption(tempObj, key, value);
       }
     });
 
     tempObj = this.validator.validate(tempObj);
-    Object.assign(this.options, tempObj);
+    this.options = { ...options, ...tempObj };
 
     Object.keys(tempObj).forEach((key) => {
-      if (isObjKey(this.options, key)) {
+      if (isObjKey(options, key)) {
         this.broadcast(key, { value: tempObj[key], method: 'setOptions' });
       }
     });
@@ -89,29 +90,30 @@ export default class Model extends EventObserver {
   }
 
   setThumbsPos(opts: {left?: number, right?: number}): Model {
+    const { options, validator } = this;
     const {
-      left = this.options.thumbLeftPos,
-      right = this.options.thumbRightPos,
+      left = options.thumbLeftPos,
+      right = options.thumbRightPos,
     } = opts;
 
     if ('left' in opts) {
-      const res = this.validator.validate({ thumbLeftPos: left }).thumbLeftPos;
+      const res = validator.validate({ thumbLeftPos: left }).thumbLeftPos;
       if (typeof res !== 'undefined') {
-        this.options.thumbLeftPos = res;
+        options.thumbLeftPos = res;
 
         this.broadcast('thumbLeftPos', {
-          value: this.options.thumbLeftPos,
+          value: options.thumbLeftPos,
           method: 'setThumbsPos',
         });
       }
     }
 
     if ('right' in opts) {
-      const res = this.validator.validate({ thumbRightPos: right }).thumbRightPos;
+      const res = validator.validate({ thumbRightPos: right }).thumbRightPos;
       if (typeof res !== 'undefined') {
-        this.options.thumbRightPos = res;
+        options.thumbRightPos = res;
         this.broadcast('thumbRightPos', {
-          value: this.options.thumbRightPos,
+          value: options.thumbRightPos,
           method: 'setThumbsPos',
         });
       }

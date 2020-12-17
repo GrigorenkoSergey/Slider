@@ -117,20 +117,21 @@ export default class SliderOptionsPalette extends EventObserver implements Input
       precision: true,
     };
 
+    const { slider, el } = this;
     Object.keys(inputs).forEach((prop) => {
-      const input: HTMLInputElement | null = this.el.querySelector(`[name=${prop}]`);
+      const input: HTMLInputElement | null = el.querySelector(`[name=${prop}]`);
 
       if (input === null) {
         throw new Error(`There is no input with name "${prop}" in current palette!`);
       }
 
       if (isObjKey(inputs, prop)) {
-        this[prop] = new BindedInput(input, this.slider, prop);
+        this[prop] = new BindedInput(input, slider, prop);
         this[prop].update();
       }
     });
 
-    this.slider.addSubscriber('changeSlider', this);
+    slider.addSubscriber('changeSlider', this);
     this.handleRangeChange();
     this.handleHintAlwaysShowChange();
   }
@@ -144,21 +145,23 @@ export default class SliderOptionsPalette extends EventObserver implements Input
   }
 
   private handleRangeChange() {
-    const opts = this.slider.getOptions();
+    const { slider, thumbRightPos } = this;
+    const opts = slider.getOptions();
     if (opts.range === false) {
-      this.thumbRightPos.el.setAttribute('disabled', 'true');
-      this.thumbRightPos.el.value = String(opts.thumbRightPos);
+      thumbRightPos.el.setAttribute('disabled', 'true');
+      thumbRightPos.el.value = String(opts.thumbRightPos);
     } else {
-      this.thumbRightPos.el.removeAttribute('disabled');
+      thumbRightPos.el.removeAttribute('disabled');
     }
   }
 
   private handleHintAlwaysShowChange() {
-    const opts = this.slider.getOptions();
+    const { slider, hintAboveThumb } = this;
+    const opts = slider.getOptions();
     if (opts.hintAlwaysShow) {
-      this.hintAboveThumb.el.setAttribute('disabled', 'true');
+      hintAboveThumb.el.setAttribute('disabled', 'true');
     } else {
-      this.hintAboveThumb.el.removeAttribute('disabled');
+      hintAboveThumb.el.removeAttribute('disabled');
     }
   }
 }

@@ -26,22 +26,23 @@ export default class Thumbs extends EventObserver {
 
   private render() {
     const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
+    const { view } = this;
     Object.assign(this, { thumbLeft, thumbRight });
 
-    const { className } = this.view.getOptions();
+    const { className } = view.getOptions();
     thumbLeft.className = `${className}__thumb-left`;
     thumbRight.className = `${className}__thumb-right`;
 
-    this.view.el.append(thumbLeft);
+    view.el.append(thumbLeft);
     this.displayThumbRight();
 
     thumbLeft.addEventListener('mousedown', this.handleThumbMousedown.bind(this));
     thumbRight.addEventListener('mousedown', this.handleThumbMousedown.bind(this));
 
-    this.view.addSubscriber('range', this);
+    view.addSubscriber('range', this);
   }
 
-  update(eventType: string): this {
+  update(eventType: string) {
     if (eventType === 'range') {
       this.displayThumbRight();
     }
@@ -49,11 +50,12 @@ export default class Thumbs extends EventObserver {
   }
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number) {
-    const newLeft = offset * (this.view.el.clientWidth - thumb.offsetWidth);
+    const { view, thumbLeft } = this;
+    const newLeft = offset * (view.el.clientWidth - thumb.offsetWidth);
     // eslint-disable-next-line no-param-reassign
     thumb.style.left = `${newLeft}px`;
 
-    if (thumb === this.thumbLeft) {
+    if (thumb === thumbLeft) {
       this.thumbLeftOffset = offset;
     } else {
       this.thumbRightOffset = offset;
@@ -69,8 +71,8 @@ export default class Thumbs extends EventObserver {
     e.preventDefault();
 
     const thumb = <HTMLElement>e.target;
-    const slider = this.view.el;
     const { view } = this;
+    const slider = view.el;
 
     const sliderCoords: DOMRect = slider.getBoundingClientRect();
     const thumbCoords: DOMRect = thumb.getBoundingClientRect();
@@ -84,16 +86,17 @@ export default class Thumbs extends EventObserver {
 
     const pixelStep: number = step * (slider.clientWidth - thumb.offsetWidth);
 
+    const { thumbLeft, thumbRight } = this;
     let leftLimit: number;
-    if (thumb === this.thumbLeft) {
+    if (thumb === thumbLeft) {
       leftLimit = 0;
     } else {
-      leftLimit = parseFloat(getComputedStyle(this.thumbLeft).left);
+      leftLimit = parseFloat(getComputedStyle(thumbLeft).left);
     }
 
     let rightLimit: number;
-    if (thumb === this.thumbLeft && range) {
-      rightLimit = parseFloat(getComputedStyle(this.thumbRight).left);
+    if (thumb === thumbLeft && range) {
+      rightLimit = parseFloat(getComputedStyle(thumbRight).left);
     } else {
       const scaleWidth = slider.clientWidth - thumb.offsetWidth;
       rightLimit = Math.floor(scaleWidth / pixelStep) * pixelStep;
@@ -105,7 +108,7 @@ export default class Thumbs extends EventObserver {
     thumb.classList.add(`${view.getOptions().className}__thumb_moving`);
 
     const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
-    const offset = thumb === this.thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
+    const offset = thumb === thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
     this.broadcast('thumbMousedown', {
       el: thumb,
@@ -139,15 +142,18 @@ export default class Thumbs extends EventObserver {
         Соответственно не совпадают и значения подсказок над бегунками.
         Поэтому удостоверимся, что не будет никаких неприятных сюрпризов.
       */
-      if (thumb === self.thumbRight) {
+      const {
+        thumbLeft, thumbLeftOffset, thumbRight, thumbRightOffset, view,
+      } = self;
+      if (thumb === thumbRight) {
         if (newLeft === leftLimit) {
-          offset = self.thumbLeftOffset;
+          offset = thumbLeftOffset;
         }
-      } else if (newLeft === rightLimit && self.view.getOptions().range) {
-        offset = self.thumbRightOffset;
+      } else if (newLeft === rightLimit && view.getOptions().range) {
+        offset = thumbRightOffset;
       }
 
-      if (thumb === self.thumbLeft) {
+      if (thumb === thumbLeft) {
         self.thumbLeftOffset = offset;
       } else {
         self.thumbRightOffset = offset;
@@ -174,10 +180,11 @@ export default class Thumbs extends EventObserver {
   }
 
   private displayThumbRight() {
-    if (this.view.getOptions().range) {
-      this.view.el.append(this.thumbRight);
+    const { view, thumbRight } = this;
+    if (view.getOptions().range) {
+      view.el.append(thumbRight);
     } else {
-      this.thumbRight.remove();
+      thumbRight.remove();
     }
   }
 }

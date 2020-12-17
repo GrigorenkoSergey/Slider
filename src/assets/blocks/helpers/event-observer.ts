@@ -3,22 +3,25 @@ import { ISubscriber } from './interfaces';
 export default abstract class EventObserver {
   observers: {[key: string]: ISubscriber[]} = {};
 
-  addSubscriber(eventType: string, obj: ISubscriber): void {
-    this.observers[eventType] = this.observers[eventType] || [];
-    this.observers[eventType].push(obj);
+  addSubscriber(eventType: string, obj: ISubscriber) {
+    const { observers } = this;
+    observers[eventType] = observers[eventType] || [];
+    observers[eventType].push(obj);
   }
 
   removeSubscriber(eventType: string, obj: ISubscriber): void {
-    if (!this.observers[eventType]) return;
+    const { observers } = this;
+    if (!observers[eventType]) return;
 
-    this.observers[eventType] = this.observers[eventType]
+    observers[eventType] = observers[eventType]
       .filter((subscriber) => subscriber !== obj);
   }
 
   broadcast<T>(eventType: string, data: T): void {
-    if (!this.observers[eventType]) return;
+    const { observers } = this;
+    if (!observers[eventType]) return;
 
-    this.observers[eventType]
+    observers[eventType]
       .forEach((subscriber) => (subscriber
         && subscriber.update(eventType, data)));
   }
