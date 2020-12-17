@@ -1,6 +1,3 @@
-// Потом 2 строки ниже можно убрать
-/* eslint-disable no-shadow */
-/* eslint-disable no-use-before-define */
 import View from '../view';
 import EventObserver from '../../../../helpers/event-observer';
 
@@ -18,10 +15,40 @@ export default class Thumbs extends EventObserver {
 
   view!: View;
 
+  private handlers!: {
+    handleThumbMousedown: (e: MouseEvent) => void,
+    handleDocumentMouseMove: (e: MouseEvent) => void,
+    handleDocumentMouseUp : (e: MouseEvent) => void,
+  };
+
+  private closure = {
+    startX: 0,
+    startY: 0,
+    cosA: 0,
+    sinA: 0,
+    leftLimit: 0,
+    rightLimit: 0,
+    shiftX: 0,
+    shiftY: 0,
+    scaleInnerWidth: 0,
+    pixelStep: 0,
+  };
+
+  private currentThumb!: HTMLElement;
+
   constructor(view: View) {
     super();
     this.view = view;
+    this.bindHandlers();
     this.render();
+  }
+
+  private bindHandlers() {
+    this.handlers = {
+      handleThumbMousedown: this.handleThumbMousedown.bind(this),
+      handleDocumentMouseMove: this.handleDocumentMouseMove.bind(this),
+      handleDocumentMouseUp: this.handleDocumentMouseUp.bind(this),
+    };
   }
 
   private render() {
@@ -36,8 +63,8 @@ export default class Thumbs extends EventObserver {
     view.el.append(thumbLeft);
     this.displayThumbRight();
 
-    thumbLeft.addEventListener('mousedown', this.handleThumbMousedown.bind(this));
-    thumbRight.addEventListener('mousedown', this.handleThumbMousedown.bind(this));
+    thumbLeft.addEventListener('mousedown', this.handlers.handleThumbMousedown);
+    thumbRight.addEventListener('mousedown', this.handlers.handleThumbMousedown);
 
     view.addSubscriber('range', this);
   }
@@ -69,45 +96,45 @@ export default class Thumbs extends EventObserver {
 
   private handleThumbMousedown(e: MouseEvent) {
     e.preventDefault();
+    const { closure, view } = this;
 
     const thumb = <HTMLElement>e.target;
-    const { view } = this;
-    const slider = view.el;
+    this.currentThumb = thumb;
 
+    const slider = view.el;
     const sliderCoords: DOMRect = slider.getBoundingClientRect();
     const thumbCoords: DOMRect = thumb.getBoundingClientRect();
 
-    const startX: number = sliderCoords.left + slider.clientLeft;
-    const startY: number = sliderCoords.top + slider.clientTop;
+    closure.startX = sliderCoords.left + slider.clientLeft;
+    closure.startY = sliderCoords.top + slider.clientTop;
 
     const { angle, step, range } = view.getOptions();
-    const cosA: number = Math.cos((angle / 180) * Math.PI);
-    const sinA: number = Math.sin((angle / 180) * Math.PI);
+    closure.cosA = Math.cos((angle / 180) * Math.PI);
+    closure.sinA = Math.sin((angle / 180) * Math.PI);
 
-    const pixelStep: number = step * (slider.clientWidth - thumb.offsetWidth);
+    closure.pixelStep = step * (slider.clientWidth - thumb.offsetWidth);
+    const { pixelStep } = closure;
 
     const { thumbLeft, thumbRight } = this;
-    let leftLimit: number;
     if (thumb === thumbLeft) {
-      leftLimit = 0;
+      closure.leftLimit = 0;
     } else {
-      leftLimit = parseFloat(getComputedStyle(thumbLeft).left);
+      closure.leftLimit = parseFloat(getComputedStyle(thumbLeft).left);
     }
 
-    let rightLimit: number;
     if (thumb === thumbLeft && range) {
-      rightLimit = parseFloat(getComputedStyle(thumbRight).left);
+      closure.rightLimit = parseFloat(getComputedStyle(thumbRight).left);
     } else {
       const scaleWidth = slider.clientWidth - thumb.offsetWidth;
-      rightLimit = Math.floor(scaleWidth / pixelStep) * pixelStep;
+      closure.rightLimit = Math.floor(scaleWidth / pixelStep) * pixelStep;
     }
 
-    const shiftX: number = e.clientX - thumbCoords.left;
-    const shiftY: number = e.clientY - thumbCoords.top;
+    closure.shiftX = e.clientX - thumbCoords.left;
+    closure.shiftY = e.clientY - thumbCoords.top;
 
     thumb.classList.add(`${view.getOptions().className}__thumb_moving`);
 
-    const scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
+    closure.scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
     const offset = thumb === thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
     this.broadcast('thumbMousedown', {
@@ -115,26 +142,34 @@ export default class Thumbs extends EventObserver {
       offset,
     });
 
-    const self = this;
-    document.addEventListener('mousemove', handleDocumentMouseMove);
-    document.addEventListener('mouseup', handleDocumentMouseUp);
+    const { handlers } = this;
+    document.addEventListener('mousemove', handlers.handleDocumentMouseMove);
+    document.addEventListener('mouseup', handlers.handleDocumentMouseUp);
+  }
 
-    function handleDocumentMouseMove(e: MouseEvent): void {
-      e.preventDefault();
-      thumb.style.zIndex = `${1000}`;
+  private handleDocumentMouseMove(e: MouseEvent): void {
+    e.preventDefault();
 
-      const newLeftX: number = e.clientX - startX - shiftX;
-      const newLeftY: number = e.clientY - startY - shiftY;
-      let newLeft: number = newLeftX * cosA + newLeftY * sinA;
+    const {
+      startX, shiftX, startY,
+      shiftY, cosA, sinA, pixelStep,
+      leftLimit, rightLimit, scaleInnerWidth,
+    } = this.closure;
+    const { currentThumb: thumb } = this;
+    thumb.style.zIndex = `${1000}`;
 
-      newLeft = takeStepIntoAccount(newLeft, pixelStep);
-      newLeft = Math.max(leftLimit, newLeft);
-      newLeft = Math.min(newLeft, rightLimit);
+    const newLeftX: number = e.clientX - startX - shiftX;
+    const newLeftY: number = e.clientY - startY - shiftY;
+    let newLeft: number = newLeftX * cosA + newLeftY * sinA;
 
-      thumb.style.left = `${newLeft}px`;
+    newLeft = this.takeStepIntoAccount(newLeft, pixelStep);
+    newLeft = Math.max(leftLimit, newLeft);
+    newLeft = Math.min(newLeft, rightLimit);
 
-      let offset = newLeft / scaleInnerWidth;
-      /*
+    thumb.style.left = `${newLeft}px`;
+
+    let offset = newLeft / scaleInnerWidth;
+    /*
         Вот здесь может возникнуть ошибка из-за механики округления значений left
         браузером. Он округляет до 1/1000, а наши вычисления гораздо точнее,
         поэтому на границах может возникнуть ошибка, например, когда
@@ -142,41 +177,38 @@ export default class Thumbs extends EventObserver {
         Соответственно не совпадают и значения подсказок над бегунками.
         Поэтому удостоверимся, что не будет никаких неприятных сюрпризов.
       */
-      const {
-        thumbLeft, thumbLeftOffset, thumbRight, thumbRightOffset, view,
-      } = self;
-      if (thumb === thumbRight) {
-        if (newLeft === leftLimit) {
-          offset = thumbLeftOffset;
-        }
-      } else if (newLeft === rightLimit && view.getOptions().range) {
-        offset = thumbRightOffset;
+    const {
+      thumbLeft, thumbLeftOffset, thumbRight, thumbRightOffset, view,
+    } = this;
+    if (thumb === thumbRight) {
+      if (newLeft === leftLimit) {
+        offset = thumbLeftOffset;
       }
-
-      if (thumb === thumbLeft) {
-        self.thumbLeftOffset = offset;
-      } else {
-        self.thumbRightOffset = offset;
-      }
-
-      self.broadcast('thumbMousemove', {
-        el: thumb,
-        offset,
-      });
+    } else if (newLeft === rightLimit && view.getOptions().range) {
+      offset = thumbRightOffset;
     }
 
-    function handleDocumentMouseUp(): void {
-      thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
-      self.broadcast('thumbMouseup', {
-        thumb,
-      });
-      document.removeEventListener('mousemove', handleDocumentMouseMove);
-      document.removeEventListener('mouseup', handleDocumentMouseUp);
+    if (thumb === thumbLeft) {
+      this.thumbLeftOffset = offset;
+    } else {
+      this.thumbRightOffset = offset;
     }
 
-    function takeStepIntoAccount(x: number, step: number): number {
-      return Math.round(x / step) * step;
-    }
+    this.broadcast('thumbMousemove', {
+      el: thumb,
+      offset,
+    });
+  }
+
+  private handleDocumentMouseUp(): void {
+    const { view } = this;
+    const { currentThumb: thumb } = this;
+    thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
+    this.broadcast('thumbMouseup', {
+      thumb,
+    });
+    document.removeEventListener('mousemove', this.handlers.handleDocumentMouseMove);
+    document.removeEventListener('mouseup', this.handlers.handleDocumentMouseUp);
   }
 
   private displayThumbRight() {
@@ -186,5 +218,9 @@ export default class Thumbs extends EventObserver {
     } else {
       thumbRight.remove();
     }
+  }
+
+  private takeStepIntoAccount(x: number, step: number): number {
+    return Math.round(x / step) * step;
   }
 }
