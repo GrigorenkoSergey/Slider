@@ -11,6 +11,7 @@ export class PresenterNormalizer {
 
     Object.keys(opts).forEach((key) => {
       if (!(isModelOptionsKey(key))) return;
+
       if (key === 'alternativeRange') {
         result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
       } else if (key === 'range') {
