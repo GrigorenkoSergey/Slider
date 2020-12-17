@@ -95,8 +95,8 @@
 Сам слайдер должен находиться в каком-либо блоке (*div*). Возможны 3 варианта вызова: 
 ```js 
     let slider = new Slider(options); //только с webpack
-    let slider = $(selector).slider(options); //c jquery
-    let slider = $().slider(options); //с jquery, селектор находится в options.
+    let slider = $('').slider(options); //c jquery
+    let slider = $(selector).slider(options); //c jquery, значение selector будет проигнорировано
 ```
 В объекте настроек, передаваемых параметром **options** есть поле **selector**, в которое необходимо записать селектор выбора, аналогичный тому, что мы передаем через ```document.body.querySelector(selector)``` или через ```$(selector)```.
 
