@@ -10,6 +10,18 @@ export type ModelOptions = {
   alternativeRange?: string[],
 }
 
+const modelOptionsDummy: Required<ModelOptions> = {
+  min: 0,
+  max: 0,
+  step: 0,
+  partsNum: 0,
+  thumbLeftPos: 0,
+  thumbRightPos: 0,
+  range: true,
+  precision: 0,
+  alternativeRange: [],
+};
+
 export type ModelInitType =
 { min: number, max: number} |
 { alternativeRange: string[] };
@@ -35,4 +47,8 @@ export function isModelOptionsType(options: Object): options is ModelOptions {
   };
 
   return Object.keys(options).some((key) => key in modelOptionsExample);
+}
+
+export function isModelOptionsKey(key: string): key is Extract<keyof ModelOptions, string> {
+  return key in modelOptionsDummy;
 }

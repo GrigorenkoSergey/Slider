@@ -4,7 +4,7 @@ import EventObserver from '../../../../helpers/event-observer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 
-import isIncreasing from '../../../../helpers/functions/is-increasing';
+import { isIncreasing } from '../../../../helpers/functions/is-increasing';
 
 export default class Scale extends EventObserver {
   view: View;

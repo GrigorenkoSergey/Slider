@@ -10,6 +10,18 @@ export type ViewOptions = {
   partsNum?: number,
 }
 
+const viewOptionsDummy: Required<ViewOptions> = {
+  className: '',
+  selector: '',
+  angle: 0,
+  step: 0,
+  range: true,
+  hintAboveThumb: true,
+  hintAlwaysShow: true,
+  showScale: true,
+  partsNum: 0,
+};
+
 export type ViewInitType = {
   selector: string;
 }
@@ -21,17 +33,9 @@ export function isViewInitType(options: any): options is ViewInitType {
 }
 
 export function isViewOptionsType(options: Object): options is ViewOptions {
-  const example: ViewOptions = {
-    className: '',
-    selector: '',
-    angle: 0,
-    step: 0,
-    range: true,
-    hintAboveThumb: true,
-    hintAlwaysShow: true,
-    showScale: true,
-    partsNum: 0,
-  };
+  return Object.keys(options).some((key) => key in viewOptionsDummy);
+}
 
-  return Object.keys(options).some((key) => key in example);
+export function isViewOptionsKey(key: string): key is Extract<keyof ViewOptions, string> {
+  return key in viewOptionsDummy;
 }

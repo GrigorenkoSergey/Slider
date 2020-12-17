@@ -1,4 +1,4 @@
-function isIncreasing(arr: number[] | string[]): boolean {
+export function isIncreasing(arr: number[] | string[]): boolean {
   let prev = Number(arr[0]);
   const arrSliced = arr.slice(1);
   let result = true;
@@ -12,5 +12,3 @@ function isIncreasing(arr: number[] | string[]): boolean {
 
   return result;
 }
-
-export default isIncreasing;

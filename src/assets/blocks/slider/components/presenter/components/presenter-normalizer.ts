@@ -1,73 +1,52 @@
 import { PresenterOptions } from './presenter-types';
-import { ModelOptions } from '../../model/components/model-types';
-import { ViewOptions } from '../../view/components/view-types';
+import { isModelOptionsKey, ModelOptions } from '../../model/components/model-types';
+import { isViewOptionsKey, ViewOptions } from '../../view/components/view-types';
 import { isObjKey } from '../../../../helpers/functions/is-obj-key';
+import { setOption } from '../../../../helpers/functions/set-option';
+import { isStringArray } from '../../../../helpers/functions/is-string-array';
 
 export class PresenterNormalizer {
-  normalizeModelOptions(opts: PresenterOptions): ModelOptions {
-    const result: ModelOptions = {};
+  normalizeModelOptions(opts: ModelOptions): ModelOptions {
+    let result: ModelOptions = {};
 
-    if ('min' in opts) {
-      result.min = this.handleNumberTypeProp('min', opts);
-    }
-    if ('max' in opts) {
-      result.max = this.handleNumberTypeProp('max', opts);
-    }
-    if ('step' in opts) {
-      result.step = this.handleNumberTypeProp('step', opts);
-    }
-    if ('partsNum' in opts) {
-      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
-    }
-    if ('thumbLeftPos' in opts) {
-      result.thumbLeftPos = this.handleNumberTypeProp('thumbLeftPos', opts);
-    }
-    if ('thumbRightPos' in opts) {
-      result.thumbRightPos = this.handleNumberTypeProp('thumbRightPos', opts);
-    }
-    if ('range' in opts) {
-      result.range = this.handleBooleanTypeProp('range', opts);
-    }
-    if ('precision' in opts) {
-      result.precision = this.handleNumberTypeProp('precision', opts);
-    }
-    if ('alternativeRange' in opts) {
-      result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
-    }
+    Object.keys(opts).forEach((key) => {
+      if (!(isModelOptionsKey(key))) return;
+      if (key === 'alternativeRange') {
+        result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
+      } else if (key === 'range') {
+        result.range = this.handleBooleanTypeProp('range', opts);
+      } else {
+        const value = this.handleNumberTypeProp(key, opts);
+        result = setOption(result, key, value);
+      }
+    });
 
     return result;
   }
 
-  normalizeViewOptions(opts: PresenterOptions): ViewOptions {
-    const result: ViewOptions = {};
+  normalizeViewOptions(opts: ViewOptions): ViewOptions {
+    let result: ViewOptions = {};
 
-    if ('className' in opts) {
-      result.className = this.handleStringTypeProp('className', opts);
-    }
-    if ('selector' in opts) {
-      result.selector = this.handleStringTypeProp('selector', opts);
-    }
-    if ('angle' in opts) {
-      result.angle = this.handleNumberTypeProp('angle', opts);
-    }
-    if ('step' in opts) {
-      result.step = this.handleNumberTypeProp('step', opts);
-    }
-    if ('range' in opts) {
-      result.range = this.handleBooleanTypeProp('range', opts);
-    }
-    if ('hintAboveThumb' in opts) {
-      result.hintAboveThumb = this.handleBooleanTypeProp('hintAboveThumb', opts);
-    }
-    if ('hintAlwaysShow' in opts) {
-      result.hintAlwaysShow = this.handleBooleanTypeProp('hintAlwaysShow', opts);
-    }
-    if ('showScale' in opts) {
-      result.showScale = this.handleBooleanTypeProp('showScale', opts);
-    }
-    if ('partsNum' in opts) {
-      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
-    }
+    Object.keys(opts).forEach((key) => {
+      if (!isViewOptionsKey(key)) return;
+
+      let val;
+      switch (key) {
+        case 'className':
+        case 'selector':
+          val = this.handleStringTypeProp(key, opts);
+          break;
+        case 'step':
+        case 'partsNum':
+        case 'angle':
+          val = this.handleNumberTypeProp(key, opts);
+          break;
+        default:
+          val = this.handleBooleanTypeProp(key, opts);
+          break;
+      }
+      result = setOption(result, key, val);
+    });
     return result;
   }
 
@@ -111,14 +90,10 @@ export class PresenterNormalizer {
     if (!isObjKey(obj, prop)) {
       throw new Error();
     }
-    const value = obj[prop];
-    if (!(Array.isArray(value))) {
-      throw new Error(`"${prop}" should be a string[]!`);
-    }
 
-    const stringArray = value.every((item: any) => typeof item === 'string');
-    if (!stringArray) {
-      throw new Error('alternativeRange should be a string[]!');
+    const value = obj[prop];
+    if (!(isStringArray(value))) {
+      throw new Error(`"${prop}" should be a string[]!`);
     }
     return value;
   }
