@@ -1,0 +1,27 @@
+.example {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 10px;
+  justify-content: space-around;
+  align-items: center;
+
+  &_area_testA {
+    grid-area: testA;
+  }
+
+  &_area_testB {
+    grid-area: testB;
+  }
+
+  &_area_testC {
+    grid-area: testC;
+  }
+
+  &__slider {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

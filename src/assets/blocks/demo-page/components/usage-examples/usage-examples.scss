@@ -1,0 +1,39 @@
+.usage-examples {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  overflow: hidden;
+  justify-content: space-between;
+  column-gap: 10px;
+  margin-bottom: 50px;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    padding-top: 50px;
+  }
+
+  &__text {
+    font-size: medium;
+    font-weight: bolder;
+    word-break: break-all;
+    text-align: center;
+    padding: 20px;
+    padding-top: 50px;
+  }
+
+  &__letter {
+    height: 150px;
+    padding-top: 40px;
+    font-size: 150px;
+    line-height: 150px;
+    text-align: center;
+    text-shadow: -10px 19px 7px grey;
+  }
+
+  &__img {
+    width: 183.6px;
+    height: 168.66px;
+    background: url('./images/bird.png') no-repeat left top;
+  }
+}

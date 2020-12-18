@@ -4,8 +4,8 @@ import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 import { isObjKey } from '../../../helpers/functions/is-obj-key';
 import { setOption } from '../../../helpers/functions/set-option';
-import { ModelValidator } from './components/model-validator';
 
+import { ModelValidator } from './components/model-validator';
 import { ModelOptions } from './components/model-types';
 
 export default class Model extends EventObserver {

@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../helpers/debugger-point';
-import EventObserver from '../../helpers/event-observer';
-import { Slider } from '../../slider/slider';
+import debuggerPoint from '../../../helpers/debugger-point';
+import EventObserver from '../../../helpers/event-observer';
+import { Slider } from '../../../slider/slider';
 
 type propertyKey = keyof ReturnType<Slider['getOptions']>;
 

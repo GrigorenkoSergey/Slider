@@ -1,7 +1,9 @@
-import EventObserver from '../../helpers/event-observer';
-import BindedInput from './binded-input';
-import { Slider } from '../../slider/slider';
-import { isObjKey } from '../../helpers/functions/is-obj-key';
+import { isObjKey } from '../../../helpers/functions/is-obj-key';
+import EventObserver from '../../../helpers/event-observer';
+import { Slider } from '../../../slider/slider';
+
+import BindedInput from '../binded-input/binded-input';
+import './slider-options-palette.scss';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;
 type OptionsKeys = Exclude<keyof SliderOptions, 'alternativeRange' | 'className' | 'selector'>;
@@ -64,15 +66,15 @@ export default class SliderOptionsPalette extends EventObserver implements Input
     ];
 
     const ul = document.createElement('ul');
-    ul.className = 'slider-options';
+    ul.className = 'slider-options-palette';
 
     inputTextes.forEach((inputName) => {
       const li = document.createElement('li');
-      li.className = 'slider-options__li';
+      li.className = 'slider-options-palette__li';
       li.textContent = inputName;
 
       const input = document.createElement('input');
-      input.className = 'slider-options__input';
+      input.className = 'slider-options-palette__input';
       input.type = 'text';
       input.name = inputName;
 
@@ -81,15 +83,15 @@ export default class SliderOptionsPalette extends EventObserver implements Input
     });
 
     const liCheckbox = document.createElement('li');
-    liCheckbox.className = 'slider-options__li slider-options__li_checkbox';
+    liCheckbox.className = 'slider-options-palette__li slider-options-palette__li_checkbox';
 
     inputCheckboxes.forEach(([name, alias]) => {
       const label = document.createElement('label');
-      label.className = 'slider-options__label';
+      label.className = 'slider-options-palette__label';
       label.textContent = alias;
 
       const input = document.createElement('input');
-      input.className = 'slider-options__checkbox';
+      input.className = 'slider-options-palette__checkbox';
       input.type = 'checkbox';
       input.name = name;
 

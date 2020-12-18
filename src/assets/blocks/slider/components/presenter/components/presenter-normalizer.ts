@@ -1,9 +1,9 @@
-import { PresenterOptions } from './presenter-types';
-import { isModelOptionsKey, ModelOptions } from '../../model/components/model-types';
-import { isViewOptionsKey, ViewOptions } from '../../view/components/view-types';
 import { isObjKey } from '../../../../helpers/functions/is-obj-key';
 import { setOption } from '../../../../helpers/functions/set-option';
 import { isStringArray } from '../../../../helpers/functions/is-string-array';
+import { isModelOptionsKey, ModelOptions } from '../../model/components/model-types';
+import { isViewOptionsKey, ViewOptions } from '../../view/components/view-types';
+import { PresenterOptions } from './presenter-types';
 
 export class PresenterNormalizer {
   normalizeModelOptions(opts: ModelOptions): ModelOptions {

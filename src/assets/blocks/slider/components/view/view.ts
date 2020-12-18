@@ -1,20 +1,16 @@
 /* eslint-disable no-restricted-globals */
-/* eslint-disable no-underscore-dangle */
+import { isObjKey } from '../../../helpers/functions/is-obj-key';
+import { setOption } from '../../../helpers/functions/set-option';
 import EventObserver from '../../../helpers/event-observer';
 import { ISubscriber } from '../../../helpers/interfaces';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import debuggerPoint from '../../../helpers/debugger-point';
 
+import { ViewOptions } from './components/view-types';
 import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import Thumbs from './components/thumbs';
-
 import Hint from './components/hint';
-
-import { ViewOptions } from './components/view-types';
-import { isObjKey } from '../../../helpers/functions/is-obj-key';
-import { setOption } from '../../../helpers/functions/set-option';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../../helpers/debugger-point';
 
 export default class View extends EventObserver implements ISubscriber {
   el: HTMLDivElement = document.createElement('div');
@@ -52,7 +48,7 @@ export default class View extends EventObserver implements ISubscriber {
     const wrapper = document.querySelector(selector);
 
     if (wrapper === null) {
-      throw new Error(`There is no element with class ${selector}`);
+      throw new Error(`There is no element with selector "${selector}"`);
     }
 
     wrapper.append(el);

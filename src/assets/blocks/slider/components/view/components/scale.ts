@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
-import View from '../view';
-import EventObserver from '../../../../helpers/event-observer';
+import { isIncreasingSequence } from '../../../../helpers/functions/is-increasing-sequence';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
+import EventObserver from '../../../../helpers/event-observer';
 
-import { isIncreasingSequence } from '../../../../helpers/functions/is-increasing-sequence';
+import View from '../view';
 
 export default class Scale extends EventObserver {
   view: View;

@@ -1,0 +1,13 @@
+extends ./components/template/template.pug
+
+block includes
+  include ./components/examples/examples.pug
+  include ./components/usage-examples/usage-examples.pug
+
+block content
+  .demo-page
+    .demo-page__examples
+      +examples()
+    h1.demo-page__h1 Usage examples
+    .demo-page__usage-examples
+      +usage-examples()

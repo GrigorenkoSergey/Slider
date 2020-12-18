@@ -32,43 +32,56 @@
 |   │   ├── blocks
 |   |   |   |
 |   |   |   ├── helpers
+|   |   |   │   ├── functions
+|   |   |   |   │   ├── is-increasing-sequence.ts
+|   |   |   |   │   ├── is-obj-key.ts
+|   |   |   |   │   ├── is-object.ts
+|   |   |   |   │   ├── is-string-array.ts
+|   |   |   │   │   └── set-option.ts
 |   |   |   │   ├── debugger-point.ts
 |   |   |   │   ├── event-observer.ts
-|   |   |   │   ├── functions
-|   |   |   │   │   └── is-increasing.ts
-|   |   |   │   ├── interfaces.ts
-|   |   |   │   └── types.ts
+|   |   |   │   └── interfaces.ts
 |   |   |   |
-|   |   |   ├── main-page
+|   |   |   ├── demo-page
 |   |   |   │   ├── components
-|   |   |   │   │   ├── binded-input.ts
-|   |   |   │   │   └── slider-options-palette.ts
-|   |   |   │   ├── main-page.pug
-|   |   |   │   ├── main-page.scss
-|   |   |   │   └── main-page.ts
+|   |   |   |   │   ├── binded-input
+|   |   |   |   │   ├── example
+|   |   |   |   │   ├── examples
+|   |   |   |   │   ├── slider-options-palette
+|   |   |   |   │   ├── template
+|   |   |   │   │   └── usage-examples
+|   |   |   │   │ 
+|   |   |   │   ├── demo-page.pug
+|   |   |   │   ├── demo-page.scss
+|   |   |   │   └── demo-page.ts
 |   |   |   |
-|   |   |   ├── slider
-|   |   |   │   ├── components
-|   |   |   │   │   ├── model
-|   |   |   │   │   │   └── model.ts
-|   |   |   │   │   ├── presenter
-|   |   |   │   │   │   └── presenter.ts
-|   |   |   │   │   └── view
-|   |   |   │   │       ├── components
-|   |   |   │   │       │   ├── hint.ts
-|   |   |   │   │       │   ├── scale.ts
-|   |   |   │   │       │   ├── stretcher.ts
-|   |   |   │   │       │   └── thumbs.ts
-|   |   |   │   │       └── view.ts
-|   |   |   │   ├── jquery.slider.d.ts
-|   |   |   │   ├── slider.scss
-|   |   |   │   └── slider.ts
-|   |   |   |
-|   |   |   └── template
-|   |   |       ├── template.js
-|   |   |       ├── template.pug
-|   |   |       └── template.scss
-|   │   |
+|   |   │   └── slider
+|   |   |       ├── components
+|   |   |       │   ├── model
+|   |   │       |   |   ├── components
+|   |   |       │   |   |   ├── model-types.ts
+|   |   |       │   |   |   └── model-validator.ts
+|   |   │       |   |   └── model.ts
+|   |   │       |   |   
+|   |   |       │   ├── presenter
+|   |   │       |   |   ├── components
+|   |   |       │   |   |   ├── presenter-normalizer.ts
+|   |   |       │   |   |   └── presenter-types.ts
+|   |   |       │   │   └── presenter.ts
+|   |   |       │   │   
+|   |   |       │   └── view
+|   |   |       │       ├── components
+|   |   |       │       │   ├── hint.ts
+|   |   |       │       │   ├── scale.ts
+|   |   |       │       │   ├── stretcher.ts
+|   |   |       │       │   ├── thumbs.ts
+|   |   |       │       │   └── view-types.ts
+|   |   |       │       └── view.ts
+|   |   |       │      
+|   |   |       ├── jquery.slider.d.ts
+|   |   |       ├── slider.scss
+|   |   |       └── slider.ts
+|   |   |    
 |   │   ├── fonts
 |   │   └── images
 |   |   
@@ -147,17 +160,17 @@ slider.setOptions({range: true, max: -100});
 | `callback` | Функция вида `(eventType?: string, cause?: string) => any`. Здесь `eventType` - событие `changeSlider`, которое возникает при любом изменении слайдера, и `cause` - событие, которое вызвало это изменение. Иногда полезно (хотя и очень редко), если мы хотим отфильтровать некоторые события. |
 
 ### Пример использования привязки (демо-страница, последний пример).
-Пусть в DOM у нас имеется элемент ```<div class="slider6></div> ```  
-Картинка `imgSprite`- это спрайт, состоящий из 14 картинок по 5 в ряду, 3 ряда.  
+Пусть в DOM у нас имеется элемент ```<div class="sliderC></div> ```  
+Картинка `usage-examples__img`- это спрайт, состоящий из 14 картинок по 5 в ряду, 3 ряда.  
 Высота спрайта 506 пикселей, ширина 918.  
 Упрощенно можно рассмотреть спрайт как двумерную матрицу 3x5, где каждая ячейка - картинка.  
 Тогда в js-файле указываем:
 ```js
-let options6 = {
-  max: 1000, 
+let optionsC = {
+  max: 1000,
   min: 0,
   step: 10,
-  selector: ".slider6",
+  selector: '.js-usage-examples__sliderC',
   angle: 0,
   range: false,
   hintAboveThumb: true,
@@ -166,10 +179,12 @@ let options6 = {
 // Значения min, max, step особо не важны, они устанавливаются для обеспечения плавности
 // движения бегунка.
 
-let slider6 = $('.slider6').slider(options6);
-const birdImg = document.querySelector('.imgSprite');
+const sliderC = $('').slider(optionsC);
 
-slider6.onChange({
+selector = '.usage-examles__img';
+const birdImg = document.querySelector(selector);
+
+sliderC.onChange({
   el: birdImg,
   callback: () => {
     let imgWidth = 918 / 5;
@@ -193,7 +208,7 @@ slider6.onChange({
 ```
 Итого у нас один бегунок, положение которого мы связали с номером картинки.
 Крайнее левое положение отображает первую картинку (нумерация с нуля), в крайнем правом положении мы отображаем последнюю 14-ю картинку (с индексом 13).
-Полный код примеров использования смотри в ***src/main-page/main-page.ts***.
+Полный код примеров использования смотри в ***src/assets/demo-page/components/usage-examples/usage-examples.ts***
 
 
 ## uml-диаграмма

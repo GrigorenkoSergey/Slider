@@ -1,19 +1,18 @@
 import '../../slider.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 import { ISubscriber } from '../../../helpers/interfaces';
 import { isObject } from '../../../helpers/functions/is-object';
 
-import Model from '../model/model';
 import { isModelInitType, isModelOptionsType } from '../model/components/model-types';
+import Model from '../model/model';
 
-import View from '../view/view';
 import { isViewInitType, isViewOptionsType } from '../view/components/view-types';
+import View from '../view/view';
 
 import { PresenterNormalizer } from './components/presenter-normalizer';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../../helpers/debugger-point';
 
 type onChangeOpts = {
   el: any,

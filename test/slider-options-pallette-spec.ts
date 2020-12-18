@@ -1,8 +1,9 @@
-import '../src/assets/blocks/slider/slider';
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
-import SliderOptionsPalette from '../src/assets/blocks/main-page/components/slider-options-palette';
+import SliderOptionsPalette
+  from '../src/assets/blocks/demo-page/components/slider-options-palette/slider-options-palette';
 
-import '../src/assets/blocks/main-page/main-page.scss';
+import '../src/assets/blocks/slider/slider';
+import '../src/assets/blocks/demo-page/demo-page.scss';
 import '../src/assets/blocks/slider/slider.scss';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';

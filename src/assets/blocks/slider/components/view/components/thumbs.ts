@@ -1,8 +1,7 @@
-import View from '../view';
-import EventObserver from '../../../../helpers/event-observer';
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
+import EventObserver from '../../../../helpers/event-observer';
+import View from '../view';
 
 export default class Thumbs extends EventObserver {
   thumbLeft!: HTMLDivElement;
@@ -202,13 +201,14 @@ export default class Thumbs extends EventObserver {
 
   private handleDocumentMouseUp(): void {
     const { view } = this;
-    const { currentThumb: thumb } = this;
+    const { currentThumb: thumb, handlers } = this;
+
     thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
     this.broadcast('thumbMouseup', {
       thumb,
     });
-    document.removeEventListener('mousemove', this.handlers.handleDocumentMouseMove);
-    document.removeEventListener('mouseup', this.handlers.handleDocumentMouseUp);
+    document.removeEventListener('mousemove', handlers.handleDocumentMouseMove);
+    document.removeEventListener('mouseup', handlers.handleDocumentMouseUp);
   }
 
   private displayThumbRight() {

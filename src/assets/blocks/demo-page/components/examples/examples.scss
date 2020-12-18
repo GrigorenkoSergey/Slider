@@ -1,0 +1,10 @@
+.examples {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0px;
+  grid-template-areas:
+    'testA testB'
+    'testC testD';
+  row-gap: 20px;
+}
