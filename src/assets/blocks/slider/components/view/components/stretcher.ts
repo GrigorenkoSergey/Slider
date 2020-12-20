@@ -28,15 +28,17 @@ export default class Stretcher extends EventObserver {
     const { el, view } = this;
     const { range } = view.getOptions();
     const { thumbs } = view;
+    const { style } = el;
+
     if (range) {
-      el.style.left = `${parseFloat(getComputedStyle(thumbs.thumbLeft).left)
+      style.left = `${parseFloat(getComputedStyle(thumbs.thumbLeft).left)
         + thumbs.thumbLeft.offsetWidth / 2}px`;
 
-      el.style.right = `${view.el.clientWidth
+      style.right = `${view.el.clientWidth
         - parseFloat(getComputedStyle(thumbs.thumbRight).left)}px`;
     } else {
-      el.style.left = '0px';
-      el.style.right = `${view.el.clientWidth
+      style.left = '0px';
+      style.right = `${view.el.clientWidth
         - parseFloat(getComputedStyle(thumbs.thumbLeft).left)}px`;
     }
   }
