@@ -138,7 +138,9 @@ export default class SliderOptionsPalette extends EventObserver implements Input
     this.handleHintAlwaysShowChange();
   }
 
-  update(eventType: string, originEvent: any) {
+  update<T>(eventType: string, originEvent: T) {
+    if (typeof originEvent !== 'string') return;
+
     if (originEvent === 'range') {
       this.handleRangeChange();
     } else if (originEvent === 'hintAlwaysShow') {

@@ -7,17 +7,20 @@
 
   &__li {
     max-width: 100px;
+
+    &_checkbox {
+      grid-column: 1 / 3;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      max-width: 220px;
+    }
   }
+
   &__input {
     max-width: 100px;
   }
-  &__li_checkbox {
-    grid-column: 1 / 3;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    max-width: 220px;
-  }
+  
   &__label {
     width: 50%;
     display: flex;
