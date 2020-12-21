@@ -23,7 +23,7 @@ export default class Hint extends EventObserver {
 
     parent.append(el);
 
-    el.addEventListener('mousedown', this.handleMousedown);
+    el.addEventListener('mousedown', this.handleMouseDown);
 
     if (view.getOptions().hintAlwaysShow) {
       this.showHint();
@@ -63,7 +63,7 @@ export default class Hint extends EventObserver {
     hint.style.transformOrigin = 'left';
   }
 
-  private handleMousedown(e: Event) {
+  private handleMouseDown(e: Event) {
     e.preventDefault();
     e.stopPropagation();
   }

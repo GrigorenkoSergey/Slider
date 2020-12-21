@@ -54,9 +54,9 @@ export class Presenter extends EventObserver implements ISubscriber {
     const { view } = this;
 
     view.addSubscriber('angle', this);
-    view.addSubscriber('thumbMousedown', this);
-    view.addSubscriber('thumbMousemove', this);
-    view.addSubscriber('thumbMouseup', this);
+    view.addSubscriber('thumbMouseDown', this);
+    view.addSubscriber('thumbMouseMove', this);
+    view.addSubscriber('thumbMouseUp', this);
     view.addSubscriber('thumbProgramMove', this);
     view.addSubscriber('showScale', this);
     view.addSubscriber('hintAlwaysShow', this);
@@ -126,11 +126,11 @@ export class Presenter extends EventObserver implements ISubscriber {
     const modelOptions = this.model.getOptions();
     const { model, view } = this;
 
-    if (eventType === 'thumbMousedown') {
+    if (eventType === 'thumbMouseDown') {
       const thumb = data.el;
       const offset = model.findValue(data.offset);
       view.setHintValue(thumb, this.recountValue(offset));
-    } else if (eventType === 'thumbMousemove') {
+    } else if (eventType === 'thumbMouseMove') {
       const thumb = data.el;
       const offset = model.findValue(data.offset);
       view.setHintValue(thumb, this.recountValue(offset));

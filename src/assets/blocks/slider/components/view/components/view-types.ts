@@ -39,3 +39,14 @@ export function isViewOptionsType(options: Object): options is ViewOptions {
 export function isViewOptionsKey(key: string): key is Extract<keyof ViewOptions, string> {
   return key in viewOptionsDummy;
 }
+
+type ViewResponse = {
+  anchorClick: true,
+  data: number,
+} | {
+  thumbProgrammove: true,
+  data: {
+    el: HTMLElement,
+    offset: number,
+  }
+}

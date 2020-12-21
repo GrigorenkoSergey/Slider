@@ -58,9 +58,9 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.thumbs = new Thumbs(this);
     const { thumbs } = this;
-    thumbs.addSubscriber('thumbMousemove', this);
-    thumbs.addSubscriber('thumbMousedown', this);
-    thumbs.addSubscriber('thumbMouseup', this);
+    thumbs.addSubscriber('thumbMouseMove', this);
+    thumbs.addSubscriber('thumbMouseDown', this);
+    thumbs.addSubscriber('thumbMouseUp', this);
 
     el.addEventListener('click', this.handleSliderClick.bind(this));
 
@@ -133,12 +133,12 @@ export default class View extends EventObserver implements ISubscriber {
       return this;
     }
 
-    if (eventType === 'thumbMousedown') {
+    if (eventType === 'thumbMouseDown') {
       const thumb = data.el;
-      this.handleThumbMousedown(thumb);
-    } else if (eventType === 'thumbMouseup') {
+      this.handleThumbMouseDown(thumb);
+    } else if (eventType === 'thumbMouseUp') {
       const { thumb } = data;
-      this.handleThumbMouseup(thumb);
+      this.handleThumbMouseUp(thumb);
     } else if (eventType === 'anchorClick') {
       this.handleAnchorClick(data);
     } else if (eventType === 'range') {
@@ -184,7 +184,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.handleHintsIntersection();
   }
 
-  private handleThumbMousedown(thumb: HTMLDivElement) {
+  private handleThumbMouseDown(thumb: HTMLDivElement) {
     const { thumbs, hints, options } = this;
     if (!options.hintAboveThumb) return;
 
@@ -192,7 +192,7 @@ export default class View extends EventObserver implements ISubscriber {
     hint.showHint();
   }
 
-  private handleThumbMouseup(thumb: HTMLElement) {
+  private handleThumbMouseUp(thumb: HTMLElement) {
     const { thumbs, hints, options } = this;
     const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
 

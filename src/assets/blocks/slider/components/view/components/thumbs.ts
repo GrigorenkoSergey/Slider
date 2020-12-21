@@ -15,7 +15,7 @@ export default class Thumbs extends EventObserver {
   view!: View;
 
   private handlers!: {
-    handleThumbMousedown: (e: MouseEvent) => void,
+    handleThumbMouseDown: (e: MouseEvent) => void,
     handleDocumentMouseMove: (e: MouseEvent) => void,
     handleDocumentMouseUp : (e: MouseEvent) => void,
   };
@@ -44,7 +44,7 @@ export default class Thumbs extends EventObserver {
 
   private bindHandlers() {
     this.handlers = {
-      handleThumbMousedown: this.handleThumbMousedown.bind(this),
+      handleThumbMouseDown: this.handleThumbMouseDown.bind(this),
       handleDocumentMouseMove: this.handleDocumentMouseMove.bind(this),
       handleDocumentMouseUp: this.handleDocumentMouseUp.bind(this),
     };
@@ -62,8 +62,8 @@ export default class Thumbs extends EventObserver {
     view.el.append(thumbLeft);
     this.displayThumbRight();
 
-    thumbLeft.addEventListener('mousedown', this.handlers.handleThumbMousedown);
-    thumbRight.addEventListener('mousedown', this.handlers.handleThumbMousedown);
+    thumbLeft.addEventListener('mousedown', this.handlers.handleThumbMouseDown);
+    thumbRight.addEventListener('mousedown', this.handlers.handleThumbMouseDown);
 
     view.addSubscriber('range', this);
   }
@@ -93,7 +93,7 @@ export default class Thumbs extends EventObserver {
     });
   }
 
-  private handleThumbMousedown(e: MouseEvent) {
+  private handleThumbMouseDown(e: MouseEvent) {
     e.preventDefault();
     const { closure, view } = this;
 
@@ -136,7 +136,7 @@ export default class Thumbs extends EventObserver {
     closure.scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
     const offset = thumb === thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
-    this.broadcast('thumbMousedown', {
+    this.broadcast('thumbMouseDown', {
       el: thumb,
       offset,
     });
@@ -193,7 +193,7 @@ export default class Thumbs extends EventObserver {
       this.thumbRightOffset = offset;
     }
 
-    this.broadcast('thumbMousemove', {
+    this.broadcast('thumbMouseMove', {
       el: thumb,
       offset,
     });
@@ -204,7 +204,7 @@ export default class Thumbs extends EventObserver {
     const { currentThumb: thumb, handlers } = this;
 
     thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
-    this.broadcast('thumbMouseup', {
+    this.broadcast('thumbMouseUp', {
       thumb,
     });
     document.removeEventListener('mousemove', handlers.handleDocumentMouseMove);
