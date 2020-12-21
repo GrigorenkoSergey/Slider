@@ -263,6 +263,7 @@ describe('Позволяет пользователю взаимодейство
       clientX: thumbStartX + slider.clientWidth,
       clientY: 0,
     });
+
     slider.dispatchEvent(fakeMouseClick);
 
     expect(parseFloat(leftThumb.style.left))

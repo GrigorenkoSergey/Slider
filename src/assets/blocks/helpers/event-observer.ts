@@ -1,4 +1,4 @@
-import { ISubscriber } from './interfaces';
+import { ISubscriber, SliderEvents } from './interfaces';
 
 export default abstract class EventObserver {
   observers: {[key: string]: ISubscriber[]} = {};
@@ -17,7 +17,7 @@ export default abstract class EventObserver {
       .filter((subscriber) => subscriber !== obj);
   }
 
-  broadcast<T>(eventType: string, data: T): void {
+  broadcast(eventType: string, data: SliderEvents): void {
     const { observers } = this;
     if (!observers[eventType]) return;
 

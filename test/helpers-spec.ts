@@ -1,5 +1,5 @@
 import EventObserver from '../src/assets/blocks/helpers/event-observer';
-import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
+import { ISubscriber, SliderEvents } from '../src/assets/blocks/helpers/interfaces';
 import { isObjKey } from '../src/assets/blocks/helpers/functions/is-obj-key';
 import { setOption } from '../src/assets/blocks/helpers/functions/set-option';
 
@@ -15,7 +15,8 @@ describe('EventObserver\n', () => {
     observer = new EventObserverChild();
 
     subscriber1 = {
-      update(eventType: string) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      update(eventType: string, data: SliderEvents) {
         return eventType;
       },
     };
@@ -65,14 +66,15 @@ describe('EventObserver\n', () => {
     it('Вызывает обработчиков по мере наступления события', () => {
       spyOn(subscriber1, 'update');
       spyOn(subscriber2, 'update');
-      observer.broadcast('mousedown', 'DOWN!');
+      const event: SliderEvents = { event: 'angle', value: 0 };
+      observer.broadcast('mousedown', event);
 
-      expect(subscriber1.update).toHaveBeenCalledWith('mousedown', 'DOWN!');
-      expect(subscriber2.update).toHaveBeenCalledWith('mousedown', 'DOWN!');
+      expect(subscriber1.update).toHaveBeenCalledWith('mousedown', event);
+      expect(subscriber2.update).toHaveBeenCalledWith('mousedown', event);
     });
 
     it('Ничего не делает, если обработчиков на событие нет', () => {
-      expect(observer.broadcast('mousemove', 'MOUSEMOVE!')).toBeUndefined();
+      expect(observer.broadcast('mousemove', { event: 'precision', value: 0 })).toBeUndefined();
     });
   });
 });

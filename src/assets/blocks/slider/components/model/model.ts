@@ -82,7 +82,44 @@ export default class Model extends EventObserver {
 
     Object.keys(tempObj).forEach((key) => {
       if (isObjKey(options, key)) {
-        this.broadcast(key, { value: tempObj[key], method: 'setOptions' });
+        const value = tempObj[key];
+        if (key === 'alternativeRange') {
+          const valueArray = tempObj[key];
+          if (valueArray === undefined) {
+            throw new Error('You should set alternativeRange value!');
+          }
+          this.broadcast(key, {
+            event: 'alternativeRange',
+            value: valueArray,
+          });
+        } else if (key === 'range') {
+          this.broadcast(key, {
+            event: 'range',
+            value: Boolean(value),
+          });
+        } else if (key === 'min' || key === 'max') {
+          this.broadcast(key, {
+            event: key,
+            value: Number(value),
+          });
+        } else if (key === 'precision' || key === 'partsNum') {
+          this.broadcast(key, {
+            event: key,
+            value: Number(value),
+          });
+        } else if (key === 'step' || key === 'thumbLeftPos') {
+          this.broadcast(key, {
+            event: key,
+            value: Number(value),
+            method: 'setOptions',
+          });
+        } else if (key === 'thumbRightPos') {
+          this.broadcast(key, {
+            event: key,
+            value: Number(value),
+            method: 'setOptions',
+          });
+        }
       }
     });
 
@@ -102,6 +139,7 @@ export default class Model extends EventObserver {
         options.thumbLeftPos = res;
 
         this.broadcast('thumbLeftPos', {
+          event: 'thumbLeftPos',
           value: options.thumbLeftPos,
           method: 'setThumbsPos',
         });
@@ -113,6 +151,7 @@ export default class Model extends EventObserver {
       if (typeof res !== 'undefined') {
         options.thumbRightPos = res;
         this.broadcast('thumbRightPos', {
+          event: 'thumbRightPos',
           value: options.thumbRightPos,
           method: 'setThumbsPos',
         });

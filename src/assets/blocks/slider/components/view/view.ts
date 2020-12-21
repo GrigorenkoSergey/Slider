@@ -2,7 +2,7 @@
 import { isObjKey } from '../../../helpers/functions/is-obj-key';
 import { setOption } from '../../../helpers/functions/set-option';
 import EventObserver from '../../../helpers/event-observer';
-import { ISubscriber } from '../../../helpers/interfaces';
+import { ISubscriber, SliderEvents } from '../../../helpers/interfaces';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
 
@@ -104,9 +104,20 @@ export default class View extends EventObserver implements ISubscriber {
     this.options = { ...this.options, ...expectant };
 
     Object.entries(expectant).forEach(([prop, value]) => {
-      this.broadcast(prop, value);
+      if (isObjKey(expectant, prop)) {
+        if (prop === 'angle' || prop === 'partsNum') {
+          this.broadcast(prop, { event: prop, value: Number(value) });
+        } else if (prop === 'step') {
+          this.broadcast(prop, { event: prop, value: Number(value) });
+        } else if (prop === 'className' || prop === 'selector') {
+          this.broadcast(prop, { event: prop, value: String(value) });
+        } else if (prop === 'range' || prop === 'showScale') {
+          this.broadcast(prop, { event: prop, value: Boolean(value) });
+        } else if (prop === 'hintAboveThumb' || prop === 'hintAlwaysShow') {
+          this.broadcast(prop, { event: prop, value: Boolean(value) });
+        }
+      }
     });
-
     return this;
   }
 
@@ -115,15 +126,15 @@ export default class View extends EventObserver implements ISubscriber {
     return obj;
   }
 
-  update(eventType: string, data: any): this {
+  update(eventType: string, data: SliderEvents) {
     // если View подписан сам на себя, то он должен выходить из
     // функции, иначе получится бесконечный цикл
-    if (eventType === 'angle') {
+    if (data.event === 'angle') {
       this.el.style.transform = `rotate(${this.options.angle}deg)`;
       return this;
     }
 
-    if (eventType === 'hintAlwaysShow') {
+    if (data.event === 'hintAlwaysShow') {
       const { options, hints } = this;
       if (options.hintAlwaysShow) {
         hints.forEach((hint) => hint.showHint());
@@ -133,15 +144,15 @@ export default class View extends EventObserver implements ISubscriber {
       return this;
     }
 
-    if (eventType === 'thumbMouseDown') {
-      const thumb = data.el;
+    if (data.event === 'thumbMouseDown') {
+      const { thumb } = data;
       this.handleThumbMouseDown(thumb);
-    } else if (eventType === 'thumbMouseUp') {
+    } else if (data.event === 'thumbMouseUp') {
       const { thumb } = data;
       this.handleThumbMouseUp(thumb);
-    } else if (eventType === 'anchorClick') {
-      this.handleAnchorClick(data);
-    } else if (eventType === 'range') {
+    } else if (data.event === 'anchorClick') {
+      this.handleAnchorClick(data.offset);
+    } else if (data.event === 'range') {
       this.handleHintsIntersection();
       return this;
     }
@@ -154,12 +165,12 @@ export default class View extends EventObserver implements ISubscriber {
     const { thumbs } = this;
     thumbs.moveThumbToPos.call(thumbs, thumb, offset);
 
-    let data = null;
+    let data: SliderEvents;
 
     if (thumb === thumbs.thumbLeft) {
-      data = { left: offset };
+      data = { event: 'thumbProgramMove', left: offset };
     } else {
-      data = { right: offset };
+      data = { event: 'thumbProgramMove', right: offset };
     }
 
     this.handleHintsIntersection();

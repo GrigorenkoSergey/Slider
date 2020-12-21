@@ -33,7 +33,7 @@ export default class Thumbs extends EventObserver {
     pixelStep: 0,
   };
 
-  private currentThumb!: HTMLElement;
+  private currentThumb!: HTMLDivElement;
 
   constructor(view: View) {
     super();
@@ -88,7 +88,8 @@ export default class Thumbs extends EventObserver {
     }
 
     this.broadcast('thumbProgramMove', {
-      el: thumb,
+      event: 'thumbMouseMove',
+      thumb,
       offset,
     });
   }
@@ -97,7 +98,7 @@ export default class Thumbs extends EventObserver {
     e.preventDefault();
     const { closure, view } = this;
 
-    const thumb = <HTMLElement>e.target;
+    const thumb = <HTMLDivElement>e.target;
     this.currentThumb = thumb;
 
     const slider = view.el;
@@ -137,7 +138,8 @@ export default class Thumbs extends EventObserver {
     const offset = thumb === thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
     this.broadcast('thumbMouseDown', {
-      el: thumb,
+      event: 'thumbMouseDown',
+      thumb,
       offset,
     });
 
@@ -194,7 +196,8 @@ export default class Thumbs extends EventObserver {
     }
 
     this.broadcast('thumbMouseMove', {
-      el: thumb,
+      event: 'thumbMouseMove',
+      thumb,
       offset,
     });
   }
@@ -205,6 +208,7 @@ export default class Thumbs extends EventObserver {
 
     thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
     this.broadcast('thumbMouseUp', {
+      event: 'thumbMouseUp',
       thumb,
     });
     document.removeEventListener('mousemove', handlers.handleDocumentMouseMove);

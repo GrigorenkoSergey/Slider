@@ -111,7 +111,7 @@ export default class Scale extends EventObserver {
     });
 
     this.rotateScale();
-    this.broadcast('rerenderScale', anchors);
+    this.broadcast('rerenderScale', { event: 'rerenderScale', anchors });
   }
 
   private handleMouseClick(e: MouseEvent) {
@@ -125,7 +125,7 @@ export default class Scale extends EventObserver {
       offset = Math.floor(offset / step) * step;
     }
 
-    this.broadcast('anchorClick', offset);
+    this.broadcast('anchorClick', { event: 'anchorClick', offset });
   }
 
   private displayScale() {
