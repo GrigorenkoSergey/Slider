@@ -106,15 +106,15 @@ export default class View extends EventObserver implements ISubscriber {
     Object.entries(expectant).forEach(([prop, value]) => {
       if (isObjKey(expectant, prop)) {
         if (prop === 'angle' || prop === 'partsNum') {
-          this.broadcast(prop, { event: prop, value: Number(value) });
+          this.broadcast({ event: prop, value: Number(value) });
         } else if (prop === 'step') {
-          this.broadcast(prop, { event: prop, value: Number(value) });
+          this.broadcast({ event: prop, value: Number(value) });
         } else if (prop === 'className' || prop === 'selector') {
-          this.broadcast(prop, { event: prop, value: String(value) });
+          this.broadcast({ event: prop, value: String(value) });
         } else if (prop === 'range' || prop === 'showScale') {
-          this.broadcast(prop, { event: prop, value: Boolean(value) });
+          this.broadcast({ event: prop, value: Boolean(value) });
         } else if (prop === 'hintAboveThumb' || prop === 'hintAlwaysShow') {
-          this.broadcast(prop, { event: prop, value: Boolean(value) });
+          this.broadcast({ event: prop, value: Boolean(value) });
         }
       }
     });
@@ -126,7 +126,7 @@ export default class View extends EventObserver implements ISubscriber {
     return obj;
   }
 
-  update(eventType: string, data: SliderEvents) {
+  update(data: SliderEvents) {
     // если View подписан сам на себя, то он должен выходить из
     // функции, иначе получится бесконечный цикл
     if (data.event === 'angle') {
@@ -157,7 +157,7 @@ export default class View extends EventObserver implements ISubscriber {
       return this;
     }
 
-    this.broadcast(eventType, data);
+    this.broadcast(data);
     return this;
   }
 
@@ -174,7 +174,7 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     this.handleHintsIntersection();
-    this.broadcast('thumbProgramMove', data);
+    this.broadcast(data);
   }
 
   setAnchorValues(values: number[] | string[]) {

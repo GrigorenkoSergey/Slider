@@ -6,6 +6,7 @@ import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
 
 import View from '../view';
+import { SliderEvents } from '../../../../helpers/interfaces';
 
 export default class Scale extends EventObserver {
   view: View;
@@ -36,14 +37,14 @@ export default class Scale extends EventObserver {
     this.render();
   }
 
-  update(prop: string) {
-    if (prop === 'showScale') {
+  update(data: SliderEvents) {
+    if (data.event === 'showScale') {
       this.displayScale();
-    } else if (prop === 'partsNum') {
+    } else if (data.event === 'partsNum') {
       this.setMilestones();
-    } else if (prop === 'step') {
+    } else if (data.event === 'step') {
       this.setMilestones();
-    } else if (prop === 'angle') {
+    } else if (data.event === 'angle') {
       this.rotateScale();
     }
   }
@@ -111,7 +112,7 @@ export default class Scale extends EventObserver {
     });
 
     this.rotateScale();
-    this.broadcast('rerenderScale', { event: 'rerenderScale', anchors });
+    this.broadcast({ event: 'rerenderScale', anchors });
   }
 
   private handleMouseClick(e: MouseEvent) {
@@ -125,7 +126,7 @@ export default class Scale extends EventObserver {
       offset = Math.floor(offset / step) * step;
     }
 
-    this.broadcast('anchorClick', { event: 'anchorClick', offset });
+    this.broadcast({ event: 'anchorClick', offset });
   }
 
   private displayScale() {

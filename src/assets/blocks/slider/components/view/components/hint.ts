@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
+import { SliderEvents } from '../../../../helpers/interfaces';
 import View from '../view';
 
 export default class Hint extends EventObserver {
@@ -32,8 +33,8 @@ export default class Hint extends EventObserver {
     view.addSubscriber('angle', this);
   }
 
-  update(eventType: string) {
-    if (eventType === 'angle') {
+  update(data: SliderEvents) {
+    if (data.event === 'angle') {
       this.rotateHint();
     }
   }

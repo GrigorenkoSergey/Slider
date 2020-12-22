@@ -1,5 +1,5 @@
 export interface ISubscriber {
-  update: (eventType: string, data: SliderEvents) => void | unknown;
+  update: (data: SliderEvents) => void | unknown;
 }
 
 type ClassNameChange = {

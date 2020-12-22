@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
+import { SliderEvents } from '../../../../helpers/interfaces';
 import View from '../view';
 
 export default class Thumbs extends EventObserver {
@@ -68,8 +69,8 @@ export default class Thumbs extends EventObserver {
     view.addSubscriber('range', this);
   }
 
-  update(eventType: string) {
-    if (eventType === 'range') {
+  update(data: SliderEvents) {
+    if (data.event === 'range') {
       this.displayThumbRight();
     }
     return this;
@@ -87,7 +88,7 @@ export default class Thumbs extends EventObserver {
       this.thumbRightOffset = offset;
     }
 
-    this.broadcast('thumbProgramMove', {
+    this.broadcast({
       event: 'thumbMouseMove',
       thumb,
       offset,
@@ -137,7 +138,7 @@ export default class Thumbs extends EventObserver {
     closure.scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
     const offset = thumb === thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
-    this.broadcast('thumbMouseDown', {
+    this.broadcast({
       event: 'thumbMouseDown',
       thumb,
       offset,
@@ -195,7 +196,7 @@ export default class Thumbs extends EventObserver {
       this.thumbRightOffset = offset;
     }
 
-    this.broadcast('thumbMouseMove', {
+    this.broadcast({
       event: 'thumbMouseMove',
       thumb,
       offset,
@@ -207,7 +208,7 @@ export default class Thumbs extends EventObserver {
     const { currentThumb: thumb, handlers } = this;
 
     thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
-    this.broadcast('thumbMouseUp', {
+    this.broadcast({
       event: 'thumbMouseUp',
       thumb,
     });

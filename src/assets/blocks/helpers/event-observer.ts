@@ -17,12 +17,14 @@ export default abstract class EventObserver {
       .filter((subscriber) => subscriber !== obj);
   }
 
-  broadcast(eventType: string, data: SliderEvents): void {
+  broadcast(data: SliderEvents): void {
     const { observers } = this;
-    if (!observers[eventType]) return;
+    const { event } = data;
 
-    observers[eventType]
+    if (!observers[event]) return;
+
+    observers[event]
       .forEach((subscriber) => (subscriber
-        && subscriber.update(eventType, data)));
+        && subscriber.update(data)));
   }
 }

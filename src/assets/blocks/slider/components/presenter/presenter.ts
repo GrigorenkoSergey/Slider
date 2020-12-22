@@ -16,7 +16,7 @@ import { PresenterNormalizer } from './components/presenter-normalizer';
 
 type onChangeOpts = {
   el: any,
-  callback?: <T>(eventType: string, data: T) => void
+  callback?: <T>(data: T) => void
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
@@ -122,7 +122,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     };
   }
 
-  update(eventType: string, data: SliderEvents) {
+  update(data: SliderEvents) {
     const modelOptions = this.model.getOptions();
     const { model, view } = this;
 
@@ -159,7 +159,7 @@ export class Presenter extends EventObserver implements ISubscriber {
       view.setOptions({ partsNum: modelOptions.partsNum });
     } else if (data.event === 'thumbLeftPos') {
       if (data.method === 'setThumbsPos') {
-        this.broadcast(eventType, data);
+        this.broadcast(data);
         return;
       }
 
@@ -167,7 +167,7 @@ export class Presenter extends EventObserver implements ISubscriber {
       view.moveThumbToPos(thumbLeft, model.findArgument(data.value));
     } else if (data.event === 'thumbRightPos') {
       if (data.method === 'setThumbsPos') {
-        this.broadcast(eventType, data);
+        this.broadcast(data);
         return;
       }
 
@@ -176,7 +176,7 @@ export class Presenter extends EventObserver implements ISubscriber {
       view.moveThumbToPos(thumbRight, model.findArgument(data.value));
     } else if (data.event === 'range') {
       view.setOptions({ range: data.value });
-    } else if (eventType === 'thumbProgramMove') {
+    } else if (data.event === 'thumbProgramMove') {
       let handledData: ThumbProgramMove;
 
       if ('left' in data && data.left !== undefined) {
@@ -198,14 +198,14 @@ export class Presenter extends EventObserver implements ISubscriber {
       this.scaleValues();
     }
 
-    this.broadcast(eventType, data);
-    this.broadcast('changeSlider', { event: 'changeSlider', cause: eventType });
+    this.broadcast(data);
+    this.broadcast({ event: 'changeSlider', cause: data.event });
   }
 
   onChange(opts: onChangeOpts) {
     const {
       el,
-      callback = (eventType: string, data: any) => console.log(data),
+      callback = (data: SliderEvents) => console.log(data),
     } = opts;
 
     const elemSubscriber = {
@@ -214,7 +214,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     };
 
     this.addSubscriber('changeSlider', elemSubscriber);
-    this.broadcast('changeSlider', { event: 'changeSlider', cause: 'onChangeInit' });
+    this.broadcast({ event: 'changeSlider', cause: 'onChangeInit' });
     return elemSubscriber;
   }
 

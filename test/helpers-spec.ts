@@ -8,73 +8,74 @@ class EventObserverChild extends EventObserver {}
 
 describe('EventObserver\n', () => {
   let observer: EventObserver;
-  let subscriber1: ISubscriber;
-  let subscriber2: ISubscriber;
+  let subscriberA: ISubscriber;
+  let subscriberB: ISubscriber;
+  const eventRange: SliderEvents = { event: 'range', value: true };
+  const eventMin: SliderEvents = { event: 'min', value: 0 };
 
   beforeEach(() => {
     observer = new EventObserverChild();
 
-    subscriber1 = {
+    subscriberA = {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      update(eventType: string, data: SliderEvents) {
-        return eventType;
+      update(data: SliderEvents) {
+        return data.event;
       },
     };
-    subscriber2 = {
-      update(eventType: string, data: any) {
+    subscriberB = {
+      update(data: SliderEvents) {
         return data;
       },
     };
-    observer.addSubscriber('mousedown', subscriber1);
-    observer.addSubscriber('mousedown', subscriber2);
-    observer.addSubscriber('mouseup', subscriber2);
+    observer.addSubscriber(eventRange.event, subscriberA);
+    observer.addSubscriber(eventRange.event, subscriberB);
+    observer.addSubscriber(eventMin.event, subscriberB);
   });
 
   it('Корректно сохраняет в памяти подписчиков', () => {
-    expect(observer.observers.mousedown)
-      .toEqual(jasmine.arrayContaining([subscriber1, subscriber2]));
-    expect(observer.observers.mouseup)
-      .toEqual([subscriber2]);
+    expect(observer.observers.range)
+      .toEqual(jasmine.arrayContaining([subscriberA, subscriberB]));
+    expect(observer.observers.min)
+      .toEqual([subscriberB]);
   });
 
-  describe('Удаляет подписчиков при необходимости', () => {
+  describe('Удаляет подписчиков при необходимости\n', () => {
     it('Корректно удаляет подписчика, если он есть', () => {
-      observer.removeSubscriber('mouseup', subscriber2);
-      observer.removeSubscriber('mousedown', subscriber2);
+      observer.removeSubscriber('min', subscriberB);
+      observer.removeSubscriber('range', subscriberB);
 
-      expect(observer.observers.mouseup).toEqual([]);
-      expect(observer.observers.mousedown).toEqual([subscriber1]);
+      expect(observer.observers.min).toEqual([]);
+      expect(observer.observers.range).toEqual([subscriberA]);
     });
 
     it('Ничего не делает, если подписчика или события нет', () => {
-      const { ...subscriber3 } = subscriber1;
-      observer.removeSubscriber('mousemove', subscriber1);
-      observer.removeSubscriber('mouseup', subscriber3);
+      const { ...subscriberC } = subscriberA;
+      observer.removeSubscriber('mousemove', subscriberA);
+      observer.removeSubscriber('mouseup', subscriberC);
 
       expect(observer.observers).toEqual(jasmine.objectContaining({
-        mousedown: [subscriber1, subscriber2],
-        mouseup: [subscriber2],
+        range: [subscriberA, subscriberB],
+        min: [subscriberB],
       }));
 
       expect(observer.observers).not.toEqual(jasmine.objectContaining({
-        mousemove: [subscriber1],
+        mousemove: [subscriberA],
       }));
     });
   });
 
   describe('Извещает подписчиков о наступлении события', () => {
     it('Вызывает обработчиков по мере наступления события', () => {
-      spyOn(subscriber1, 'update');
-      spyOn(subscriber2, 'update');
-      const event: SliderEvents = { event: 'angle', value: 0 };
-      observer.broadcast('mousedown', event);
+      spyOn(subscriberA, 'update');
+      spyOn(subscriberB, 'update');
+      observer.broadcast(eventRange);
 
-      expect(subscriber1.update).toHaveBeenCalledWith('mousedown', event);
-      expect(subscriber2.update).toHaveBeenCalledWith('mousedown', event);
+      expect(subscriberA.update).toHaveBeenCalledWith(eventRange);
+      expect(subscriberB.update).toHaveBeenCalledWith(eventRange);
     });
 
     it('Ничего не делает, если обработчиков на событие нет', () => {
-      expect(observer.broadcast('mousemove', { event: 'precision', value: 0 })).toBeUndefined();
+      expect(observer.broadcast({ event: 'precision', value: 0 })).toBeUndefined();
     });
   });
 });
