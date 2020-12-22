@@ -3,7 +3,8 @@ import '../../slider.scss';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
-import { ISubscriber, SliderEvents, ThumbProgramMove } from '../../../helpers/interfaces';
+import { SliderEvents, ThumbProgramMove } from '../../../helpers/slider-events';
+import { ISubscriber } from '../../../helpers/interfaces';
 import { isObject } from '../../../helpers/functions/is-object';
 
 import { isModelInitType, isModelOptionsType } from '../model/components/model-types';
@@ -15,7 +16,6 @@ import View from '../view/view';
 import { PresenterNormalizer } from './components/presenter-normalizer';
 
 type onChangeOpts = {
-  // callback?: <T>(data: T) => void
   callback?: <T>(data: T) => unknown
 };
 

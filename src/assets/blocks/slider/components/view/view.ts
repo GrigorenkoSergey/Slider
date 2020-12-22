@@ -2,7 +2,8 @@
 import { isObjKey } from '../../../helpers/functions/is-obj-key';
 import { setOption } from '../../../helpers/functions/set-option';
 import EventObserver from '../../../helpers/event-observer';
-import { ISubscriber, SliderEvents } from '../../../helpers/interfaces';
+import { SliderEvents } from '../../../helpers/slider-events';
+import { ISubscriber } from '../../../helpers/interfaces';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../../../helpers/debugger-point';
 

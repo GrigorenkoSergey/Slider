@@ -1,4 +1,5 @@
-import { ISubscriber, SliderEvents } from './interfaces';
+import { SliderEvents } from './slider-events';
+import { ISubscriber } from './interfaces';
 
 export default abstract class EventObserver {
   observers: {[key: string]: ISubscriber[]} = {};

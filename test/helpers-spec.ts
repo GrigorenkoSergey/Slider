@@ -1,5 +1,6 @@
 import EventObserver from '../src/assets/blocks/helpers/event-observer';
-import { ISubscriber, SliderEvents } from '../src/assets/blocks/helpers/interfaces';
+import { SliderEvents } from '../src/assets/blocks/helpers/slider-events';
+import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
 import { isObjKey } from '../src/assets/blocks/helpers/functions/is-obj-key';
 import { setOption } from '../src/assets/blocks/helpers/functions/set-option';
 

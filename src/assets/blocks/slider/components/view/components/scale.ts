@@ -6,7 +6,7 @@ import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
 
 import View from '../view';
-import { SliderEvents } from '../../../../helpers/interfaces';
+import { SliderEvents } from '../../../../helpers/slider-events';
 
 export default class Scale extends EventObserver {
   view: View;
