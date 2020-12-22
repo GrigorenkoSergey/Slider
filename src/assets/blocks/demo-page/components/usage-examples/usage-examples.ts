@@ -82,7 +82,7 @@ const optionsC: SliderOptions = {
   showScale: false,
 };
 
-const sliderC = $('').slider(optionsC);
+const sliderC = $('js-usage-examples__sliderC').slider(optionsC);
 
 selector = '.usage-examples__img';
 const birdImg: HTMLDivElement | null = document.querySelector(selector);

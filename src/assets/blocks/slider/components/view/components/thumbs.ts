@@ -54,7 +54,8 @@ export default class Thumbs extends EventObserver {
   private render() {
     const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
     const { view } = this;
-    Object.assign(this, { thumbLeft, thumbRight });
+    this.thumbLeft = thumbLeft;
+    this.thumbRight = thumbRight;
 
     const { className } = view.getOptions();
     thumbLeft.className = `${className}__thumb-left`;
