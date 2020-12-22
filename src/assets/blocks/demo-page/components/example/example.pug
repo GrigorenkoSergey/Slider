@@ -1,3 +1,6 @@
+include ../js-slider/js-slider
+
 mixin example(letter)
   .example(class=`example_area_test${letter}`)
-    div(class=`example__slider js-example__slider${letter}`)
+    .example__slider
+      +js-slider(letter)

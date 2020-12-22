@@ -1,12 +1,13 @@
 import $ from 'jquery';
 import { Slider, SliderOptions } from '../../../slider/slider';
+import '../js-slider/js-slider';
 import './usage-examples.scss';
 
-const optionsA: SliderOptions = {
+const optionsD: SliderOptions = {
   max: 100,
   min: 0,
   step: 1,
-  selector: '.js-usage-examples__sliderA',
+  selector: '.js-slider_test_D',
   angle: 0,
   range: true,
   hintAboveThumb: true,
@@ -24,29 +25,29 @@ if (textContent === null) {
   throw new Error();
 }
 
-const sliderA = new Slider(optionsA);
-sliderA.setOptions({ max: textContent.length });
+const sliderD = new Slider(optionsD);
+sliderD.setOptions({ max: textContent.length });
 
-sliderA.onChange({
+sliderD.onChange({
   callback: () => {
-    const options = sliderA.getOptions();
+    const options = sliderD.getOptions();
     const resLeft = Math.round(options.thumbLeftPos);
     const resRight = Math.round(options.thumbRightPos);
     text.textContent = textContent.slice(resLeft, resRight);
   },
 });
 
-const optionsB: SliderOptions = {
+const optionsE: SliderOptions = {
   max: 255,
   min: 0,
   step: 1,
-  selector: '.js-usage-examples__sliderB',
+  selector: '.js-slider_test_E',
   angle: 0,
   range: false,
   hintAboveThumb: true,
 };
 
-const sliderB = new Slider(optionsB);
+const sliderE = new Slider(optionsE);
 
 selector = '.usage-examples__letter';
 const letter: HTMLDivElement | null = document.querySelector(selector);
@@ -54,9 +55,9 @@ if (letter === null) {
   throw new Error(`No element with selector "${selector}"`);
 }
 
-sliderB.onChange({
+sliderE.onChange({
   callback: () => {
-    const offset = sliderB.getOffsets().left;
+    const offset = sliderE.getOffsets().left;
 
     // offset == 0 -> 200
     // offset == 1 -> 360
@@ -71,18 +72,18 @@ sliderB.onChange({
   },
 });
 
-const optionsC: SliderOptions = {
+const optionsF: SliderOptions = {
   max: 1000,
   min: 0,
   step: 10,
-  selector: '.js-usage-examples__sliderC',
+  selector: '.js-slider_test_F',
   angle: 0,
   range: false,
   hintAboveThumb: true,
   showScale: false,
 };
 
-const sliderC = $('js-usage-examples__sliderC').slider(optionsC);
+const sliderF = $('.js-slider_test_F').slider(optionsF);
 
 selector = '.usage-examples__img';
 const birdImg: HTMLDivElement | null = document.querySelector(selector);
@@ -91,11 +92,11 @@ if (birdImg === null) {
   throw new Error(`No element with selector "${selector}" in document`);
 }
 
-sliderC.onChange({
+sliderF.onChange({
   callback: () => {
     const imgWidth = 918 / 5;
     const imgHeight = 506 / 3;
-    const offset = sliderC.getOffsets().left;
+    const offset = sliderF.getOffsets().left;
 
     // offset == 0 -> 0
     // offset == 1 -> 13

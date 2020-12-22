@@ -1,7 +1,9 @@
+include ../js-slider/js-slider.pug
+
 mixin usage-examples()
   .usage-examples
     .usage-examples__container
-      .js-usage-examples__sliderA
+      +js-slider('D')
       -
         let i = 65;
         let arr = new Array(58).fill(1).map(item => i++);
@@ -9,9 +11,9 @@ mixin usage-examples()
       .usage-examples__text= content
 
     .usage-examples__container
-      .js-usage-examples__sliderB
+      +js-slider('E')
       .usage-examples__letter A
 
     .usage-examples__container
-      .js-usage-examples__sliderC
+      +js-slider('F')
       .usage-examples__img
