@@ -4,6 +4,9 @@ import { Slider } from '../../../slider/slider';
 
 import BindedInput from '../binded-input/binded-input';
 import './slider-options-palette.scss';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import debuggerPoint from '../../../helpers/debugger-point';
+import { SliderEvents } from '../../../helpers/interfaces';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;
 type OptionsKeys = Exclude<keyof SliderOptions, 'alternativeRange' | 'className' | 'selector'>;
@@ -138,12 +141,14 @@ export default class SliderOptionsPalette extends EventObserver implements Input
     this.handleHintAlwaysShowChange();
   }
 
-  update<T>(eventType: string, originEvent: T) {
-    if (typeof originEvent !== 'string') return;
+  update(data: SliderEvents) {
+    if (typeof data.event !== 'string') return;
 
-    if (originEvent === 'range') {
+    if (!('cause' in data)) return;
+
+    if (data.cause === 'range') {
       this.handleRangeChange();
-    } else if (originEvent === 'hintAlwaysShow') {
+    } else if (data.cause === 'hintAlwaysShow') {
       this.handleHintAlwaysShowChange();
     }
   }

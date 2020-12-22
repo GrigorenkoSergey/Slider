@@ -77,6 +77,23 @@ export default class BindedInput extends EventObserver {
         el.checked = value;
       }
     }
-    this.broadcast(String(prop), value);
+
+    if (prop === 'alternativeRange' || prop === 'selector') {
+      throw new Error(`Palette doesn't maintain changing property "${prop}"!`);
+    } else if (prop === 'className') {
+      throw new Error(`Palette doesn't maintain changing property "${prop}"!`);
+    } else if (prop === 'hintAboveThumb' || prop === 'hintAlwaysShow') {
+      this.broadcast({ event: prop, value: Boolean(value) });
+    } else if (prop === 'showScale' || prop === 'range') {
+      this.broadcast({ event: prop, value: Boolean(value) });
+    } else if (prop === 'min' || prop === 'max') {
+      this.broadcast({ event: prop, value: Number(value) });
+    } else if (prop === 'angle' || prop === 'partsNum') {
+      this.broadcast({ event: prop, value: Number(value) });
+    } else if (prop === 'precision' || prop === 'step') {
+      this.broadcast({ event: prop, value: Number(value) });
+    } else if (prop === 'thumbLeftPos' || prop === 'thumbRightPos') {
+      this.broadcast({ event: 'thumbLeftPos', value: Number(value), method: 'setOptions' });
+    }
   }
 }
