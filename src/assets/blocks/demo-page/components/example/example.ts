@@ -1,5 +1,5 @@
 import { Slider, SliderOptions } from '../../../slider/slider';
-import SliderOptionsPalette from '../slider-options-palette/slider-options-palette';
+import { SliderOptionsPalette } from '../slider-options-palette/slider-options-palette';
 import './example.scss';
 
 class Example {

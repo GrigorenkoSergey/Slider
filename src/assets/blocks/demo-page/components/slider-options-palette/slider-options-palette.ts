@@ -1,4 +1,3 @@
-import { isObjKey } from '../../../helpers/functions/is-obj-key';
 import EventObserver from '../../../helpers/event-observer';
 import { Slider } from '../../../slider/slider';
 
@@ -10,36 +9,27 @@ import { SliderEvents } from '../../../helpers/slider-events';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;
 type OptionsKeys = Exclude<keyof SliderOptions, 'alternativeRange' | 'className' | 'selector'>;
-type Inputs = Record<OptionsKeys, BindedInput>;
+export type Inputs = Record<OptionsKeys, (BindedInput | null)>;
 
-export default class SliderOptionsPalette extends EventObserver implements Inputs {
+export class SliderOptionsPalette extends EventObserver {
   el: HTMLDivElement;
 
   slider: Slider;
 
-  min!: BindedInput;
-
-  max!: BindedInput;
-
-  step!: BindedInput;
-
-  angle!: BindedInput;
-
-  thumbLeftPos!: BindedInput;
-
-  thumbRightPos!: BindedInput;
-
-  range!: BindedInput;
-
-  hintAboveThumb!: BindedInput;
-
-  showScale!: BindedInput;
-
-  hintAlwaysShow!: BindedInput;
-
-  partsNum!: BindedInput;
-
-  precision!: BindedInput;
+  inputs: Inputs = {
+    angle: null,
+    hintAboveThumb: null,
+    hintAlwaysShow: null,
+    max: null,
+    min: null,
+    partsNum: null,
+    precision: null,
+    range: null,
+    showScale: null,
+    step: null,
+    thumbLeftPos: null,
+    thumbRightPos: null,
+  };
 
   constructor(elem: HTMLDivElement, slider: Slider) {
     super();
@@ -107,32 +97,25 @@ export default class SliderOptionsPalette extends EventObserver implements Input
   }
 
   private init() {
-    const inputs = {
-      min: true,
-      max: true,
-      step: true,
-      angle: true,
-      thumbLeftPos: true,
-      thumbRightPos: true,
-      range: true,
-      hintAboveThumb: true,
-      showScale: true,
-      hintAlwaysShow: true,
-      partsNum: true,
-      precision: true,
-    };
+    const inputs: (keyof Inputs)[] = [
+      'min', 'max', 'step', 'angle', 'thumbLeftPos', 'thumbRightPos',
+      'range', 'hintAboveThumb', 'showScale', 'hintAlwaysShow',
+      'partsNum', 'precision',
+    ];
 
     const { slider, el } = this;
-    Object.keys(inputs).forEach((prop) => {
+
+    inputs.forEach((prop) => {
       const input: HTMLInputElement | null = el.querySelector(`[name=${prop}]`);
 
       if (input === null) {
         throw new Error(`There is no input with name "${prop}" in current palette!`);
       }
 
-      if (isObjKey(inputs, prop)) {
-        this[prop] = new BindedInput(input, slider, prop);
-        this[prop].update();
+      this.inputs[prop] = new BindedInput(input, slider, prop);
+      const bindedInput = this.inputs[prop];
+      if (bindedInput !== null) {
+        bindedInput.update();
       }
     });
 
@@ -154,7 +137,11 @@ export default class SliderOptionsPalette extends EventObserver implements Input
   }
 
   private handleRangeChange() {
-    const { slider, thumbRightPos } = this;
+    const { slider, inputs } = this;
+    const { thumbRightPos } = inputs;
+
+    if (thumbRightPos === null) return;
+
     const opts = slider.getOptions();
     if (opts.range === false) {
       thumbRightPos.el.setAttribute('disabled', 'true');
@@ -165,8 +152,12 @@ export default class SliderOptionsPalette extends EventObserver implements Input
   }
 
   private handleHintAlwaysShowChange() {
-    const { slider, hintAboveThumb } = this;
+    const { slider, inputs } = this;
+    const { hintAboveThumb } = inputs;
+    if (hintAboveThumb === null) return;
+
     const opts = slider.getOptions();
+
     if (opts.hintAlwaysShow) {
       hintAboveThumb.el.setAttribute('disabled', 'true');
     } else {
