@@ -28,7 +28,6 @@ const sliderA = new Slider(optionsA);
 sliderA.setOptions({ max: textContent.length });
 
 sliderA.onChange({
-  el: text,
   callback: () => {
     const options = sliderA.getOptions();
     const resLeft = Math.round(options.thumbLeftPos);
@@ -56,7 +55,6 @@ if (letter === null) {
 }
 
 sliderB.onChange({
-  el: letter,
   callback: () => {
     const offset = sliderB.getOffsets().left;
 
@@ -94,7 +92,6 @@ if (birdImg === null) {
 }
 
 sliderC.onChange({
-  el: birdImg,
   callback: () => {
     const imgWidth = 918 / 5;
     const imgHeight = 506 / 3;

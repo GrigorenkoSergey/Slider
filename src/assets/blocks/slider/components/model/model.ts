@@ -34,14 +34,16 @@ export default class Model extends EventObserver {
     const defaultDependentOptions = {
       step: () => {
         if (!('alternativeRange' in optionsCopy)) {
-          return Math.round((optionsCopy.max! - optionsCopy.min!) / 100);
+          if (optionsCopy.max !== undefined && optionsCopy.min !== undefined) {
+            return Math.round((optionsCopy.max - optionsCopy.min) / 100);
+          }
         }
         return 1;
       },
       thumbLeftPos: () => {
         let result = 0;
-        if ('min' in optionsCopy) {
-          result = optionsCopy.min!;
+        if (optionsCopy.min !== undefined) {
+          result = optionsCopy.min;
         }
         return result;
       },

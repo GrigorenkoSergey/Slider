@@ -37,7 +37,11 @@ export default class View extends EventObserver implements ISubscriber {
 
   constructor(options: ViewOptions) {
     super();
-    this.options.selector = options.selector!;
+    if (options.selector === undefined) {
+      throw new Error('You should pass options "selector" in options!');
+    }
+
+    this.options.selector = options.selector;
     this.setOptions(options);
     this.init();
   }
@@ -247,7 +251,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.moveThumbToPos(closestThumb, offset);
   }
 
-  private validateOptions(key: string, value: any) {
+  private validateOptions(key: string, value: number | string | boolean | undefined) {
     const validator = {
       step: (val: number) => {
         if (val > 1) {
@@ -267,7 +271,9 @@ export default class View extends EventObserver implements ISubscriber {
     };
 
     if (isObjKey(validator, key)) {
-      return validator[key](value);
+      if (typeof value === 'number') {
+        return validator[key](value);
+      }
     }
   }
 

@@ -762,7 +762,7 @@ describe('Проверка опции "onChange\n', () => {
     const presenter = new Presenter(option);
     let num = 3;
 
-    const miniObserver = presenter.onChange({ el: num });
+    const miniObserver = presenter.onChange({});
     miniObserver.update = () => { num = presenter.getOptions().thumbLeftPos; };
 
     presenter.setOptions({ thumbLeftPos: 10 });

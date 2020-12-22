@@ -19,12 +19,13 @@ describe('EventObserver\n', () => {
     subscriberA = {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       update(data: SliderEvents) {
-        return data.event;
+        return this;
       },
     };
     subscriberB = {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       update(data: SliderEvents) {
-        return data;
+        return this;
       },
     };
     observer.addSubscriber(eventRange.event, subscriberA);

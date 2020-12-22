@@ -15,8 +15,8 @@ import View from '../view/view';
 import { PresenterNormalizer } from './components/presenter-normalizer';
 
 type onChangeOpts = {
-  el: any,
-  callback?: <T>(data: T) => void
+  // callback?: <T>(data: T) => void
+  callback?: <T>(data: T) => unknown
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
@@ -204,13 +204,11 @@ export class Presenter extends EventObserver implements ISubscriber {
 
   onChange(opts: onChangeOpts) {
     const {
-      el,
       callback = (data: SliderEvents) => console.log(data),
     } = opts;
 
     const elemSubscriber = {
       update: callback,
-      el,
     };
 
     this.addSubscriber('changeSlider', elemSubscriber);
