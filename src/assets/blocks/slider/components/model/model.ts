@@ -2,9 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
-import { isObjKey } from '../../../helpers/functions/is-obj-key';
-import { setOption } from '../../../helpers/functions/set-option';
-
+import { createUA } from '../../../helpers/functions/create-ua';
 import { ModelValidator } from './components/model-validator';
 import { ModelOptions } from './components/model-types';
 
@@ -47,18 +45,14 @@ export default class Model extends EventObserver {
         }
         return result;
       },
-      thumbRightPos: () => Infinity,
     };
 
-    Object.keys(defaultDependentOptions).forEach((key) => {
-      if (key in options) return;
-
-      if (isObjKey(this.options, key)) {
-        if (isObjKey(defaultDependentOptions, key)) {
-          optionsCopy[key] = defaultDependentOptions[key]();
-        }
-      }
-    });
+    if (!('step' in optionsCopy)) {
+      optionsCopy.step = defaultDependentOptions.step();
+    }
+    if (!('thumbLeftPos' in optionsCopy)) {
+      optionsCopy.thumbLeftPos = defaultDependentOptions.thumbLeftPos();
+    }
 
     this.validator = new ModelValidator(this);
     this.setOptions(optionsCopy);
@@ -73,35 +67,43 @@ export default class Model extends EventObserver {
     let tempObj: ModelOptions = {};
     const { options } = this;
 
-    Object.entries(expectant).forEach(([key, value]) => {
-      if (isObjKey(options, key)) {
-        tempObj = setOption(tempObj, key, value);
-      }
+    // немного эротики
+    const keys = createUA([
+      'min', 'max', 'step', 'partsNum',
+      'thumbLeftPos', 'thumbRightPos', 'precision',
+    ]);
+
+    keys.forEach((key) => {
+      if (key in expectant) { tempObj[key] = expectant[key]; }
     });
+
+    if (expectant.range !== undefined) {
+      tempObj.range = expectant.range;
+    }
+    if (expectant.alternativeRange !== undefined) {
+      tempObj.alternativeRange = expectant.alternativeRange;
+    }
 
     tempObj = this.validator.validate(tempObj);
     this.options = { ...options, ...tempObj };
 
     Object.keys(tempObj).forEach((key) => {
-      if (isObjKey(options, key)) {
-        const value = tempObj[key];
-        if (key === 'alternativeRange') {
-          const valueArray = tempObj[key];
-          if (valueArray === undefined) {
-            throw new Error('You should set alternativeRange value!');
-          }
-          this.broadcast({ event: 'alternativeRange', value: valueArray });
-        } else if (key === 'range') {
-          this.broadcast({ event: 'range', value: Boolean(value) });
-        } else if (key === 'min' || key === 'max') {
-          this.broadcast({ event: key, value: Number(value) });
-        } else if (key === 'precision' || key === 'partsNum') {
-          this.broadcast({ event: key, value: Number(value) });
-        } else if (key === 'step' || key === 'thumbLeftPos') {
-          this.broadcast({ event: key, value: Number(value), method: 'setOptions' });
-        } else if (key === 'thumbRightPos') {
-          this.broadcast({ event: key, value: Number(value), method: 'setOptions' });
+      if (key === 'alternativeRange') {
+        const valueArray = tempObj[key];
+        if (valueArray === undefined) {
+          throw new Error('You should set alternativeRange value!');
         }
+        this.broadcast({ event: 'alternativeRange', value: valueArray });
+      } else if (key === 'range') {
+        this.broadcast({ event: 'range', value: Boolean(tempObj[key]) });
+      } else if (key === 'min' || key === 'max') {
+        this.broadcast({ event: key, value: Number(tempObj[key]) });
+      } else if (key === 'precision' || key === 'partsNum') {
+        this.broadcast({ event: key, value: Number(tempObj[key]) });
+      } else if (key === 'step' || key === 'thumbLeftPos') {
+        this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
+      } else if (key === 'thumbRightPos') {
+        this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
       }
     });
 
