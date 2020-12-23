@@ -51,6 +51,9 @@ describe('Первоначальная минимальная реализаци
     expect(() => {
       new Presenter({ selector });
     }).not.toThrowError();
+    expect(() => {
+      new Presenter({ boo: 0, foo: 100 });
+    }).toThrowError();
   });
 
   it(`Если аргументы не тех типов (кроме типа number),
@@ -119,6 +122,9 @@ describe('Первоначальная минимальная реализаци
     }).toThrowError();
     expect(() => {
       presenter.setOptions({ alternativeRange: [1, 2, 3] });
+    }).toThrowError();
+    expect(() => {
+      presenter.setOptions({ aternativeRange: ['1', '2', '3'] });
     }).toThrowError();
   });
 

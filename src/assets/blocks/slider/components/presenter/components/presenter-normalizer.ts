@@ -71,6 +71,9 @@ export class PresenterNormalizer {
     if (opts.showScale !== undefined) {
       result.showScale = this.handleBooleanTypeProp('showScale', opts);
     }
+    if (opts.range !== undefined) {
+      result.range = this.handleBooleanTypeProp('range', opts);
+    }
 
     return result;
   }
