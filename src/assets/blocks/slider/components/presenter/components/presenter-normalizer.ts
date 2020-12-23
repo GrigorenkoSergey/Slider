@@ -1,61 +1,81 @@
-import { isObjKey } from '../../../../helpers/functions/is-obj-key';
-import { setOption } from '../../../../helpers/functions/set-option';
-import { isStringArray } from '../../../../helpers/functions/is-string-array';
-import { isModelOptionsKey, ModelOptions } from '../../model/components/model-types';
-import { isViewOptionsKey, ViewOptions } from '../../view/components/view-types';
+import { ModelOptions } from '../../model/components/model-types';
+import { ViewOptions } from '../../view/components/view-types';
 import { PresenterOptions } from './presenter-types';
+
+type NumberProps = 'max' | 'min' | 'step' | 'partsNum' | 'thumbLeftPos' |
+  'thumbRightPos' | 'precision' | 'angle';
+
+type BooleanProps = 'range' | 'hintAlwaysShow' | 'hintAboveThumb' | 'showScale';
+type StringProps = 'className' | 'selector';
+type StringArrayProps = 'alternativeRange';
 
 export class PresenterNormalizer {
   normalizeModelOptions(opts: ModelOptions): ModelOptions {
-    let result: ModelOptions = {};
+    const result: ModelOptions = {};
 
-    Object.keys(opts).forEach((key) => {
-      if (!(isModelOptionsKey(key))) return;
-
-      if (key === 'alternativeRange') {
-        result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
-      } else if (key === 'range') {
-        result.range = this.handleBooleanTypeProp('range', opts);
-      } else {
-        const value = this.handleNumberTypeProp(key, opts);
-        result = setOption(result, key, value);
-      }
-    });
+    if (opts.max !== undefined) {
+      result.max = this.handleNumberTypeProp('max', opts);
+    }
+    if (opts.min !== undefined) {
+      result.min = this.handleNumberTypeProp('min', opts);
+    }
+    if (opts.step !== undefined) {
+      result.step = this.handleNumberTypeProp('step', opts);
+    }
+    if (opts.partsNum !== undefined) {
+      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
+    }
+    if (opts.thumbLeftPos !== undefined) {
+      result.thumbLeftPos = this.handleNumberTypeProp('thumbLeftPos', opts);
+    }
+    if (opts.thumbRightPos !== undefined) {
+      result.thumbRightPos = this.handleNumberTypeProp('thumbRightPos', opts);
+    }
+    if (opts.precision !== undefined) {
+      result.precision = this.handleNumberTypeProp('precision', opts);
+    }
+    if (opts.range !== undefined) {
+      result.range = this.handleBooleanTypeProp('range', opts);
+    }
+    if (opts.alternativeRange !== undefined) {
+      result.alternativeRange = this.handleStringArrayTypeProp('alternativeRange', opts);
+    }
 
     return result;
   }
 
   normalizeViewOptions(opts: ViewOptions): ViewOptions {
-    let result: ViewOptions = {};
+    const result: ViewOptions = {};
 
-    Object.keys(opts).forEach((key) => {
-      if (!isViewOptionsKey(key)) return;
+    if (opts.className !== undefined) {
+      result.className = this.handleStringTypeProp('className', opts);
+    }
+    if (opts.selector !== undefined) {
+      result.selector = this.handleStringTypeProp('selector', opts);
+    }
+    if (opts.step !== undefined) {
+      result.step = this.handleNumberTypeProp('step', opts);
+    }
+    if (opts.partsNum !== undefined) {
+      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
+    }
+    if (opts.angle !== undefined) {
+      result.angle = this.handleNumberTypeProp('angle', opts);
+    }
+    if (opts.hintAboveThumb !== undefined) {
+      result.hintAboveThumb = this.handleBooleanTypeProp('hintAboveThumb', opts);
+    }
+    if (opts.hintAlwaysShow !== undefined) {
+      result.hintAlwaysShow = this.handleBooleanTypeProp('hintAlwaysShow', opts);
+    }
+    if (opts.showScale !== undefined) {
+      result.showScale = this.handleBooleanTypeProp('showScale', opts);
+    }
 
-      let val;
-      switch (key) {
-        case 'className':
-        case 'selector':
-          val = this.handleStringTypeProp(key, opts);
-          break;
-        case 'step':
-        case 'partsNum':
-        case 'angle':
-          val = this.handleNumberTypeProp(key, opts);
-          break;
-        default:
-          val = this.handleBooleanTypeProp(key, opts);
-          break;
-      }
-      result = setOption(result, key, val);
-    });
     return result;
   }
 
-  private handleNumberTypeProp(prop: string, obj: PresenterOptions): number {
-    if (!isObjKey(obj, prop)) {
-      throw new Error();
-    }
-
+  private handleNumberTypeProp(prop: NumberProps, obj: PresenterOptions): number {
     let value = obj[prop];
     value = Number(value);
 
@@ -65,10 +85,7 @@ export class PresenterNormalizer {
     return value;
   }
 
-  private handleStringTypeProp(prop: string, obj: PresenterOptions): string {
-    if (!isObjKey(obj, prop)) {
-      throw new Error();
-    }
+  private handleStringTypeProp(prop: StringProps, obj: PresenterOptions): string {
     const value = obj[prop];
     if (typeof value !== 'string') {
       throw new Error(`"${prop}" should be a string!`);
@@ -76,10 +93,7 @@ export class PresenterNormalizer {
     return value;
   }
 
-  private handleBooleanTypeProp(prop: string, obj: PresenterOptions): boolean {
-    if (!isObjKey(obj, prop)) {
-      throw new Error();
-    }
+  private handleBooleanTypeProp(prop: BooleanProps, obj: PresenterOptions): boolean {
     const value = obj[prop];
     if (typeof value !== 'boolean') {
       throw new Error(`"${prop}" should be a boolean!`);
@@ -87,14 +101,15 @@ export class PresenterNormalizer {
     return value;
   }
 
-  private handleStringArrayTypeProp(prop: string, obj: PresenterOptions): string[] {
-    if (!isObjKey(obj, prop)) {
-      throw new Error();
-    }
-
+  private handleStringArrayTypeProp(prop: StringArrayProps, obj: PresenterOptions): string[] {
     const value = obj[prop];
-    if (!(isStringArray(value))) {
-      throw new Error(`"${prop}" should be a string[]!`);
+
+    if (!(Array.isArray(value))) {
+      throw new Error(`Prop "${prop}" is not an array`);
+    } else if (value.some((item) => typeof item !== 'string')) {
+      throw new Error(`Prop "${prop}" is not a string array`);
+    } else if (value === undefined) {
+      throw new Error(`Prop "${prop} should not be undefined`);
     }
     return value;
   }

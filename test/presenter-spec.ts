@@ -29,7 +29,6 @@ const fakeMouseUp = new MouseEvent('mouseup', {
 const fakeClick = new MouseEvent('click', {
   bubbles: true, cancelable: true,
 });
-
 describe('Первоначальная минимальная реализация', () => {
   const selector = '.divPresenterSpec';
   beforeEach(() => {
@@ -50,14 +49,8 @@ describe('Первоначальная минимальная реализаци
       new Presenter({ min: 0, max: 100, selector });
     }).not.toThrowError();
     expect(() => {
-      new Presenter({ alternativeRange: ['first', 'second'] });
-    }).toThrowError();
-    expect(() => {
-      new Presenter({ alternativeRange: ['first', 'second'], selector });
-    }).not.toThrowError();
-    expect(() => {
       new Presenter({ selector });
-    }).toThrowError();
+    }).not.toThrowError();
   });
 
   it(`Если аргументы не тех типов (кроме типа number),
@@ -217,6 +210,7 @@ describe('Меняет значения подсказки над бегунко
   });
 
   it('При движении значение подсказки меняется', () => {
+    debuggerPoint.start = 12;
     const presenter = new Presenter(option);
     const { thumbLeft } = presenter.view.thumbs;
     const { thumbRight } = presenter.view.thumbs;

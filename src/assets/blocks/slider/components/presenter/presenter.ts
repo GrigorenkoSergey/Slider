@@ -5,15 +5,12 @@ import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 import { SliderEvents, ThumbProgramMove } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
-import { isObject } from '../../../helpers/functions/is-object';
 
-import { isModelInitType, isModelOptionsType } from '../model/components/model-types';
 import Model from '../model/model';
-
-import { isViewInitType, isViewOptionsType } from '../view/components/view-types';
 import View from '../view/view';
 
 import { PresenterNormalizer } from './components/presenter-normalizer';
+import { isPresenterOptions } from './components/presenter-types';
 
 type onChangeOpts = {
   callback?: <T>(data: T) => unknown
@@ -32,12 +29,8 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   private init(options: unknown) {
-    if (!isObject(options)) {
-      throw new Error('Options should be an object!');
-    }
-
-    if (!isModelInitType(options) || !isViewInitType(options)) {
-      throw new Error('Not enough options to initialization!');
+    if (!isPresenterOptions(options)) {
+      throw new Error('No slider options in options');
     }
 
     const normalizedToModel = this.normalizer.normalizeModelOptions(options);
@@ -80,12 +73,8 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   setOptions(options: unknown) {
-    if (!isObject(options)) {
-      throw new Error('Options should be an object!');
-    }
-
-    if (!isModelOptionsType(options) && !isViewOptionsType(options)) {
-      throw new Error('No slider options!');
+    if (!isPresenterOptions(options)) {
+      throw new Error('No slider options in options');
     }
 
     const { model, view } = this;

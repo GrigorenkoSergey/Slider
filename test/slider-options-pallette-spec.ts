@@ -56,7 +56,6 @@ describe('Проверка связи значения инпута со зна�
     document.body.append(div);
 
     slider = new Presenter(options);
-    debuggerPoint.start = 12;
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
 
@@ -507,7 +506,6 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(inputs.thumbLeftPos.el.value).toEqual(value);
 
     inputs.thumbLeftPos.el.value = '10a';
-    debuggerPoint.start = 12;
     inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(inputs.thumbLeftPos.el.value).toEqual(value);
 

@@ -1,8 +1,6 @@
 import EventObserver from '../src/assets/blocks/helpers/event-observer';
 import { SliderEvents } from '../src/assets/blocks/helpers/slider-events';
 import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
-import { isObjKey } from '../src/assets/blocks/helpers/functions/is-obj-key';
-import { setOption } from '../src/assets/blocks/helpers/functions/set-option';
 
 // EventObserver is abstract class so let us create some derived class
 class EventObserverChild extends EventObserver {}
@@ -79,40 +77,5 @@ describe('EventObserver\n', () => {
     it('Ничего не делает, если обработчиков на событие нет', () => {
       expect(observer.broadcast({ event: 'precision', value: 0 })).toBeUndefined();
     });
-  });
-});
-
-describe('Functions\n', () => {
-  it(`Функция isObjKey
-     Выдает верные результаты, если строка является ключом объекта`, () => {
-    const person = {
-      name: 'Sergey',
-      age: '999',
-      character: 'nasty',
-    };
-
-    expect(isObjKey(person, 'name')).toBeTrue();
-    expect(isObjKey(person, 'age')).toBeTrue();
-    expect(isObjKey(person, 'height')).toBeFalse();
-  });
-
-  it(`Функция setOptions. Может устанавливать свойства объекта,
-    при неправильных значениях TS просто подсветит ошибку`, () => {
-    const obj = {
-      height: 12,
-    };
-
-    const objCopy: typeof obj = setOption(obj, 'height', 15);
-    expect(objCopy.height).toEqual(15);
-
-    /* Если раскомментировать, компилятор должен выделить ошибки
-
-    const obj2 = {
-      width: 100,
-    };
-
-    objCopy = setOption(obj, 'weight', 10);
-    objCopy = setOption(obj2, 'width', 12);
-    */
   });
 });
