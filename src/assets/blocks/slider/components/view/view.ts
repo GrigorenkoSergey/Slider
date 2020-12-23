@@ -1,6 +1,4 @@
 /* eslint-disable no-restricted-globals */
-import { isObjKey } from '../../../helpers/functions/is-obj-key';
-import { setOption } from '../../../helpers/functions/set-option';
 import EventObserver from '../../../helpers/event-observer';
 import { SliderEvents } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
@@ -93,14 +91,35 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   setOptions(options: ViewOptions) {
-    let expectant: ViewOptions = {};
+    const expectant: ViewOptions = {};
 
-    Object.keys(options)
-      .forEach((prop) => {
-        if (isObjKey(options, prop)) {
-          expectant = setOption(expectant, prop, options[prop]);
-        }
-      });
+    if (options.step !== undefined) {
+      expectant.step = options.step;
+    }
+    if (options.showScale !== undefined) {
+      expectant.showScale = options.showScale;
+    }
+    if (options.selector !== undefined) {
+      expectant.selector = options.selector;
+    }
+    if (options.range !== undefined) {
+      expectant.range = options.range;
+    }
+    if (options.partsNum !== undefined) {
+      expectant.partsNum = options.partsNum;
+    }
+    if (options.hintAlwaysShow !== undefined) {
+      expectant.hintAlwaysShow = options.hintAlwaysShow;
+    }
+    if (options.hintAboveThumb !== undefined) {
+      expectant.hintAboveThumb = options.hintAboveThumb;
+    }
+    if (options.className !== undefined) {
+      expectant.className = options.className;
+    }
+    if (options.angle !== undefined) {
+      expectant.angle = options.angle;
+    }
 
     Object.entries(expectant).forEach(([prop, value]) => {
       this.validateOptions(prop, value);
@@ -109,7 +128,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.options = { ...this.options, ...expectant };
 
     Object.entries(expectant).forEach(([prop, value]) => {
-      if (isObjKey(expectant, prop)) {
+      if (prop in expectant) {
         if (prop === 'angle' || prop === 'partsNum') {
           this.broadcast({ event: prop, value: Number(value) });
         } else if (prop === 'step') {
@@ -271,10 +290,8 @@ export default class View extends EventObserver implements ISubscriber {
       },
     };
 
-    if (isObjKey(validator, key)) {
-      if (typeof value === 'number') {
-        return validator[key](value);
-      }
+    if (key === 'step' || key === 'angle') {
+      return validator[key](Number(value));
     }
   }
 
