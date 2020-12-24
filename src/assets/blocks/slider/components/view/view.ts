@@ -235,7 +235,7 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private handleSliderClick(e: MouseEvent) {
-    const target = <HTMLElement>e.target;
+    const { target } = e;
     const {
       options, el: slider, stretcher, scale,
     } = this;

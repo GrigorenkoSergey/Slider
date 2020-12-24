@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
 import { SliderOptionsPalette, Inputs }
   from '../src/assets/blocks/demo-page/components/slider-options-palette/slider-options-palette';
@@ -58,10 +59,21 @@ describe('Проверка связи значения инпута со зна�
     inputs = palette.inputs;
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightThumb = el;
+
+    el = leftThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftHint = el;
+
+    el = rightThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightHint = el;
   });
 
   afterEach(() => {
@@ -233,10 +245,22 @@ describe('При установке значения свойств програ
     inputs = palette.inputs;
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
+
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightThumb = el;
+
+    el = leftThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftHint = el;
+
+    el = rightThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightHint = el;
   });
 
   afterEach(() => {
@@ -590,10 +614,21 @@ describe('Реагирует на ручное изменение положен
     inputs = palette.inputs;
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightThumb = el;
+
+    el = leftThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftHint = el;
+
+    el = rightThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightHint = el;
   });
 
   afterEach(() => {
@@ -686,10 +721,22 @@ describe('Данные баги более не возникают\n', () => {
     inputs = palette.inputs;
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
+
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightThumb = el;
+
+    el = leftThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftHint = el;
+
+    el = rightThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightHint = el;
   });
 
   afterEach(() => {

@@ -113,7 +113,11 @@ export default class Scale extends EventObserver {
 
   private handleMouseClick(e: MouseEvent) {
     const { view, anchors, parts } = this;
-    const el = <HTMLDivElement>e.target;
+    const el = e.target;
+    if (!(el instanceof HTMLDivElement)) {
+      throw new Error();
+    }
+
     const index = anchors.indexOf(el);
     let offset = parts[index];
 

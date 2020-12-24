@@ -95,7 +95,11 @@ export default class Thumbs extends EventObserver {
     e.preventDefault();
     const { closure, view } = this;
 
-    const thumb = <HTMLDivElement>e.target;
+    const thumb = e.target;
+    if (!(thumb instanceof HTMLDivElement)) {
+      throw new Error();
+    }
+
     this.currentThumb = thumb;
 
     const slider = view.el;

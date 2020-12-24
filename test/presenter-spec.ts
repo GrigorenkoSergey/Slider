@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-new */
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
@@ -195,7 +196,10 @@ describe('Меняет значения подсказки над бегунко
     const thumb = presenter.view.thumbs.thumbLeft;
     thumb.dispatchEvent(fakeMouseDown);
 
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) {
+      throw new Error();
+    }
 
     expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('10');
@@ -207,7 +211,8 @@ describe('Меняет значения подсказки над бегунко
     const thumb = presenter.view.thumbs.thumbRight;
     thumb.dispatchEvent(fakeMouseDown);
 
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.textContent).toEqual('70');
     expect(hint.hidden).toBeFalse();
@@ -221,7 +226,8 @@ describe('Меняет значения подсказки над бегунко
     const { thumbRight } = presenter.view.thumbs;
 
     thumbLeft.dispatchEvent(fakeMouseDown);
-    const hintLeft = <HTMLDivElement>thumbLeft.querySelector('[class*=__hint]');
+    const hintLeft = thumbLeft.querySelector('[class*=__hint]');
+    if (!(hintLeft instanceof HTMLDivElement)) throw new Error();
 
     const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
 
@@ -230,7 +236,10 @@ describe('Меняет значения подсказки над бегунко
     thumbLeft.dispatchEvent(fakeMouseUp);
 
     thumbRight.dispatchEvent(fakeMouseDown);
-    const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
+
+    const hintRight = thumbRight.querySelector('[class*=__hint]');
+    if (!(hintRight instanceof HTMLDivElement)) throw new Error();
+
     thumbRight.dispatchEvent(fakeMouseMove(-scaleWidth / 4));
     expect(hintRight.textContent).toEqual('78');
     thumbRight.dispatchEvent(fakeMouseUp);
@@ -261,7 +270,8 @@ describe('Проверка работы "alternativeRange"\n', () => {
     const thumb = presenter.view.thumbs.thumbLeft;
     thumb.dispatchEvent(fakeMouseDown);
 
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('Jan');
@@ -273,7 +283,8 @@ describe('Проверка работы "alternativeRange"\n', () => {
     const thumb = presenter.view.thumbs.thumbRight;
     thumb.dispatchEvent(fakeMouseDown);
 
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.textContent).toEqual('Nov');
     expect(hint.hidden).toBeFalse();
@@ -286,7 +297,10 @@ describe('Проверка работы "alternativeRange"\n', () => {
     const { thumbRight } = presenter.view.thumbs;
 
     thumbLeft.dispatchEvent(fakeMouseDown);
-    const hintLeft = <HTMLDivElement>thumbLeft.querySelector('[class*=__hint]');
+
+    const hintLeft = thumbLeft.querySelector('[class*=__hint]');
+    if (!(hintLeft instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
 
     thumbLeft.dispatchEvent(fakeMouseMove(scaleWidth / 2));
@@ -294,7 +308,10 @@ describe('Проверка работы "alternativeRange"\n', () => {
     thumbLeft.dispatchEvent(fakeMouseUp);
 
     thumbRight.dispatchEvent(fakeMouseDown);
-    const hintRight = <HTMLDivElement>thumbRight.querySelector('[class*=__hint]');
+
+    const hintRight = thumbRight.querySelector('[class*=__hint]');
+    if (!(hintRight instanceof HTMLDivElement)) throw new Error();
+
     thumbLeft.dispatchEvent(fakeMouseMove(-scaleWidth / 4));
     expect(hintRight.textContent).toEqual('Sep');
     thumbLeft.dispatchEvent(fakeMouseUp);
@@ -401,7 +418,8 @@ describe('Меняет значения шкалы в соответствии �
     const { model } = presenter;
 
     const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
-    const leftHint = <HTMLElement>thumbLeft.querySelector('[class*=hint]');
+    const leftHint = thumbLeft.querySelector('[class*=hint]');
+    if (!(leftHint instanceof HTMLDivElement)) throw new Error();
 
     model.setOptions({ thumbLeftPos: 100 });
     expect(model.getOptions().thumbLeftPos).toEqual(100);
@@ -417,7 +435,8 @@ describe('Меняет значения шкалы в соответствии �
     const { model } = presenter;
 
     const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
-    const rightHint = <HTMLElement>thumbRight.querySelector('[class*=hint]');
+    const rightHint = thumbRight.querySelector('[class*=hint]');
+    if (!(rightHint instanceof HTMLDivElement)) throw new Error();
 
     model.setOptions({ thumbRightPos: 800 });
     expect(model.getOptions().thumbRightPos).toEqual(800);
@@ -433,7 +452,8 @@ describe('Меняет значения шкалы в соответствии �
     const { model } = presenter;
     const stretcher = div.getElementsByClassName('slider__stretcher')[0];
     const style = getComputedStyle(stretcher);
-    const thumb = <HTMLElement>div.querySelector('[class*=thumb]');
+    const thumb = div.querySelector('[class*=thumb]');
+    if (!(thumb instanceof HTMLDivElement)) throw new Error();
 
     expect(parseFloat(style.left)).toEqual(thumb.offsetWidth / 2);
 
@@ -656,10 +676,16 @@ describe('Проверка поведения подсказки над бегу
 
     presenter.setOptions({ range: false });
 
-    const leftThumb = <HTMLElement>div.getElementsByClassName('slider__thumb-left')[0];
-    const slider = <HTMLElement>div.getElementsByClassName('slider')[0];
+    const leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+
+    const slider = div.getElementsByClassName('slider')[0];
+    if (!(slider instanceof HTMLDivElement)) throw new Error();
+
     const thumbStartX = leftThumb.getBoundingClientRect().left;
-    const hint = <HTMLElement>div.getElementsByClassName('slider__hint')[0];
+
+    const hint = div.getElementsByClassName('slider__hint')[0];
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     let fakeMouseClick = new MouseEvent('click', {
       bubbles: true,
@@ -707,9 +733,17 @@ describe('Проверка поведения подсказок при вклю
 
     presenter = new Presenter(option);
 
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
-    rightHint = <HTMLDivElement>div.getElementsByClassName('slider__hint')[1];
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+
+    rightThumb = el;
+    el = div.getElementsByClassName('slider__hint')[1];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightHint = el;
   });
 
   afterEach(() => {
@@ -810,10 +844,22 @@ describe('Данные баги более не возникают\n', () => {
     document.body.append(div);
 
     slider = new Presenter({ ...options });
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
-    leftHint = <HTMLDivElement>leftThumb.getElementsByClassName('slider__hint')[0];
-    rightHint = <HTMLDivElement>rightThumb.getElementsByClassName('slider__hint')[0];
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightThumb = el;
+
+    el = leftThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftHint = el;
+
+    el = rightThumb.getElementsByClassName('slider__hint')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightHint = el;
     scaleWidth = div.clientWidth - leftThumb.offsetWidth;
   });
 
@@ -874,8 +920,14 @@ describe('Данные баги более не возникают\n', () => {
     slider = new Presenter({ ...options });
     slider.setOptions({ min: 0, max: 58, thumbRightPos: 41 });
 
-    leftThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-left')[0];
-    rightThumb = <HTMLDivElement>div.getElementsByClassName('slider__thumb-right')[0];
+    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    leftThumb = el;
+
+    el = div.getElementsByClassName('slider__thumb-right')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    rightThumb = el;
+
     leftThumb.dispatchEvent(fakeMouseDown);
     leftThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
     leftThumb.dispatchEvent(fakeMouseUp);

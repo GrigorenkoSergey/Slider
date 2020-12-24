@@ -80,7 +80,9 @@ describe('Позволяет пользователю взаимодейство
 
     const view = new View(option);
 
-    const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
+    const leftThumb = div.querySelector('[class*=left]');
+    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
 
     const { step } = view.getOptions();
@@ -108,7 +110,9 @@ describe('Позволяет пользователю взаимодейство
     const view = new View(option);
     view.setOptions({ range: true });
 
-    const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
+    const rightThumb = div.querySelector('[class*=right]');
+    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
 
     const { step } = view.getOptions();
@@ -136,8 +140,12 @@ describe('Позволяет пользователю взаимодейство
     const view = new View(option);
     view.setOptions({ range: true });
 
-    const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
-    const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
+    const leftThumb = div.querySelector('[class*=left]');
+    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+
+    const rightThumb = div.querySelector('[class*=right]');
+    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
 
     let startTop: number;
@@ -178,8 +186,12 @@ describe('Позволяет пользователю взаимодейство
     // eslint-disable-next-line no-new
     new View(option);
 
-    const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
-    const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');
+    const leftThumb = div.querySelector('[class*=left]');
+    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+
+    const rightThumb = div.querySelector('[class*=right]');
+    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
 
     const highLimit = leftThumb.getBoundingClientRect().top;
@@ -256,7 +268,10 @@ describe('Позволяет пользователю взаимодейство
     };
 
     const view = new View(option);
-    const leftThumb = <HTMLElement>div.getElementsByClassName('slider__thumb-left')[0];
+
+    const leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+
     const slider = view.el;
     const thumbStartX = leftThumb.getBoundingClientRect().left;
 
@@ -360,8 +375,11 @@ describe('Также присутствует интерактивная шка�
       bubbles: true, cancelable: true,
     });
 
-    const rightThumb = <HTMLDivElement> view.el.getElementsByClassName('slider__thumb-right')[0];
-    const leftThumb = <HTMLDivElement> view.el.getElementsByClassName('slider__thumb-left')[0];
+    const rightThumb = view.el.getElementsByClassName('slider__thumb-right')[0];
+    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+
+    const leftThumb = view.el.getElementsByClassName('slider__thumb-left')[0];
+    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
 
     for (let i = 3; i < 8; i += 1) {
       moveThumb(rightThumb, -scale.width / i);
@@ -419,8 +437,11 @@ describe('Также присутствует интерактивная шка�
 
     const anchors = scale.el.querySelectorAll('[class*=scale-points]');
 
-    const labelLeft: HTMLDivElement = <HTMLDivElement>anchors[0];
-    const labelRight: HTMLDivElement = <HTMLDivElement>anchors[1];
+    const labelLeft = anchors[0];
+    if (!(labelLeft instanceof HTMLDivElement)) throw new Error();
+
+    const labelRight = anchors[1];
+    if (!(labelRight instanceof HTMLDivElement)) throw new Error();
 
     expect(labelLeft.offsetHeight).toBeTruthy();
     expect(labelRight.offsetHeight).toBeTruthy();
@@ -516,7 +537,8 @@ describe('Может отображать подсказку\n', () => {
     const thumb = view.thumbs.thumbLeft;
     thumb.dispatchEvent(fakeMouseDown);
 
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('hint');
@@ -527,7 +549,8 @@ describe('Может отображать подсказку\n', () => {
     const thumb = view.thumbs.thumbRight;
     thumb.dispatchEvent(fakeMouseDown);
 
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('hint');
@@ -539,7 +562,9 @@ describe('Может отображать подсказку\n', () => {
     const thumb = view.thumbs.thumbLeft;
 
     thumb.dispatchEvent(fakeMouseDown);
-    const hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+    const hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
+
     expect(hint.offsetWidth).toEqual(0);
 
     const scaleWidth = div.clientWidth - thumb.offsetWidth;
@@ -555,13 +580,18 @@ describe('Может отображать подсказку\n', () => {
     view.setOptions({ hintAlwaysShow: true });
 
     const thumb = view.thumbs.thumbLeft;
-    let hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+
+    let hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
+
     expect(hint.offsetWidth).toBeGreaterThan(0);
     expect(hint.textContent).toEqual('hint');
     expect(hint.offsetWidth).toBeGreaterThan(0);
 
     view.setOptions({ hintAlwaysShow: false });
-    hint = <HTMLDivElement>thumb.querySelector('[class*=__hint]');
+
+    hint = thumb.querySelector('[class*=__hint]');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
     expect(hint.offsetWidth).toEqual(0);
   });
 });
