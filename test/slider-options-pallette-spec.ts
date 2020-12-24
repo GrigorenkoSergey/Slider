@@ -5,8 +5,6 @@ import { SliderOptionsPalette, Inputs }
 import '../src/assets/blocks/slider/slider';
 import '../src/assets/blocks/demo-page/demo-page.scss';
 import '../src/assets/blocks/slider/slider.scss';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 
 let slider: Presenter;
 let palette: SliderOptionsPalette;

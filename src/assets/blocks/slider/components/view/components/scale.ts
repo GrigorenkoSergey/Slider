@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { isIncreasingSequence } from '../../../../helpers/functions/is-increasing-sequence';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
 
 import View from '../view';

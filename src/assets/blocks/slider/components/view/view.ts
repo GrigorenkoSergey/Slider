@@ -1,9 +1,6 @@
-/* eslint-disable no-restricted-globals */
 import EventObserver from '../../../helpers/event-observer';
 import { SliderEvents } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../../helpers/debugger-point';
 
 import { ViewOptions } from './components/view-types';
 import Stretcher from './components/stretcher';

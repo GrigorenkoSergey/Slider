@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe('Model\n', () => {

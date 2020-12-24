@@ -1,7 +1,5 @@
 import '../../slider.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 import { SliderEvents, ThumbProgramMove } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';

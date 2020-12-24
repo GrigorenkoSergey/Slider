@@ -40,7 +40,6 @@ module.exports = {
     'import/extensions': ['error', 'never'],
     'lines-between-class-members': ['error', 'always'],
     indent: ['error', 2, { SwitchCase: 1 }],
-    'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     'require-jsdoc': 0,
     'fsd/hof-name-prefix': 'error',

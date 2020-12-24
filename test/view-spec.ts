@@ -175,8 +175,8 @@ describe('Позволяет пользователю взаимодейство
       angle: 90,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const slider = new View(option);
+    // eslint-disable-next-line no-new
+    new View(option);
 
     const leftThumb = <HTMLDivElement>div.querySelector('[class*=left]');
     const rightThumb = <HTMLDivElement>div.querySelector('[class*=right]');

@@ -1,11 +1,9 @@
 import EventObserver from '../../../helpers/event-observer';
+import { SliderEvents } from '../../../helpers/slider-events';
 import { Slider } from '../../../slider/slider';
 
 import BindedInput from '../binded-input/binded-input';
 import './slider-options-palette.scss';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import debuggerPoint from '../../../helpers/debugger-point';
-import { SliderEvents } from '../../../helpers/slider-events';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;
 type OptionsKeys = Exclude<keyof SliderOptions, 'alternativeRange' | 'className' | 'selector'>;

@@ -1,6 +1,3 @@
-/* eslint-disable no-restricted-globals */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import debuggerPoint from '../../../helpers/debugger-point';
 import EventObserver from '../../../helpers/event-observer';
 import { createUA } from '../../../helpers/functions/create-ua';
 import { ModelValidator } from './components/model-validator';

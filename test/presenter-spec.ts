@@ -1,5 +1,4 @@
 /* eslint-disable no-new */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
 import '../src/assets/blocks/slider/slider.scss';
