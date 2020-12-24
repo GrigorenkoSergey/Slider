@@ -24,7 +24,7 @@ export default class Scale extends EventObserver {
     return this;
   }
 
-  private init() {
+  private init(): void {
     const { view } = this;
     const propsToSubscribe = ['showScale', 'step', 'partsNum', 'angle'];
     propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));

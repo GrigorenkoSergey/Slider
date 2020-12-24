@@ -24,7 +24,7 @@ export default class Model extends EventObserver {
     this.init(options);
   }
 
-  private init(options: ModelOptions) {
+  private init(options: ModelOptions): void {
     const optionsCopy = { ...options };
 
     const defaultDependentOptions = {

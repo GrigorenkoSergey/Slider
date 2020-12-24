@@ -15,7 +15,7 @@ export default class Hint extends EventObserver {
     this.init(parentNode);
   }
 
-  private init(parent: HTMLElement) {
+  private init(parent: HTMLElement): void {
     const { view, el } = this;
     el.className = `${view.getOptions().className}__hint`;
     el.hidden = true;

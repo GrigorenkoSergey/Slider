@@ -28,7 +28,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     this.model = initObj.model;
   }
 
-  private init(options: unknown) {
+  private init(options: unknown): {model: Model, view: View} {
     if (!isPresenterOptions(options)) {
       throw new Error('No slider options in options');
     }

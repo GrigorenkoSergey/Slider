@@ -94,7 +94,7 @@ export class SliderOptionsPalette extends EventObserver {
     this.el.append(ul);
   }
 
-  private init() {
+  private init(): void {
     const inputs: (keyof Inputs)[] = [
       'min', 'max', 'step', 'angle', 'thumbLeftPos', 'thumbRightPos',
       'range', 'hintAboveThumb', 'showScale', 'hintAlwaysShow',
