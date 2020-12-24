@@ -215,7 +215,10 @@ describe('Позволяет пользователю взаимодейство
       step: 0.5,
     };
     const view = new View(option);
-    const scaleWidth = view.scale.width;
+    const { scale } = view;
+    if (scale === null) throw new Error();
+
+    const scaleWidth = scale.width;
     const rightThumb = view.thumbs.thumbRight;
     const leftThumb = view.thumbs.thumbLeft;
 
@@ -303,31 +306,35 @@ describe('Также присутствует интерактивная шка�
     };
 
     const view = new View(option);
-    let anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    const { scale } = view;
+    if (scale === null) {
+      throw new Error();
+    }
+    let anchors = scale.el.querySelectorAll('[class*=scale-points]');
 
     expect(anchors[0].textContent).toEqual('0');
     expect(anchors[1].textContent).toEqual('0.75');
     expect(anchors[2].textContent).toEqual('1');
 
     view.setOptions({ step: 0.4, partsNum: 2 });
-    anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.4');
 
     view.setOptions({ step: 0.32, partsNum: 2 });
-    anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.64');
 
     view.setOptions({ step: 0.36, partsNum: 2 });
-    anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.36');
 
     view.setOptions({ step: 0.36, partsNum: 3 });
-    anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.36');
     expect(anchors[2].textContent).toEqual('0.72');
 
     view.setOptions({ step: 0.4, partsNum: 3 });
-    anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.4');
     expect(anchors[2].textContent).toEqual('0.8');
   });
@@ -344,7 +351,10 @@ describe('Также присутствует интерактивная шка�
     };
 
     const view = new View(option);
-    const anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    const { scale } = view;
+    if (scale === null) throw new Error();
+
+    const anchors = scale.el.querySelectorAll('[class*=scale-points]');
 
     const fakeMouseClick = new MouseEvent('click', {
       bubbles: true, cancelable: true,
@@ -354,15 +364,15 @@ describe('Также присутствует интерактивная шка�
     const leftThumb = <HTMLDivElement> view.el.getElementsByClassName('slider__thumb-left')[0];
 
     for (let i = 3; i < 8; i += 1) {
-      moveThumb(rightThumb, -view.scale.width / i);
-      moveThumb(leftThumb, view.scale.width / i);
+      moveThumb(rightThumb, -scale.width / i);
+      moveThumb(leftThumb, scale.width / i);
 
       anchors[0].dispatchEvent(fakeMouseClick);
       expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(0);
 
       anchors[3].dispatchEvent(fakeMouseClick);
       expect(parseFloat(getComputedStyle(rightThumb).left))
-        .toEqual(view.scale.width);
+        .toEqual(scale.width);
 
       anchors[1].dispatchEvent(fakeMouseClick);
       let thumbRect = leftThumb.getBoundingClientRect();
@@ -383,13 +393,13 @@ describe('Также присутствует интерактивная шка�
 
     view.setOptions({ range: false });
     for (let i = 1; i < 8; i += 1) {
-      moveThumb(leftThumb, view.scale.width / i);
+      moveThumb(leftThumb, scale.width / i);
       anchors[0].dispatchEvent(fakeMouseClick);
       expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(0);
 
       anchors[3].dispatchEvent(fakeMouseClick);
       expect(parseFloat(getComputedStyle(leftThumb).left))
-        .toEqual(view.scale.width);
+        .toEqual(scale.width);
       anchors[0].dispatchEvent(fakeMouseClick);
     }
   });
@@ -404,7 +414,10 @@ describe('Также присутствует интерактивная шка�
     };
 
     const view = new View(option);
-    const anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    const { scale } = view;
+    if (scale === null) throw new Error();
+
+    const anchors = scale.el.querySelectorAll('[class*=scale-points]');
 
     const labelLeft: HTMLDivElement = <HTMLDivElement>anchors[0];
     const labelRight: HTMLDivElement = <HTMLDivElement>anchors[1];
@@ -427,11 +440,13 @@ describe('Также присутствует интерактивная шка�
     };
 
     const view = new View(option);
+    const { scale } = view;
+    if (scale === null) throw new Error();
 
-    let anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    let anchors = scale.el.querySelectorAll('[class*=scale-points]');
     let values: number[] | string[] = [50, 75, 100, 125, 150];
 
-    view.scale.setAnchorValues(values);
+    scale.setAnchorValues(values);
 
     anchors.forEach((anchor, i) => {
       expect(anchor.textContent).toEqual(String(values[i]));
@@ -439,9 +454,9 @@ describe('Также присутствует интерактивная шка�
 
     view.setOptions({ partsNum: 1 });
     values = ['Jan', 'Dec'];
-    view.scale.setAnchorValues(values);
+    scale.setAnchorValues(values);
 
-    anchors = view.scale.el.querySelectorAll('[class*=scale-points]');
+    anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[0].textContent).toEqual('Jan');
     expect(anchors[1].textContent).toEqual('Dec');
   });
@@ -456,13 +471,15 @@ describe('Также присутствует интерактивная шка�
     };
 
     const view = new View(option);
-    const anchors = view.scale.el.getElementsByClassName('slider__scale-points');
+    const { scale } = view;
+    if (scale === null) throw new Error();
+    const anchors = scale.el.getElementsByClassName('slider__scale-points');
 
-    expect(() => view.scale.setMilestones([1, 2, 3])).toThrowError();
-    expect(() => view.scale.setMilestones([0, 2, 1])).toThrowError();
-    expect(() => view.scale.setMilestones([0, 0.5, 2])).toThrowError();
+    expect(() => scale.setMilestones([1, 2, 3])).toThrowError();
+    expect(() => scale.setMilestones([0, 2, 1])).toThrowError();
+    expect(() => scale.setMilestones([0, 0.5, 2])).toThrowError();
 
-    view.scale.setMilestones([0, 0.25, 0.7, 1]);
+    scale.setMilestones([0, 0.25, 0.7, 1]);
 
     expect(anchors[0].textContent).toEqual('0');
     expect(anchors[1].textContent).toEqual('0.25');

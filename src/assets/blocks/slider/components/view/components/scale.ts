@@ -17,7 +17,7 @@ export default class Scale extends EventObserver {
 
   parts: number[] = [];
 
-  private anchors!: HTMLDivElement[];
+  private anchors: HTMLDivElement[] = [];
 
   constructor(options: {view: View}) {
     super();
@@ -32,8 +32,6 @@ export default class Scale extends EventObserver {
     propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
 
     this.width = view.el.clientWidth - view.thumbs.thumbLeft.offsetWidth;
-    this.anchors = [];
-
     this.render();
   }
 

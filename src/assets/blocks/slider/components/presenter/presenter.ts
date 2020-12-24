@@ -17,15 +17,17 @@ type onChangeOpts = {
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
-  view!: View;
+  view: View;
 
-  model!: Model;
+  model: Model;
 
   normalizer = new PresenterNormalizer();
 
   constructor(options: unknown) {
     super();
-    this.init(options);
+    const initObj = this.init(options);
+    this.view = initObj.view;
+    this.model = initObj.model;
   }
 
   private init(options: unknown) {
@@ -55,7 +57,10 @@ export class Presenter extends EventObserver implements ISubscriber {
     view.addSubscriber('hintAlwaysShow', this);
     view.addSubscriber('hintAboveThumb', this);
 
-    view.scale.addSubscriber('rerenderScale', this);
+    const { scale } = view;
+    if (scale === null) throw new Error('Scale was not initialized');
+    scale.addSubscriber('rerenderScale', this);
+
     this.addSubscriber('rerenderScale', this.view);
 
     model.addSubscriber('partsNum', this);
@@ -70,6 +75,10 @@ export class Presenter extends EventObserver implements ISubscriber {
     model.addSubscriber('precision', this);
 
     this.setOptions(options);
+    return {
+      model,
+      view,
+    };
   }
 
   setOptions(options: unknown) {
@@ -220,7 +229,10 @@ export class Presenter extends EventObserver implements ISubscriber {
     );
 
     const { precision } = modelOptions;
-    const anchorValues = view.scale.parts.map((value) => {
+    const { scale } = view;
+    if (scale === null) throw new Error('Scale was not initialized');
+
+    const anchorValues = scale.parts.map((value) => {
       const result = this.recountValue(Number(model.findValue(value).toFixed(precision)));
       return result;
     });

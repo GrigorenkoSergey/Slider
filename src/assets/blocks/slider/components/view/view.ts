@@ -26,13 +26,13 @@ export default class View extends EventObserver implements ISubscriber {
     partsNum: 2,
   }
 
-  hints!: Hint[];
+  hints: Hint[];
 
-  thumbs!: Thumbs;
+  thumbs: Thumbs;
 
-  scale!: Scale;
+  scale: Scale | null = null;
 
-  stretcher!: Stretcher;
+  stretcher: Stretcher;
 
   constructor(options: ViewOptions) {
     super();
@@ -41,6 +41,13 @@ export default class View extends EventObserver implements ISubscriber {
     }
 
     this.options.selector = options.selector;
+    this.thumbs = new Thumbs(this);
+    this.hints = [
+      new Hint(this, this.thumbs.thumbLeft),
+      new Hint(this, this.thumbs.thumbRight),
+    ];
+
+    this.stretcher = new Stretcher(this);
     this.setOptions(options);
     this.init();
   }
@@ -59,7 +66,6 @@ export default class View extends EventObserver implements ISubscriber {
     el.style.transform = `rotate(${options.angle}deg)`;
     el.classList.add(options.className);
 
-    this.thumbs = new Thumbs(this);
     const { thumbs } = this;
     thumbs.addSubscriber('thumbMouseMove', this);
     thumbs.addSubscriber('thumbMouseDown', this);
@@ -67,21 +73,10 @@ export default class View extends EventObserver implements ISubscriber {
 
     el.addEventListener('click', this.handleSliderClick.bind(this));
 
-    this.hints = [
-      new Hint(
-        this,
-        this.thumbs.thumbLeft,
-      ),
-      new Hint(
-        this,
-        this.thumbs.thumbRight,
-      ),
-    ];
-
     this.scale = new Scale({ view: this });
     this.scale.addSubscriber('anchorClick', this);
 
-    this.stretcher = new Stretcher(this);
+    // this.stretcher = new Stretcher(this);
 
     this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);
@@ -202,7 +197,13 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   setAnchorValues(values: number[] | string[]) {
-    this.scale.setAnchorValues(values);
+    const { scale } = this;
+
+    if (scale === null) {
+      throw new Error('Scale was not initialized');
+    }
+
+    scale.setAnchorValues(values);
     this.handleHintsIntersection();
   }
 
@@ -241,6 +242,10 @@ export default class View extends EventObserver implements ISubscriber {
     const {
       options, el: slider, stretcher, scale,
     } = this;
+
+    if (scale === null) {
+      throw new Error('Scale was not initialized');
+    }
 
     if (target !== slider && target !== stretcher.el) return;
 

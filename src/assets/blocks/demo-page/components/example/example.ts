@@ -3,12 +3,14 @@ import { SliderOptionsPalette } from '../slider-options-palette/slider-options-p
 import './example.scss';
 
 class Example {
-  slider!: Slider;
+  slider: Slider;
 
-  palette!: SliderOptionsPalette;
+  palette: SliderOptionsPalette;
 
   constructor(opts: SliderOptions) {
-    this.init(opts);
+    const initObj = this.init(opts);
+    this.slider = initObj.slider;
+    this.palette = initObj.palette;
   }
 
   init(opts: SliderOptions) {
@@ -27,6 +29,9 @@ class Example {
       throw new Error(`No element with selector "${selector}"`);
     }
     this.palette = new SliderOptionsPalette(paletteElement, this.slider);
+    const { slider, palette } = this;
+
+    return { slider, palette };
   }
 }
 

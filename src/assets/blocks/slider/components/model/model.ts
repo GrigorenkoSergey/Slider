@@ -19,10 +19,11 @@ export default class Model extends EventObserver {
     alternativeRange: [],
   }
 
-  validator!: ModelValidator;
+  validator: ModelValidator;
 
   constructor(options: ModelOptions) {
     super();
+    this.validator = new ModelValidator(this);
     this.init(options);
   }
 
@@ -54,7 +55,6 @@ export default class Model extends EventObserver {
       optionsCopy.thumbLeftPos = defaultDependentOptions.thumbLeftPos();
     }
 
-    this.validator = new ModelValidator(this);
     this.setOptions(optionsCopy);
   }
 

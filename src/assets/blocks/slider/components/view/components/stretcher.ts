@@ -2,13 +2,14 @@ import EventObserver from '../../../../helpers/event-observer';
 import View from '../view';
 
 export default class Stretcher extends EventObserver {
-  el!: HTMLDivElement;
+  el: HTMLDivElement;
 
   view: View;
 
   constructor(view: View) {
     super();
     this.view = view;
+    this.el = document.createElement('div');
     this.render();
     view.addSubscriber('thumbMouseMove', this);
     view.addSubscriber('thumbProgramMove', this);
@@ -16,7 +17,6 @@ export default class Stretcher extends EventObserver {
   }
 
   private render() {
-    this.el = document.createElement('div');
     const { view, el } = this;
 
     el.className = `${view.getOptions().className}__stretcher`;
@@ -26,6 +26,7 @@ export default class Stretcher extends EventObserver {
 
   update() {
     const { el, view } = this;
+
     const { range } = view.getOptions();
     const { thumbs } = view;
     const { style } = el;

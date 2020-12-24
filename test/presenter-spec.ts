@@ -324,7 +324,10 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Масштабирует значения шкалы при первоначальной инициализации\n', () => {
     const presenter = new Presenter(option);
-    const anchors = presenter.view.scale.el.querySelectorAll('[class*=scale-points]');
+    const { scale } = presenter.view;
+    if (scale === null) throw new Error();
+
+    const anchors = scale.el.querySelectorAll('[class*=scale-points]');
 
     expect(anchors[0].textContent).toEqual('20');
     expect(anchors[1].textContent).toEqual('110');
@@ -334,8 +337,10 @@ describe('Меняет значения шкалы в соответствии �
   it('Реагирует на изменение свойства "min" модели', () => {
     const presenter = new Presenter(option);
     const { model } = presenter;
+    const { scale } = presenter.view;
+    if (scale === null) throw new Error();
 
-    const anchors = presenter.view.scale.el.getElementsByClassName('slider__scale-points');
+    const anchors = scale.el.getElementsByClassName('slider__scale-points');
 
     model.setOptions({ min: 0 });
     expect(anchors[0].textContent).toEqual('0');
@@ -364,13 +369,19 @@ describe('Меняет значения шкалы в соответствии �
 
     const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
     presenter.setOptions({ max: 80 });
-    expect(getComputedStyle(thumbRight).left).toEqual(`${presenter.view.scale.width}px`);
+
+    const { scale } = presenter.view;
+    if (scale === null) throw new Error();
+    expect(getComputedStyle(thumbRight).left).toEqual(`${scale.width}px`);
   });
 
   it('Реагирует на изменение свойства "max" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0 } });
     const { model } = presenter;
-    const anchors = presenter.view.scale.el.getElementsByClassName('slider__scale-points');
+    const { scale } = presenter.view;
+
+    if (scale === null) throw new Error();
+    const anchors = scale.el.getElementsByClassName('slider__scale-points');
 
     model.setOptions({ max: 1000 });
     expect(anchors[0].textContent).toEqual('0');
@@ -435,7 +446,10 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Реагирует на изменение свойства "partsNum" вида', () => {
     const presenter = new Presenter(option);
-    const anchors = presenter.view.scale.el.getElementsByClassName('slider__scale-points');
+    const { scale } = presenter.view;
+    if (scale === null) throw new Error();
+
+    const anchors = scale.el.getElementsByClassName('slider__scale-points');
 
     presenter.setOptions({ partsNum: 3 });
     expect(anchors.length).toEqual(4);

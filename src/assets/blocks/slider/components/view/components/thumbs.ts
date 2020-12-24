@@ -5,17 +5,17 @@ import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../view';
 
 export default class Thumbs extends EventObserver {
-  thumbLeft!: HTMLDivElement;
+  thumbLeft = document.createElement('div');
 
-  thumbRight!: HTMLDivElement;
+  thumbRight = document.createElement('div');
 
   thumbLeftOffset: number = 0;
 
   thumbRightOffset: number = 1;
 
-  view!: View;
+  view: View;
 
-  private handlers!: {
+  private handlers: {
     handleThumbMouseDown: (e: MouseEvent) => void,
     handleDocumentMouseMove: (e: MouseEvent) => void,
     handleDocumentMouseUp : (e: MouseEvent) => void,
@@ -34,29 +34,26 @@ export default class Thumbs extends EventObserver {
     pixelStep: 0,
   };
 
-  private currentThumb!: HTMLDivElement;
+  private currentThumb: HTMLDivElement | null = null;
 
   constructor(view: View) {
     super();
     this.view = view;
-    this.bindHandlers();
+    this.handlers = this.bindHandlers();
     this.render();
   }
 
   private bindHandlers() {
-    this.handlers = {
+    const handlers = {
       handleThumbMouseDown: this.handleThumbMouseDown.bind(this),
       handleDocumentMouseMove: this.handleDocumentMouseMove.bind(this),
       handleDocumentMouseUp: this.handleDocumentMouseUp.bind(this),
     };
+    return handlers;
   }
 
   private render() {
-    const [thumbLeft, thumbRight] = new Array(2).fill(1).map(() => document.createElement('div'));
-    const { view } = this;
-    this.thumbLeft = thumbLeft;
-    this.thumbRight = thumbRight;
-
+    const { view, thumbLeft, thumbRight } = this;
     const { className } = view.getOptions();
     thumbLeft.className = `${className}__thumb-left`;
     thumbRight.className = `${className}__thumb-right`;
@@ -158,7 +155,9 @@ export default class Thumbs extends EventObserver {
       shiftY, cosA, sinA, pixelStep,
       leftLimit, rightLimit, scaleInnerWidth,
     } = this.closure;
+
     const { currentThumb: thumb } = this;
+    if (thumb === null) throw new Error('No thumb in closure');
     thumb.style.zIndex = `${1000}`;
 
     const newLeftX: number = e.clientX - startX - shiftX;
@@ -207,6 +206,7 @@ export default class Thumbs extends EventObserver {
   private handleDocumentMouseUp(): void {
     const { view } = this;
     const { currentThumb: thumb, handlers } = this;
+    if (thumb === null) throw new Error('No thumb in closure');
 
     thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
     this.broadcast({
