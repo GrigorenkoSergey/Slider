@@ -33,11 +33,6 @@ export default class View extends EventObserver implements ISubscriber {
 
   constructor(options: ViewOptions) {
     super();
-    if (options.selector === undefined) {
-      throw new Error('You should pass options "selector" in options!');
-    }
-
-    this.options.selector = options.selector;
     this.thumbs = new Thumbs(this);
     this.hints = [
       new Hint(this, this.thumbs.thumbLeft),
@@ -45,11 +40,16 @@ export default class View extends EventObserver implements ISubscriber {
     ];
 
     this.stretcher = new Stretcher(this);
-    this.setOptions(options);
-    this.init();
+    this.init(options);
   }
 
-  private init(): this {
+  private init(opts: ViewOptions): this {
+    if (opts.selector === undefined) {
+      throw new Error('You should pass options "selector" in options!');
+    }
+
+    this.setOptions(opts);
+
     const { options, el } = this;
     const { selector } = options;
     const wrapper = document.querySelector(selector);
