@@ -61,38 +61,31 @@ export default class Scale extends EventObserver {
 
   setMilestones(values?: number[]) {
     const { view, anchors, el } = this;
-    /*
-      Не стоит, наверное, деструктурировать объекты, которые
-      мы собираемся менять, а то получается как-то неоднозначно
-    */
-    let { parts } = this;
     const { step, partsNum } = view.getOptions();
 
     anchors.forEach((item) => item.remove());
     anchors.length = 0;
 
     if (!values) {
-      parts.length = 0;
+      this.parts.length = 0;
 
       for (let i = 1; i < view.getOptions().partsNum; i += 1) {
         let value = Math.round(i / partsNum / step) * step;
         value = Math.min(1, value);
 
-        parts.push(value);
+        this.parts.push(value);
       }
-      this.parts = [0, ...parts];
-      parts = this.parts;
+      this.parts = [0, ...this.parts];
 
-      if (parts[parts.length - 1] !== 1) {
-        parts.push(1);
+      if (this.parts[this.parts.length - 1] !== 1) {
+        this.parts.push(1);
       }
     } else {
       this.validateScaleParts(values);
       this.parts = values;
-      parts = this.parts;
     }
 
-    parts.forEach((value) => {
+    this.parts.forEach((value) => {
       const div = document.createElement('div');
       div.classList.add(`${view.el.className}__scale-points`);
 
