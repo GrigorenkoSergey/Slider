@@ -55,11 +55,11 @@ export default class Hint extends EventObserver {
 
   private rotateHint() {
     const { angle } = this.view.getOptions();
-    const hint = this.el;
+    const { style } = this.el;
 
     const transformation = `rotate(-${angle}deg)`;
-    hint.style.transform = transformation;
-    hint.style.transformOrigin = 'left';
+    style.transform = transformation;
+    style.transformOrigin = 'left';
   }
 
   private handleMouseDown(e: Event) {
