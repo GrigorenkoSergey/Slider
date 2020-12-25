@@ -386,10 +386,10 @@ describe('Меняет значения шкалы в соответствии �
     });
 
     presenter.setOptions({ min: 50 });
-    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+    const thumbLeft = div.getElementsByClassName('slider__thumb_left')[0];
     expect(getComputedStyle(thumbLeft).left).toEqual('0px');
 
-    const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
+    const thumbRight = div.getElementsByClassName('slider__thumb_right')[0];
     presenter.setOptions({ max: 80 });
 
     const scale = document.getElementsByClassName('slider__scale')[0];
@@ -417,7 +417,7 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Реагирует на изменение свойства "thumbLeftPos" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
-    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+    const thumbLeft = div.getElementsByClassName('slider__thumb_left')[0];
     const leftHint = thumbLeft.querySelector('[class*=hint]');
     if (!(leftHint instanceof HTMLDivElement)) throw new Error();
 
@@ -433,7 +433,7 @@ describe('Меняет значения шкалы в соответствии �
   it('Реагирует на изменение свойства "thumbRightPos" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
 
-    const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
+    const thumbRight = div.getElementsByClassName('slider__thumb_right')[0];
     const rightHint = thumbRight.querySelector('[class*=hint]');
     if (!(rightHint instanceof HTMLDivElement)) throw new Error();
 
@@ -506,7 +506,7 @@ describe('Меняет состояние модели в соответстви
 
   it('При движении левого бегунка меняется значение thumbLeftPos в модели', () => {
     const presenter = new Presenter(option);
-    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+    const thumbLeft = div.getElementsByClassName('slider__thumb_left')[0];
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint');
 
@@ -518,7 +518,7 @@ describe('Меняет состояние модели в соответстви
 
   it('При движении правого бегунка меняется значение thumbRightPos в модели', () => {
     const presenter = new Presenter(option);
-    const thumbLeft = div.getElementsByClassName('slider__thumb-right')[0];
+    const thumbLeft = div.getElementsByClassName('slider__thumb_right')[0];
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint');
 
@@ -632,7 +632,7 @@ describe('Проверка поведения подсказки над бегу
 
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint');
-    const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
+    const thumbLeft = div.getElementsByClassName('slider__thumb_left')[0];
     expect(hints[0].textContent).toEqual('25');
 
     thumbLeft.dispatchEvent(fakeMouseDown);
@@ -656,7 +656,7 @@ describe('Проверка поведения подсказки над бегу
 
     presenter.setOptions({ range: false });
 
-    const leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    const leftThumb = div.getElementsByClassName('slider__thumb_left')[0];
     if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
 
     const slider = div.getElementsByClassName('slider')[0];
@@ -713,11 +713,11 @@ describe('Проверка поведения подсказок при вклю
 
     presenter = new Presenter(option);
 
-    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    let el = div.getElementsByClassName('slider__thumb_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb-right')[0];
+    el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
 
     rightThumb = el;
@@ -824,12 +824,12 @@ describe('Данные баги более не возникают\n', () => {
     document.body.append(div);
 
     slider = new Presenter({ ...options });
-    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    let el = div.getElementsByClassName('slider__thumb_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
 
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb-right')[0];
+    el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
 
@@ -900,11 +900,11 @@ describe('Данные баги более не возникают\n', () => {
     slider = new Presenter({ ...options });
     slider.setOptions({ min: 0, max: 58, thumbRightPos: 41 });
 
-    let el = div.getElementsByClassName('slider__thumb-left')[0];
+    let el = div.getElementsByClassName('slider__thumb_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb-right')[0];
+    el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
 

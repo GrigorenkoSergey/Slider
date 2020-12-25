@@ -7,10 +7,13 @@
   position: relative;
   cursor: pointer;
 
-  &__thumb-left,
-  &__thumb-right {
-    width: 12px; // ВАЖНО! Должны быть целыми значениями.
-    height: 12px; // ВАЖНО! Должны быть целыми значениями.
+  &__thumb {
+    /*
+       ВАЖНО! Размеры должны быть целыми значениями из-за
+       особенностей работы Element.clientWidth
+    */
+    width: 12px;
+    height: 12px;
     box-sizing: content-box;
     background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
     border: 2px solid white;
@@ -19,6 +22,29 @@
     top: -6px;
     cursor: move;
     z-index: 1000;
+
+    &_left {
+      left: 0;
+    }
+
+    &_right {
+      right: 0;
+    }
+
+    &_moving::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      box-sizing: content-box;
+      background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
+      border: 4px solid white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 
   &__hint {
@@ -28,28 +54,6 @@
     cursor: default;
     padding-right: 5px;
     width: max-content;
-  }
-
-  &__thumb_moving::after {
-    content: '';
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    box-sizing: content-box;
-    background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
-    border: 4px solid white;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%; 
-    transform: translate(-50%, -50%);
-  }
-
-  &__thumb-left {
-    left: 0;
-  }
-  &__thumb-right {
-    right: 0;
   }
 
   &__scale {

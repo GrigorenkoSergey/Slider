@@ -269,7 +269,7 @@ describe('Позволяет пользователю взаимодейство
 
     const view = new View(option);
 
-    const leftThumb = div.getElementsByClassName('slider__thumb-left')[0];
+    const leftThumb = div.getElementsByClassName('slider__thumb_left')[0];
     if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
 
     const slider = view.el;
@@ -375,10 +375,10 @@ describe('Также присутствует интерактивная шка�
       bubbles: true, cancelable: true,
     });
 
-    const rightThumb = view.el.getElementsByClassName('slider__thumb-right')[0];
+    const rightThumb = view.el.getElementsByClassName('slider__thumb_right')[0];
     if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
 
-    const leftThumb = view.el.getElementsByClassName('slider__thumb-left')[0];
+    const leftThumb = view.el.getElementsByClassName('slider__thumb_left')[0];
     if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
 
     for (let i = 3; i < 8; i += 1) {
