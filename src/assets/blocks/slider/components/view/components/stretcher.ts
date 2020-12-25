@@ -2,14 +2,13 @@ import EventObserver from '../../../../helpers/event-observer';
 import View from '../view';
 
 export default class Stretcher extends EventObserver {
-  el: HTMLDivElement;
+  readonly el: HTMLDivElement = document.createElement('div');
 
-  view: View;
+  private view: View;
 
   constructor(view: View) {
     super();
     this.view = view;
-    this.el = document.createElement('div');
     this.render();
     view.addSubscriber('thumbMouseMove', this);
     view.addSubscriber('thumbProgramMove', this);

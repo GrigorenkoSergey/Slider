@@ -1,6 +1,5 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-new */
-import debuggerPoint from '../src/assets/blocks/helpers/debugger-point';
 import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
 import '../src/assets/blocks/slider/slider.scss';
 
@@ -192,8 +191,10 @@ describe('Меняет значения подсказки над бегунко
   });
 
   it('При нажатии на левом кругляше отображается подсказка', () => {
-    const presenter = new Presenter(option);
-    const thumb = presenter.view.thumbs.thumbLeft;
+    new Presenter(option);
+    const thumb = document.querySelector('[class*=left]');
+    if (!(thumb instanceof HTMLDivElement)) throw new Error();
+
     thumb.dispatchEvent(fakeMouseDown);
 
     const hint = thumb.querySelector('[class*=__hint]');
@@ -207,8 +208,10 @@ describe('Меняет значения подсказки над бегунко
   });
 
   it('При нажатии на правом кругляше отображается подсказка', () => {
-    const presenter = new Presenter({ ...option, thumbRightPos: 70 });
-    const thumb = presenter.view.thumbs.thumbRight;
+    new Presenter({ ...option, thumbRightPos: 70 });
+    const thumb = document.querySelector('[class*=right]');
+    if (!(thumb instanceof HTMLDivElement)) throw new Error();
+
     thumb.dispatchEvent(fakeMouseDown);
 
     const hint = thumb.querySelector('[class*=__hint]');
@@ -220,10 +223,12 @@ describe('Меняет значения подсказки над бегунко
   });
 
   it('При движении значение подсказки меняется', () => {
-    debuggerPoint.start = 12;
-    const presenter = new Presenter(option);
-    const { thumbLeft } = presenter.view.thumbs;
-    const { thumbRight } = presenter.view.thumbs;
+    new Presenter(option);
+    const thumbLeft = document.querySelector('[class*=left]');
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
+    const thumbRight = document.querySelector('[class*=right]');
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
     thumbLeft.dispatchEvent(fakeMouseDown);
     const hintLeft = thumbLeft.querySelector('[class*=__hint]');
@@ -253,7 +258,8 @@ describe('Проверка работы "alternativeRange"\n', () => {
     className: 'slider',
     showScale: true,
     partsNum: 2,
-    alternativeRange: ['Jan', 'Feb', 'March', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    alternativeRange: ['Jan', 'Feb', 'March', 'Apr', 'May',
+      'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   };
 
   beforeEach(() => {
@@ -266,8 +272,9 @@ describe('Проверка работы "alternativeRange"\n', () => {
   });
 
   it('При нажатии на левом кругляше отображается подсказка', () => {
-    const presenter = new Presenter(option);
-    const thumb = presenter.view.thumbs.thumbLeft;
+    new Presenter(option);
+    const thumb = document.querySelector('[class*=left]');
+    if (!(thumb instanceof HTMLDivElement)) throw new Error();
     thumb.dispatchEvent(fakeMouseDown);
 
     const hint = thumb.querySelector('[class*=__hint]');
@@ -279,8 +286,10 @@ describe('Проверка работы "alternativeRange"\n', () => {
   });
 
   it('При нажатии на правом кругляше отображается подсказка', () => {
-    const presenter = new Presenter({ ...option, thumbRightPos: 10 });
-    const thumb = presenter.view.thumbs.thumbRight;
+    new Presenter({ ...option, thumbRightPos: 10 });
+
+    const thumb = document.querySelector('[class*=right]');
+    if (!(thumb instanceof HTMLDivElement)) throw new Error();
     thumb.dispatchEvent(fakeMouseDown);
 
     const hint = thumb.querySelector('[class*=__hint]');
@@ -292,9 +301,12 @@ describe('Проверка работы "alternativeRange"\n', () => {
   });
 
   it('При движении значение подсказки меняется', () => {
-    const presenter = new Presenter(option);
-    const { thumbLeft } = presenter.view.thumbs;
-    const { thumbRight } = presenter.view.thumbs;
+    new Presenter(option);
+    const thumbLeft = document.querySelector('[class*=left]');
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
+    const thumbRight = document.querySelector('[class*=right]');
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
     thumbLeft.dispatchEvent(fakeMouseDown);
 
@@ -339,11 +351,8 @@ describe('Меняет значения шкалы в соответствии �
   });
 
   it('Масштабирует значения шкалы при первоначальной инициализации\n', () => {
-    const presenter = new Presenter(option);
-    const { scale } = presenter.view;
-    if (scale === null) throw new Error();
-
-    const anchors = scale.el.querySelectorAll('[class*=scale-points]');
+    new Presenter(option);
+    const anchors = document.querySelectorAll('[class*=scale-points]');
 
     expect(anchors[0].textContent).toEqual('20');
     expect(anchors[1].textContent).toEqual('110');
@@ -352,22 +361,19 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Реагирует на изменение свойства "min" модели', () => {
     const presenter = new Presenter(option);
-    const { model } = presenter;
-    const { scale } = presenter.view;
-    if (scale === null) throw new Error();
+    const anchors = document.getElementsByClassName('slider__scale-points');
 
-    const anchors = scale.el.getElementsByClassName('slider__scale-points');
-
-    model.setOptions({ min: 0 });
+    presenter.setOptions({ min: 0 });
     expect(anchors[0].textContent).toEqual('0');
     expect(anchors[1].textContent).toEqual('100');
     expect(anchors[2].textContent).toEqual('200');
 
-    model.setOptions({ min: 0.5 });
+    presenter.setOptions({ min: 0.5 });
     expect(anchors[0].textContent).toEqual('0.5');
   });
 
-  it('При изменении свойства "min" или "max" модели, бегунок бежит к своему старому местоположению', () => {
+  it(`При изменении свойства "min" или "max" модели, бегунок
+   бежит к своему старому местоположению`, () => {
     const presenter = new Presenter(option);
 
     presenter.setOptions({
@@ -386,20 +392,18 @@ describe('Меняет значения шкалы в соответствии �
     const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
     presenter.setOptions({ max: 80 });
 
-    const { scale } = presenter.view;
-    if (scale === null) throw new Error();
-    expect(getComputedStyle(thumbRight).left).toEqual(`${scale.width}px`);
+    const scale = document.getElementsByClassName('slider__scale')[0];
+    const scaleWidth = scale.clientWidth - thumbLeft.getBoundingClientRect().width;
+    // Здесь надо быть осторожным, т.к. clientWidth, offsetWidth возвращают
+    // целочисленные значения
+    expect(getComputedStyle(thumbRight).left).toEqual(`${scaleWidth}px`);
   });
 
   it('Реагирует на изменение свойства "max" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0 } });
-    const { model } = presenter;
-    const { scale } = presenter.view;
+    const anchors = document.getElementsByClassName('slider__scale-points');
 
-    if (scale === null) throw new Error();
-    const anchors = scale.el.getElementsByClassName('slider__scale-points');
-
-    model.setOptions({ max: 1000 });
+    presenter.setOptions({ max: 1000 });
     expect(anchors[0].textContent).toEqual('0');
     expect(anchors[1].textContent).toEqual('500');
     expect(anchors[2].textContent).toEqual('1000');
@@ -407,22 +411,18 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Реагирует на изменение свойства "step" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
-    const { model, view } = presenter;
-
-    model.setOptions({ step: 100 });
-    expect(view.getOptions().step).toEqual(0.1);
+    presenter.setOptions({ step: 100 });
+    expect(presenter.getOptions().step).toEqual(100);
   });
 
   it('Реагирует на изменение свойства "thumbLeftPos" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
-    const { model } = presenter;
-
     const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
     const leftHint = thumbLeft.querySelector('[class*=hint]');
     if (!(leftHint instanceof HTMLDivElement)) throw new Error();
 
-    model.setOptions({ thumbLeftPos: 100 });
-    expect(model.getOptions().thumbLeftPos).toEqual(100);
+    presenter.setOptions({ thumbLeftPos: 100 });
+    expect(presenter.getOptions().thumbLeftPos).toEqual(100);
     expect(leftHint.offsetHeight).toEqual(0);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(leftHint.textContent).toEqual('100');
@@ -432,14 +432,13 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Реагирует на изменение свойства "thumbRightPos" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
-    const { model } = presenter;
 
     const thumbRight = div.getElementsByClassName('slider__thumb-right')[0];
     const rightHint = thumbRight.querySelector('[class*=hint]');
     if (!(rightHint instanceof HTMLDivElement)) throw new Error();
 
-    model.setOptions({ thumbRightPos: 800 });
-    expect(model.getOptions().thumbRightPos).toEqual(800);
+    presenter.setOptions({ thumbRightPos: 800 });
+    expect(presenter.getOptions().thumbRightPos).toEqual(800);
     expect(rightHint.offsetHeight).toEqual(0);
     thumbRight.dispatchEvent(fakeMouseDown);
     expect(thumbRight.textContent).toEqual('800');
@@ -449,7 +448,6 @@ describe('Меняет значения шкалы в соответствии �
 
   it('Реагирует на изменение свойства "range" модели', () => {
     const presenter = new Presenter(option);
-    const { model } = presenter;
     const stretcher = div.getElementsByClassName('slider__stretcher')[0];
     const style = getComputedStyle(stretcher);
     const thumb = div.querySelector('[class*=thumb]');
@@ -458,17 +456,14 @@ describe('Меняет значения шкалы в соответствии �
     expect(parseFloat(style.left)).toEqual(thumb.offsetWidth / 2);
 
     expect(parseFloat(style.right)).toEqual(thumb.offsetWidth);
-    model.setOptions({ range: false, thumbLeftPos: 1000 });
+    presenter.setOptions({ range: false, thumbLeftPos: 1000 });
     expect(style.left).toEqual('0px');
     expect(style.right).toEqual('16px');
   });
 
   it('Реагирует на изменение свойства "partsNum" вида', () => {
     const presenter = new Presenter(option);
-    const { scale } = presenter.view;
-    if (scale === null) throw new Error();
-
-    const anchors = scale.el.getElementsByClassName('slider__scale-points');
+    const anchors = document.getElementsByClassName('slider__scale-points');
 
     presenter.setOptions({ partsNum: 3 });
     expect(anchors.length).toEqual(4);
@@ -511,7 +506,6 @@ describe('Меняет состояние модели в соответстви
 
   it('При движении левого бегунка меняется значение thumbLeftPos в модели', () => {
     const presenter = new Presenter(option);
-    const { model } = presenter;
     const thumbLeft = div.getElementsByClassName('slider__thumb-left')[0];
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint');
@@ -519,12 +513,11 @@ describe('Меняет состояние модели в соответстви
     anchors[1].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[0].textContent).toEqual('25');
-    expect(model.getOptions().thumbLeftPos).toEqual(25);
+    expect(presenter.getOptions().thumbLeftPos).toEqual(25);
   });
 
   it('При движении правого бегунка меняется значение thumbRightPos в модели', () => {
     const presenter = new Presenter(option);
-    const { model } = presenter;
     const thumbLeft = div.getElementsByClassName('slider__thumb-right')[0];
     const anchors = div.getElementsByClassName('slider__scale-points');
     const hints = div.getElementsByClassName('slider__hint');
@@ -532,7 +525,7 @@ describe('Меняет состояние модели в соответстви
     anchors[3].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[1].textContent).toEqual('75');
-    expect(model.getOptions().thumbRightPos).toEqual(75);
+    expect(presenter.getOptions().thumbRightPos).toEqual(75);
   });
 });
 
@@ -587,8 +580,6 @@ describe('В любой момент времени можно узнать и �
 
   it('Задаем свойства слайдера', () => {
     const presenter = new Presenter(option);
-    const { model, view } = presenter;
-
     presenter.setOptions({
       range: false,
       showScale: false,
@@ -608,19 +599,8 @@ describe('В любой момент времени можно узнать и �
     expect(options.min).toEqual(0);
     expect(options.max).toEqual(100);
     expect(options.step).toEqual(10);
-
-    const modelOptions = model.getOptions();
-    expect(modelOptions.range).toEqual(false);
-    expect(modelOptions.min).toEqual(0);
-    expect(modelOptions.max).toEqual(100);
-    expect(modelOptions.step).toEqual(10);
-    expect(modelOptions.thumbLeftPos).toEqual(50);
-
-    const viewOptions = view.getOptions();
-    expect(viewOptions.angle).toEqual(45);
-    expect(viewOptions.range).toEqual(false);
-    expect(viewOptions.showScale).toEqual(false);
-    expect(viewOptions.step).toEqual(0.1);
+    expect(options.thumbLeftPos).toEqual(50);
+    expect(options.angle).toEqual(45);
 
     div.style.marginTop = '70px';
   });

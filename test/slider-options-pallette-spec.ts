@@ -639,9 +639,9 @@ describe('Реагирует на ручное изменение положен
   });
 
   it('При перетаскивании бегунков мышкой значение соответствующего поля меняется', () => {
-    const { scale } = slider.view;
-    if (scale === null) throw new Error();
-    const scaleWidth = scale.width;
+    const scale = div.querySelector('.slider__scale');
+    if (!(scale instanceof HTMLDivElement)) throw new Error();
+    const scaleWidth = scale.clientWidth - leftThumb.offsetWidth;
 
     for (let i = 0; i < 5; i += 1) {
       const fakeMouseMove = new MouseEvent('mousemove',

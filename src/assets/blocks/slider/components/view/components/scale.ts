@@ -7,9 +7,9 @@ import View from '../view';
 import { SliderEvents } from '../../../../helpers/slider-events';
 
 export default class Scale extends EventObserver {
-  view: View;
+  private view: View;
 
-  el: HTMLDivElement = document.createElement('div');
+  readonly el: HTMLDivElement = document.createElement('div');
 
   width: number = 0;
 

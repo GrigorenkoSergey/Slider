@@ -3,7 +3,7 @@ import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../view';
 
 export default class Hint extends EventObserver {
-  el: HTMLDivElement = document.createElement('div');
+  readonly el: HTMLDivElement = document.createElement('div');
 
   private view: View;
 

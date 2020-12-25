@@ -9,8 +9,8 @@
 
   &__thumb-left,
   &__thumb-right {
-    width: 12px;
-    height: 12px;
+    width: 12px; // ВАЖНО! Должны быть целыми значениями.
+    height: 12px; // ВАЖНО! Должны быть целыми значениями.
     box-sizing: content-box;
     background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
     border: 2px solid white;

@@ -3,15 +3,15 @@ import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../view';
 
 export default class Thumbs extends EventObserver {
-  thumbLeft = document.createElement('div');
+  readonly thumbLeft = document.createElement('div');
 
-  thumbRight = document.createElement('div');
+  readonly thumbRight = document.createElement('div');
 
   thumbLeftOffset: number = 0;
 
   thumbRightOffset: number = 1;
 
-  view: View;
+  private view: View;
 
   private handlers: {
     handleThumbMouseDown: (e: MouseEvent) => void,

@@ -2,11 +2,11 @@ import Model from '../model';
 import { ModelOptions } from './model-types';
 
 export class ModelValidator {
-  model: Model;
+  private model: Model;
 
-  modifiedObj: ModelOptions;
+  private modifiedObj: ModelOptions;
 
-  originObj: ModelOptions;
+  private originObj: ModelOptions;
 
   constructor(model: Model) {
     this.model = model;

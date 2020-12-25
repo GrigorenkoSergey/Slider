@@ -15,11 +15,11 @@ type onChangeOpts = {
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
-  view: View;
+  private view: View;
 
-  model: Model;
+  private model: Model;
 
-  normalizer = new PresenterNormalizer();
+  private normalizer = new PresenterNormalizer();
 
   constructor(options: unknown) {
     super();

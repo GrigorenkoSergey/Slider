@@ -9,7 +9,7 @@ import Thumbs from './components/thumbs';
 import Hint from './components/hint';
 
 export default class View extends EventObserver implements ISubscriber {
-  el: HTMLDivElement = document.createElement('div');
+  readonly el: HTMLDivElement = document.createElement('div');
 
   private options: Required<ViewOptions> = {
     className: 'slider',
@@ -23,13 +23,13 @@ export default class View extends EventObserver implements ISubscriber {
     partsNum: 2,
   }
 
-  hints: Hint[];
+  private hints: Hint[];
 
   thumbs: Thumbs;
 
   scale: Scale | null = null;
 
-  stretcher: Stretcher;
+  private stretcher: Stretcher;
 
   constructor(options: ViewOptions) {
     super();
@@ -72,8 +72,6 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.scale = new Scale({ view: this });
     this.scale.addSubscriber('anchorClick', this);
-
-    // this.stretcher = new Stretcher(this);
 
     this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);

@@ -16,7 +16,7 @@ export default class Model extends EventObserver {
     alternativeRange: [],
   }
 
-  validator: ModelValidator;
+  private validator: ModelValidator;
 
   constructor(options: ModelOptions) {
     super();
