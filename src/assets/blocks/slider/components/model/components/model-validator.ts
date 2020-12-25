@@ -14,7 +14,7 @@ export class ModelValidator {
     this.originObj = {};
   }
 
-  validate(originObj: ModelOptions) {
+  validate(originObj: ModelOptions): ModelOptions {
     this.modifiedObj = { ...originObj };
     this.originObj = originObj;
 
@@ -71,7 +71,7 @@ export class ModelValidator {
     return modifiedObj;
   }
 
-  private precision(val: number) {
+  private precision(val: number): void {
     if (![0, 1, 2, 3].includes(Number(val))) {
       throw new Error('"precision" should be integer in range [0, 3]');
     }
@@ -79,7 +79,7 @@ export class ModelValidator {
     modifiedObj.precision = Number(val);
   }
 
-  private partsNum(val: number) {
+  private partsNum(val: number): void {
     if (!Number.isInteger(val)) {
       throw new Error('"partsNum" should be integer!');
     } else if (val < 1) {
@@ -96,7 +96,7 @@ export class ModelValidator {
     modifiedObj.partsNum = val;
   }
 
-  private alternativeRange(val: string[]) {
+  private alternativeRange(val: string[]): void {
     if (val.length <= 1) {
       throw new Error('"alternativeRange" is a string array with more then one value!');
     }
@@ -113,7 +113,7 @@ export class ModelValidator {
     modifiedObj.max = val.length - 1;
   }
 
-  private min(val: number) {
+  private min(val: number): void {
     const { modifiedObj, originObj } = this;
     const {
       max,
@@ -156,7 +156,7 @@ export class ModelValidator {
     modifiedObj.min = Number(Number(val).toFixed(precision));
   }
 
-  private max(val: number) {
+  private max(val: number): void {
     const { modifiedObj, originObj } = this;
     const {
       min,
@@ -204,7 +204,7 @@ export class ModelValidator {
     modifiedObj.max = Number(Number(val).toFixed(precision));
   }
 
-  private step(val: number) {
+  private step(val: number): void {
     const { modifiedObj } = this;
     const {
       min,
@@ -231,7 +231,7 @@ export class ModelValidator {
     modifiedObj.thumbRightPos = thumbRightPos;
   }
 
-  private range(val: boolean) {
+  private range(val: boolean): void {
     const { modifiedObj } = this;
     const { thumbRightPos, max } = { ...this.model.getOptions(), ...modifiedObj };
 
@@ -244,7 +244,7 @@ export class ModelValidator {
     modifiedObj.range = val;
   }
 
-  private thumbLeftPos(val: number) {
+  private thumbLeftPos(val: number): void {
     const { modifiedObj } = this;
     const {
       thumbRightPos, min, max, precision, step,
@@ -261,7 +261,7 @@ export class ModelValidator {
     );
   }
 
-  private thumbRightPos(val: number) {
+  private thumbRightPos(val: number): void {
     const { modifiedObj } = this;
     const {
       range, max, step, min,

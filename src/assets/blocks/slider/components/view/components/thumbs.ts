@@ -13,12 +13,6 @@ export default class Thumbs extends EventObserver {
 
   private view: View;
 
-  private handlers: {
-    handleThumbMouseDown: (e: MouseEvent) => void,
-    handleDocumentMouseMove: (e: MouseEvent) => void,
-    handleDocumentMouseUp : (e: MouseEvent) => void,
-  };
-
   private closure = {
     startX: 0,
     startY: 0,
@@ -37,20 +31,10 @@ export default class Thumbs extends EventObserver {
   constructor(view: View) {
     super();
     this.view = view;
-    this.handlers = this.bindHandlers();
     this.render();
   }
 
-  private bindHandlers() {
-    const handlers = {
-      handleThumbMouseDown: this.handleThumbMouseDown.bind(this),
-      handleDocumentMouseMove: this.handleDocumentMouseMove.bind(this),
-      handleDocumentMouseUp: this.handleDocumentMouseUp.bind(this),
-    };
-    return handlers;
-  }
-
-  private render() {
+  private render(): void {
     const { view, thumbLeft, thumbRight } = this;
     const { className } = view.getOptions();
 
@@ -62,20 +46,20 @@ export default class Thumbs extends EventObserver {
     view.el.append(thumbLeft);
     this.displayThumbRight();
 
-    thumbLeft.addEventListener('mousedown', this.handlers.handleThumbMouseDown);
-    thumbRight.addEventListener('mousedown', this.handlers.handleThumbMouseDown);
+    thumbLeft.addEventListener('mousedown', this.handleThumbMouseDown);
+    thumbRight.addEventListener('mousedown', this.handleThumbMouseDown);
 
     view.addSubscriber('range', this);
   }
 
-  update(data: SliderEvents) {
+  update(data: SliderEvents): this {
     if (data.event === 'range') {
       this.displayThumbRight();
     }
     return this;
   }
 
-  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+  moveThumbToPos(thumb: HTMLDivElement, offset: number): void {
     const { view, thumbLeft } = this;
     const newLeft = offset * (view.el.clientWidth - thumb.offsetWidth);
     // eslint-disable-next-line no-param-reassign
@@ -94,7 +78,7 @@ export default class Thumbs extends EventObserver {
     });
   }
 
-  private handleThumbMouseDown(e: MouseEvent) {
+  private handleThumbMouseDown = (e: MouseEvent): void => {
     e.preventDefault();
     const { closure, view } = this;
 
@@ -147,12 +131,11 @@ export default class Thumbs extends EventObserver {
       offset,
     });
 
-    const { handlers } = this;
-    document.addEventListener('mousemove', handlers.handleDocumentMouseMove);
-    document.addEventListener('mouseup', handlers.handleDocumentMouseUp);
+    document.addEventListener('mousemove', this.handleDocumentMouseMove);
+    document.addEventListener('mouseup', this.handleDocumentMouseUp);
   }
 
-  private handleDocumentMouseMove(e: MouseEvent): void {
+  private handleDocumentMouseMove = (e: MouseEvent): void => {
     e.preventDefault();
 
     const {
@@ -208,9 +191,9 @@ export default class Thumbs extends EventObserver {
     });
   }
 
-  private handleDocumentMouseUp(): void {
+  private handleDocumentMouseUp = (): void => {
     const { view } = this;
-    const { currentThumb: thumb, handlers } = this;
+    const { currentThumb: thumb } = this;
     if (thumb === null) throw new Error('No thumb in closure');
 
     thumb.classList.remove(`${view.getOptions().className}__thumb_moving`);
@@ -218,11 +201,11 @@ export default class Thumbs extends EventObserver {
       event: 'thumbMouseUp',
       thumb,
     });
-    document.removeEventListener('mousemove', handlers.handleDocumentMouseMove);
-    document.removeEventListener('mouseup', handlers.handleDocumentMouseUp);
+    document.removeEventListener('mousemove', this.handleDocumentMouseMove);
+    document.removeEventListener('mouseup', this.handleDocumentMouseUp);
   }
 
-  private displayThumbRight() {
+  private displayThumbRight(): void {
     const { view, thumbRight } = this;
     if (view.getOptions().range) {
       view.el.append(thumbRight);

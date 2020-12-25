@@ -33,7 +33,7 @@ export default class Scale extends EventObserver {
     this.render();
   }
 
-  update(data: SliderEvents) {
+  update(data: SliderEvents): void {
     if (data.event === 'showScale') {
       this.displayScale();
     } else if (data.event === 'partsNum') {
@@ -45,7 +45,7 @@ export default class Scale extends EventObserver {
     }
   }
 
-  private render() {
+  private render(): void {
     const { view, el } = this;
     el.classList.add(`${view.el.className}__scale`);
     view.el.append(el);
@@ -53,13 +53,13 @@ export default class Scale extends EventObserver {
     this.setMilestones();
   }
 
-  setAnchorValues(values: number[] | string[]) {
+  setAnchorValues(values: number[] | string[]): void {
     this.anchors.forEach((div, i) => {
       div.textContent = String(values[i]);
     });
   }
 
-  setMilestones(values?: number[]) {
+  setMilestones(values?: number[]): void {
     const { view, anchors, el } = this;
     const { step, partsNum } = view.getOptions();
 
@@ -104,7 +104,7 @@ export default class Scale extends EventObserver {
     this.broadcast({ event: 'rerenderScale', anchors });
   }
 
-  private handleMouseClick(e: MouseEvent) {
+  private handleMouseClick(e: MouseEvent): void {
     const { view, anchors, parts } = this;
     const el = e.target;
     if (!(el instanceof HTMLDivElement)) {
@@ -122,7 +122,7 @@ export default class Scale extends EventObserver {
     this.broadcast({ event: 'anchorClick', offset });
   }
 
-  private displayScale() {
+  private displayScale(): void {
     const { view, el } = this;
     if (!view.getOptions().showScale) {
       el.style.display = 'none';
@@ -131,7 +131,7 @@ export default class Scale extends EventObserver {
     }
   }
 
-  private rotateScale() {
+  private rotateScale(): void {
     const { view, anchors, el } = this;
     const { angle } = view.getOptions();
     const { sin, PI } = Math;
@@ -154,7 +154,7 @@ export default class Scale extends EventObserver {
     });
   }
 
-  private validateScaleParts(values: number[]) {
+  private validateScaleParts(values: number[]): void {
     if (values[0] !== 0) {
       throw new Error('First value of scalePoint should be zero');
     } else if (values[values.length - 1] !== 1) {

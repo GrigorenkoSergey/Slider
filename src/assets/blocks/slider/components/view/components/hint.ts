@@ -29,29 +29,29 @@ export default class Hint extends EventObserver {
     view.addSubscriber('angle', this);
   }
 
-  update(data: SliderEvents) {
+  update(data: SliderEvents): void {
     if (data.event === 'angle') {
       this.rotateHint();
     }
   }
 
-  setHintValue(value: string) {
+  setHintValue(value: string): void {
     const { el } = this;
     this.value = value;
     if (!el.hidden) el.textContent = value;
   }
 
-  showHint() {
+  showHint(): void {
     const { el, value, parent } = this;
     el.textContent = value;
     parent.append(el);
   }
 
-  hideHint() {
+  hideHint(): void {
     this.el.remove();
   }
 
-  private rotateHint() {
+  private rotateHint(): void {
     const { angle } = this.view.getOptions();
     const { style } = this.el;
 

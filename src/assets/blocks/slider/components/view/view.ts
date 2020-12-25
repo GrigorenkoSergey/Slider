@@ -68,7 +68,7 @@ export default class View extends EventObserver implements ISubscriber {
     thumbs.addSubscriber('thumbMouseDown', this);
     thumbs.addSubscriber('thumbMouseUp', this);
 
-    el.addEventListener('click', this.handleSliderClick.bind(this));
+    el.addEventListener('click', this.handleSliderClick);
 
     this.scale = new Scale({ view: this });
     this.scale.addSubscriber('anchorClick', this);
@@ -80,7 +80,7 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  setOptions(options: ViewOptions) {
+  setOptions(options: ViewOptions): this {
     const expectant: ViewOptions = {};
 
     if (options.step !== undefined) {
@@ -135,12 +135,12 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  getOptions() {
+  getOptions(): Required<ViewOptions> {
     const obj = { ...this.options };
     return obj;
   }
 
-  update(data: SliderEvents) {
+  update(data: SliderEvents): this {
     // если View подписан сам на себя, то он должен выходить из
     // функции, иначе получится бесконечный цикл
     if (data.event === 'angle') {
@@ -175,7 +175,7 @@ export default class View extends EventObserver implements ISubscriber {
     return this;
   }
 
-  moveThumbToPos(thumb: HTMLDivElement, offset: number) {
+  moveThumbToPos(thumb: HTMLDivElement, offset: number): void {
     const { thumbs } = this;
     thumbs.moveThumbToPos.call(thumbs, thumb, offset);
 
@@ -191,7 +191,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.broadcast(data);
   }
 
-  setAnchorValues(values: number[] | string[]) {
+  setAnchorValues(values: number[] | string[]): void {
     const { scale } = this;
 
     if (scale === null) {
@@ -202,7 +202,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.handleHintsIntersection();
   }
 
-  setHintValue(thumb: HTMLDivElement, value: string) {
+  setHintValue(thumb: HTMLDivElement, value: string): void {
     const { thumbs, hints } = this;
     const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
     hint.setHintValue(value);
@@ -215,7 +215,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.handleHintsIntersection();
   }
 
-  private handleThumbMouseDown(thumb: HTMLDivElement) {
+  private handleThumbMouseDown(thumb: HTMLDivElement): void {
     const { thumbs, hints, options } = this;
     if (!options.hintAboveThumb) return;
 
@@ -223,7 +223,7 @@ export default class View extends EventObserver implements ISubscriber {
     hint.showHint();
   }
 
-  private handleThumbMouseUp(thumb: HTMLElement) {
+  private handleThumbMouseUp(thumb: HTMLElement): void {
     const { thumbs, hints, options } = this;
     const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
 
@@ -232,7 +232,7 @@ export default class View extends EventObserver implements ISubscriber {
     }
   }
 
-  private handleSliderClick(e: MouseEvent) {
+  private handleSliderClick = (e: MouseEvent): void => {
     const { target } = e;
     const {
       options, el: slider, stretcher, scale,
@@ -271,7 +271,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.moveThumbToPos(closestThumb, offset);
   }
 
-  private validateOptions(key: string, value: number | string | boolean | undefined) {
+  private validateOptions(key: string, value: number | string | boolean | undefined): void {
     const validator = {
       angle: (val: number) => {
         if (val < 0 || val > 90) {
@@ -285,7 +285,7 @@ export default class View extends EventObserver implements ISubscriber {
     }
   }
 
-  private findClosestThumb(offset: number) {
+  private findClosestThumb(offset: number): HTMLDivElement {
     const { thumbs, options } = this;
     const { thumbLeft, thumbRight } = thumbs;
 
@@ -304,7 +304,7 @@ export default class View extends EventObserver implements ISubscriber {
     return closestThumb;
   }
 
-  private checkHintsIntersection() {
+  private checkHintsIntersection(): boolean {
     const { options, hints } = this;
     if (!options.hintAlwaysShow || !options.range) return false;
 
@@ -342,7 +342,7 @@ export default class View extends EventObserver implements ISubscriber {
     return result;
   }
 
-  private handleHintsIntersection() {
+  private handleHintsIntersection(): void {
     if (!this.options.hintAlwaysShow) return;
 
     const { hints, options } = this;

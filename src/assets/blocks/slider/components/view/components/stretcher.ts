@@ -15,7 +15,7 @@ export default class Stretcher extends EventObserver {
     view.addSubscriber('range', this);
   }
 
-  private render() {
+  private render(): void {
     const { view, el } = this;
 
     el.classList.add(`${view.getOptions().className}__stretcher`);
@@ -23,7 +23,7 @@ export default class Stretcher extends EventObserver {
     this.update();
   }
 
-  update() {
+  update(): void {
     const { el, view } = this;
 
     const { range } = view.getOptions();

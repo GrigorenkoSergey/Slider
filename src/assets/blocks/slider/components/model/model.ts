@@ -55,7 +55,7 @@ export default class Model extends EventObserver {
     this.setOptions(optionsCopy);
   }
 
-  getOptions() {
+  getOptions(): Required<ModelOptions> {
     const obj = { ...this.options };
     return obj;
   }

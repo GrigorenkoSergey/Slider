@@ -4,14 +4,22 @@ import EventObserver from '../../../helpers/event-observer';
 import { SliderEvents, ThumbProgramMove } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
 
+import { ModelOptions } from '../model/components/model-types';
 import Model from '../model/model';
+import { ViewOptions } from '../view/components/view-types';
 import View from '../view/view';
 
 import { PresenterNormalizer } from './components/presenter-normalizer';
 import { isPresenterOptions } from './components/presenter-types';
 
-type onChangeOpts = {
+type SummaryOptions = Required<ModelOptions & ViewOptions>
+
+type OnChangeOpts = {
   callback?: <T>(data: T) => unknown
+};
+
+type OnChangeResult = {
+   update: (data: SliderEvents) => void;
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
@@ -79,7 +87,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     };
   }
 
-  setOptions(options: unknown) {
+  setOptions(options: unknown): this {
     if (!isPresenterOptions(options)) {
       throw new Error('No slider options in options');
     }
@@ -104,13 +112,13 @@ export class Presenter extends EventObserver implements ISubscriber {
     return this;
   }
 
-  getOptions() {
+  getOptions(): SummaryOptions {
     const { model, view } = this;
     const res = { ...view.getOptions(), ...model.getOptions() };
     return res;
   }
 
-  getOffsets() {
+  getOffsets(): { left: number, right: number } {
     const { view } = this;
     return {
       left: view.thumbs.thumbLeftOffset,
@@ -118,7 +126,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     };
   }
 
-  update(data: SliderEvents) {
+  update(data: SliderEvents): void {
     const modelOptions = this.model.getOptions();
     const { model, view } = this;
 
@@ -198,7 +206,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     this.broadcast({ event: 'changeSlider', cause: data.event });
   }
 
-  onChange(opts: onChangeOpts) {
+  onChange(opts: OnChangeOpts): OnChangeResult {
     const {
       callback = (data: SliderEvents) => console.log(data),
     } = opts;
@@ -212,7 +220,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     return elemSubscriber;
   }
 
-  private scaleValues() {
+  private scaleValues(): void {
     const { view, model } = this;
     const modelOptions = model.getOptions();
 
@@ -238,7 +246,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     view.setAnchorValues(anchorValues);
   }
 
-  private recountValue(val: number) {
+  private recountValue(val: number): string {
     const { model } = this;
     let result;
 
