@@ -44,15 +44,6 @@ describe('Первоначальная минимальная инициализ
     });
 
     expect(() => {
-      view.setOptions({ step: -10 });
-    }).toThrowError();
-    expect(() => {
-      view.setOptions({ step: 10 });
-    }).toThrowError();
-    expect(() => {
-      view.setOptions({ step: 0 });
-    }).toThrowError();
-    expect(() => {
       view.setOptions({ angle: -10 });
     }).toThrowError();
     expect(() => {

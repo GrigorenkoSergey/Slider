@@ -47,7 +47,7 @@ export default class Scale extends EventObserver {
 
   private render() {
     const { view, el } = this;
-    el.className = `${view.el.className}__scale`;
+    el.classList.add(`${view.el.className}__scale`);
     view.el.append(el);
 
     this.setMilestones();
@@ -94,7 +94,7 @@ export default class Scale extends EventObserver {
 
     parts.forEach((value) => {
       const div = document.createElement('div');
-      div.className = `${view.el.className}__scale-points`;
+      div.classList.add(`${view.el.className}__scale-points`);
 
       const right = this.width * (1 - value) + view.thumbs.thumbLeft.offsetWidth / 2;
       div.style.right = `${right}px`;

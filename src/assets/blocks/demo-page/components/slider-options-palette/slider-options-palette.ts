@@ -57,15 +57,15 @@ export class SliderOptionsPalette extends EventObserver {
     ];
 
     const ul = document.createElement('ul');
-    ul.className = 'slider-options-palette';
+    ul.classList.add('slider-options-palette');
 
     inputTextes.forEach((inputName) => {
       const li = document.createElement('li');
-      li.className = 'slider-options-palette__li';
+      li.classList.add('slider-options-palette__li');
       li.textContent = inputName;
 
       const input = document.createElement('input');
-      input.className = 'slider-options-palette__input';
+      input.classList.add('slider-options-palette__input');
       input.type = 'text';
       input.name = inputName;
 
@@ -74,15 +74,16 @@ export class SliderOptionsPalette extends EventObserver {
     });
 
     const liCheckbox = document.createElement('li');
-    liCheckbox.className = 'slider-options-palette__li slider-options-palette__li_checkbox';
+    liCheckbox.classList.add('slider-options-palette__li');
+    liCheckbox.classList.add('slider-options-palette__li_checkbox');
 
     inputCheckboxes.forEach(([name, alias]) => {
       const label = document.createElement('label');
-      label.className = 'slider-options-palette__label';
+      label.classList.add('slider-options-palette__label');
       label.textContent = alias;
 
       const input = document.createElement('input');
-      input.className = 'slider-options-palette__checkbox';
+      input.classList.add('slider-options-palette__checkbox');
       input.type = 'checkbox';
       input.name = name;
 

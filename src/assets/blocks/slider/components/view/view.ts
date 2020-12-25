@@ -273,16 +273,6 @@ export default class View extends EventObserver implements ISubscriber {
 
   private validateOptions(key: string, value: number | string | boolean | undefined) {
     const validator = {
-      step: (val: number) => {
-        if (val > 1) {
-          throw new Error('step is too big!');
-        } else if (val < 0) {
-          throw new Error('step is negative!');
-        } else if (val === 0) {
-          throw new Error('step is equal to zero!');
-        }
-      },
-
       angle: (val: number) => {
         if (val < 0 || val > 90) {
           throw new Error('angle should be >= 0 and <= 90');
@@ -290,7 +280,7 @@ export default class View extends EventObserver implements ISubscriber {
       },
     };
 
-    if (key === 'step' || key === 'angle') {
+    if (key === 'angle') {
       return validator[key](Number(value));
     }
   }

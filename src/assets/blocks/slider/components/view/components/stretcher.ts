@@ -18,7 +18,7 @@ export default class Stretcher extends EventObserver {
   private render() {
     const { view, el } = this;
 
-    el.className = `${view.getOptions().className}__stretcher`;
+    el.classList.add(`${view.getOptions().className}__stretcher`);
     view.el.append(el);
     this.update();
   }
@@ -37,7 +37,7 @@ export default class Stretcher extends EventObserver {
       style.right = `${view.el.clientWidth
         - parseFloat(getComputedStyle(thumbs.thumbRight).left)}px`;
     } else {
-      style.left = '0px';
+      style.left = '0';
       style.right = `${view.el.clientWidth
         - parseFloat(getComputedStyle(thumbs.thumbLeft).left)}px`;
     }
