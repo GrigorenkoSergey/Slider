@@ -418,13 +418,15 @@ describe('Меняет значения шкалы в соответствии �
   it('Реагирует на изменение свойства "thumbLeftPos" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
     const thumbLeft = div.getElementsByClassName('slider__thumb_left')[0];
-    const leftHint = thumbLeft.querySelector('[class*=hint]');
-    if (!(leftHint instanceof HTMLDivElement)) throw new Error();
 
     presenter.setOptions({ thumbLeftPos: 100 });
     expect(presenter.getOptions().thumbLeftPos).toEqual(100);
-    expect(leftHint.offsetHeight).toEqual(0);
+
     thumbLeft.dispatchEvent(fakeMouseDown);
+
+    const leftHint = thumbLeft.querySelector('[class*=hint]');
+    if (!(leftHint instanceof HTMLDivElement)) throw new Error();
+
     expect(leftHint.textContent).toEqual('100');
     thumbLeft.dispatchEvent(fakeMouseUp);
     expect(leftHint.offsetHeight).toEqual(0);
@@ -434,13 +436,14 @@ describe('Меняет значения шкалы в соответствии �
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
 
     const thumbRight = div.getElementsByClassName('slider__thumb_right')[0];
-    const rightHint = thumbRight.querySelector('[class*=hint]');
-    if (!(rightHint instanceof HTMLDivElement)) throw new Error();
 
     presenter.setOptions({ thumbRightPos: 800 });
     expect(presenter.getOptions().thumbRightPos).toEqual(800);
-    expect(rightHint.offsetHeight).toEqual(0);
+
     thumbRight.dispatchEvent(fakeMouseDown);
+    const rightHint = thumbRight.querySelector('[class*=hint]');
+    if (!(rightHint instanceof HTMLDivElement)) throw new Error();
+
     expect(thumbRight.textContent).toEqual('800');
     thumbRight.dispatchEvent(fakeMouseUp);
     expect(rightHint.offsetHeight).toEqual(0);
@@ -524,7 +527,7 @@ describe('Меняет состояние модели в соответстви
 
     anchors[3].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
-    expect(hints[1].textContent).toEqual('75');
+    expect(hints[0].textContent).toEqual('75');
     expect(presenter.getOptions().thumbRightPos).toEqual(75);
   });
 });

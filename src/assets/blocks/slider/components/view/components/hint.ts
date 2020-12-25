@@ -7,22 +7,20 @@ export default class Hint extends EventObserver {
 
   private view: View;
 
+  private parent: HTMLElement;
+
   value: string = 'hint';
 
   constructor(view: View, parentNode: HTMLElement) {
     super();
     this.view = view;
-    this.init(parentNode);
+    this.parent = parentNode;
+    this.init();
   }
 
-  private init(parent: HTMLElement): void {
+  private init(): void {
     const { view, el } = this;
     el.classList.add(`${view.getOptions().className}__hint`);
-    el.hidden = true;
-
-    parent.append(el);
-
-    el.addEventListener('mousedown', this.handleMouseDown);
 
     if (view.getOptions().hintAlwaysShow) {
       this.showHint();
@@ -44,13 +42,13 @@ export default class Hint extends EventObserver {
   }
 
   showHint() {
-    const { el } = this;
-    el.hidden = false;
-    el.textContent = this.value;
+    const { el, value, parent } = this;
+    el.textContent = value;
+    parent.append(el);
   }
 
   hideHint() {
-    this.el.hidden = true;
+    this.el.remove();
   }
 
   private rotateHint() {
@@ -60,10 +58,5 @@ export default class Hint extends EventObserver {
     const transformation = `rotate(-${angle}deg)`;
     style.transform = transformation;
     style.transformOrigin = 'left';
-  }
-
-  private handleMouseDown(e: Event) {
-    e.preventDefault();
-    e.stopPropagation();
   }
 }

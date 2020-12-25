@@ -553,16 +553,15 @@ describe('Может отображать подсказку\n', () => {
     const thumb = view.thumbs.thumbLeft;
 
     thumb.dispatchEvent(fakeMouseDown);
-    const hint = thumb.querySelector('[class*=__hint]');
-    if (!(hint instanceof HTMLDivElement)) throw new Error();
+    const hints = thumb.getElementsByClassName('slider__hint');
 
-    expect(hint.offsetWidth).toEqual(0);
+    expect(hints.length).toEqual(0);
 
     const scaleWidth = div.clientWidth - thumb.offsetWidth;
     const deltaPx: number = scaleWidth / 8;
 
     moveThumb(thumb, deltaPx);
-    expect(hint.offsetWidth).toEqual(0);
+    expect(hints.length).toEqual(0);
     thumb.dispatchEvent(fakeMouseUp);
   });
 
@@ -582,8 +581,7 @@ describe('Может отображать подсказку\n', () => {
     view.setOptions({ hintAlwaysShow: false });
 
     hint = thumb.querySelector('[class*=__hint]');
-    if (!(hint instanceof HTMLDivElement)) throw new Error();
-    expect(hint.offsetWidth).toEqual(0);
+    expect(hint).toEqual(null);
   });
 });
 

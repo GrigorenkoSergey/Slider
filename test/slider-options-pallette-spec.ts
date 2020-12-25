@@ -12,8 +12,7 @@ let palette: SliderOptionsPalette;
 let anchors: HTMLCollection;
 let leftThumb: HTMLDivElement;
 let rightThumb: HTMLDivElement;
-let leftHint: HTMLDivElement;
-let rightHint: HTMLDivElement;
+const hints = document.getElementsByClassName('slider__hint');
 let inputs: Inputs;
 
 const fakeChange = new Event('change', {
@@ -32,7 +31,6 @@ const fakeMouseUp = new MouseEvent('mouseup', {
 const fakeClick = new MouseEvent('click', {
   bubbles: true, cancelable: true,
 });
-
 describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
@@ -66,14 +64,6 @@ describe('Проверка связи значения инпута со зна�
     el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
-
-    el = leftThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    leftHint = el;
-
-    el = rightThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    rightHint = el;
   });
 
   afterEach(() => {
@@ -115,6 +105,8 @@ describe('Проверка связи значения инпута со зна�
     inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().thumbLeftPos).toEqual(50);
     leftThumb.dispatchEvent(fakeMouseDown);
+
+    const leftHint = hints[0];
     expect(leftHint.textContent).toEqual('50');
     leftThumb.dispatchEvent(fakeMouseUp);
   });
@@ -143,6 +135,7 @@ describe('Проверка связи значения инпута со зна�
 
     expect(slider.getOptions().thumbRightPos).toEqual(402);
     rightThumb.dispatchEvent(fakeMouseDown);
+    const rightHint = hints[0];
     expect(rightHint.textContent).toEqual('402');
     rightThumb.dispatchEvent(fakeMouseUp);
   });
@@ -165,10 +158,12 @@ describe('Проверка связи значения инпута со зна�
 
     inputs.hintAlwaysShow.el.checked = false;
     inputs.hintAlwaysShow.el.dispatchEvent(fakeChange);
-    expect(leftHint.clientWidth).toBeFalsy();
+
+    expect(hints.length).toEqual(0);
     expect(slider.getOptions().hintAlwaysShow).toBeFalse();
 
     leftThumb.dispatchEvent(fakeMouseDown);
+    const leftHint = hints[0];
     expect(leftHint.clientHeight).toBeTruthy();
     leftThumb.dispatchEvent(fakeMouseUp);
 
@@ -200,19 +195,19 @@ describe('Проверка связи значения инпута со зна�
     inputs.hintAlwaysShow.el.checked = false;
     inputs.hintAlwaysShow.el.dispatchEvent(fakeChange);
 
-    expect(leftHint.clientWidth).toBeFalsy();
+    expect(hints.length).toEqual(0);
     expect(slider.getOptions().hintAboveThumb).toBeFalse();
 
     leftThumb.dispatchEvent(fakeMouseDown);
-    expect(leftHint.clientHeight).toBeFalsy();
+    expect(hints.length).toEqual(0);
     leftThumb.dispatchEvent(fakeMouseUp);
 
     inputs.hintAboveThumb.el.checked = true;
     inputs.hintAboveThumb.el.dispatchEvent(fakeChange);
 
-    expect(leftHint.clientWidth).toBeFalsy();
+    expect(hints.length).toBeFalsy();
     leftThumb.dispatchEvent(fakeMouseDown);
-    expect(leftHint.clientHeight).toBeTruthy();
+    expect(hints.length).toBeTruthy();
     leftThumb.dispatchEvent(fakeMouseUp);
     expect(slider.getOptions().hintAboveThumb).toBeTrue();
   });
@@ -253,14 +248,6 @@ describe('При установке значения свойств програ
     el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
-
-    el = leftThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    leftHint = el;
-
-    el = rightThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    rightHint = el;
   });
 
   afterEach(() => {
@@ -621,14 +608,6 @@ describe('Реагирует на ручное изменение положен
     el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
-
-    el = leftThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    leftHint = el;
-
-    el = rightThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    rightHint = el;
   });
 
   afterEach(() => {
@@ -655,6 +634,8 @@ describe('Реагирует на ручное изменение положен
       if (inputs.thumbLeftPos === null) throw new Error();
 
       leftThumb.dispatchEvent(fakeMouseDown);
+      const leftHint = hints[0];
+
       expect(leftHint.textContent).toEqual(inputs.thumbLeftPos.el.value);
       leftThumb.dispatchEvent(fakeMouseMove);
       expect(slider.getOptions().thumbLeftPos).toEqual(Number(inputs.thumbLeftPos.el.value));
@@ -672,7 +653,9 @@ describe('Реагирует на ручное изменение положен
       if (inputs.thumbRightPos === null) throw new Error();
 
       rightThumb.dispatchEvent(fakeMouseDown);
+      const rightHint = hints.length > 1 ? hints[1] : hints[0];
       expect(rightHint.textContent).toEqual(inputs.thumbRightPos.el.value);
+
       rightThumb.dispatchEvent(fakeMouseMove);
       expect(slider.getOptions().thumbRightPos).toEqual(Number(inputs.thumbRightPos.el.value));
       rightThumb.dispatchEvent(fakeMouseUp);
@@ -729,14 +712,6 @@ describe('Данные баги более не возникают\n', () => {
     el = div.getElementsByClassName('slider__thumb_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
-
-    el = leftThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    leftHint = el;
-
-    el = rightThumb.getElementsByClassName('slider__hint')[0];
-    if (!(el instanceof HTMLDivElement)) throw new Error();
-    rightHint = el;
   });
 
   afterEach(() => {
@@ -786,7 +761,7 @@ describe('Данные баги более не возникают\n', () => {
     expect(inputs.hintAboveThumb.el.disabled).toBeFalse();
   });
 
-  it('При наложении бегунков значение подсказок должно быть одинаковым', () => {
+  it('При наложении бегунков одна из подсказок пропадает', () => {
     slider.setOptions({ min: 0, thumbLeftPos: 0 });
 
     if (inputs.max === null) throw new Error();
@@ -805,8 +780,9 @@ describe('Данные баги более не возникают\n', () => {
     inputs.min.el.value = '1';
     inputs.min.el.dispatchEvent(fakeChange);
 
+    const leftHint = hints[0];
     expect(inputs.min.el.value).toEqual('1');
+    expect(hints.length).toEqual(1);
     expect(leftHint.textContent).toEqual('1');
-    expect(rightHint.textContent).toEqual('1');
   });
 });
