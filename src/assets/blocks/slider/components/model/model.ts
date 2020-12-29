@@ -1,5 +1,5 @@
 import EventObserver from '../../../helpers/event-observer';
-import { createUA } from '../../../helpers/functions/create-ua';
+import { makeUA } from '../../../helpers/functions/make-ua';
 import { ModelValidator } from './components/model-validator';
 import { ModelOptions } from './components/model-types';
 
@@ -64,11 +64,10 @@ export default class Model extends EventObserver {
     let tempObj: ModelOptions = {};
     const { options } = this;
 
-    // немного эротики
-    const keys = createUA([
+    const keys = makeUA<keyof ModelOptions>()(
       'min', 'max', 'step', 'partsNum',
       'thumbLeftPos', 'thumbRightPos', 'precision',
-    ]);
+    );
 
     keys.forEach((key) => {
       if (key in expectant) { tempObj[key] = expectant[key]; }
