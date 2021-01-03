@@ -115,7 +115,7 @@ export default class Model extends EventObserver {
 
     if ('left' in opts) {
       const res = validator.validate({ thumbLeftPos: left }).thumbLeftPos;
-      if (typeof res !== 'undefined') {
+      if (res !== undefined) {
         options.thumbLeftPos = res;
 
         this.broadcast({
@@ -128,7 +128,7 @@ export default class Model extends EventObserver {
 
     if ('right' in opts) {
       const res = validator.validate({ thumbRightPos: right }).thumbRightPos;
-      if (typeof res !== 'undefined') {
+      if (res !== undefined) {
         options.thumbRightPos = res;
         this.broadcast({
           event: 'thumbRightPos',

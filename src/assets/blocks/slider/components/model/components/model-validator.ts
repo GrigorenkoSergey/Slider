@@ -43,21 +43,21 @@ export class ModelValidator {
           case 'thumbLeftPos':
           case 'thumbRightPos': {
             const value = modifiedObj[prop];
-            if (typeof value !== 'undefined') {
+            if (value !== undefined) {
               this[prop](value);
             }
           }
             break;
           case 'alternativeRange': {
             const value = modifiedObj[prop];
-            if (typeof value !== 'undefined') {
+            if (value !== undefined) {
               this[prop](value);
             }
           }
             break;
           case 'range': {
             const value = modifiedObj[prop];
-            if (typeof value !== 'undefined') {
+            if (value !== undefined) {
               this[prop](value);
             }
           }
