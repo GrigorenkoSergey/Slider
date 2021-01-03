@@ -35,7 +35,7 @@ export default class Scale extends EventObserver {
 
   update(data: SliderEvents): void {
     if (data.event === 'showScale') {
-      this.displayScale();
+      this.handleShowScaleChange();
     } else if (data.event === 'partsNum') {
       this.setMilestones();
     } else if (data.event === 'step') {
@@ -48,9 +48,11 @@ export default class Scale extends EventObserver {
   private render(): void {
     const { view, el } = this;
     el.classList.add(`${view.el.className}__scale`);
-    view.el.append(el);
 
-    this.setMilestones();
+    if (view.getOptions().showScale) {
+      view.el.append(el);
+      this.setMilestones();
+    }
   }
 
   setAnchorValues(values: number[] | string[]): void {
@@ -122,12 +124,12 @@ export default class Scale extends EventObserver {
     this.broadcast({ event: 'anchorClick', offset });
   }
 
-  private displayScale(): void {
+  private handleShowScaleChange(): void {
     const { view, el } = this;
     if (!view.getOptions().showScale) {
-      el.style.display = 'none';
+      el.remove();
     } else {
-      el.style.display = '';
+      view.el.append(el);
     }
   }
 
