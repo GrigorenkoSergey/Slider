@@ -245,14 +245,14 @@ export default class View extends EventObserver implements ISubscriber {
     if (target !== slider && target !== stretcher.el) return;
 
     const sliderCoords: DOMRect = slider.getBoundingClientRect();
-    const startX: number = sliderCoords.left + slider.clientLeft;
-    const startY: number = sliderCoords.top + slider.clientTop;
+    const startX = sliderCoords.left + slider.clientLeft;
+    const startY = sliderCoords.top + slider.clientTop;
 
-    const cosA: number = Math.cos((options.angle / 180) * Math.PI);
-    const sinA: number = Math.sin((options.angle / 180) * Math.PI);
+    const cosA = Math.cos((options.angle / 180) * Math.PI);
+    const sinA = Math.sin((options.angle / 180) * Math.PI);
 
-    const newLeftX: number = e.clientX - startX;
-    const newLeftY: number = e.clientY - startY;
+    const newLeftX = e.clientX - startX;
+    const newLeftY = e.clientY - startY;
 
     let newLeft = newLeftX * cosA + newLeftY * sinA;
     let offset = newLeft / scale.width;

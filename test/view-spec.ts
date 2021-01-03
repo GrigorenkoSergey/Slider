@@ -79,8 +79,8 @@ describe('Позволяет пользователю взаимодейство
     const { step } = view.getOptions();
 
     // бежим к концу
-    const deltaPx: number = scaleWidth / 8;
-    const pixelStep: number = step * scaleWidth;
+    const deltaPx = scaleWidth / 8;
+    const pixelStep = step * scaleWidth;
     for (let i = 1; i < 8; i += 1) {
       // не стоит бежать до самого конца, т.к. из-зa погрешности округления
       // мы можем достичь конца раньше, чем надеялись
@@ -110,7 +110,7 @@ describe('Позволяет пользователю взаимодейство
 
     // бежим к началу
     const deltaPx = scaleWidth / 8;
-    const pixelStep: number = step * scaleWidth;
+    const pixelStep = step * scaleWidth;
 
     for (let i = 7; i < 1; i += 1) {
       // определим начальное положение бегунка
@@ -558,7 +558,7 @@ describe('Может отображать подсказку\n', () => {
     expect(hints.length).toEqual(0);
 
     const scaleWidth = div.clientWidth - thumb.offsetWidth;
-    const deltaPx: number = scaleWidth / 8;
+    const deltaPx = scaleWidth / 8;
 
     moveThumb(thumb, deltaPx);
     expect(hints.length).toEqual(0);

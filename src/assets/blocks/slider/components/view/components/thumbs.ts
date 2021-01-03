@@ -148,9 +148,9 @@ export default class Thumbs extends EventObserver {
     if (thumb === null) throw new Error('No thumb in closure');
     thumb.style.zIndex = `${1000}`;
 
-    const newLeftX: number = e.clientX - startX - shiftX;
-    const newLeftY: number = e.clientY - startY - shiftY;
-    let newLeft: number = newLeftX * cosA + newLeftY * sinA;
+    const newLeftX = e.clientX - startX - shiftX;
+    const newLeftY = e.clientY - startY - shiftY;
+    let newLeft = newLeftX * cosA + newLeftY * sinA;
 
     newLeft = this.takeStepIntoAccount(newLeft, pixelStep);
     newLeft = Math.max(leftLimit, newLeft);
