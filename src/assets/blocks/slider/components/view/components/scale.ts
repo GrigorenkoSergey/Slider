@@ -109,19 +109,18 @@ export default class Scale extends EventObserver {
   private handleMouseClick(e: MouseEvent): void {
     const { view, anchors, parts } = this;
     const el = e.target;
-    if (!(el instanceof HTMLDivElement)) {
-      throw new Error();
+
+    if (el instanceof HTMLDivElement) {
+      const index = anchors.indexOf(el);
+      let offset = parts[index];
+
+      if (offset === 1) {
+        const { step } = view.getOptions();
+        offset = Math.floor(offset / step) * step;
+      }
+
+      this.broadcast({ event: 'anchorClick', offset });
     }
-
-    const index = anchors.indexOf(el);
-    let offset = parts[index];
-
-    if (offset === 1) {
-      const { step } = view.getOptions();
-      offset = Math.floor(offset / step) * step;
-    }
-
-    this.broadcast({ event: 'anchorClick', offset });
   }
 
   private handleShowScaleChange(): void {
