@@ -151,9 +151,9 @@ export default class View extends EventObserver implements ISubscriber {
     if (data.event === 'hintAlwaysShow') {
       const { options, hints } = this;
       if (options.hintAlwaysShow) {
-        hints.forEach((hint) => hint.showHint());
+        hints.forEach((hint) => hint.appendHint());
       } else {
-        hints.forEach((hint) => hint.hideHint());
+        hints.forEach((hint) => hint.removeHint());
       }
       return this;
     }
@@ -220,7 +220,7 @@ export default class View extends EventObserver implements ISubscriber {
     if (!options.hintAboveThumb) return;
 
     const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
-    hint.showHint();
+    hint.appendHint();
   }
 
   private handleThumbMouseUp(thumb: HTMLElement): void {
@@ -228,7 +228,7 @@ export default class View extends EventObserver implements ISubscriber {
     const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
 
     if (!options.hintAlwaysShow) {
-      hint.hideHint();
+      hint.removeHint();
     }
   }
 
@@ -346,7 +346,7 @@ export default class View extends EventObserver implements ISubscriber {
     if (!this.options.hintAlwaysShow) return;
 
     const { hints, options } = this;
-    this.hints.forEach((hint) => hint.showHint());
+    this.hints.forEach((hint) => hint.appendHint());
 
     if (this.checkHintsIntersection()) {
       /*
@@ -354,7 +354,7 @@ export default class View extends EventObserver implements ISubscriber {
         javascript, к примеру, чтобы подвинуть подсказку как нужно пользователю
       */
       hints[0].el.classList.add(`${options.className}__hint_summary`);
-      hints[1].hideHint();
+      hints[1].removeHint();
 
       const leftValue = hints[0].value;
       const rightValue = hints[1].value;

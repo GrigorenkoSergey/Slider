@@ -25,7 +25,7 @@ export default class Hint extends EventObserver {
     el.addEventListener('mousedown', this.handleMouseDown);
 
     if (view.getOptions().hintAlwaysShow) {
-      this.showHint();
+      this.appendHint();
     }
 
     view.addSubscriber('angle', this);
@@ -43,13 +43,13 @@ export default class Hint extends EventObserver {
     if (!el.hidden) el.textContent = value;
   }
 
-  showHint(): void {
+  appendHint(): void {
     const { el, value, parent } = this;
     el.textContent = value;
     parent.append(el);
   }
 
-  hideHint(): void {
+  removeHint(): void {
     this.el.remove();
   }
 
