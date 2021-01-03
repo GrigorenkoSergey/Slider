@@ -57,11 +57,11 @@ describe('Проверка связи значения инпута со зна�
     inputs = palette.inputs;
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    let el = div.getElementsByClassName('slider__thumb_left')[0];
+    let el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb_right')[0];
+    el = div.getElementsByClassName('slider__thumb_side_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
   });
@@ -241,11 +241,11 @@ describe('При установке значения свойств програ
 
     anchors = div.getElementsByClassName('slider__scale-points');
 
-    let el = div.getElementsByClassName('slider__thumb_left')[0];
+    let el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb_right')[0];
+    el = div.getElementsByClassName('slider__thumb_side_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
   });
@@ -601,11 +601,11 @@ describe('Реагирует на ручное изменение положен
     inputs = palette.inputs;
 
     anchors = div.getElementsByClassName('slider__scale-points');
-    let el = div.getElementsByClassName('slider__thumb_left')[0];
+    let el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb_right')[0];
+    el = div.getElementsByClassName('slider__thumb_side_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
   });
@@ -705,11 +705,11 @@ describe('Данные баги более не возникают\n', () => {
 
     anchors = div.getElementsByClassName('slider__scale-points');
 
-    let el = div.getElementsByClassName('slider__thumb_left')[0];
+    let el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
-    el = div.getElementsByClassName('slider__thumb_right')[0];
+    el = div.getElementsByClassName('slider__thumb_side_right')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightThumb = el;
   });
