@@ -30,8 +30,7 @@
 |   |   |   |
 |   |   |   ├── helpers
 |   |   |   │   ├── functions
-|   |   |   |   │   ├── is-increasing-sequence.ts
-|   |   |   │   │   └── make-ua.ts
+|   |   |   │   │   └── is-increasing-sequence.ts
 |   |   |   │   ├── debugger-point.ts
 |   |   |   │   ├── event-observer.ts
 |   |   |   │   ├── interfaces.ts

@@ -1,5 +1,4 @@
 import EventObserver from '../../../helpers/event-observer';
-import { makeUA } from '../../../helpers/functions/make-ua';
 import { ModelValidator } from './components/model-validator';
 import { ModelOptions } from './components/model-types';
 import { MODEL_OPTIONS_DEFAULT } from './components/model-options-default';
@@ -55,42 +54,61 @@ export default class Model extends EventObserver {
     let tempObj: ModelOptions = {};
     const { options } = this;
 
-    const keys = makeUA<keyof ModelOptions>()(
-      'min', 'max', 'step', 'partsAmount',
-      'thumbLeftValue', 'thumbRightValue', 'precision',
-    );
+    Object.keys(expectant).forEach((key) => {
+      switch (key) {
+        case ('min'):
+        case ('max'):
+        case ('step'):
+        case ('partsAmount'):
+        case ('thumbLeftValue'):
+        case ('thumbRightValue'):
+        case ('precision'):
+          tempObj[key] = expectant[key];
+          break;
 
-    keys.forEach((key) => {
-      if (key in expectant) { tempObj[key] = expectant[key]; }
+        case ('range'):
+          tempObj[key] = expectant[key];
+          break;
+
+        case ('alternativeRange'):
+          tempObj[key] = expectant[key];
+          break;
+
+        default:
+          console.log(`No "${key}" option in model`);
+          break;
+      }
     });
-
-    if (expectant.range !== undefined) {
-      tempObj.range = expectant.range;
-    }
-    if (expectant.alternativeRange !== undefined) {
-      tempObj.alternativeRange = expectant.alternativeRange;
-    }
 
     tempObj = this.validator.validate(tempObj);
     this.options = { ...options, ...tempObj };
 
     Object.keys(tempObj).forEach((key) => {
-      if (key === 'alternativeRange') {
-        const valueArray = tempObj[key];
-        if (valueArray === undefined) {
-          throw new Error('You should set alternativeRange value!');
+      switch (key) {
+        case ('min'):
+        case ('max'):
+        case ('step'):
+        case ('partsAmount'):
+        case ('precision'):
+          return this.broadcast({ event: key, value: Number(tempObj[key]) });
+
+        case ('thumbLeftValue'):
+        case ('thumbRightValue'):
+          return this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
+
+        case ('range'):
+          return this.broadcast({ event: key, value: Boolean(tempObj[key]) });
+
+        case ('alternativeRange'): {
+          const valueArray = tempObj[key];
+          if (valueArray === undefined) {
+            throw new Error('You should set alternativeRange value!');
+          }
+          return this.broadcast({ event: key, value: valueArray });
         }
-        this.broadcast({ event: 'alternativeRange', value: valueArray });
-      } else if (key === 'range') {
-        this.broadcast({ event: 'range', value: Boolean(tempObj[key]) });
-      } else if (key === 'min' || key === 'max') {
-        this.broadcast({ event: key, value: Number(tempObj[key]) });
-      } else if (key === 'precision' || key === 'partsAmount') {
-        this.broadcast({ event: key, value: Number(tempObj[key]) });
-      } else if (key === 'step' || key === 'thumbLeftValue') {
-        this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
-      } else if (key === 'thumbRightValue') {
-        this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
+
+        default:
+          throw new Error(`You forget to handle "${key}" option in model`);
       }
     });
 
