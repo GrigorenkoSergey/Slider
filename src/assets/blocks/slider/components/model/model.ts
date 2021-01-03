@@ -106,7 +106,7 @@ export default class Model extends EventObserver {
     return this;
   }
 
-  setThumbsPos(opts: {left?: number, right?: number}): Model {
+  setThumbsPos(opts: { left?: number, right?: number }): Model {
     const { options, validator } = this;
     const {
       left = options.thumbLeftPos,

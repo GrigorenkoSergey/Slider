@@ -19,7 +19,7 @@ type OnChangeOpts = {
 };
 
 type OnChangeResult = {
-   update: (data: SliderEvents) => void;
+  update: (data: SliderEvents) => void;
 };
 
 export class Presenter extends EventObserver implements ISubscriber {
@@ -36,7 +36,7 @@ export class Presenter extends EventObserver implements ISubscriber {
     this.model = initObj.model;
   }
 
-  private init(options: unknown): {model: Model, view: View} {
+  private init(options: unknown): { model: Model, view: View } {
     if (!isPresenterOptions(options)) {
       throw new Error('No slider options in options');
     }

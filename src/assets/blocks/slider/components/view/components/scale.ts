@@ -17,7 +17,7 @@ export default class Scale extends EventObserver {
 
   private anchors: HTMLDivElement[] = [];
 
-  constructor(options: {view: View}) {
+  constructor(options: { view: View }) {
     super();
     this.view = options.view;
     this.init();
