@@ -301,14 +301,14 @@ describe('Также присутствует интерактивная шка�
     div.remove();
   });
 
-  it('По умолчанию шкала отображает значения, кратные шагу и зависящие от свойства "partsNum"', () => {
+  it('По умолчанию шкала отображает значения, кратные шагу и зависящие от свойства "partsAmount"', () => {
     const option = {
       range: true,
       selector: '.divViewSpec',
       className: 'slider',
       showScale: true,
       step: 0.75,
-      partsNum: 2,
+      partsAmount: 2,
     };
 
     const view = new View(option);
@@ -322,24 +322,24 @@ describe('Также присутствует интерактивная шка�
     expect(anchors[1].textContent).toEqual('0.75');
     expect(anchors[2].textContent).toEqual('1');
 
-    view.setOptions({ step: 0.4, partsNum: 2 });
+    view.setOptions({ step: 0.4, partsAmount: 2 });
     anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.4');
 
-    view.setOptions({ step: 0.32, partsNum: 2 });
+    view.setOptions({ step: 0.32, partsAmount: 2 });
     anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.64');
 
-    view.setOptions({ step: 0.36, partsNum: 2 });
+    view.setOptions({ step: 0.36, partsAmount: 2 });
     anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.36');
 
-    view.setOptions({ step: 0.36, partsNum: 3 });
+    view.setOptions({ step: 0.36, partsAmount: 3 });
     anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.36');
     expect(anchors[2].textContent).toEqual('0.72');
 
-    view.setOptions({ step: 0.4, partsNum: 3 });
+    view.setOptions({ step: 0.4, partsAmount: 3 });
     anchors = scale.el.querySelectorAll('[class*=scale-points]');
     expect(anchors[1].textContent).toEqual('0.4');
     expect(anchors[2].textContent).toEqual('0.8');
@@ -353,7 +353,7 @@ describe('Также присутствует интерактивная шка�
       className: 'slider',
       showScale: true,
       step: 1 / 10,
-      partsNum: 3,
+      partsAmount: 3,
     };
 
     const view = new View(option);
@@ -419,7 +419,7 @@ describe('Также присутствует интерактивная шка�
       selector: '.divViewSpec',
       className: 'slider',
       showScale: true,
-      partsNum: 1,
+      partsAmount: 1,
     };
 
     const view = new View(option);
@@ -448,7 +448,7 @@ describe('Также присутствует интерактивная шка�
       selector: '.divViewSpec',
       className: 'slider',
       showScale: true,
-      partsNum: 4,
+      partsAmount: 4,
     };
 
     const view = new View(option);
@@ -464,7 +464,7 @@ describe('Также присутствует интерактивная шка�
       expect(anchor.textContent).toEqual(String(values[i]));
     });
 
-    view.setOptions({ partsNum: 1 });
+    view.setOptions({ partsAmount: 1 });
     values = ['Jan', 'Dec'];
     scale.setAnchorValues(values);
 
@@ -473,13 +473,13 @@ describe('Также присутствует интерактивная шка�
     expect(anchors[1].textContent).toEqual('Dec');
   });
 
-  it('Можно задавать значения, не зависящие от свойства partsNum', () => {
+  it('Можно задавать значения, не зависящие от свойства partsAmount', () => {
     const option = {
       range: true,
       selector: '.divViewSpec',
       className: 'slider',
       showScale: true,
-      partsNum: 4,
+      partsAmount: 4,
     };
 
     const view = new View(option);
@@ -506,7 +506,7 @@ describe('Может отображать подсказку\n', () => {
     selector: '.divViewSpec',
     className: 'slider',
     showScale: true,
-    partsNum: 4,
+    partsAmount: 4,
   };
 
   const fakeMouseDown = new MouseEvent('mousedown',

@@ -20,13 +20,13 @@ export class SliderOptionsPalette extends EventObserver {
     hintAlwaysShow: null,
     max: null,
     min: null,
-    partsNum: null,
+    partsAmount: null,
     precision: null,
     range: null,
     showScale: null,
     step: null,
-    thumbLeftPos: null,
-    thumbRightPos: null,
+    thumbLeftValue: null,
+    thumbRightValue: null,
   };
 
   constructor(elem: HTMLDivElement, slider: Slider) {
@@ -43,9 +43,9 @@ export class SliderOptionsPalette extends EventObserver {
       'max',
       'step',
       'angle',
-      'thumbLeftPos',
-      'thumbRightPos',
-      'partsNum',
+      'thumbLeftValue',
+      'thumbRightValue',
+      'partsAmount',
       'precision',
     ];
 
@@ -97,9 +97,9 @@ export class SliderOptionsPalette extends EventObserver {
 
   private init(): void {
     const inputs: (keyof Inputs)[] = [
-      'min', 'max', 'step', 'angle', 'thumbLeftPos', 'thumbRightPos',
+      'min', 'max', 'step', 'angle', 'thumbLeftValue', 'thumbRightValue',
       'range', 'hintAboveThumb', 'showScale', 'hintAlwaysShow',
-      'partsNum', 'precision',
+      'partsAmount', 'precision',
     ];
 
     const { slider, el } = this;
@@ -137,16 +137,16 @@ export class SliderOptionsPalette extends EventObserver {
 
   private handleRangeChange() {
     const { slider, inputs } = this;
-    const { thumbRightPos } = inputs;
+    const { thumbRightValue } = inputs;
 
-    if (thumbRightPos === null) return;
+    if (thumbRightValue === null) return;
 
     const opts = slider.getOptions();
     if (opts.range === false) {
-      thumbRightPos.el.setAttribute('disabled', 'true');
-      thumbRightPos.el.value = String(opts.thumbRightPos);
+      thumbRightValue.el.setAttribute('disabled', 'true');
+      thumbRightValue.el.value = String(opts.thumbRightValue);
     } else {
-      thumbRightPos.el.removeAttribute('disabled');
+      thumbRightValue.el.removeAttribute('disabled');
     }
   }
 

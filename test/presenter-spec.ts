@@ -96,9 +96,9 @@ describe('Первоначальная минимальная реализаци
       min: 0,
       max: 100,
       step: 1,
-      thumbLeftPos: 10,
+      thumbLeftValue: 10,
       selector,
-      thumbRightPos: 80,
+      thumbRightValue: 80,
       angle: 90,
       range: true,
       precision: 0,
@@ -132,9 +132,9 @@ describe('Первоначальная минимальная реализаци
       min: '0',
       max: '100',
       step: 1,
-      thumbLeftPos: 10,
+      thumbLeftValue: 10,
       selector,
-      thumbRightPos: 80,
+      thumbRightValue: 80,
       angle: '89',
       range: true,
       precision: 0,
@@ -154,17 +154,17 @@ describe('Первоначальная минимальная реализаци
     expect(() => presenter.setOptions({ step: '11' })).not.toThrowError();
     expect(() => presenter.setOptions({ step: '11a' })).toThrowError();
 
-    expect(() => presenter.setOptions({ thumbLeftPos: '11' })).not.toThrowError();
-    expect(() => presenter.setOptions({ thumbLeftPos: '11a' })).toThrowError();
+    expect(() => presenter.setOptions({ thumbLeftValue: '11' })).not.toThrowError();
+    expect(() => presenter.setOptions({ thumbLeftValue: '11a' })).toThrowError();
 
-    expect(() => presenter.setOptions({ thumbRightPos: '90' })).not.toThrowError();
-    expect(() => presenter.setOptions({ thumbRightPos: '90a' })).toThrowError();
+    expect(() => presenter.setOptions({ thumbRightValue: '90' })).not.toThrowError();
+    expect(() => presenter.setOptions({ thumbRightValue: '90a' })).toThrowError();
 
     expect(() => presenter.setOptions({ precision: '1' })).not.toThrowError();
     expect(() => presenter.setOptions({ precision: '1a' })).toThrowError();
 
-    expect(() => presenter.setOptions({ partsNum: '1' })).not.toThrowError();
-    expect(() => presenter.setOptions({ partsNum: '1a' })).toThrowError();
+    expect(() => presenter.setOptions({ partsAmount: '1' })).not.toThrowError();
+    expect(() => presenter.setOptions({ partsAmount: '1a' })).toThrowError();
 
     expect(() => presenter.setOptions({ angle: '90deg' })).toThrowError();
   });
@@ -176,7 +176,7 @@ describe('Меняет значения подсказки над бегунко
     selector: '.divPresenterSpec',
     className: 'slider',
     showScale: true,
-    partsNum: 4,
+    partsAmount: 4,
     min: 10,
     max: 100,
   };
@@ -208,7 +208,7 @@ describe('Меняет значения подсказки над бегунко
   });
 
   it('При нажатии на правом кругляше отображается подсказка', () => {
-    new Presenter({ ...option, thumbRightPos: 70 });
+    new Presenter({ ...option, thumbRightValue: 70 });
     const thumb = document.querySelector('[class*=right]');
     if (!(thumb instanceof HTMLDivElement)) throw new Error();
 
@@ -257,7 +257,7 @@ describe('Проверка работы "alternativeRange"\n', () => {
     selector: '.divPresenterSpec',
     className: 'slider',
     showScale: true,
-    partsNum: 2,
+    partsAmount: 2,
     alternativeRange: ['Jan', 'Feb', 'March', 'Apr', 'May',
       'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   };
@@ -286,7 +286,7 @@ describe('Проверка работы "alternativeRange"\n', () => {
   });
 
   it('При нажатии на правом кругляше отображается подсказка', () => {
-    new Presenter({ ...option, thumbRightPos: 10 });
+    new Presenter({ ...option, thumbRightValue: 10 });
 
     const thumb = document.querySelector('[class*=right]');
     if (!(thumb instanceof HTMLDivElement)) throw new Error();
@@ -381,8 +381,8 @@ describe('Меняет значения шкалы в соответствии �
       max: 100,
       range: true,
       hintAlwaysShow: true,
-      thumbLeftPos: 50,
-      thumbRightPos: 80,
+      thumbLeftValue: 50,
+      thumbRightValue: 80,
     });
 
     presenter.setOptions({ min: 50 });
@@ -415,12 +415,12 @@ describe('Меняет значения шкалы в соответствии �
     expect(presenter.getOptions().step).toEqual(100);
   });
 
-  it('Реагирует на изменение свойства "thumbLeftPos" модели', () => {
+  it('Реагирует на изменение свойства "thumbLeftValue" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
     const thumbLeft = div.getElementsByClassName('slider__thumb_side_left')[0];
 
-    presenter.setOptions({ thumbLeftPos: 100 });
-    expect(presenter.getOptions().thumbLeftPos).toEqual(100);
+    presenter.setOptions({ thumbLeftValue: 100 });
+    expect(presenter.getOptions().thumbLeftValue).toEqual(100);
 
     thumbLeft.dispatchEvent(fakeMouseDown);
 
@@ -432,13 +432,13 @@ describe('Меняет значения шкалы в соответствии �
     expect(leftHint.offsetHeight).toEqual(0);
   });
 
-  it('Реагирует на изменение свойства "thumbRightPos" модели', () => {
+  it('Реагирует на изменение свойства "thumbRightValue" модели', () => {
     const presenter = new Presenter({ ...option, ...{ min: 0, max: 1000 } });
 
     const thumbRight = div.getElementsByClassName('slider__thumb_side_right')[0];
 
-    presenter.setOptions({ thumbRightPos: 800 });
-    expect(presenter.getOptions().thumbRightPos).toEqual(800);
+    presenter.setOptions({ thumbRightValue: 800 });
+    expect(presenter.getOptions().thumbRightValue).toEqual(800);
 
     thumbRight.dispatchEvent(fakeMouseDown);
     const rightHint = thumbRight.querySelector('[class*=hint]');
@@ -459,28 +459,28 @@ describe('Меняет значения шкалы в соответствии �
     expect(parseFloat(style.left)).toEqual(thumb.offsetWidth / 2);
 
     expect(parseFloat(style.right)).toEqual(thumb.offsetWidth);
-    presenter.setOptions({ range: false, thumbLeftPos: 1000 });
+    presenter.setOptions({ range: false, thumbLeftValue: 1000 });
     expect(style.left).toEqual('0px');
     expect(style.right).toEqual('16px');
   });
 
-  it('Реагирует на изменение свойства "partsNum" вида', () => {
+  it('Реагирует на изменение свойства "partsAmount" вида', () => {
     const presenter = new Presenter(option);
     const anchors = document.getElementsByClassName('slider__scale-points');
 
-    presenter.setOptions({ partsNum: 3 });
+    presenter.setOptions({ partsAmount: 3 });
     expect(anchors.length).toEqual(4);
     expect(anchors[0].textContent).toEqual('20');
     expect(anchors[1].textContent).toEqual('80');
     expect(anchors[2].textContent).toEqual('140');
     expect(anchors[3].textContent).toEqual('200');
 
-    presenter.setOptions({ partsNum: 4 });
+    presenter.setOptions({ partsAmount: 4 });
     expect(anchors[1].textContent).toEqual('66');
     expect(anchors[2].textContent).toEqual('110');
     expect(anchors[3].textContent).toEqual('156');
 
-    presenter.setOptions({ partsNum: 2 });
+    presenter.setOptions({ partsAmount: 2 });
     expect(anchors[0].textContent).toEqual('20');
     expect(anchors[1].textContent).toEqual('110');
     expect(anchors[2].textContent).toEqual('200');
@@ -493,7 +493,7 @@ describe('Меняет состояние модели в соответстви
     selector: '.divPresenterSpec',
     className: 'slider',
     showScale: true,
-    partsNum: 4,
+    partsAmount: 4,
     min: 0,
     max: 100,
   };
@@ -507,7 +507,7 @@ describe('Меняет состояние модели в соответстви
     div.remove();
   });
 
-  it('При движении левого бегунка меняется значение thumbLeftPos в модели', () => {
+  it('При движении левого бегунка меняется значение thumbLeftValue в модели', () => {
     const presenter = new Presenter(option);
     const thumbLeft = div.getElementsByClassName('slider__thumb_side_left')[0];
     const anchors = div.getElementsByClassName('slider__scale-points');
@@ -516,10 +516,10 @@ describe('Меняет состояние модели в соответстви
     anchors[1].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[0].textContent).toEqual('25');
-    expect(presenter.getOptions().thumbLeftPos).toEqual(25);
+    expect(presenter.getOptions().thumbLeftValue).toEqual(25);
   });
 
-  it('При движении правого бегунка меняется значение thumbRightPos в модели', () => {
+  it('При движении правого бегунка меняется значение thumbRightValue в модели', () => {
     const presenter = new Presenter(option);
     const thumbLeft = div.getElementsByClassName('slider__thumb_side_right')[0];
     const anchors = div.getElementsByClassName('slider__scale-points');
@@ -528,7 +528,7 @@ describe('Меняет состояние модели в соответстви
     anchors[3].dispatchEvent(fakeClick);
     thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints[0].textContent).toEqual('75');
-    expect(presenter.getOptions().thumbRightPos).toEqual(75);
+    expect(presenter.getOptions().thumbRightValue).toEqual(75);
   });
 });
 
@@ -559,11 +559,11 @@ describe('В любой момент времени можно узнать и �
     expect(options.hintAboveThumb).toBeTrue();
     expect(options.min).toEqual(20);
     expect(options.max).toEqual(200);
-    expect(options.partsNum).toEqual(2);
+    expect(options.partsAmount).toEqual(2);
     expect(options.range).toBeTrue();
     expect(options.showScale).toBeTrue();
-    expect(options.thumbLeftPos).toEqual(20);
-    expect(options.thumbRightPos).toEqual(200);
+    expect(options.thumbLeftValue).toEqual(20);
+    expect(options.thumbRightValue).toEqual(200);
     expect(options.step).toEqual(2);
   });
 
@@ -574,10 +574,10 @@ describe('В любой момент времени можно узнать и �
     expect(offsets.left).toEqual(0);
     expect(offsets.right).toEqual(1);
 
-    presenter.setOptions({ thumbLeftPos: 40, min: 0 });
+    presenter.setOptions({ thumbLeftValue: 40, min: 0 });
     expect(presenter.getOffsets().left).toEqual(0.2);
 
-    presenter.setOptions({ thumbRightPos: 160, min: 0 });
+    presenter.setOptions({ thumbRightValue: 160, min: 0 });
     expect(presenter.getOffsets().right).toEqual(0.8);
   });
 
@@ -590,7 +590,7 @@ describe('В любой момент времени можно узнать и �
       max: 100,
       step: 10,
       angle: 45,
-      thumbLeftPos: 50,
+      thumbLeftValue: 50,
     });
 
     // Для красоты
@@ -602,7 +602,7 @@ describe('В любой момент времени можно узнать и �
     expect(options.min).toEqual(0);
     expect(options.max).toEqual(100);
     expect(options.step).toEqual(10);
-    expect(options.thumbLeftPos).toEqual(50);
+    expect(options.thumbLeftValue).toEqual(50);
     expect(options.angle).toEqual(45);
 
     div.style.marginTop = '70px';
@@ -626,7 +626,7 @@ describe('Проверка поведения подсказки над бегу
     showScale: true,
     min: 20,
     max: 200,
-    thumbLeftPos: 25,
+    thumbLeftValue: 25,
   };
 
   it(`При включенной опции "hintAlwaysShow" и при клике на значении шкалы, 
@@ -643,7 +643,7 @@ describe('Проверка поведения подсказки над бегу
     expect(hints[1].textContent).toEqual('200');
     thumbLeft.dispatchEvent(fakeMouseUp);
 
-    presenter.setOptions({ thumbLeftPos: 50 });
+    presenter.setOptions({ thumbLeftValue: 50 });
     anchors[1].dispatchEvent(fakeClick);
     expect(hints[0].textContent).toEqual('110');
   });
@@ -654,7 +654,7 @@ describe('Проверка поведения подсказки над бегу
       min: 0,
       max: 100,
       hintAlwaysShow: true,
-      thumbLeftPos: 0,
+      thumbLeftValue: 0,
     });
 
     presenter.setOptions({ range: false });
@@ -707,8 +707,8 @@ describe('Проверка поведения подсказок при вклю
     max: 600,
     step: 1,
     hintAlwaysShow: true,
-    thumbLeftPos: 360,
-    thumbRightPos: 434,
+    thumbLeftValue: 360,
+    thumbRightValue: 434,
   };
 
   beforeEach(() => {
@@ -736,10 +736,10 @@ describe('Проверка поведения подсказок при вклю
 
   it(`При движении подсказки правый бегунок исчезает, 
     если бегунки находятся слишком близко`, () => {
-    presenter.setOptions({ thumbRightPos: 361 });
+    presenter.setOptions({ thumbRightValue: 361 });
     expect(rightHint.offsetWidth).toEqual(0);
 
-    presenter.setOptions({ thumbRightPos: 600 });
+    presenter.setOptions({ thumbRightValue: 600 });
     expect(rightHint.offsetWidth).toBeTruthy();
 
     const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
@@ -753,7 +753,7 @@ describe('Проверка поведения подсказок при вклю
 
   it(`При нажатии на правый бегунок, если подсказки накладываются друг на друга,
     он не должен появляться`, () => {
-    presenter.setOptions({ thumbRightPos: 361 });
+    presenter.setOptions({ thumbRightValue: 361 });
 
     rightThumb.dispatchEvent(fakeMouseDown);
     expect(rightHint.offsetWidth).toEqual(0);
@@ -762,7 +762,7 @@ describe('Проверка поведения подсказок при вклю
 
   it(`При щелчке на якоре, подсказка над правым бегунком должна исчезнуть, если в результате
   получилось наложение текстов подсказок`, () => {
-    presenter.setOptions({ thumbRightPos: 302, thumbLeftPos: 299 });
+    presenter.setOptions({ thumbRightValue: 302, thumbLeftValue: 299 });
     const anchors = div.getElementsByClassName('slider__scale-points');
     anchors[1].dispatchEvent(fakeClick);
     expect(rightHint.offsetWidth).toEqual(0);
@@ -793,9 +793,9 @@ describe('Проверка опции "onChange\n', () => {
     let num = 3;
 
     const miniObserver = presenter.onChange({});
-    miniObserver.update = () => { num = presenter.getOptions().thumbLeftPos; };
+    miniObserver.update = () => { num = presenter.getOptions().thumbLeftValue; };
 
-    presenter.setOptions({ thumbLeftPos: 10 });
+    presenter.setOptions({ thumbLeftValue: 10 });
     expect(num).toEqual(10);
 
     const anchors = div.getElementsByClassName('slider__scale-points');
@@ -852,10 +852,10 @@ describe('Данные баги более не возникают\n', () => {
   });
 
   it('При наложении бегунков значение подсказок разное', () => {
-    slider.setOptions({ min: 0, thumbLeftPos: 0 });
+    slider.setOptions({ min: 0, thumbLeftValue: 0 });
 
     slider.setOptions({
-      max: 6, step: 1, thumbRightPos: 1, min: 1,
+      max: 6, step: 1, thumbRightValue: 1, min: 1,
     });
 
     expect(leftHint.textContent).toEqual('1');
@@ -864,7 +864,7 @@ describe('Данные баги более не возникают\n', () => {
 
   it('При изменении шага, бегунки остаются в недопустимом положении', () => {
     slider.setOptions({
-      min: 0, max: 11, step: 1, thumbLeftPos: 10, range: false,
+      min: 0, max: 11, step: 1, thumbLeftValue: 10, range: false,
     });
     expect(leftHint.textContent).toEqual('10');
     slider.setOptions({ step: 11 });
@@ -875,11 +875,11 @@ describe('Данные баги более не возникают\n', () => {
     slider.setOptions({
       min: 1000000, max: 6000000, step: 1, range: true,
     });
-    slider.setOptions({ thumbRightPos: 5112367 });
+    slider.setOptions({ thumbRightValue: 5112367 });
     leftThumb.dispatchEvent(fakeMouseDown);
 
     leftThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
-    expect(slider.getOptions().thumbLeftPos).toEqual(5112367);
+    expect(slider.getOptions().thumbLeftValue).toEqual(5112367);
     expect(leftHint.textContent).toEqual(rightHint.textContent);
   });
 
@@ -901,7 +901,7 @@ describe('Данные баги более не возникают\n', () => {
 
     document.body.appendChild(div);
     slider = new Presenter({ ...options });
-    slider.setOptions({ min: 0, max: 58, thumbRightPos: 41 });
+    slider.setOptions({ min: 0, max: 58, thumbRightValue: 41 });
 
     let el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
@@ -924,20 +924,20 @@ describe('Данные баги более не возникают\n', () => {
       min: 1, max: 6, step: 4, range: false,
     });
     slider.setOptions({ range: true });
-    expect(slider.getOptions().thumbRightPos).toEqual(5);
+    expect(slider.getOptions().thumbRightValue).toEqual(5);
   });
 
   it('Так и не придумал, что написать в названии теста.. ', () => {
     slider.setOptions({
       min: 0,
       max: 6,
-      thumbLeftPos: 0,
-      thumbRightPos: 0,
+      thumbLeftValue: 0,
+      thumbRightValue: 0,
       range: true,
       step: 1,
     });
 
-    slider.setOptions({ partsNum: 3 });
+    slider.setOptions({ partsAmount: 3 });
     slider.setOptions({ step: 4 });
 
     rightThumb.dispatchEvent(fakeMouseDown);

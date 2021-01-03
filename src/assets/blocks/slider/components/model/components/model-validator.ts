@@ -20,14 +20,14 @@ export class ModelValidator {
 
     const order = [
       'precision',
-      'partsNum',
+      'partsAmount',
       'alternativeRange',
       'min',
       'max',
       'step',
       'range',
-      'thumbLeftPos',
-      'thumbRightPos',
+      'thumbLeftValue',
+      'thumbRightValue',
     ];
 
     const { modifiedObj } = this;
@@ -36,12 +36,12 @@ export class ModelValidator {
       if (prop in modifiedObj) {
         switch (prop) {
           case 'precision':
-          case 'partsNum':
+          case 'partsAmount':
           case 'min':
           case 'max':
           case 'step':
-          case 'thumbLeftPos':
-          case 'thumbRightPos': {
+          case 'thumbLeftValue':
+          case 'thumbRightValue': {
             const value = modifiedObj[prop];
             if (value !== undefined) {
               this[prop](value);
@@ -79,21 +79,21 @@ export class ModelValidator {
     modifiedObj.precision = Number(val);
   }
 
-  private partsNum(val: number): void {
+  private partsAmount(val: number): void {
     if (!Number.isInteger(val)) {
-      throw new Error('"partsNum" should be integer!');
+      throw new Error('"partsAmount" should be integer!');
     } else if (val < 1) {
-      throw new Error('"partsNum" should be >= 1');
+      throw new Error('"partsAmount" should be >= 1');
     }
 
     const { modifiedObj } = this;
     const { min, max, step } = { ...this.model.getOptions(), ...modifiedObj };
 
     if ((val - 1) * step >= (max - min)) {
-      throw new Error('"partsNum" is to large!');
+      throw new Error('"partsAmount" is to large!');
     }
 
-    modifiedObj.partsNum = val;
+    modifiedObj.partsAmount = val;
   }
 
   private alternativeRange(val: string[]): void {
@@ -118,9 +118,9 @@ export class ModelValidator {
     const {
       max,
       step,
-      partsNum,
-      thumbLeftPos,
-      thumbRightPos,
+      partsAmount,
+      thumbLeftValue,
+      thumbRightValue,
       precision,
       alternativeRange,
     } = { ...this.model.getOptions(), ...modifiedObj };
@@ -129,9 +129,9 @@ export class ModelValidator {
       throw new Error('"min" should be < "max"!');
     } else if (max - val < step) {
       throw new Error('"max" - "min" should be >= "step"!');
-    } else if (val + step * partsNum >= max + step) {
-      console.log('min + step * partsNum should be < max + step\nSet partsNum = 1');
-      modifiedObj.partsNum = 1;
+    } else if (val + step * partsAmount >= max + step) {
+      console.log('min + step * partsAmount should be < max + step\nSet partsAmount = 1');
+      modifiedObj.partsAmount = 1;
     } else if (alternativeRange.length !== 0) {
       if ('min' in originObj) {
         console.log('when you set "min" option "alternativeRange" sets to []');
@@ -139,18 +139,18 @@ export class ModelValidator {
       }
     }
 
-    if (val > thumbLeftPos) {
-      if ('thumbLeftPos' in originObj) {
-        throw new Error('"thumbLeftPos" should be >= "min"!');
+    if (val > thumbLeftValue) {
+      if ('thumbLeftValue' in originObj) {
+        throw new Error('"thumbLeftValue" should be >= "min"!');
       }
-      modifiedObj.thumbLeftPos = Number(Number(val).toFixed(precision));
+      modifiedObj.thumbLeftValue = Number(Number(val).toFixed(precision));
     }
 
-    if (val > thumbRightPos) {
-      if ('thumbRightPos' in originObj) {
-        throw new Error('"thumbRightPos" should be > "min"!');
+    if (val > thumbRightValue) {
+      if ('thumbRightValue' in originObj) {
+        throw new Error('"thumbRightValue" should be > "min"!');
       }
-      modifiedObj.thumbRightPos = Number(Number(max).toFixed(precision));
+      modifiedObj.thumbRightValue = Number(Number(max).toFixed(precision));
     }
 
     modifiedObj.min = Number(Number(val).toFixed(precision));
@@ -161,9 +161,9 @@ export class ModelValidator {
     const {
       min,
       step,
-      partsNum,
-      thumbLeftPos,
-      thumbRightPos,
+      partsAmount,
+      thumbLeftValue,
+      thumbRightValue,
       precision,
       alternativeRange,
     } = { ...this.model.getOptions(), ...modifiedObj };
@@ -172,9 +172,9 @@ export class ModelValidator {
       throw new Error('"max" should be >= "min"!');
     } else if (val - min < step) {
       throw new Error('"max" - "min" should be >= "step"!');
-    } else if (min + step * partsNum >= val + step) {
-      console.log('min + step * partsNum should be < max + step\nSet partsNum = 1');
-      modifiedObj.partsNum = 1;
+    } else if (min + step * partsAmount >= val + step) {
+      console.log('min + step * partsAmount should be < max + step\nSet partsAmount = 1');
+      modifiedObj.partsAmount = 1;
     } else if (alternativeRange.length !== 0) {
       if ('max' in originObj) {
         console.log('when you set "max" option "alternativeRange" sets to []');
@@ -182,23 +182,23 @@ export class ModelValidator {
       }
     }
 
-    if (thumbLeftPos > val) {
-      if ('thumbLeftPos' in originObj) {
-        throw new Error('"thumbLeftPos" should be <= "max"!');
+    if (thumbLeftValue > val) {
+      if ('thumbLeftValue' in originObj) {
+        throw new Error('"thumbLeftValue" should be <= "max"!');
       }
-      if (thumbRightPos !== Infinity) {
-        modifiedObj.thumbLeftPos = min;
-        modifiedObj.thumbRightPos = Number(Number(val).toFixed(precision));
+      if (thumbRightValue !== Infinity) {
+        modifiedObj.thumbLeftValue = min;
+        modifiedObj.thumbRightValue = Number(Number(val).toFixed(precision));
       } else {
-        modifiedObj.thumbLeftPos = Number(Number(val).toFixed(precision));
+        modifiedObj.thumbLeftValue = Number(Number(val).toFixed(precision));
       }
     }
 
-    if (thumbRightPos !== Infinity && thumbRightPos > val) {
-      if ('thumbRightPos' in originObj) {
-        throw new Error('"thumbRightPos should be <= "max"!');
+    if (thumbRightValue !== Infinity && thumbRightValue > val) {
+      if ('thumbRightValue' in originObj) {
+        throw new Error('"thumbRightValue should be <= "max"!');
       }
-      modifiedObj.thumbRightPos = Number(Number(val).toFixed(precision));
+      modifiedObj.thumbRightValue = Number(Number(val).toFixed(precision));
     }
 
     modifiedObj.max = Number(Number(val).toFixed(precision));
@@ -210,9 +210,9 @@ export class ModelValidator {
       min,
       max,
       precision,
-      partsNum,
-      thumbLeftPos,
-      thumbRightPos,
+      partsAmount,
+      thumbLeftValue,
+      thumbRightValue,
     } = { ...this.model.getOptions(), ...modifiedObj };
 
     if (val > max - min) {
@@ -221,65 +221,65 @@ export class ModelValidator {
       throw new Error('"step" is negative!');
     } else if (val === 0) {
       throw new Error('"step" is equal to zero!');
-    } else if (min + val * partsNum >= max + val) {
-      console.log('min + step * partsNum should be < max + step\nSet partsNum = 1');
-      modifiedObj.partsNum = 1;
+    } else if (min + val * partsAmount >= max + val) {
+      console.log('min + step * partsAmount should be < max + step\nSet partsAmount = 1');
+      modifiedObj.partsAmount = 1;
     }
 
     modifiedObj.step = Number(Number(val).toFixed(precision));
-    modifiedObj.thumbLeftPos = thumbLeftPos;
-    modifiedObj.thumbRightPos = thumbRightPos;
+    modifiedObj.thumbLeftValue = thumbLeftValue;
+    modifiedObj.thumbRightValue = thumbRightValue;
   }
 
   private range(val: boolean): void {
     const { modifiedObj } = this;
-    const { thumbRightPos, max } = { ...this.model.getOptions(), ...modifiedObj };
+    const { thumbRightValue, max } = { ...this.model.getOptions(), ...modifiedObj };
 
-    if (val && thumbRightPos === Infinity) {
-      modifiedObj.thumbRightPos = max;
+    if (val && thumbRightValue === Infinity) {
+      modifiedObj.thumbRightValue = max;
     } else if (!val) {
-      modifiedObj.thumbRightPos = Infinity;
+      modifiedObj.thumbRightValue = Infinity;
     }
 
     modifiedObj.range = val;
   }
 
-  private thumbLeftPos(val: number): void {
+  private thumbLeftValue(val: number): void {
     const { modifiedObj } = this;
     const {
-      thumbRightPos, min, max, precision, step,
+      thumbRightValue, min, max, precision, step,
     } = { ...this.model.getOptions(), ...modifiedObj };
 
-    if (thumbRightPos < val) {
-      throw new Error('"thumbLeftPos" should be <= than "thumbRightPos"');
+    if (thumbRightValue < val) {
+      throw new Error('"thumbLeftValue" should be <= than "thumbRightValue"');
     }
 
     const maxValue = Math.floor((max - min) / step) * step + min;
     const roundedToStep = Math.round((val - min) / step) * step + min;
-    modifiedObj.thumbLeftPos = Number(
+    modifiedObj.thumbLeftValue = Number(
       Math.min(Math.max(min, roundedToStep), maxValue).toFixed(precision),
     );
   }
 
-  private thumbRightPos(val: number): void {
+  private thumbRightValue(val: number): void {
     const { modifiedObj } = this;
     const {
       range, max, step, min,
     } = { ...this.model.getOptions(), ...modifiedObj };
 
     if (!range) {
-      modifiedObj.thumbRightPos = Infinity;
+      modifiedObj.thumbRightValue = Infinity;
       return;
     }
 
-    const { thumbLeftPos, precision } = { ...this.model.getOptions(), ...modifiedObj };
+    const { thumbLeftValue, precision } = { ...this.model.getOptions(), ...modifiedObj };
 
-    if (val < thumbLeftPos) {
-      throw new Error('"thumbRightPos should be greater than "thumbLeftPos"');
+    if (val < thumbLeftValue) {
+      throw new Error('"thumbRightValue should be greater than "thumbLeftValue"');
     }
 
     const maxValue = Math.floor((max - min) / step) * step + min;
     const roundedToStep = Math.round((val - min) / step) * step + min;
-    modifiedObj.thumbRightPos = Number(Math.min(roundedToStep, maxValue).toFixed(precision));
+    modifiedObj.thumbRightValue = Number(Math.min(roundedToStep, maxValue).toFixed(precision));
   }
 }

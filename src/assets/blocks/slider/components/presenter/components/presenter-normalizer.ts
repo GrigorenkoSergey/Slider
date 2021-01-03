@@ -1,8 +1,8 @@
 import { ModelOptions } from '../../model/components/model-types';
 import { ViewOptions } from '../../view/components/view-types';
 
-type NumberProps = 'max' | 'min' | 'step' | 'partsNum' | 'thumbLeftPos' |
-  'thumbRightPos' | 'precision' | 'angle';
+type NumberProps = 'max' | 'min' | 'step' | 'partsAmount' | 'thumbLeftValue' |
+  'thumbRightValue' | 'precision' | 'angle';
 
 type BooleanProps = 'range' | 'hintAlwaysShow' | 'hintAboveThumb' | 'showScale';
 type StringProps = 'className' | 'selector';
@@ -23,14 +23,14 @@ export class PresenterNormalizer {
     if (opts.step !== undefined) {
       result.step = this.handleNumberTypeProp('step', opts);
     }
-    if (opts.partsNum !== undefined) {
-      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
+    if (opts.partsAmount !== undefined) {
+      result.partsAmount = this.handleNumberTypeProp('partsAmount', opts);
     }
-    if (opts.thumbLeftPos !== undefined) {
-      result.thumbLeftPos = this.handleNumberTypeProp('thumbLeftPos', opts);
+    if (opts.thumbLeftValue !== undefined) {
+      result.thumbLeftValue = this.handleNumberTypeProp('thumbLeftValue', opts);
     }
-    if (opts.thumbRightPos !== undefined) {
-      result.thumbRightPos = this.handleNumberTypeProp('thumbRightPos', opts);
+    if (opts.thumbRightValue !== undefined) {
+      result.thumbRightValue = this.handleNumberTypeProp('thumbRightValue', opts);
     }
     if (opts.precision !== undefined) {
       result.precision = this.handleNumberTypeProp('precision', opts);
@@ -57,8 +57,8 @@ export class PresenterNormalizer {
     if (opts.step !== undefined) {
       result.step = this.handleNumberTypeProp('step', opts);
     }
-    if (opts.partsNum !== undefined) {
-      result.partsNum = this.handleNumberTypeProp('partsNum', opts);
+    if (opts.partsAmount !== undefined) {
+      result.partsAmount = this.handleNumberTypeProp('partsAmount', opts);
     }
     if (opts.angle !== undefined) {
       result.angle = this.handleNumberTypeProp('angle', opts);

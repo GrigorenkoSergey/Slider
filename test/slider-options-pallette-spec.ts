@@ -99,11 +99,11 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().angle).toEqual(0);
   });
 
-  it('Поменяем значение thumbLeftPos', () => {
-    if (inputs.thumbLeftPos === null) throw new Error();
-    inputs.thumbLeftPos.el.value = '50';
-    inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
-    expect(slider.getOptions().thumbLeftPos).toEqual(50);
+  it('Поменяем значение thumbLeftValue', () => {
+    if (inputs.thumbLeftValue === null) throw new Error();
+    inputs.thumbLeftValue.el.value = '50';
+    inputs.thumbLeftValue.el.dispatchEvent(fakeChange);
+    expect(slider.getOptions().thumbLeftValue).toEqual(50);
     leftThumb.dispatchEvent(fakeMouseDown);
 
     const leftHint = hints[0];
@@ -124,16 +124,16 @@ describe('Проверка связи значения инпута со зна�
     expect(document.contains(rightThumb)).toBeFalse();
   });
 
-  it('Поменяем значение thumbRightPos', () => {
+  it('Поменяем значение thumbRightValue', () => {
     if (inputs.range === null) throw new Error();
     inputs.range.el.checked = true;
     inputs.range.el.dispatchEvent(fakeChange);
 
-    if (inputs.thumbRightPos === null) throw new Error();
-    inputs.thumbRightPos.el.value = '400';
-    inputs.thumbRightPos.el.dispatchEvent(fakeChange);
+    if (inputs.thumbRightValue === null) throw new Error();
+    inputs.thumbRightValue.el.value = '400';
+    inputs.thumbRightValue.el.dispatchEvent(fakeChange);
 
-    expect(slider.getOptions().thumbRightPos).toEqual(402);
+    expect(slider.getOptions().thumbRightValue).toEqual(402);
     rightThumb.dispatchEvent(fakeMouseDown);
     const rightHint = hints[0];
     expect(rightHint.textContent).toEqual('402');
@@ -173,15 +173,15 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().hintAlwaysShow).toBeTrue();
   });
 
-  it('Поменяем значение "partsNum', () => {
-    if (inputs.partsNum === null) throw new Error();
+  it('Поменяем значение "partsAmount', () => {
+    if (inputs.partsAmount === null) throw new Error();
 
-    inputs.partsNum.el.value = '3';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
+    inputs.partsAmount.el.value = '3';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
     expect(anchors.length).toEqual(4);
 
-    inputs.partsNum.el.value = '6';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
+    inputs.partsAmount.el.value = '6';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
     expect(anchors.length).toEqual(7);
   });
 
@@ -298,24 +298,24 @@ describe('При установке значения свойств програ
     expect(slider.getOptions().angle).toEqual(45);
   });
 
-  it('Поменяем значение thumbLeftPos', () => {
-    slider.setOptions({ thumbLeftPos: 25, range: false });
-    expect(slider.getOptions().thumbLeftPos).toEqual(25);
+  it('Поменяем значение thumbLeftValue', () => {
+    slider.setOptions({ thumbLeftValue: 25, range: false });
+    expect(slider.getOptions().thumbLeftValue).toEqual(25);
 
     if (inputs.max === null) throw new Error();
     expect(inputs.max.el.value).toEqual('100');
 
-    if (inputs.thumbLeftPos === null) throw new Error();
-    expect(inputs.thumbLeftPos.el.value).toEqual('25');
+    if (inputs.thumbLeftValue === null) throw new Error();
+    expect(inputs.thumbLeftValue.el.value).toEqual('25');
 
     anchors[0].dispatchEvent(fakeClick);
-    expect(inputs.thumbLeftPos.el.value).toEqual('0');
+    expect(inputs.thumbLeftValue.el.value).toEqual('0');
 
     anchors[1].dispatchEvent(fakeClick);
-    expect(inputs.thumbLeftPos.el.value).toEqual('50');
+    expect(inputs.thumbLeftValue.el.value).toEqual('50');
 
     anchors[2].dispatchEvent(fakeClick);
-    expect(inputs.thumbLeftPos.el.value).toEqual('100');
+    expect(inputs.thumbLeftValue.el.value).toEqual('100');
   });
 
   it('Поменяем значение "range"', () => {
@@ -327,16 +327,16 @@ describe('При установке значения свойств програ
     expect(inputs.range.el.checked).toBeTrue();
   });
 
-  it('Поменяем значение "thumbRightPos"', () => {
-    slider.setOptions({ thumbRightPos: 75 });
-    if (inputs.thumbRightPos === null) throw new Error();
-    expect(inputs.thumbRightPos.el.value).toEqual('75');
+  it('Поменяем значение "thumbRightValue"', () => {
+    slider.setOptions({ thumbRightValue: 75 });
+    if (inputs.thumbRightValue === null) throw new Error();
+    expect(inputs.thumbRightValue.el.value).toEqual('75');
 
     anchors[1].dispatchEvent(fakeClick);
-    expect(inputs.thumbRightPos.el.value).toEqual('50');
+    expect(inputs.thumbRightValue.el.value).toEqual('50');
 
     anchors[2].dispatchEvent(fakeClick);
-    expect(inputs.thumbRightPos.el.value).toEqual('100');
+    expect(inputs.thumbRightValue.el.value).toEqual('100');
   });
 
   it('Поменяем значение "showScale"', () => {
@@ -357,13 +357,13 @@ describe('При установке значения свойств програ
     expect(inputs.hintAlwaysShow.el.checked).toBeFalse();
   });
 
-  it('Поменяем значение "partsNum"', () => {
-    slider.setOptions({ partsNum: 3 });
-    if (inputs.partsNum === null) throw new Error();
-    expect(inputs.partsNum.el.value).toEqual('3');
+  it('Поменяем значение "partsAmount"', () => {
+    slider.setOptions({ partsAmount: 3 });
+    if (inputs.partsAmount === null) throw new Error();
+    expect(inputs.partsAmount.el.value).toEqual('3');
 
-    slider.setOptions({ partsNum: 4 });
-    expect(inputs.partsNum.el.value).toEqual('4');
+    slider.setOptions({ partsAmount: 4 });
+    expect(inputs.partsAmount.el.value).toEqual('4');
   });
 
   it('Поменяем значение "hintAboveThumb"', () => {
@@ -501,76 +501,76 @@ describe('В поля ввода нельза ввести ошибочные д
     expect(inputs.angle.el.value).toEqual(value);
   });
 
-  it('Поменяем значение thumbLeftPos, оно не может выйти за пределы', () => {
+  it('Поменяем значение thumbLeftValue, оно не может выйти за пределы', () => {
     if (inputs.range === null) throw new Error();
 
     inputs.range.el.checked = false;
     inputs.range.el.dispatchEvent(fakeChange);
 
-    if (inputs.thumbLeftPos === null) throw new Error();
-    const { value } = inputs.thumbLeftPos.el;
+    if (inputs.thumbLeftValue === null) throw new Error();
+    const { value } = inputs.thumbLeftValue.el;
 
-    inputs.thumbLeftPos.el.value = '-10';
-    inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
-    expect(inputs.thumbLeftPos.el.value).toEqual(value);
+    inputs.thumbLeftValue.el.value = '-10';
+    inputs.thumbLeftValue.el.dispatchEvent(fakeChange);
+    expect(inputs.thumbLeftValue.el.value).toEqual(value);
 
-    inputs.thumbLeftPos.el.value = '10a';
-    inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
-    expect(inputs.thumbLeftPos.el.value).toEqual(value);
+    inputs.thumbLeftValue.el.value = '10a';
+    inputs.thumbLeftValue.el.dispatchEvent(fakeChange);
+    expect(inputs.thumbLeftValue.el.value).toEqual(value);
 
-    inputs.thumbLeftPos.el.value = '1000';
-    inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
-    expect(inputs.thumbLeftPos.el.value).toEqual('100');
+    inputs.thumbLeftValue.el.value = '1000';
+    inputs.thumbLeftValue.el.dispatchEvent(fakeChange);
+    expect(inputs.thumbLeftValue.el.value).toEqual('100');
 
-    slider.setOptions({ thumbLeftPos: value, thumbRightPos: 50, range: true });
-    inputs.thumbLeftPos.el.value = '51';
-    inputs.thumbLeftPos.el.dispatchEvent(fakeChange);
-    expect(inputs.thumbLeftPos.el.value).toEqual(value);
+    slider.setOptions({ thumbLeftValue: value, thumbRightValue: 50, range: true });
+    inputs.thumbLeftValue.el.value = '51';
+    inputs.thumbLeftValue.el.dispatchEvent(fakeChange);
+    expect(inputs.thumbLeftValue.el.value).toEqual(value);
   });
 
-  it('Поменяем значение thumbRightPos, оно не может выйти за пределы', () => {
-    slider.setOptions({ thumbLeftPos: 0, range: true });
-    if (inputs.thumbRightPos === null) throw new Error();
+  it('Поменяем значение thumbRightValue, оно не может выйти за пределы', () => {
+    slider.setOptions({ thumbLeftValue: 0, range: true });
+    if (inputs.thumbRightValue === null) throw new Error();
 
-    const { value } = inputs.thumbRightPos.el;
-    inputs.thumbRightPos.el.value = '-10';
-    inputs.thumbRightPos.el.dispatchEvent(fakeChange);
-    expect(inputs.thumbRightPos.el.value).toEqual(value);
+    const { value } = inputs.thumbRightValue.el;
+    inputs.thumbRightValue.el.value = '-10';
+    inputs.thumbRightValue.el.dispatchEvent(fakeChange);
+    expect(inputs.thumbRightValue.el.value).toEqual(value);
 
-    inputs.thumbRightPos.el.value = '1000';
-    inputs.thumbRightPos.el.dispatchEvent(fakeChange);
-    expect(inputs.thumbRightPos.el.value).toEqual('100');
+    inputs.thumbRightValue.el.value = '1000';
+    inputs.thumbRightValue.el.dispatchEvent(fakeChange);
+    expect(inputs.thumbRightValue.el.value).toEqual('100');
   });
 
-  it('Поменяем значение partsNum', () => {
+  it('Поменяем значение partsAmount', () => {
     if (inputs.range === null) throw new Error();
     inputs.range.el.dispatchEvent(fakeChange);
 
-    if (inputs.partsNum === null) throw new Error();
-    const { value } = inputs.partsNum.el;
-    inputs.partsNum.el.value = '-10';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
-    expect(inputs.partsNum.el.value).toEqual(value);
+    if (inputs.partsAmount === null) throw new Error();
+    const { value } = inputs.partsAmount.el;
+    inputs.partsAmount.el.value = '-10';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
+    expect(inputs.partsAmount.el.value).toEqual(value);
 
-    inputs.partsNum.el.value = '0';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
-    expect(inputs.partsNum.el.value).toEqual(value);
+    inputs.partsAmount.el.value = '0';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
+    expect(inputs.partsAmount.el.value).toEqual(value);
 
-    inputs.partsNum.el.value = '101';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
-    expect(inputs.partsNum.el.value).toEqual(value);
+    inputs.partsAmount.el.value = '101';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
+    expect(inputs.partsAmount.el.value).toEqual(value);
 
-    inputs.partsNum.el.value = '1n';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
-    expect(inputs.partsNum.el.value).toEqual(value);
+    inputs.partsAmount.el.value = '1n';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
+    expect(inputs.partsAmount.el.value).toEqual(value);
 
-    inputs.partsNum.el.value = 'a';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
-    expect(inputs.partsNum.el.value).toEqual(value);
+    inputs.partsAmount.el.value = 'a';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
+    expect(inputs.partsAmount.el.value).toEqual(value);
 
-    inputs.partsNum.el.value = '2.5';
-    inputs.partsNum.el.dispatchEvent(fakeChange);
-    expect(inputs.partsNum.el.value).toEqual(value);
+    inputs.partsAmount.el.value = '2.5';
+    inputs.partsAmount.el.dispatchEvent(fakeChange);
+    expect(inputs.partsAmount.el.value).toEqual(value);
   });
 });
 
@@ -631,14 +631,15 @@ describe('Реагирует на ручное изменение положен
           clientY: 0,
         });
 
-      if (inputs.thumbLeftPos === null) throw new Error();
+      if (inputs.thumbLeftValue === null) throw new Error();
 
       leftThumb.dispatchEvent(fakeMouseDown);
       const leftHint = hints[0];
 
-      expect(leftHint.textContent).toEqual(inputs.thumbLeftPos.el.value);
+      expect(leftHint.textContent).toEqual(inputs.thumbLeftValue.el.value);
       leftThumb.dispatchEvent(fakeMouseMove);
-      expect(slider.getOptions().thumbLeftPos).toEqual(Number(inputs.thumbLeftPos.el.value));
+      expect(slider.getOptions().thumbLeftValue)
+        .toEqual(Number(inputs.thumbLeftValue.el.value));
       leftThumb.dispatchEvent(fakeMouseUp);
     }
 
@@ -650,28 +651,28 @@ describe('Реагирует на ручное изменение положен
         clientY: 0,
       });
 
-      if (inputs.thumbRightPos === null) throw new Error();
+      if (inputs.thumbRightValue === null) throw new Error();
 
       rightThumb.dispatchEvent(fakeMouseDown);
       const rightHint = hints.length > 1 ? hints[1] : hints[0];
-      expect(rightHint.textContent).toEqual(inputs.thumbRightPos.el.value);
+      expect(rightHint.textContent).toEqual(inputs.thumbRightValue.el.value);
 
       rightThumb.dispatchEvent(fakeMouseMove);
-      expect(slider.getOptions().thumbRightPos).toEqual(Number(inputs.thumbRightPos.el.value));
+      expect(slider.getOptions().thumbRightValue).toEqual(Number(inputs.thumbRightValue.el.value));
       rightThumb.dispatchEvent(fakeMouseUp);
     }
   });
 
   it('При щелчке на якоре шкалы, бегунок двигается и значение соответствующего поля меняется', () => {
-    slider.setOptions({ partsNum: 4 });
+    slider.setOptions({ partsAmount: 4 });
     anchors[1].dispatchEvent(fakeClick);
 
-    if (inputs.thumbLeftPos === null) throw new Error();
-    expect(inputs.thumbLeftPos.el.value).toEqual('25');
+    if (inputs.thumbLeftValue === null) throw new Error();
+    expect(inputs.thumbLeftValue.el.value).toEqual('25');
 
-    if (inputs.thumbRightPos === null) throw new Error();
+    if (inputs.thumbRightValue === null) throw new Error();
     anchors[3].dispatchEvent(fakeClick);
-    expect(inputs.thumbRightPos.el.value).toEqual('75');
+    expect(inputs.thumbRightValue.el.value).toEqual('75');
   });
 });
 
@@ -740,15 +741,15 @@ describe('Данные баги более не возникают\n', () => {
     expect(inputs.min.el.value).toEqual('0.555');
 
     anchors[1].dispatchEvent(fakeClick);
-    if (inputs.thumbRightPos === null) throw new Error();
-    expect(inputs.thumbRightPos.el.value).toEqual('100.555');
+    if (inputs.thumbRightValue === null) throw new Error();
+    expect(inputs.thumbRightValue.el.value).toEqual('100.555');
   });
 
-  it(`При установке опции "range=false" значение поля "thumbRightPos" становится недоступным
+  it(`При установке опции "range=false" значение поля "thumbRightValue" становится недоступным
     для редактирования`, () => {
     slider.setOptions({ range: false });
-    if (inputs.thumbRightPos === null) throw new Error();
-    expect(inputs.thumbRightPos.el.disabled).toBeTrue();
+    if (inputs.thumbRightValue === null) throw new Error();
+    expect(inputs.thumbRightValue.el.disabled).toBeTrue();
   });
 
   it(`При выборе опции "hintAlwaysShow" опция "hintAboveThumb" должна быть недоступна для
@@ -762,7 +763,7 @@ describe('Данные баги более не возникают\n', () => {
   });
 
   it('При наложении бегунков одна из подсказок пропадает', () => {
-    slider.setOptions({ min: 0, thumbLeftPos: 0 });
+    slider.setOptions({ min: 0, thumbLeftValue: 0 });
 
     if (inputs.max === null) throw new Error();
     inputs.max.el.value = '6';
@@ -772,9 +773,9 @@ describe('Данные баги более не возникают\n', () => {
     inputs.step.el.value = '1';
     inputs.step.el.dispatchEvent(fakeChange);
 
-    if (inputs.thumbRightPos === null) throw new Error();
-    inputs.thumbRightPos.el.value = '1';
-    inputs.thumbRightPos.el.dispatchEvent(fakeChange);
+    if (inputs.thumbRightValue === null) throw new Error();
+    inputs.thumbRightValue.el.value = '1';
+    inputs.thumbRightValue.el.dispatchEvent(fakeChange);
 
     if (inputs.min === null) throw new Error();
     inputs.min.el.value = '1';

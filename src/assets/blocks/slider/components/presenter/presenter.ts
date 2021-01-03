@@ -71,14 +71,14 @@ export class Presenter extends EventObserver implements ISubscriber {
 
     this.addSubscriber('rerenderScale', this.view);
 
-    model.addSubscriber('partsNum', this);
+    model.addSubscriber('partsAmount', this);
     // model.addSubscriber('alternativeRange', this);
     // не требуется, т.к. автоматически меняются min, max
     model.addSubscriber('min', this);
     model.addSubscriber('max', this);
     model.addSubscriber('step', this);
-    model.addSubscriber('thumbLeftPos', this);
-    model.addSubscriber('thumbRightPos', this);
+    model.addSubscriber('thumbLeftValue', this);
+    model.addSubscriber('thumbRightValue', this);
     model.addSubscriber('range', this);
     model.addSubscriber('precision', this);
 
@@ -150,33 +150,33 @@ export class Presenter extends EventObserver implements ISubscriber {
       const { thumbLeft } = view.thumbs;
       view.moveThumbToPos(
         thumbLeft,
-        model.findArgument(modelOptions.thumbLeftPos),
+        model.findArgument(modelOptions.thumbLeftValue),
       );
 
       if (model.getOptions().range) {
         const { thumbRight } = view.thumbs;
-        view.moveThumbToPos(thumbRight, model.findArgument(modelOptions.thumbRightPos));
+        view.moveThumbToPos(thumbRight, model.findArgument(modelOptions.thumbRightValue));
       }
       this.scaleValues();
     } else if (data.event === 'step') {
       const step = modelOptions.step / (modelOptions.max - modelOptions.min);
       view.setOptions({ step });
-    } else if (data.event === 'partsNum') {
-      view.setOptions({ partsNum: modelOptions.partsNum });
-    } else if (data.event === 'thumbLeftPos') {
+    } else if (data.event === 'partsAmount') {
+      view.setOptions({ partsAmount: modelOptions.partsAmount });
+    } else if (data.event === 'thumbLeftValue') {
       if (data.method === 'setThumbsPos') {
         return this.broadcast(data);
       }
 
       const { thumbLeft } = view.thumbs;
       view.moveThumbToPos(thumbLeft, model.findArgument(data.value));
-    } else if (data.event === 'thumbRightPos') {
+    } else if (data.event === 'thumbRightValue') {
       if (data.method === 'setThumbsPos') {
         return this.broadcast(data);
       }
 
       const { thumbRight } = view.thumbs;
-      if (modelOptions.thumbRightPos === Infinity) return;
+      if (modelOptions.thumbRightValue === Infinity) return;
       view.moveThumbToPos(thumbRight, model.findArgument(data.value));
     } else if (data.event === 'range') {
       view.setOptions({ range: data.value });
@@ -226,12 +226,12 @@ export class Presenter extends EventObserver implements ISubscriber {
 
     view.setHintValue(
       view.thumbs.thumbLeft,
-      this.recountValue(modelOptions.thumbLeftPos),
+      this.recountValue(modelOptions.thumbLeftValue),
     );
 
     view.setHintValue(
       view.thumbs.thumbRight,
-      this.recountValue(modelOptions.thumbRightPos),
+      this.recountValue(modelOptions.thumbRightValue),
     );
 
     const { precision } = modelOptions;

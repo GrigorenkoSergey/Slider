@@ -17,8 +17,8 @@ type StepChange = {
   value: number,
 }
 
-type PartsNumChange = {
-  event: 'partsNum',
+type partsAmountChange = {
+  event: 'partsAmount',
   value: number,
 }
 
@@ -78,14 +78,14 @@ type AnchorClick = {
 }
 
 // Only Model
-type ThumbLeftPosChange = {
-  event: 'thumbLeftPos',
+type thumbLeftValueChange = {
+  event: 'thumbLeftValue',
   value: number,
   method: 'setThumbsPos' | 'setOptions'
 }
 
-type ThumbRightPosChange = {
-  event: 'thumbRightPos',
+type thumbRightValueChange = {
+  event: 'thumbRightValue',
   value: number,
   method: 'setThumbsPos' | 'setOptions'
 }
@@ -115,9 +115,9 @@ type OnChangeInitType = {
   cause: string,
 }
 
-export type SliderEvents = AngleChange | PartsNumChange | HintAboveThumbChange |
+export type SliderEvents = AngleChange | partsAmountChange | HintAboveThumbChange |
  RangeChange | HintAlwaysShowChange | ThumbMouseDown | ThumbMouseMove |
  ThumbMouseUp | ThumbProgramMove | RerenderScale | AnchorClick | StepChange |
-  SelectorChange | ClassNameChange | ShowScaleChange | ThumbLeftPosChange |
-  ThumbRightPosChange | AlternativeRangeChange | MinChange | MaxChange |
+  SelectorChange | ClassNameChange | ShowScaleChange | thumbLeftValueChange |
+  thumbRightValueChange | AlternativeRangeChange | MinChange | MaxChange |
   PrecisionChange | OnChangeInitType

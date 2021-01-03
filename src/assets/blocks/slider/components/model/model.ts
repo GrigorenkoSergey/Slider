@@ -27,7 +27,7 @@ export default class Model extends EventObserver {
         }
         return 1;
       },
-      thumbLeftPos: () => {
+      thumbLeftValue: () => {
         let result = 0;
         if (optionsCopy.min !== undefined) {
           result = optionsCopy.min;
@@ -39,8 +39,8 @@ export default class Model extends EventObserver {
     if (!('step' in optionsCopy)) {
       optionsCopy.step = defaultDependentOptions.step();
     }
-    if (!('thumbLeftPos' in optionsCopy)) {
-      optionsCopy.thumbLeftPos = defaultDependentOptions.thumbLeftPos();
+    if (!('thumbLeftValue' in optionsCopy)) {
+      optionsCopy.thumbLeftValue = defaultDependentOptions.thumbLeftValue();
     }
 
     this.setOptions(optionsCopy);
@@ -56,8 +56,8 @@ export default class Model extends EventObserver {
     const { options } = this;
 
     const keys = makeUA<keyof ModelOptions>()(
-      'min', 'max', 'step', 'partsNum',
-      'thumbLeftPos', 'thumbRightPos', 'precision',
+      'min', 'max', 'step', 'partsAmount',
+      'thumbLeftValue', 'thumbRightValue', 'precision',
     );
 
     keys.forEach((key) => {
@@ -85,11 +85,11 @@ export default class Model extends EventObserver {
         this.broadcast({ event: 'range', value: Boolean(tempObj[key]) });
       } else if (key === 'min' || key === 'max') {
         this.broadcast({ event: key, value: Number(tempObj[key]) });
-      } else if (key === 'precision' || key === 'partsNum') {
+      } else if (key === 'precision' || key === 'partsAmount') {
         this.broadcast({ event: key, value: Number(tempObj[key]) });
-      } else if (key === 'step' || key === 'thumbLeftPos') {
+      } else if (key === 'step' || key === 'thumbLeftValue') {
         this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
-      } else if (key === 'thumbRightPos') {
+      } else if (key === 'thumbRightValue') {
         this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
       }
     });
@@ -100,30 +100,30 @@ export default class Model extends EventObserver {
   setThumbsPos(opts: { left?: number, right?: number }): Model {
     const { options, validator } = this;
     const {
-      left = options.thumbLeftPos,
-      right = options.thumbRightPos,
+      left = options.thumbLeftValue,
+      right = options.thumbRightValue,
     } = opts;
 
     if ('left' in opts) {
-      const res = validator.validate({ thumbLeftPos: left }).thumbLeftPos;
+      const res = validator.validate({ thumbLeftValue: left }).thumbLeftValue;
       if (res !== undefined) {
-        options.thumbLeftPos = res;
+        options.thumbLeftValue = res;
 
         this.broadcast({
-          event: 'thumbLeftPos',
-          value: options.thumbLeftPos,
+          event: 'thumbLeftValue',
+          value: options.thumbLeftValue,
           method: 'setThumbsPos',
         });
       }
     }
 
     if ('right' in opts) {
-      const res = validator.validate({ thumbRightPos: right }).thumbRightPos;
+      const res = validator.validate({ thumbRightValue: right }).thumbRightValue;
       if (res !== undefined) {
-        options.thumbRightPos = res;
+        options.thumbRightValue = res;
         this.broadcast({
-          event: 'thumbRightPos',
-          value: options.thumbRightPos,
+          event: 'thumbRightValue',
+          value: options.thumbRightValue,
           method: 'setThumbsPos',
         });
       }

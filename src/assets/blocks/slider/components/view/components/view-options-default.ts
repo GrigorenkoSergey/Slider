@@ -9,7 +9,7 @@ const VIEW_OPTIONS_DEFAULT: Required<ViewOptions> = {
   hintAboveThumb: true,
   hintAlwaysShow: false,
   showScale: true,
-  partsNum: 2,
+  partsAmount: 2,
 };
 
 export { VIEW_OPTIONS_DEFAULT };

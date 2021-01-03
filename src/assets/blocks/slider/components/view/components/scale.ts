@@ -26,7 +26,7 @@ export default class Scale extends EventObserver {
 
   private init(): void {
     const { view } = this;
-    const propsToSubscribe = ['showScale', 'step', 'partsNum', 'angle'];
+    const propsToSubscribe = ['showScale', 'step', 'partsAmount', 'angle'];
     propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
 
     this.width = view.el.clientWidth - view.thumbs.thumbLeft.offsetWidth;
@@ -36,7 +36,7 @@ export default class Scale extends EventObserver {
   update(data: SliderEvents): void {
     if (data.event === 'showScale') {
       this.handleShowScaleChange();
-    } else if (data.event === 'partsNum') {
+    } else if (data.event === 'partsAmount') {
       this.setMilestones();
     } else if (data.event === 'step') {
       this.setMilestones();
@@ -63,7 +63,7 @@ export default class Scale extends EventObserver {
 
   setMilestones(values?: number[]): void {
     const { view, anchors, el } = this;
-    const { step, partsNum } = view.getOptions();
+    const { step, partsAmount } = view.getOptions();
 
     anchors.forEach((item) => item.remove());
     anchors.length = 0;
@@ -71,8 +71,8 @@ export default class Scale extends EventObserver {
     if (!values) {
       this.parts.length = 0;
 
-      for (let i = 1; i < view.getOptions().partsNum; i += 1) {
-        let value = Math.round(i / partsNum / step) * step;
+      for (let i = 1; i < view.getOptions().partsAmount; i += 1) {
+        let value = Math.round(i / partsAmount / step) * step;
         value = Math.min(1, value);
 
         this.parts.push(value);

@@ -8,13 +8,13 @@ const sliderOptions: SliderOptions[] = [
     min: 1000000,
     max: 6000000,
     step: 1,
-    thumbLeftPos: 3322695,
-    thumbRightPos: 4865248,
+    thumbLeftValue: 3322695,
+    thumbRightValue: 4865248,
     selector: '.js-slider_test_A',
     range: true,
     hintAboveThumb: true,
     hintAlwaysShow: true,
-    partsNum: 2,
+    partsAmount: 2,
   },
 
   {
@@ -26,8 +26,8 @@ const sliderOptions: SliderOptions[] = [
     range: true,
     hintAboveThumb: true,
     hintAlwaysShow: true,
-    thumbLeftPos: 800,
-    thumbRightPos: 935,
+    thumbLeftValue: 800,
+    thumbRightValue: 935,
   },
   {
     alternativeRange: [
@@ -39,7 +39,7 @@ const sliderOptions: SliderOptions[] = [
     range: true,
     hintAboveThumb: true,
     hintAlwaysShow: true,
-    thumbLeftPos: 8,
+    thumbLeftValue: 8,
     precision: 1,
   },
 ];

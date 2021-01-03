@@ -7,5 +7,5 @@ export type ViewOptions = {
   hintAboveThumb?: boolean,
   hintAlwaysShow?: boolean,
   showScale?: boolean,
-  partsNum?: number,
+  partsAmount?: number,
 }

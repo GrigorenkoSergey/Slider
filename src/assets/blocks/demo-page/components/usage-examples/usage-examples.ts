@@ -31,8 +31,8 @@ sliderD.setOptions({ max: textContent.length });
 sliderD.onChange({
   callback: () => {
     const options = sliderD.getOptions();
-    const resLeft = Math.round(options.thumbLeftPos);
-    const resRight = Math.round(options.thumbRightPos);
+    const resLeft = Math.round(options.thumbLeftValue);
+    const resRight = Math.round(options.thumbRightValue);
     text.textContent = textContent.slice(resLeft, resRight);
   },
 });

@@ -86,12 +86,12 @@ export default class BindedInput extends EventObserver {
       this.broadcast({ event: prop, value: Boolean(value) });
     } else if (prop === 'min' || prop === 'max') {
       this.broadcast({ event: prop, value: Number(value) });
-    } else if (prop === 'angle' || prop === 'partsNum') {
+    } else if (prop === 'angle' || prop === 'partsAmount') {
       this.broadcast({ event: prop, value: Number(value) });
     } else if (prop === 'precision' || prop === 'step') {
       this.broadcast({ event: prop, value: Number(value) });
-    } else if (prop === 'thumbLeftPos' || prop === 'thumbRightPos') {
-      this.broadcast({ event: 'thumbLeftPos', value: Number(value), method: 'setOptions' });
+    } else if (prop === 'thumbLeftValue' || prop === 'thumbRightValue') {
+      this.broadcast({ event: 'thumbLeftValue', value: Number(value), method: 'setOptions' });
     }
   }
 }

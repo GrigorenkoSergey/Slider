@@ -87,8 +87,8 @@ export default class View extends EventObserver implements ISubscriber {
     if (options.range !== undefined) {
       expectant.range = options.range;
     }
-    if (options.partsNum !== undefined) {
-      expectant.partsNum = options.partsNum;
+    if (options.partsAmount !== undefined) {
+      expectant.partsAmount = options.partsAmount;
     }
     if (options.hintAlwaysShow !== undefined) {
       expectant.hintAlwaysShow = options.hintAlwaysShow;
@@ -111,7 +111,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     Object.entries(expectant).forEach(([prop, value]) => {
       if (prop in expectant) {
-        if (prop === 'angle' || prop === 'partsNum') {
+        if (prop === 'angle' || prop === 'partsAmount') {
           this.broadcast({ event: prop, value: Number(value) });
         } else if (prop === 'step') {
           this.broadcast({ event: prop, value: Number(value) });
