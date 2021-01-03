@@ -48,8 +48,8 @@ export class Presenter extends EventObserver implements ISubscriber {
 
     // step у View относительный, поэтому переделаем его
     const { step, max, min } = model.getOptions();
-    const ViewStep = step / (max - min);
-    const normalizedToView = this.normalizer.normalizeViewOptions({ ...options, step: ViewStep });
+    const viewStep = step / (max - min);
+    const normalizedToView = this.normalizer.normalizeViewOptions({ ...options, step: viewStep });
 
     this.view = new View(normalizedToView);
     const { view } = this;
@@ -163,16 +163,14 @@ export class Presenter extends EventObserver implements ISubscriber {
       view.setOptions({ partsNum: modelOptions.partsNum });
     } else if (data.event === 'thumbLeftPos') {
       if (data.method === 'setThumbsPos') {
-        this.broadcast(data);
-        return;
+        return this.broadcast(data);
       }
 
       const { thumbLeft } = view.thumbs;
       view.moveThumbToPos(thumbLeft, model.findArgument(data.value));
     } else if (data.event === 'thumbRightPos') {
       if (data.method === 'setThumbsPos') {
-        this.broadcast(data);
-        return;
+        return this.broadcast(data);
       }
 
       const { thumbRight } = view.thumbs;
