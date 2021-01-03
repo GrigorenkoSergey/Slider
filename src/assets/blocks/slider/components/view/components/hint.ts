@@ -22,6 +22,8 @@ export default class Hint extends EventObserver {
     const { view, el } = this;
     el.classList.add(`${view.getOptions().className}__hint`);
 
+    el.addEventListener('mousedown', this.handleMouseDown);
+
     if (view.getOptions().hintAlwaysShow) {
       this.showHint();
     }
@@ -58,5 +60,10 @@ export default class Hint extends EventObserver {
     const transformation = `rotate(-${angle}deg)`;
     style.transform = transformation;
     style.transformOrigin = 'left';
+  }
+
+  private handleMouseDown(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
