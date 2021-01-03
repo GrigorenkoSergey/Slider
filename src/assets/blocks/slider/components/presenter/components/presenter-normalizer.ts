@@ -1,6 +1,5 @@
 import { ModelOptions } from '../../model/components/model-types';
 import { ViewOptions } from '../../view/components/view-types';
-import { PresenterOptions } from './presenter-types';
 
 type NumberProps = 'max' | 'min' | 'step' | 'partsNum' | 'thumbLeftPos' |
   'thumbRightPos' | 'precision' | 'angle';
@@ -8,6 +7,8 @@ type NumberProps = 'max' | 'min' | 'step' | 'partsNum' | 'thumbLeftPos' |
 type BooleanProps = 'range' | 'hintAlwaysShow' | 'hintAboveThumb' | 'showScale';
 type StringProps = 'className' | 'selector';
 type StringArrayProps = 'alternativeRange';
+
+type SummaryOptions = ModelOptions & ViewOptions;
 
 export class PresenterNormalizer {
   normalizeModelOptions(opts: ModelOptions): ModelOptions {
@@ -78,7 +79,7 @@ export class PresenterNormalizer {
     return result;
   }
 
-  private handleNumberTypeProp(prop: NumberProps, obj: PresenterOptions): number {
+  private handleNumberTypeProp(prop: NumberProps, obj: SummaryOptions): number {
     let value = obj[prop];
     value = Number(value);
 
@@ -88,7 +89,7 @@ export class PresenterNormalizer {
     return value;
   }
 
-  private handleStringTypeProp(prop: StringProps, obj: PresenterOptions): string {
+  private handleStringTypeProp(prop: StringProps, obj: SummaryOptions): string {
     const value = obj[prop];
     if (typeof value !== 'string') {
       throw new Error(`"${prop}" should be a string!`);
@@ -96,7 +97,7 @@ export class PresenterNormalizer {
     return value;
   }
 
-  private handleBooleanTypeProp(prop: BooleanProps, obj: PresenterOptions): boolean {
+  private handleBooleanTypeProp(prop: BooleanProps, obj: SummaryOptions): boolean {
     const value = obj[prop];
     if (typeof value !== 'boolean') {
       throw new Error(`"${prop}" should be a boolean!`);
@@ -104,7 +105,7 @@ export class PresenterNormalizer {
     return value;
   }
 
-  private handleStringArrayTypeProp(prop: StringArrayProps, obj: PresenterOptions): string[] {
+  private handleStringArrayTypeProp(prop: StringArrayProps, obj: SummaryOptions): string[] {
     const value = obj[prop];
 
     if (!(Array.isArray(value))) {

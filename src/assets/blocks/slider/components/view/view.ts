@@ -3,6 +3,8 @@ import { SliderEvents } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
 
 import { ViewOptions } from './components/view-types';
+import { VIEW_OPTIONS_DEFAULT } from './components/view-options-default';
+
 import Stretcher from './components/stretcher';
 import Scale from './components/scale';
 import Thumbs from './components/thumbs';
@@ -11,17 +13,7 @@ import Hint from './components/hint';
 export default class View extends EventObserver implements ISubscriber {
   readonly el: HTMLDivElement = document.createElement('div');
 
-  private options: Required<ViewOptions> = {
-    className: 'slider',
-    selector: '',
-    angle: 0,
-    step: 1 / 100, // 0 < step <= 1
-    range: false,
-    hintAboveThumb: true,
-    hintAlwaysShow: false,
-    showScale: true,
-    partsNum: 2,
-  }
+  private options = { ...VIEW_OPTIONS_DEFAULT };
 
   private hints: Hint[];
 

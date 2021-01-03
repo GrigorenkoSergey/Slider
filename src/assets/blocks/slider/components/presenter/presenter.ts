@@ -5,12 +5,14 @@ import { SliderEvents, ThumbProgramMove } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
 
 import { ModelOptions } from '../model/components/model-types';
+import { isModelOptions } from '../model/components/model-type-guards';
 import Model from '../model/model';
+
 import { ViewOptions } from '../view/components/view-types';
+import { isViewOptions } from '../view/components/view-type-guards';
 import View from '../view/view';
 
 import { PresenterNormalizer } from './components/presenter-normalizer';
-import { isPresenterOptions } from './components/presenter-types';
 
 type SummaryOptions = Required<ModelOptions & ViewOptions>
 
@@ -37,7 +39,7 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   private init(options: unknown): { model: Model, view: View } {
-    if (!isPresenterOptions(options)) {
+    if (!isModelOptions(options) && !isViewOptions(options)) {
       throw new Error('No slider options in options');
     }
 
@@ -88,7 +90,7 @@ export class Presenter extends EventObserver implements ISubscriber {
   }
 
   setOptions(options: unknown): this {
-    if (!isPresenterOptions(options)) {
+    if (!isModelOptions(options) && !isViewOptions(options)) {
       throw new Error('No slider options in options');
     }
 

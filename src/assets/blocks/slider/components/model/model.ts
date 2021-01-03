@@ -2,19 +2,10 @@ import EventObserver from '../../../helpers/event-observer';
 import { makeUA } from '../../../helpers/functions/make-ua';
 import { ModelValidator } from './components/model-validator';
 import { ModelOptions } from './components/model-types';
+import { MODEL_OPTIONS_DEFAULT } from './components/model-options-default';
 
 export default class Model extends EventObserver {
-  private options: Required<ModelOptions> = {
-    min: 0,
-    max: 100,
-    step: 1,
-    partsNum: 2,
-    thumbLeftPos: 0,
-    thumbRightPos: Infinity,
-    range: false,
-    precision: 0,
-    alternativeRange: [],
-  }
+  private options = { ...MODEL_OPTIONS_DEFAULT };
 
   private validator: ModelValidator;
 
