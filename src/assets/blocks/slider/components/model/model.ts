@@ -82,35 +82,7 @@ export default class Model extends EventObserver {
 
     tempObj = this.validator.validate(tempObj);
     this.options = { ...options, ...tempObj };
-
-    Object.keys(tempObj).forEach((key) => {
-      switch (key) {
-        case ('min'):
-        case ('max'):
-        case ('step'):
-        case ('partsAmount'):
-        case ('precision'):
-          return this.broadcast({ event: key, value: Number(tempObj[key]) });
-
-        case ('thumbLeftValue'):
-        case ('thumbRightValue'):
-          return this.broadcast({ event: key, value: Number(tempObj[key]), method: 'setOptions' });
-
-        case ('range'):
-          return this.broadcast({ event: key, value: Boolean(tempObj[key]) });
-
-        case ('alternativeRange'): {
-          const valueArray = tempObj[key];
-          if (valueArray === undefined) {
-            throw new Error('You should set alternativeRange value!');
-          }
-          return this.broadcast({ event: key, value: valueArray });
-        }
-
-        default:
-          throw new Error(`You forget to handle "${key}" option in model`);
-      }
-    });
+    this.broadcastChanges(tempObj);
 
     return this;
   }
@@ -158,5 +130,36 @@ export default class Model extends EventObserver {
   findArgument(y: number): number { // y = f(x), here we find 'x'
     const { min, max } = this.options;
     return (y - min) / (max - min);
+  }
+
+  private broadcastChanges(options: ModelOptions): void {
+    Object.keys(options).forEach((key) => {
+      switch (key) {
+        case ('min'):
+        case ('max'):
+        case ('step'):
+        case ('partsAmount'):
+        case ('precision'):
+          return this.broadcast({ event: key, value: Number(options[key]) });
+
+        case ('thumbLeftValue'):
+        case ('thumbRightValue'):
+          return this.broadcast({ event: key, value: Number(options[key]), method: 'setOptions' });
+
+        case ('range'):
+          return this.broadcast({ event: key, value: Boolean(options[key]) });
+
+        case ('alternativeRange'): {
+          const valueArray = options[key];
+          if (valueArray === undefined) {
+            throw new Error('You should set alternativeRange value!');
+          }
+          return this.broadcast({ event: key, value: valueArray });
+        }
+
+        default:
+          throw new Error(`You forget to handle "${key}" option in model`);
+      }
+    });
   }
 }
