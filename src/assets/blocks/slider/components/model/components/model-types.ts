@@ -4,7 +4,7 @@ export type ModelOptions = {
   step?: number,
   partsAmount?: number,
   thumbLeftValue?: number,
-  thumbRightValue?: number,
+  thumbRightValue?: number | null,
   range?: boolean,
   precision?: number,
   alternativeRange?: string[],

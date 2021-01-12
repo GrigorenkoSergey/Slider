@@ -68,15 +68,15 @@ describe('Model\n', () => {
     });
 
     it(`При изменении свойства "range" свойство "thumbRightValue" автоматически
-    становится равным "Infinity"`, () => {
+    становится равным "null"`, () => {
       const model = new Model({ min: -200, max: 100 });
-      expect(model.getOptions().thumbRightValue).toEqual(Infinity);
+      expect(model.getOptions().thumbRightValue).toEqual(null);
 
       model.setOptions({ range: true });
       expect(model.getOptions().thumbRightValue).toEqual(100);
 
       model.setOptions({ range: false });
-      expect(model.getOptions().thumbRightValue).toEqual(Infinity);
+      expect(model.getOptions().thumbRightValue).toEqual(null);
     });
 
     it(`Свойства "thumbLeftValue" и "thumbRightValue" не могут 

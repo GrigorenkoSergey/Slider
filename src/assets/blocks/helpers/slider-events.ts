@@ -86,7 +86,7 @@ type thumbLeftValueChange = {
 
 type thumbRightValueChange = {
   event: 'thumbRightValue',
-  value: number,
+  value: number | null,
   method: 'setThumbsPos' | 'setOptions'
 }
 

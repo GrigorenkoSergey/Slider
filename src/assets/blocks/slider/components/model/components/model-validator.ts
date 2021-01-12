@@ -40,7 +40,13 @@ export class ModelValidator {
           case 'min':
           case 'max':
           case 'step':
-          case 'thumbLeftValue':
+          case 'thumbLeftValue': {
+            const value = modifiedObj[prop];
+            if (value !== undefined) {
+              this[prop](value);
+            }
+          }
+            break;
           case 'thumbRightValue': {
             const value = modifiedObj[prop];
             if (value !== undefined) {
@@ -146,7 +152,7 @@ export class ModelValidator {
       modifiedObj.thumbLeftValue = Number(Number(val).toFixed(precision));
     }
 
-    if (val > thumbRightValue) {
+    if (thumbRightValue !== null && val > thumbRightValue) {
       if ('thumbRightValue' in originObj) {
         throw new Error('"thumbRightValue" should be > "min"!');
       }
@@ -186,7 +192,7 @@ export class ModelValidator {
       if ('thumbLeftValue' in originObj) {
         throw new Error('"thumbLeftValue" should be <= "max"!');
       }
-      if (thumbRightValue !== Infinity) {
+      if (thumbRightValue !== null) {
         modifiedObj.thumbLeftValue = min;
         modifiedObj.thumbRightValue = Number(Number(val).toFixed(precision));
       } else {
@@ -194,7 +200,7 @@ export class ModelValidator {
       }
     }
 
-    if (thumbRightValue !== Infinity && thumbRightValue > val) {
+    if (thumbRightValue !== null && thumbRightValue > val) {
       if ('thumbRightValue' in originObj) {
         throw new Error('"thumbRightValue should be <= "max"!');
       }
@@ -235,10 +241,10 @@ export class ModelValidator {
     const { modifiedObj } = this;
     const { thumbRightValue, max } = { ...this.model.getOptions(), ...modifiedObj };
 
-    if (val && thumbRightValue === Infinity) {
+    if (val && thumbRightValue === null) {
       modifiedObj.thumbRightValue = max;
     } else if (!val) {
-      modifiedObj.thumbRightValue = Infinity;
+      modifiedObj.thumbRightValue = null;
     }
 
     modifiedObj.range = val;
@@ -250,7 +256,7 @@ export class ModelValidator {
       thumbRightValue, min, max, precision, step,
     } = { ...this.model.getOptions(), ...modifiedObj };
 
-    if (thumbRightValue < val) {
+    if (thumbRightValue !== null && thumbRightValue < val) {
       throw new Error('"thumbLeftValue" should be <= than "thumbRightValue"');
     }
 
@@ -261,14 +267,16 @@ export class ModelValidator {
     );
   }
 
-  private thumbRightValue(val: number): void {
+  private thumbRightValue(val: number | null): void {
+    if (val === null) return;
+
     const { modifiedObj } = this;
     const {
       range, max, step, min,
     } = { ...this.model.getOptions(), ...modifiedObj };
 
     if (!range) {
-      modifiedObj.thumbRightValue = Infinity;
+      modifiedObj.thumbRightValue = null;
       return;
     }
 

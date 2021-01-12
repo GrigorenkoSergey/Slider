@@ -31,6 +31,8 @@ sliderD.setOptions({ max: textContent.length });
 sliderD.onChange({
   callback: () => {
     const options = sliderD.getOptions();
+    if (options.thumbRightValue === null) throw new Error();
+
     const resLeft = Math.round(options.thumbLeftValue);
     const resRight = Math.round(options.thumbRightValue);
     text.textContent = textContent.slice(resLeft, resRight);

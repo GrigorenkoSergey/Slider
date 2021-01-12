@@ -155,7 +155,9 @@ export class Presenter extends EventObserver implements ISubscriber {
 
       if (model.getOptions().range) {
         const { thumbRight } = view.thumbs;
-        view.moveThumbToPos(thumbRight, model.findArgument(modelOptions.thumbRightValue));
+        if (modelOptions.thumbRightValue !== null) {
+          view.moveThumbToPos(thumbRight, model.findArgument(modelOptions.thumbRightValue));
+        }
       }
       this.scaleValues();
     } else if (data.event === 'step') {
@@ -176,7 +178,7 @@ export class Presenter extends EventObserver implements ISubscriber {
       }
 
       const { thumbRight } = view.thumbs;
-      if (modelOptions.thumbRightValue === Infinity) return;
+      if (modelOptions.thumbRightValue === null || data.value === null) return;
       view.moveThumbToPos(thumbRight, model.findArgument(data.value));
     } else if (data.event === 'range') {
       view.setOptions({ range: data.value });
@@ -229,10 +231,12 @@ export class Presenter extends EventObserver implements ISubscriber {
       this.recountValue(modelOptions.thumbLeftValue),
     );
 
-    view.setHintValue(
-      view.thumbs.thumbRight,
-      this.recountValue(modelOptions.thumbRightValue),
-    );
+    if (modelOptions.thumbRightValue !== null) {
+      view.setHintValue(
+        view.thumbs.thumbRight,
+        this.recountValue(modelOptions.thumbRightValue),
+      );
+    }
 
     const { precision } = modelOptions;
     const { scale } = view;

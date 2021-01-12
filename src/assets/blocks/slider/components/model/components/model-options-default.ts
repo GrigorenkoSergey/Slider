@@ -6,7 +6,7 @@ const MODEL_OPTIONS_DEFAULT: Required<ModelOptions> = {
   step: 1,
   partsAmount: 2,
   thumbLeftValue: 0,
-  thumbRightValue: Infinity,
+  thumbRightValue: null,
   range: false,
   precision: 0,
   alternativeRange: [],

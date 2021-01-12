@@ -61,8 +61,11 @@ export default class Model extends EventObserver {
         case ('step'):
         case ('partsAmount'):
         case ('thumbLeftValue'):
-        case ('thumbRightValue'):
         case ('precision'):
+          tempObj[key] = expectant[key];
+          break;
+
+        case ('thumbRightValue'):
           tempObj[key] = expectant[key];
           break;
 
