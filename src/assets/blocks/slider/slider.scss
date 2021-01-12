@@ -20,7 +20,7 @@
     border-radius: 50%;
     position: absolute;
     top: -6px;
-    cursor: move;
+    cursor: grab;
     z-index: 1000;
 
     &_side_left {
@@ -29,6 +29,10 @@
 
     &_side_right {
       right: 0;
+    }
+
+    &_moving {
+      cursor: grabbing;
     }
 
     &_moving::after {
