@@ -31,7 +31,6 @@
 |   |   |   ├── helpers
 |   |   |   │   ├── functions
 |   |   |   │   │   └── is-increasing-sequence.ts
-|   |   |   │   ├── debugger-point.ts
 |   |   |   │   ├── event-observer.ts
 |   |   |   │   ├── interfaces.ts
 |   |   |   │   └── slider-events.ts
