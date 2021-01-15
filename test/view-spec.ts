@@ -2,6 +2,9 @@
 import View from '../src/assets/blocks/slider/components/view/view';
 import '../src/assets/blocks/slider/slider.scss';
 
+const body = document.getElementsByTagName('body')[0];
+body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
+
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.className = 'divViewSpec';
@@ -74,7 +77,8 @@ describe('Позволяет пользователю взаимодейство
     const leftThumb = div.querySelector('[class*=left]');
     if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - leftThumb.offsetWidth;
 
     const { step } = view.getOptions();
 
@@ -104,7 +108,8 @@ describe('Позволяет пользователю взаимодейство
     const rightThumb = div.querySelector('[class*=right]');
     if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - rightThumb.offsetWidth;
 
     const { step } = view.getOptions();
 
@@ -137,7 +142,8 @@ describe('Позволяет пользователю взаимодейство
     const rightThumb = div.querySelector('[class*=right]');
     if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - rightThumb.offsetWidth;
 
     let startTop: number;
 
@@ -183,7 +189,8 @@ describe('Позволяет пользователю взаимодейство
     const rightThumb = div.querySelector('[class*=right]');
     if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = div.clientWidth - rightThumb.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - rightThumb.offsetWidth;
 
     const highLimit = leftThumb.getBoundingClientRect().top;
     const lowLimit = rightThumb.getBoundingClientRect().top;
@@ -196,8 +203,8 @@ describe('Позволяет пользователю взаимодейство
     let pos = leftThumb.getBoundingClientRect();
     expect(pos.left).toEqual(leftLimit);
     expect(pos.right).toEqual(rightLimit);
-    expect(pos.top - startTop)
-      .toEqual(parseFloat(getComputedStyle(leftThumb).left));
+    expect(Math.round(pos.top - startTop))
+      .toEqual(Math.round(parseFloat(getComputedStyle(leftThumb).left)));
 
     // проверим поведение верхнего бегунка (левого)
     startTop = lowLimit;
@@ -205,8 +212,9 @@ describe('Позволяет пользователю взаимодейство
     pos = rightThumb.getBoundingClientRect();
     expect(pos.left).toEqual(leftLimit);
     expect(pos.right).toEqual(rightLimit);
-    expect(startTop - pos.top)
-      .toEqual(parseFloat(getComputedStyle(leftThumb).left));
+
+    expect(Math.round(startTop - pos.top))
+      .toEqual(Math.round(parseFloat(getComputedStyle(leftThumb).left)));
   });
 
   it('Бегунки располагаются согласно шагу и могут совпадать', () => {
@@ -384,19 +392,17 @@ describe('Также присутствует интерактивная шка�
         .toEqual(scale.width);
 
       anchors[1].dispatchEvent(fakeMouseClick);
-      let thumbRect = leftThumb.getBoundingClientRect();
-      let thumbCenter = (thumbRect.right - thumbRect.left) / 2 + thumbRect.left;
-      let anchorRect = anchors[1].getBoundingClientRect();
-      let anchorCenter = (anchorRect.right - anchorRect.left) / 2 + anchorRect.left;
-      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorCenter));
+      let expectingLeft = Math.round(scale.parts[1] * scale.width);
+      let currentLeft = Math.round(parseFloat(getComputedStyle(leftThumb).left));
+      expect(currentLeft).toEqual(expectingLeft);
+
       anchors[0].dispatchEvent(fakeMouseClick);
 
       anchors[2].dispatchEvent(fakeMouseClick);
-      thumbRect = rightThumb.getBoundingClientRect();
-      thumbCenter = (thumbRect.right - thumbRect.left) / 2 + thumbRect.left;
-      anchorRect = anchors[2].getBoundingClientRect();
-      anchorCenter = (anchorRect.right - anchorRect.left) / 2 + anchorRect.left;
-      expect(Math.round(thumbCenter)).toEqual(Math.round(anchorCenter));
+      expectingLeft = Math.round(scale.parts[2] * scale.width);
+      currentLeft = Math.round(parseFloat(getComputedStyle(rightThumb).left));
+      expect(currentLeft).toEqual(expectingLeft);
+
       anchors[3].dispatchEvent(fakeMouseClick);
     }
 
@@ -557,7 +563,8 @@ describe('Может отображать подсказку\n', () => {
 
     expect(hints.length).toEqual(0);
 
-    const scaleWidth = div.clientWidth - thumb.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - thumb.offsetWidth;
     const deltaPx = scaleWidth / 8;
 
     moveThumb(thumb, deltaPx);

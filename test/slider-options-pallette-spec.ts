@@ -31,6 +31,10 @@ const fakeMouseUp = new MouseEvent('mouseup', {
 const fakeClick = new MouseEvent('click', {
   bubbles: true, cancelable: true,
 });
+
+const body = document.getElementsByTagName('body')[0];
+body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
+
 describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
   const div = document.createElement('div');
   div.className = 'sliderPalette';
