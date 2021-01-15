@@ -28,6 +28,7 @@ const fakeMouseUp = new MouseEvent('mouseup', {
 const fakeClick = new MouseEvent('click', {
   bubbles: true, cancelable: true,
 });
+
 describe('Первоначальная минимальная реализация', () => {
   const selector = '.divPresenterSpec';
   beforeEach(() => {
@@ -234,7 +235,8 @@ describe('Меняет значения подсказки над бегунко
     const hintLeft = thumbLeft.querySelector('[class*=__hint]');
     if (!(hintLeft instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - thumbLeft.offsetWidth;
 
     thumbLeft.dispatchEvent(fakeMouseMove(scaleWidth / 2));
     expect(hintLeft.textContent).toEqual('55');
@@ -313,10 +315,11 @@ describe('Проверка работы "alternativeRange"\n', () => {
     const hintLeft = thumbLeft.querySelector('[class*=__hint]');
     if (!(hintLeft instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = div.clientWidth - thumbLeft.offsetWidth;
+    const sliderDiv = document.getElementsByClassName('slider')[0];
+    const scaleWidth = sliderDiv.clientWidth - thumbLeft.offsetWidth;
 
-    thumbLeft.dispatchEvent(fakeMouseMove(scaleWidth / 2));
-    expect(hintLeft.textContent).toEqual('Jul');
+    thumbLeft.dispatchEvent(fakeMouseMove(scaleWidth / 2.01));
+    expect(hintLeft.textContent).toEqual('Jun');
     thumbLeft.dispatchEvent(fakeMouseUp);
 
     thumbRight.dispatchEvent(fakeMouseDown);
@@ -662,8 +665,8 @@ describe('Проверка поведения подсказки над бегу
     const leftThumb = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
 
-    const slider = div.getElementsByClassName('slider')[0];
-    if (!(slider instanceof HTMLDivElement)) throw new Error();
+    const sliderDiv = div.getElementsByClassName('slider')[0];
+    if (!(sliderDiv instanceof HTMLDivElement)) throw new Error();
 
     const thumbStartX = leftThumb.getBoundingClientRect().left;
 
@@ -673,26 +676,27 @@ describe('Проверка поведения подсказки над бегу
     let fakeMouseClick = new MouseEvent('click', {
       bubbles: true,
       cancelable: true,
-      clientX: thumbStartX + slider.clientWidth,
+      clientX: thumbStartX + sliderDiv.clientWidth,
       clientY: 0,
     });
 
-    slider.dispatchEvent(fakeMouseClick);
+    sliderDiv.dispatchEvent(fakeMouseClick);
     expect(hint.textContent).toEqual('100');
 
     fakeMouseClick = new MouseEvent('click', {
       bubbles: true,
       cancelable: true,
-      clientX: -thumbStartX - slider.clientWidth,
+      clientX: -thumbStartX - sliderDiv.clientWidth,
       clientY: 0,
     });
 
-    slider.dispatchEvent(fakeMouseClick);
+    sliderDiv.dispatchEvent(fakeMouseClick);
     expect(hint.textContent).toEqual('0');
   });
 });
 
 describe('Проверка поведения подсказок при включенной опции "hintAlwaysShow"', () => {
+  let sliderDiv: HTMLDivElement;
   let leftThumb: HTMLDivElement;
   let rightThumb: HTMLDivElement;
   let rightHint: HTMLDivElement;
@@ -716,7 +720,11 @@ describe('Проверка поведения подсказок при вклю
 
     presenter = new Presenter(option);
 
-    let el = div.getElementsByClassName('slider__thumb_side_left')[0];
+    let el = div.getElementsByClassName('slider')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+    sliderDiv = el;
+
+    el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     leftThumb = el;
 
@@ -742,7 +750,7 @@ describe('Проверка поведения подсказок при вклю
     presenter.setOptions({ thumbRightValue: 600 });
     expect(rightHint.offsetWidth).toBeTruthy();
 
-    const scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+    const scaleWidth = sliderDiv.clientWidth - leftThumb.offsetWidth;
 
     rightThumb.dispatchEvent(fakeMouseDown);
     rightThumb.dispatchEvent(fakeMouseMove(-scaleWidth * 2));
@@ -816,7 +824,8 @@ describe('Данные баги более не возникают\n', () => {
     hintAlwaysShow: true,
   };
 
-  let slider: Presenter;
+  let presenter: Presenter;
+  let sliderDiv: HTMLDivElement;
   let leftThumb: HTMLDivElement;
   let rightThumb: HTMLDivElement;
   let leftHint: HTMLDivElement;
@@ -826,8 +835,14 @@ describe('Данные баги более не возникают\n', () => {
   beforeEach(() => {
     document.body.append(div);
 
-    slider = new Presenter({ ...options });
-    let el = div.getElementsByClassName('slider__thumb_side_left')[0];
+    presenter = new Presenter({ ...options });
+
+    let el = div.getElementsByClassName('slider')[0];
+    if (!(el instanceof HTMLDivElement)) throw new Error();
+
+    sliderDiv = el;
+
+    el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
 
     leftThumb = el;
@@ -843,7 +858,8 @@ describe('Данные баги более не возникают\n', () => {
     el = rightThumb.getElementsByClassName('slider__hint')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
     rightHint = el;
-    scaleWidth = div.clientWidth - leftThumb.offsetWidth;
+
+    scaleWidth = sliderDiv.clientWidth - leftThumb.offsetWidth;
   });
 
   afterEach(() => {
@@ -852,9 +868,9 @@ describe('Данные баги более не возникают\n', () => {
   });
 
   it('При наложении бегунков значение подсказок разное', () => {
-    slider.setOptions({ min: 0, thumbLeftValue: 0 });
+    presenter.setOptions({ min: 0, thumbLeftValue: 0 });
 
-    slider.setOptions({
+    presenter.setOptions({
       max: 6, step: 1, thumbRightValue: 1, min: 1,
     });
 
@@ -863,28 +879,28 @@ describe('Данные баги более не возникают\n', () => {
   });
 
   it('При изменении шага, бегунки остаются в недопустимом положении', () => {
-    slider.setOptions({
+    presenter.setOptions({
       min: 0, max: 11, step: 1, thumbLeftValue: 10, range: false,
     });
     expect(leftHint.textContent).toEqual('10');
-    slider.setOptions({ step: 11 });
+    presenter.setOptions({ step: 11 });
     expect(leftHint.textContent).toEqual('11');
   });
 
   it('Ошибка при перетаскивании бегунка к границам при слишком малом шаге', () => {
-    slider.setOptions({
+    presenter.setOptions({
       min: 1000000, max: 6000000, step: 1, range: true,
     });
-    slider.setOptions({ thumbRightValue: 5112367 });
+    presenter.setOptions({ thumbRightValue: 5112367 });
     leftThumb.dispatchEvent(fakeMouseDown);
 
     leftThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));
-    expect(slider.getOptions().thumbLeftValue).toEqual(5112367);
+    expect(presenter.getOptions().thumbLeftValue).toEqual(5112367);
     expect(leftHint.textContent).toEqual(rightHint.textContent);
   });
 
   it('При изменении шага, бегунок можно перетащить за границы слайдера', () => {
-    slider.setOptions({
+    presenter.setOptions({
       min: 0, max: 11, step: 4, range: false,
     });
     leftThumb.dispatchEvent(fakeMouseDown);
@@ -900,8 +916,8 @@ describe('Данные баги более не возникают\n', () => {
     div.style.width = '421.33px';
 
     document.body.appendChild(div);
-    slider = new Presenter({ ...options });
-    slider.setOptions({ min: 0, max: 58, thumbRightValue: 41 });
+    presenter = new Presenter({ ...options });
+    presenter.setOptions({ min: 0, max: 58, thumbRightValue: 41 });
 
     let el = div.getElementsByClassName('slider__thumb_side_left')[0];
     if (!(el instanceof HTMLDivElement)) throw new Error();
@@ -920,15 +936,15 @@ describe('Данные баги более не возникают\n', () => {
 
   it(`При выключении и включении опции "range" правый бегунок может достичь
     некратных шагу значений`, () => {
-    slider.setOptions({
+    presenter.setOptions({
       min: 1, max: 6, step: 4, range: false,
     });
-    slider.setOptions({ range: true });
-    expect(slider.getOptions().thumbRightValue).toEqual(5);
+    presenter.setOptions({ range: true });
+    expect(presenter.getOptions().thumbRightValue).toEqual(5);
   });
 
   it('Так и не придумал, что написать в названии теста.. ', () => {
-    slider.setOptions({
+    presenter.setOptions({
       min: 0,
       max: 6,
       thumbLeftValue: 0,
@@ -937,8 +953,8 @@ describe('Данные баги более не возникают\n', () => {
       step: 1,
     });
 
-    slider.setOptions({ partsAmount: 3 });
-    slider.setOptions({ step: 4 });
+    presenter.setOptions({ partsAmount: 3 });
+    presenter.setOptions({ step: 4 });
 
     rightThumb.dispatchEvent(fakeMouseDown);
     rightThumb.dispatchEvent(fakeMouseMove(scaleWidth * 2));

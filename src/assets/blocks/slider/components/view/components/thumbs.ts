@@ -1,3 +1,4 @@
+import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
 import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../view';
@@ -92,6 +93,7 @@ export default class Thumbs extends EventObserver {
     const slider = view.el;
     const sliderCoords: DOMRect = slider.getBoundingClientRect();
     const thumbCoords: DOMRect = thumb.getBoundingClientRect();
+    const scaleInnerWidth = slider.clientWidth - this.thumbLeft.offsetWidth;
 
     closure.startX = sliderCoords.left + slider.clientLeft;
     closure.startY = sliderCoords.top + slider.clientTop;
@@ -100,7 +102,7 @@ export default class Thumbs extends EventObserver {
     closure.cosA = Math.cos((angle / 180) * Math.PI);
     closure.sinA = Math.sin((angle / 180) * Math.PI);
 
-    closure.pixelStep = step * (slider.clientWidth - thumb.offsetWidth);
+    closure.pixelStep = step * scaleInnerWidth;
     const { pixelStep } = closure;
 
     const { thumbLeft, thumbRight } = this;
@@ -113,8 +115,7 @@ export default class Thumbs extends EventObserver {
     if (thumb === thumbLeft && range) {
       closure.rightLimit = parseFloat(getComputedStyle(thumbRight).left);
     } else {
-      const scaleWidth = slider.clientWidth - thumb.offsetWidth;
-      closure.rightLimit = Math.floor(scaleWidth / pixelStep) * pixelStep;
+      closure.rightLimit = Math.floor(scaleInnerWidth / pixelStep) * pixelStep;
     }
 
     closure.shiftX = e.clientX - thumbCoords.left;
@@ -122,7 +123,7 @@ export default class Thumbs extends EventObserver {
 
     thumb.classList.add(`${view.getOptions().className}__thumb_moving`);
 
-    closure.scaleInnerWidth = slider.clientWidth - thumb.offsetWidth;
+    closure.scaleInnerWidth = scaleInnerWidth;
     const offset = thumb === thumbLeft ? this.thumbLeftOffset : this.thumbRightOffset;
 
     this.broadcast({
