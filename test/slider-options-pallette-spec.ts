@@ -15,6 +15,12 @@ let rightThumb: HTMLDivElement;
 const hints = document.getElementsByClassName('slider__hint');
 let inputs: Inputs;
 
+const div = document.createElement('div');
+div.classList.add('sliderPalette');
+div.style.marginTop = '100px';
+
+const example = document.createElement('div');
+
 const fakeChange = new Event('change', {
   bubbles: true, cancelable: true,
 });
@@ -41,10 +47,6 @@ const body = document.getElementsByTagName('body')[0];
 body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 
 describe('Проверка связи значения инпута со значением привязанного слайдера\n', () => {
-  const div = document.createElement('div');
-  div.classList.add('sliderPalette');
-  div.style.marginTop = '100px';
-
   const options = {
     min: 2,
     max: 600,
@@ -54,8 +56,6 @@ describe('Проверка связи значения инпута со зна�
     range: true,
     hintAboveThumb: true,
   };
-
-  const example = document.createElement('div');
 
   beforeEach(() => {
     document.body.append(example);
@@ -224,10 +224,6 @@ describe('Проверка связи значения инпута со зна�
 });
 
 describe('При установке значения свойств программно, значения полей меняются автоматически\n', () => {
-  const div = document.createElement('div');
-  div.classList.add('sliderPalette');
-  div.style.marginTop = '100px';
-
   const options = {
     min: 0,
     max: 100,
@@ -237,8 +233,6 @@ describe('При установке значения свойств програ
     range: true,
     hintAboveThumb: true,
   };
-
-  const example = document.createElement('div');
 
   beforeEach(() => {
     document.body.append(example);
@@ -386,18 +380,12 @@ describe('При установке значения свойств програ
 });
 
 describe('В поля ввода нельза ввести ошибочные данные\n', () => {
-  const div = document.createElement('div');
-  div.classList.add('sliderPalette');
-  div.style.marginTop = '100px';
-
   const options = {
     min: 0,
     max: 100,
     step: 1,
     selector: '.sliderPalette',
   };
-
-  const example = document.createElement('div');
 
   beforeEach(() => {
     document.body.append(example);
@@ -583,10 +571,6 @@ describe('В поля ввода нельза ввести ошибочные д
 });
 
 describe('Реагирует на ручное изменение положения бегунков\n', () => {
-  const div = document.createElement('div');
-  div.classList.add('sliderPalette');
-  div.style.marginTop = '100px';
-
   const options = {
     min: 0,
     max: 100,
@@ -596,8 +580,6 @@ describe('Реагирует на ручное изменение положен
     range: true,
     hintAboveThumb: true,
   };
-
-  const example = document.createElement('div');
 
   beforeEach(() => {
     document.body.append(example);
@@ -684,10 +666,6 @@ describe('Реагирует на ручное изменение положен
 });
 
 describe('Данные баги более не возникают\n', () => {
-  const div = document.createElement('div');
-  div.classList.add('sliderPalette');
-  div.style.marginTop = '100px';
-
   const options = {
     min: 0.5,
     max: 200,
@@ -699,8 +677,6 @@ describe('Данные баги более не возникают\n', () => {
     hintAlwaysShow: true,
     precision: 1,
   };
-
-  const example = document.createElement('div');
 
   beforeEach(() => {
     document.body.append(example);

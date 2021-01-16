@@ -7,7 +7,6 @@ const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.classList.add('divPresenterSpec');
 div.style.marginTop = '70px';
-document.body.append(div);
 
 const fakeMouseMove = (x: number = 0, y: number = 0) => new MouseEvent('mousemove', {
   bubbles: true,

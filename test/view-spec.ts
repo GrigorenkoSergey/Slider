@@ -3,6 +3,32 @@
 import View from '../src/assets/blocks/slider/components/view/view';
 import '../src/assets/blocks/slider/slider.scss';
 
+function moveThumb(thumb: HTMLDivElement,
+  deltaXPx: number, deltaYPx: number = 0): void {
+  const startX = Math.abs(deltaXPx);
+  const startY = Math.abs(deltaYPx);
+
+  const fakeMouseDown = new MouseEvent('mousedown',
+    {
+      bubbles: true, cancelable: true, clientX: startX, clientY: startY,
+    });
+
+  const fakeMouseMove = new MouseEvent('mousemove',
+    {
+      bubbles: true,
+      cancelable: true,
+      clientX: startX + deltaXPx,
+      clientY: startY + deltaYPx,
+    });
+
+  const fakeMouseUp = new MouseEvent('mouseup',
+    { bubbles: true, cancelable: true });
+
+  thumb.dispatchEvent(fakeMouseDown);
+  thumb.dispatchEvent(fakeMouseMove);
+  thumb.dispatchEvent(fakeMouseUp);
+}
+
 const body = document.getElementsByTagName('body')[0];
 body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 
@@ -590,26 +616,3 @@ describe('Может отображать подсказку\n', () => {
     expect(hint).toEqual(null);
   });
 });
-
-function moveThumb(thumb: HTMLDivElement,
-  deltaXPx: number, deltaYPx: number = 0): void {
-  const startX = Math.abs(deltaXPx);
-  const startY = Math.abs(deltaYPx);
-
-  const fakeMouseDown = new MouseEvent('mousedown',
-    {
-      bubbles: true, cancelable: true, clientX: startX, clientY: startY,
-    });
-
-  const fakeMouseMove = new MouseEvent('mousemove',
-    {
-      bubbles: true,
-      cancelable: true,
-      clientX: startX + deltaXPx,
-      clientY: startY + deltaYPx,
-    });
-
-  thumb.dispatchEvent(fakeMouseDown);
-  thumb.dispatchEvent(fakeMouseMove);
-  thumb.dispatchEvent(fakeMouseUp);
-}
