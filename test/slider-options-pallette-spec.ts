@@ -33,11 +33,16 @@ const fakeClick = new MouseEvent('click', {
 });
 
 const body = document.getElementsByTagName('body')[0];
+/*
+  Иногда в некоторых тестах неожиданно появляется полоса прокрутки,
+  что может сломать логику уже созданного слайдера.
+  Поэтому ограничим максимальную ширину body.
+*/
 body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 
-describe('Проверка связи значения инпута со значением привязанного слайдера', () => {
+describe('Проверка связи значения инпута со значением привязанного слайдера\n', () => {
   const div = document.createElement('div');
-  div.className = 'sliderPalette';
+  div.classList.add('sliderPalette');
   div.style.marginTop = '100px';
 
   const options = {
@@ -51,7 +56,7 @@ describe('Проверка связи значения инпута со зна�
   };
 
   const example = document.createElement('div');
-  example.className = 'example1';
+
   beforeEach(() => {
     document.body.append(example);
     document.body.append(div);
@@ -117,6 +122,7 @@ describe('Проверка связи значения инпута со зна�
 
   it('Поменяем значение "range"', () => {
     if (inputs.range === null) throw new Error();
+
     inputs.range.el.checked = true;
     inputs.range.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().range).toBeTrue();
@@ -219,7 +225,7 @@ describe('Проверка связи значения инпута со зна�
 
 describe('При установке значения свойств программно, значения полей меняются автоматически\n', () => {
   const div = document.createElement('div');
-  div.className = 'sliderPalette';
+  div.classList.add('sliderPalette');
   div.style.marginTop = '100px';
 
   const options = {
@@ -233,7 +239,6 @@ describe('При установке значения свойств програ
   };
 
   const example = document.createElement('div');
-  example.className = 'example2';
 
   beforeEach(() => {
     document.body.append(example);
@@ -382,7 +387,7 @@ describe('При установке значения свойств програ
 
 describe('В поля ввода нельза ввести ошибочные данные\n', () => {
   const div = document.createElement('div');
-  div.className = 'sliderPalette';
+  div.classList.add('sliderPalette');
   div.style.marginTop = '100px';
 
   const options = {
@@ -393,7 +398,6 @@ describe('В поля ввода нельза ввести ошибочные д
   };
 
   const example = document.createElement('div');
-  example.className = 'example3';
 
   beforeEach(() => {
     document.body.append(example);
@@ -580,7 +584,7 @@ describe('В поля ввода нельза ввести ошибочные д
 
 describe('Реагирует на ручное изменение положения бегунков\n', () => {
   const div = document.createElement('div');
-  div.className = 'sliderPalette';
+  div.classList.add('sliderPalette');
   div.style.marginTop = '100px';
 
   const options = {
@@ -594,7 +598,6 @@ describe('Реагирует на ручное изменение положен
   };
 
   const example = document.createElement('div');
-  example.className = 'example3';
 
   beforeEach(() => {
     document.body.append(example);
@@ -682,7 +685,7 @@ describe('Реагирует на ручное изменение положен
 
 describe('Данные баги более не возникают\n', () => {
   const div = document.createElement('div');
-  div.className = 'sliderPalette';
+  div.classList.add('sliderPalette');
   div.style.marginTop = '100px';
 
   const options = {
@@ -698,7 +701,6 @@ describe('Данные баги более не возникают\n', () => {
   };
 
   const example = document.createElement('div');
-  example.className = 'example4';
 
   beforeEach(() => {
     document.body.append(example);

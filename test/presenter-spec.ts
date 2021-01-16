@@ -5,7 +5,7 @@ import '../src/assets/blocks/slider/slider.scss';
 
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
-div.className = 'divPresenterSpec';
+div.classList.add('divPresenterSpec');
 div.style.marginTop = '70px';
 document.body.append(div);
 

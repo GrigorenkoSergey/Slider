@@ -1,4 +1,3 @@
-import debuggerPoint from '../../../../helpers/debugger-point';
 import EventObserver from '../../../../helpers/event-observer';
 import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../view';
