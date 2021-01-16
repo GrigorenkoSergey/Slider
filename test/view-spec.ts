@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 /* eslint-disable no-use-before-define */
 import View from '../src/assets/blocks/slider/components/view/view';
 import '../src/assets/blocks/slider/slider.scss';
@@ -26,7 +27,6 @@ describe('Первоначальная минимальная инициализ
   it(`Можно инициализировать с минимальным количеством аргументов
     (selector), иначе будет ошибка`, () => {
     expect(() => {
-      // eslint-disable-next-line no-new
       new View({});
     }).toThrowError();
   });
@@ -81,14 +81,14 @@ describe('Позволяет пользователю взаимодейство
     const scaleWidth = sliderDiv.clientWidth - leftThumb.offsetWidth;
 
     const { step } = view.getOptions();
-
-    // бежим к концу
     const deltaPx = scaleWidth / 8;
     const pixelStep = step * scaleWidth;
+    /*
+      Бежим к концу, но не до самого конца,
+      т.к. из-зa погрешности округления
+      мы можем достичь его раньше, чем надеялись
+    */
     for (let i = 1; i < 8; i += 1) {
-      // не стоит бежать до самого конца, т.к. из-зa погрешности округления
-      // мы можем достичь конца раньше, чем надеялись
-      // определим начальное положение бегунка
       const startLeft = leftThumb.getBoundingClientRect().left;
       moveThumb(leftThumb, deltaPx);
       const deltaInFact = leftThumb.getBoundingClientRect().left - startLeft;
@@ -114,10 +114,10 @@ describe('Позволяет пользователю взаимодейство
     const { step } = view.getOptions();
 
     // бежим к началу
-    const deltaPx = scaleWidth / 8;
+    const deltaPx = -scaleWidth / 8;
     const pixelStep = step * scaleWidth;
 
-    for (let i = 7; i < 1; i += 1) {
+    for (let i = 7; i > 1; i -= 1) {
       // определим начальное положение бегунка
       const startLeft = rightThumb.getBoundingClientRect().left;
       moveThumb(rightThumb, deltaPx);
@@ -180,7 +180,6 @@ describe('Позволяет пользователю взаимодейство
       angle: 90,
     };
 
-    // eslint-disable-next-line no-new
     new View(option);
 
     const leftThumb = div.querySelector('[class*=left]');

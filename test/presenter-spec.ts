@@ -396,9 +396,10 @@ describe('Меняет значения шкалы в соответствии �
     presenter.setOptions({ max: 80 });
 
     const scale = document.getElementsByClassName('slider__scale')[0];
-    const scaleWidth = scale.clientWidth - thumbLeft.getBoundingClientRect().width;
+
     // Здесь надо быть осторожным, т.к. clientWidth, offsetWidth возвращают
     // целочисленные значения
+    const scaleWidth = scale.clientWidth - thumbLeft.getBoundingClientRect().width;
     expect(getComputedStyle(thumbRight).left).toEqual(`${scaleWidth}px`);
   });
 
