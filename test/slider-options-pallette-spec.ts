@@ -21,6 +21,9 @@ div.style.marginTop = '100px';
 
 const example = document.createElement('div');
 
+document.body.append(example);
+document.body.append(div);
+
 const fakeChange = new Event('change', {
   bubbles: true, cancelable: true,
 });
@@ -39,11 +42,9 @@ const fakeClick = new MouseEvent('click', {
 });
 
 const body = document.getElementsByTagName('body')[0];
-/*
-  Иногда в некоторых тестах неожиданно появляется полоса прокрутки,
-  что может сломать логику уже созданного слайдера.
-  Поэтому ограничим максимальную ширину body.
-*/
+// Иногда в некоторых тестах неожиданно появляется полоса прокрутки,
+// что может сломать логику уже созданного слайдера.
+// Поэтому ограничим максимальную ширину body.
 body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 
 describe('Проверка связи значения инпута со значением привязанного слайдера\n', () => {
@@ -58,9 +59,6 @@ describe('Проверка связи значения инпута со зна�
   };
 
   beforeEach(() => {
-    document.body.append(example);
-    document.body.append(div);
-
     slider = new Presenter(options);
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
@@ -77,9 +75,7 @@ describe('Проверка связи значения инпута со зна�
 
   afterEach(() => {
     example.innerHTML = '';
-    example.remove();
     div.innerHTML = '';
-    div.remove();
   });
 
   it('Поменяем значение max', () => {
@@ -235,9 +231,6 @@ describe('При установке значения свойств програ
   };
 
   beforeEach(() => {
-    document.body.append(example);
-    document.body.append(div);
-
     slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
@@ -255,9 +248,7 @@ describe('При установке значения свойств програ
 
   afterEach(() => {
     example.innerHTML = '';
-    example.remove();
     div.innerHTML = '';
-    div.remove();
   });
 
   it('Поменяем значение min', () => {
@@ -388,9 +379,6 @@ describe('В поля ввода нельза ввести ошибочные д
   };
 
   beforeEach(() => {
-    document.body.append(example);
-    document.body.append(div);
-
     slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
@@ -398,9 +386,7 @@ describe('В поля ввода нельза ввести ошибочные д
 
   afterEach(() => {
     example.innerHTML = '';
-    example.remove();
     div.innerHTML = '';
-    div.remove();
   });
 
   it('Попробуем поменять значение min', () => {
@@ -582,9 +568,6 @@ describe('Реагирует на ручное изменение положен
   };
 
   beforeEach(() => {
-    document.body.append(example);
-    document.body.append(div);
-
     slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
@@ -601,9 +584,7 @@ describe('Реагирует на ручное изменение положен
 
   afterEach(() => {
     example.innerHTML = '';
-    example.remove();
     div.innerHTML = '';
-    div.remove();
   });
 
   it('При перетаскивании бегунков мышкой значение соответствующего поля меняется', () => {
@@ -679,9 +660,6 @@ describe('Данные баги более не возникают\n', () => {
   };
 
   beforeEach(() => {
-    document.body.append(example);
-    document.body.append(div);
-
     slider = new Presenter({ ...options });
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
@@ -699,9 +677,7 @@ describe('Данные баги более не возникают\n', () => {
 
   afterEach(() => {
     example.innerHTML = '';
-    example.remove();
     div.innerHTML = '';
-    div.remove();
   });
 
   it('При смене значения "min" c "0.5" на "0" и обратно значения якорей высчитываются правильно', () => {
