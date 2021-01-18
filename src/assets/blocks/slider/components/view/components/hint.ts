@@ -40,7 +40,7 @@ export default class Hint extends EventObserver {
   setHintValue(value: string): void {
     const { el } = this;
     this.value = value;
-    if (!el.hidden) el.textContent = value;
+    el.textContent = value;
   }
 
   appendHint(): void {

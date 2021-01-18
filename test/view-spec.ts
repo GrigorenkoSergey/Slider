@@ -507,7 +507,6 @@ describe('Может отображать подсказку\n', () => {
     const hint = hints[0];
     if (!(hint instanceof HTMLDivElement)) throw new Error();
 
-    expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('hint');
   });
 
@@ -518,7 +517,6 @@ describe('Может отображать подсказку\n', () => {
     const hint = hints[0];
     if (!(hint instanceof HTMLDivElement)) throw new Error();
 
-    expect(hint.hidden).toBeFalse();
     expect(hint.textContent).toEqual('hint');
   });
 
