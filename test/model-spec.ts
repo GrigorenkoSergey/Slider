@@ -44,10 +44,10 @@ describe('Model\n', () => {
     });
 
     it('Лишние свойства просто будут проигнорированы', () => {
-      const option = {
+      const options = {
         min: 0, max: 100, foo: 1, bar: 2,
       };
-      const model = new Model(option);
+      const model = new Model(options);
       expect('foo' in model).toBeFalse();
       expect('bar' in model).toBeFalse();
     });
