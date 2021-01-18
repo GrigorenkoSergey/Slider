@@ -71,7 +71,7 @@ describe('Проверка связи значения инпута со зна�
     div.innerHTML = '';
   });
 
-  it('Поменяем значение max', () => {
+  it('Отображается смена значения max', () => {
     if (inputs.max === null) throw new Error();
 
     inputs.max.el.value = '500';
@@ -80,7 +80,7 @@ describe('Проверка связи значения инпута со зна�
     expect(anchors[anchors.length - 1].textContent).toEqual('500');
   });
 
-  it('Поменяем значение step', () => {
+  it('Отображается смена значения step', () => {
     if (inputs.step === null) throw new Error();
 
     inputs.step.el.value = '5';
@@ -88,7 +88,7 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().step).toEqual(5);
   });
 
-  it('Поменяем значение angle', () => {
+  it('Отображается смена значения angle', () => {
     if (inputs.angle === null) throw new Error();
 
     inputs.angle.el.value = '45';
@@ -100,7 +100,7 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().angle).toEqual(0);
   });
 
-  it('Поменяем значение thumbLeftValue', () => {
+  it('Отображается смена значения thumbLeftValue', () => {
     if (inputs.thumbLeftValue === null) throw new Error();
 
     inputs.thumbLeftValue.el.value = '50';
@@ -113,7 +113,7 @@ describe('Проверка связи значения инпута со зна�
     thumbLeft.dispatchEvent(fakeMouseUp);
   });
 
-  it('Поменяем значение "range"', () => {
+  it('Отображается смена значения "range"', () => {
     if (inputs.range === null) throw new Error();
 
     inputs.range.el.checked = true;
@@ -127,7 +127,7 @@ describe('Проверка связи значения инпута со зна�
     expect(thumbs[1]).toBeFalsy();
   });
 
-  it('Поменяем значение thumbRightValue', () => {
+  it('Отображается смена значения thumbRightValue', () => {
     if (inputs.range === null) throw new Error();
     inputs.range.el.checked = true;
     inputs.range.el.dispatchEvent(fakeChange);
@@ -145,7 +145,7 @@ describe('Проверка связи значения инпута со зна�
     thumbRight.dispatchEvent(fakeMouseUp);
   });
 
-  it('Поменяем значение showScale', () => {
+  it('Отображается смена значения showScale', () => {
     if (inputs.showScale === null) throw new Error();
 
     inputs.showScale.el.checked = false;
@@ -159,7 +159,7 @@ describe('Проверка связи значения инпута со зна�
     expect(Array.from(anchors).every((item) => item.clientWidth !== 0)).toBeTrue();
   });
 
-  it('Поменяем значение hintAlwaysShow', () => {
+  it('Отображается смена значения hintAlwaysShow', () => {
     if (inputs.hintAlwaysShow === null) throw new Error();
 
     inputs.hintAlwaysShow.el.checked = false;
@@ -179,7 +179,7 @@ describe('Проверка связи значения инпута со зна�
     expect(slider.getOptions().hintAlwaysShow).toBeTrue();
   });
 
-  it('Поменяем значение "partsAmount', () => {
+  it('Отображается смена значения "partsAmount', () => {
     if (inputs.partsAmount === null) throw new Error();
 
     inputs.partsAmount.el.value = '3';
@@ -191,7 +191,7 @@ describe('Проверка связи значения инпута со зна�
     expect(anchors.length).toEqual(7);
   });
 
-  it('Поменяем значение hintAboveThumb', () => {
+  it('Отображается смена значения hintAboveThumb', () => {
     if (inputs.hintAboveThumb === null) throw new Error();
     inputs.hintAboveThumb.el.checked = false;
     inputs.hintAboveThumb.el.dispatchEvent(fakeChange);
@@ -241,7 +241,7 @@ describe('При установке значения свойств програ
     div.innerHTML = '';
   });
 
-  it('Поменяем значение min', () => {
+  it('Отображается смена значения min', () => {
     slider.setOptions({ min: 0 });
     expect(slider.getOptions().min).toEqual(0);
     expect(anchors[0].textContent).toEqual('0');
@@ -251,7 +251,7 @@ describe('При установке значения свойств програ
     expect(inputs.min.el.value).toEqual('0');
   });
 
-  it('Поменяем значение max', () => {
+  it('Отображается смена значения max', () => {
     slider.setOptions({ max: 200 });
     expect(slider.getOptions().max).toEqual(200);
     expect(anchors[anchors.length - 1].textContent).toEqual('200');
@@ -261,7 +261,7 @@ describe('При установке значения свойств програ
     expect(inputs.max.el.value).toEqual('200');
   });
 
-  it('Поменяем значение max', () => {
+  it('Отображается смена значения max', () => {
     slider.setOptions({ max: 100 });
     expect(slider.getOptions().max).toEqual(100);
     expect(anchors[anchors.length - 1].textContent).toEqual('100');
@@ -271,7 +271,7 @@ describe('При установке значения свойств програ
     expect(inputs.max.el.value).toEqual('100');
   });
 
-  it('Поменяем значение step', () => {
+  it('Отображается смена значения step', () => {
     slider.setOptions({ step: 100 });
     expect(slider.getOptions().max).toEqual(100);
     expect(anchors[anchors.length - 1].textContent).toEqual('100');
@@ -281,12 +281,12 @@ describe('При установке значения свойств програ
     expect(inputs.max.el.value).toEqual('100');
   });
 
-  it('Поменяем значение angle', () => {
+  it('Отображается смена значения angle', () => {
     slider.setOptions({ angle: 45 });
     expect(slider.getOptions().angle).toEqual(45);
   });
 
-  it('Поменяем значение thumbLeftValue', () => {
+  it('Отображается смена значения thumbLeftValue', () => {
     slider.setOptions({ thumbLeftValue: 25, range: false });
     expect(slider.getOptions().thumbLeftValue).toEqual(25);
 
@@ -308,7 +308,7 @@ describe('При установке значения свойств програ
     expect(inputs.thumbLeftValue.el.value).toEqual('100');
   });
 
-  it('Поменяем значение "range"', () => {
+  it('Отображается смена значения "range"', () => {
     slider.setOptions({ range: false });
     if (inputs.range === null) throw new Error();
 
@@ -318,7 +318,7 @@ describe('При установке значения свойств програ
     expect(inputs.range.el.checked).toBeTrue();
   });
 
-  it('Поменяем значение "thumbRightValue"', () => {
+  it('Отображается смена значения "thumbRightValue"', () => {
     slider.setOptions({ thumbRightValue: 75 });
     if (inputs.thumbRightValue === null) throw new Error();
 
@@ -331,7 +331,7 @@ describe('При установке значения свойств програ
     expect(inputs.thumbRightValue.el.value).toEqual('100');
   });
 
-  it('Поменяем значение "showScale"', () => {
+  it('Отображается смена значения "showScale"', () => {
     slider.setOptions({ showScale: false });
     if (inputs.showScale === null) throw new Error();
 
@@ -341,7 +341,7 @@ describe('При установке значения свойств програ
     expect(inputs.showScale.el.checked).toBeTrue();
   });
 
-  it('Поменяем значение "hintAlwaysShow"', () => {
+  it('Отображается смена значения "hintAlwaysShow"', () => {
     slider.setOptions({ hintAlwaysShow: true });
     if (inputs.hintAlwaysShow === null) throw new Error();
 
@@ -351,7 +351,7 @@ describe('При установке значения свойств програ
     expect(inputs.hintAlwaysShow.el.checked).toBeFalse();
   });
 
-  it('Поменяем значение "partsAmount"', () => {
+  it('Отображается смена значения "partsAmount"', () => {
     slider.setOptions({ partsAmount: 3 });
     if (inputs.partsAmount === null) throw new Error();
 
@@ -361,7 +361,7 @@ describe('При установке значения свойств програ
     expect(inputs.partsAmount.el.value).toEqual('4');
   });
 
-  it('Поменяем значение "hintAboveThumb"', () => {
+  it('Отображается смена значения "hintAboveThumb"', () => {
     slider.setOptions({ hintAboveThumb: true });
     if (inputs.hintAboveThumb === null) throw new Error();
 
@@ -471,7 +471,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.step.el.value).toEqual(value);
   });
 
-  it('Поменяем значение angle', () => {
+  it('Отображается смена значения angle', () => {
     if (inputs.angle === null) throw new Error();
 
     const { value } = inputs.angle.el;
@@ -488,7 +488,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.angle.el.value).toEqual(value);
   });
 
-  it('Поменяем значение thumbLeftValue, оно не может выйти за пределы', () => {
+  it('Отображается смена значения thumbLeftValue, оно не может выйти за пределы', () => {
     if (inputs.range === null) throw new Error();
 
     inputs.range.el.checked = false;
@@ -516,7 +516,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.thumbLeftValue.el.value).toEqual(value);
   });
 
-  it('Поменяем значение thumbRightValue, оно не может выйти за пределы', () => {
+  it('Отображается смена значения thumbRightValue, оно не может выйти за пределы', () => {
     slider.setOptions({ thumbLeftValue: 0, range: true });
     if (inputs.thumbRightValue === null) throw new Error();
 
@@ -530,7 +530,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.thumbRightValue.el.value).toEqual('100');
   });
 
-  it('Поменяем значение partsAmount', () => {
+  it('Отображается смена значения partsAmount', () => {
     if (inputs.range === null) throw new Error();
 
     inputs.range.el.dispatchEvent(fakeChange);
