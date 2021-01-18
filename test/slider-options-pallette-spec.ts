@@ -372,7 +372,7 @@ describe('При установке значения свойств програ
   });
 });
 
-describe('В поля ввода нельзя ввести ошибочные данные\n', () => {
+describe('При вводе некорректного значения в поле, значение поля не меняется\n', () => {
   const options = {
     min: 0,
     max: 100,
@@ -391,17 +391,13 @@ describe('В поля ввода нельзя ввести ошибочные д
     div.innerHTML = '';
   });
 
-  it('Попробуем поменять значение min', () => {
+  it('Попытка ввода ошибочного значения min', () => {
     if (inputs.min === null) throw new Error();
 
     const { value } = inputs.min.el;
     inputs.min.el.value = 'a';
     inputs.min.el.dispatchEvent(fakeChange);
 
-    expect(inputs.min.el.value).toEqual(value);
-
-    inputs.min.el.value = '101';
-    inputs.min.el.dispatchEvent(fakeChange);
     expect(inputs.min.el.value).toEqual(value);
 
     inputs.min.el.value = 'Infinity';
@@ -418,7 +414,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.min.el.value).toEqual('0');
   });
 
-  it('Попробуем поменять значение max', () => {
+  it('Попытка ввода ошибочного значения max', () => {
     if (inputs.max === null) throw new Error();
 
     const { value } = inputs.max.el;
@@ -445,7 +441,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.max.el.value).toEqual('10');
   });
 
-  it('Попробуем поменять значение step', () => {
+  it('Попытка ввода ошибочного значения step', () => {
     if (inputs.step === null) throw new Error();
 
     const { value } = inputs.step.el;
@@ -471,7 +467,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.step.el.value).toEqual(value);
   });
 
-  it('Отображается смена значения angle', () => {
+  it('Попытка ввода ошибочного значения angle', () => {
     if (inputs.angle === null) throw new Error();
 
     const { value } = inputs.angle.el;
@@ -488,7 +484,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.angle.el.value).toEqual(value);
   });
 
-  it('Отображается смена значения thumbLeftValue, оно не может выйти за пределы', () => {
+  it('Попытка ввода ошибочного значения thumbLeftValue', () => {
     if (inputs.range === null) throw new Error();
 
     inputs.range.el.checked = false;
@@ -516,7 +512,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.thumbLeftValue.el.value).toEqual(value);
   });
 
-  it('Отображается смена значения thumbRightValue, оно не может выйти за пределы', () => {
+  it('Попытка ввода ошибочного значения thumbRightValue', () => {
     slider.setOptions({ thumbLeftValue: 0, range: true });
     if (inputs.thumbRightValue === null) throw new Error();
 
@@ -530,7 +526,7 @@ describe('В поля ввода нельзя ввести ошибочные д
     expect(inputs.thumbRightValue.el.value).toEqual('100');
   });
 
-  it('Отображается смена значения partsAmount', () => {
+  it('Попытка ввода ошибочного значения partsAmount', () => {
     if (inputs.range === null) throw new Error();
 
     inputs.range.el.dispatchEvent(fakeChange);

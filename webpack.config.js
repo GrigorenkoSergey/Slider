@@ -50,7 +50,7 @@ module.exports = {
       }],
     },
     {
-      test: /\.tsx?/, // ?
+      test: /\.tsx?/,
       exclude: /node_modules/,
       use: [
         'ts-loader',
