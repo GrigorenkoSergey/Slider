@@ -47,7 +47,7 @@ const body = document.getElementsByTagName('body')[0];
 body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 
 describe('Проверка связи значения инпута со значением привязанного слайдера\n', () => {
-  let leftThumb: Element;
+  let thumbLeft: Element;
 
   const options = {
     min: 2,
@@ -63,7 +63,7 @@ describe('Проверка связи значения инпута со зна�
     slider = new Presenter(options);
     palette = new SliderOptionsPalette(example, slider);
     inputs = palette.inputs;
-    leftThumb = thumbs[0];
+    thumbLeft = thumbs[0];
   });
 
   afterEach(() => {
@@ -106,11 +106,11 @@ describe('Проверка связи значения инпута со зна�
     inputs.thumbLeftValue.el.value = '50';
     inputs.thumbLeftValue.el.dispatchEvent(fakeChange);
     expect(slider.getOptions().thumbLeftValue).toEqual(50);
-    leftThumb.dispatchEvent(fakeMouseDown);
+    thumbLeft.dispatchEvent(fakeMouseDown);
 
-    const leftHint = hints[0];
-    expect(leftHint.textContent).toEqual('50');
-    leftThumb.dispatchEvent(fakeMouseUp);
+    const hintLeft = hints[0];
+    expect(hintLeft.textContent).toEqual('50');
+    thumbLeft.dispatchEvent(fakeMouseUp);
   });
 
   it('Поменяем значение "range"', () => {
@@ -136,13 +136,13 @@ describe('Проверка связи значения инпута со зна�
     inputs.thumbRightValue.el.value = '400';
     inputs.thumbRightValue.el.dispatchEvent(fakeChange);
 
-    const rightThumb = thumbs[1];
+    const thumbRight = thumbs[1];
 
     expect(slider.getOptions().thumbRightValue).toEqual(402);
-    rightThumb.dispatchEvent(fakeMouseDown);
-    const rightHint = hints[0];
-    expect(rightHint.textContent).toEqual('402');
-    rightThumb.dispatchEvent(fakeMouseUp);
+    thumbRight.dispatchEvent(fakeMouseDown);
+    const hintRight = hints[0];
+    expect(hintRight.textContent).toEqual('402');
+    thumbRight.dispatchEvent(fakeMouseUp);
   });
 
   it('Поменяем значение showScale', () => {
@@ -168,14 +168,14 @@ describe('Проверка связи значения инпута со зна�
     expect(hints.length).toEqual(0);
     expect(slider.getOptions().hintAlwaysShow).toBeFalse();
 
-    leftThumb.dispatchEvent(fakeMouseDown);
-    const leftHint = hints[0];
-    expect(leftHint.clientHeight).toBeTruthy();
-    leftThumb.dispatchEvent(fakeMouseUp);
+    thumbLeft.dispatchEvent(fakeMouseDown);
+    const hintLeft = hints[0];
+    expect(hintLeft.clientHeight).toBeTruthy();
+    thumbLeft.dispatchEvent(fakeMouseUp);
 
     inputs.hintAlwaysShow.el.checked = true;
     inputs.hintAlwaysShow.el.dispatchEvent(fakeChange);
-    expect(leftHint.clientWidth).toBeTruthy();
+    expect(hintLeft.clientWidth).toBeTruthy();
     expect(slider.getOptions().hintAlwaysShow).toBeTrue();
   });
 
@@ -204,17 +204,17 @@ describe('Проверка связи значения инпута со зна�
     expect(hints.length).toEqual(0);
     expect(slider.getOptions().hintAboveThumb).toBeFalse();
 
-    leftThumb.dispatchEvent(fakeMouseDown);
+    thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints.length).toEqual(0);
-    leftThumb.dispatchEvent(fakeMouseUp);
+    thumbLeft.dispatchEvent(fakeMouseUp);
 
     inputs.hintAboveThumb.el.checked = true;
     inputs.hintAboveThumb.el.dispatchEvent(fakeChange);
 
     expect(hints.length).toBeFalsy();
-    leftThumb.dispatchEvent(fakeMouseDown);
+    thumbLeft.dispatchEvent(fakeMouseDown);
     expect(hints.length).toBeTruthy();
-    leftThumb.dispatchEvent(fakeMouseUp);
+    thumbLeft.dispatchEvent(fakeMouseUp);
     expect(slider.getOptions().hintAboveThumb).toBeTrue();
   });
 });
@@ -590,9 +590,9 @@ describe('Реагирует на ручное изменение положен
     const scale = div.querySelector('.slider__scale');
     if (!(scale instanceof HTMLDivElement)) throw new Error();
 
-    const leftThumb = thumbs[0];
-    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
-    const scaleWidth = scale.clientWidth - leftThumb.offsetWidth;
+    const thumbLeft = thumbs[0];
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+    const scaleWidth = scale.clientWidth - thumbLeft.offsetWidth;
 
     for (let i = 0; i < 5; i += 1) {
       const fakeMouseMove = new MouseEvent('mousemove',
@@ -605,14 +605,14 @@ describe('Реагирует на ручное изменение положен
 
       if (inputs.thumbLeftValue === null) throw new Error();
 
-      leftThumb.dispatchEvent(fakeMouseDown);
-      const leftHint = hints[0];
+      thumbLeft.dispatchEvent(fakeMouseDown);
+      const hintLeft = hints[0];
 
-      expect(leftHint.textContent).toEqual(inputs.thumbLeftValue.el.value);
-      leftThumb.dispatchEvent(fakeMouseMove);
+      expect(hintLeft.textContent).toEqual(inputs.thumbLeftValue.el.value);
+      thumbLeft.dispatchEvent(fakeMouseMove);
       expect(slider.getOptions().thumbLeftValue)
         .toEqual(Number(inputs.thumbLeftValue.el.value));
-      leftThumb.dispatchEvent(fakeMouseUp);
+      thumbLeft.dispatchEvent(fakeMouseUp);
     }
 
     for (let i = 0; i < 5; i += 1) {
@@ -625,14 +625,14 @@ describe('Реагирует на ручное изменение положен
 
       if (inputs.thumbRightValue === null) throw new Error();
 
-      const rightThumb = thumbs[1];
-      rightThumb.dispatchEvent(fakeMouseDown);
-      const rightHint = hints.length > 1 ? hints[1] : hints[0];
-      expect(rightHint.textContent).toEqual(inputs.thumbRightValue.el.value);
+      const thumbRight = thumbs[1];
+      thumbRight.dispatchEvent(fakeMouseDown);
+      const hintRight = hints.length > 1 ? hints[1] : hints[0];
+      expect(hintRight.textContent).toEqual(inputs.thumbRightValue.el.value);
 
-      rightThumb.dispatchEvent(fakeMouseMove);
+      thumbRight.dispatchEvent(fakeMouseMove);
       expect(slider.getOptions().thumbRightValue).toEqual(Number(inputs.thumbRightValue.el.value));
-      rightThumb.dispatchEvent(fakeMouseUp);
+      thumbRight.dispatchEvent(fakeMouseUp);
     }
   });
 
@@ -740,9 +740,9 @@ describe('Данные баги более не возникают\n', () => {
     inputs.min.el.value = '1';
     inputs.min.el.dispatchEvent(fakeChange);
 
-    const leftHint = hints[0];
+    const hintLeft = hints[0];
     expect(inputs.min.el.value).toEqual('1');
     expect(hints.length).toEqual(1);
-    expect(leftHint.textContent).toEqual('1');
+    expect(hintLeft.textContent).toEqual('1');
   });
 });

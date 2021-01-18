@@ -89,11 +89,11 @@ describe('Позволяет пользователю взаимодейство
   let view: View;
 
   let sliderDiv: Element;
-  let leftThumb: Element;
+  let thumbLeft: Element;
 
   beforeEach(() => {
     view = new View({ selector: '.divViewSpec' });
-    leftThumb = thumbs[0];
+    thumbLeft = thumbs[0];
     sliderDiv = sliderCollection[0];
   });
 
@@ -102,8 +102,8 @@ describe('Позволяет пользователю взаимодейство
   });
 
   it('Можно двигать левый бегунок мышкой', () => {
-    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
-    const scaleWidth = sliderDiv.clientWidth - leftThumb.offsetWidth;
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+    const scaleWidth = sliderDiv.clientWidth - thumbLeft.offsetWidth;
 
     const { step } = view.getOptions();
     const deltaPx = scaleWidth / 8;
@@ -114,9 +114,9 @@ describe('Позволяет пользователю взаимодейство
     // мы можем достичь его раньше, чем надеялись
 
     for (let i = 1; i < 8; i += 1) {
-      const startLeft = leftThumb.getBoundingClientRect().left;
-      moveThumb(leftThumb, deltaPx);
-      const deltaInFact = leftThumb.getBoundingClientRect().left - startLeft;
+      const startLeft = thumbLeft.getBoundingClientRect().left;
+      moveThumb(thumbLeft, deltaPx);
+      const deltaInFact = thumbLeft.getBoundingClientRect().left - startLeft;
       expect(Math.abs(deltaInFact - deltaPx)).toBeLessThanOrEqual(pixelStep);
     }
   });
@@ -124,10 +124,10 @@ describe('Позволяет пользователю взаимодейство
   it('Можно двигать правый бегунок мышкой', () => {
     view.setOptions({ range: true });
 
-    const rightThumb = thumbs[1];
-    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+    const thumbRight = thumbs[1];
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = sliderDiv.clientWidth - rightThumb.offsetWidth;
+    const scaleWidth = sliderDiv.clientWidth - thumbRight.offsetWidth;
 
     const { step } = view.getOptions();
 
@@ -137,86 +137,86 @@ describe('Позволяет пользователю взаимодейство
 
     for (let i = 7; i > 1; i -= 1) {
       // определим начальное положение бегунка
-      const startLeft = rightThumb.getBoundingClientRect().left;
-      moveThumb(rightThumb, deltaPx);
-      const deltaInFact = rightThumb.getBoundingClientRect().left - startLeft;
+      const startLeft = thumbRight.getBoundingClientRect().left;
+      moveThumb(thumbRight, deltaPx);
+      const deltaInFact = thumbRight.getBoundingClientRect().left - startLeft;
       expect(Math.abs(deltaInFact - deltaPx)).toBeLessThanOrEqual(pixelStep);
     }
   });
 
   it('Бегунки не могут выходить за пределы блока', () => {
     view.setOptions({ range: true });
-    const rightThumb = thumbs[1];
+    const thumbRight = thumbs[1];
 
-    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
-    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = sliderDiv.clientWidth - rightThumb.offsetWidth;
+    const scaleWidth = sliderDiv.clientWidth - thumbRight.offsetWidth;
 
     let startTop: number;
 
-    startTop = rightThumb.getBoundingClientRect().top;
-    moveThumb(rightThumb, -scaleWidth * 100, 1000);
-    expect(parseFloat(getComputedStyle(rightThumb).left))
+    startTop = thumbRight.getBoundingClientRect().top;
+    moveThumb(thumbRight, -scaleWidth * 100, 1000);
+    expect(parseFloat(getComputedStyle(thumbRight).left))
       .toBeGreaterThanOrEqual(0);
-    expect(rightThumb.getBoundingClientRect().top).toEqual(startTop);
+    expect(thumbRight.getBoundingClientRect().top).toEqual(startTop);
 
-    startTop = rightThumb.getBoundingClientRect().top;
-    moveThumb(rightThumb, scaleWidth * 100, -50000);
-    expect(parseFloat(getComputedStyle(rightThumb).left))
+    startTop = thumbRight.getBoundingClientRect().top;
+    moveThumb(thumbRight, scaleWidth * 100, -50000);
+    expect(parseFloat(getComputedStyle(thumbRight).left))
       .toBeLessThanOrEqual(scaleWidth);
-    expect(rightThumb.getBoundingClientRect().top).toEqual(startTop);
+    expect(thumbRight.getBoundingClientRect().top).toEqual(startTop);
 
-    startTop = leftThumb.getBoundingClientRect().top;
-    moveThumb(leftThumb, -scaleWidth * 100, 1000);
-    expect(parseFloat(getComputedStyle(leftThumb).left))
+    startTop = thumbLeft.getBoundingClientRect().top;
+    moveThumb(thumbLeft, -scaleWidth * 100, 1000);
+    expect(parseFloat(getComputedStyle(thumbLeft).left))
       .toBeGreaterThanOrEqual(0);
-    expect(leftThumb.getBoundingClientRect().top).toEqual(startTop);
+    expect(thumbLeft.getBoundingClientRect().top).toEqual(startTop);
 
-    startTop = leftThumb.getBoundingClientRect().top;
-    moveThumb(leftThumb, scaleWidth * 100, -50000);
-    expect(parseFloat(getComputedStyle(leftThumb).left))
+    startTop = thumbLeft.getBoundingClientRect().top;
+    moveThumb(thumbLeft, scaleWidth * 100, -50000);
+    expect(parseFloat(getComputedStyle(thumbLeft).left))
       .toBeLessThanOrEqual(scaleWidth);
-    expect(leftThumb.getBoundingClientRect().top).toEqual(startTop);
+    expect(thumbLeft.getBoundingClientRect().top).toEqual(startTop);
   });
 
   it('Слайдер может работать в вертикальном положении', () => {
     view.setOptions({ range: true, angle: 90 });
-    const rightThumb = thumbs[1];
+    const thumbRight = thumbs[1];
 
-    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
-    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
-    const scaleWidth = sliderDiv.clientWidth - rightThumb.offsetWidth;
+    const scaleWidth = sliderDiv.clientWidth - thumbRight.offsetWidth;
 
-    const highLimit = leftThumb.getBoundingClientRect().top;
-    const lowLimit = rightThumb.getBoundingClientRect().top;
-    const leftLimit = leftThumb.getBoundingClientRect().left;
-    const rightLimit = leftThumb.getBoundingClientRect().right;
+    const highLimit = thumbLeft.getBoundingClientRect().top;
+    const lowLimit = thumbRight.getBoundingClientRect().top;
+    const leftLimit = thumbLeft.getBoundingClientRect().left;
+    const rightLimit = thumbLeft.getBoundingClientRect().right;
 
     // проверим поведение верхнего бегунка (левого)
     let startTop = highLimit;
-    moveThumb(leftThumb, 1000, scaleWidth / 4);
-    let pos = leftThumb.getBoundingClientRect();
+    moveThumb(thumbLeft, 1000, scaleWidth / 4);
+    let pos = thumbLeft.getBoundingClientRect();
     expect(pos.left).toEqual(leftLimit);
     expect(pos.right).toEqual(rightLimit);
     expect(Math.round(pos.top - startTop))
-      .toEqual(Math.round(parseFloat(getComputedStyle(leftThumb).left)));
+      .toEqual(Math.round(parseFloat(getComputedStyle(thumbLeft).left)));
 
     // проверим поведение верхнего бегунка (левого)
     startTop = lowLimit;
-    moveThumb(rightThumb, 1000, -scaleWidth / 4);
-    pos = rightThumb.getBoundingClientRect();
+    moveThumb(thumbRight, 1000, -scaleWidth / 4);
+    pos = thumbRight.getBoundingClientRect();
     expect(pos.left).toEqual(leftLimit);
     expect(pos.right).toEqual(rightLimit);
 
     expect(Math.round(startTop - pos.top))
-      .toEqual(Math.round(parseFloat(getComputedStyle(leftThumb).left)));
+      .toEqual(Math.round(parseFloat(getComputedStyle(thumbLeft).left)));
   });
 
   it('Бегунки располагаются согласно шагу и могут совпадать', () => {
     view.setOptions({ angle: 0, step: 0.5, range: true });
-    const rightThumb = thumbs[1];
+    const thumbRight = thumbs[1];
 
     const { scale } = view;
     if (scale === null) throw new Error();
@@ -239,20 +239,20 @@ describe('Позволяет пользователю взаимодейство
         clientY: 0,
       });
 
-    rightThumb.dispatchEvent(fakeMouseDown);
-    rightThumb.dispatchEvent(fakeMouseMove);
-    const posLeftThumb = leftThumb.getBoundingClientRect();
-    const posRightThumb = rightThumb.getBoundingClientRect();
-    rightThumb.dispatchEvent(fakeMouseUp);
+    thumbRight.dispatchEvent(fakeMouseDown);
+    thumbRight.dispatchEvent(fakeMouseMove);
+    const posthumbLeft = thumbLeft.getBoundingClientRect();
+    const posthumbRight = thumbRight.getBoundingClientRect();
+    thumbRight.dispatchEvent(fakeMouseUp);
 
-    expect(posLeftThumb.left).toEqual(posRightThumb.left);
+    expect(posthumbLeft.left).toEqual(posthumbRight.left);
   });
 
   it('При клике на слайдере, бегунок бежит к точке клика', () => {
-    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
 
     const slider = view.el;
-    const thumbStartX = leftThumb.getBoundingClientRect().left;
+    const thumbStartX = thumbLeft.getBoundingClientRect().left;
 
     let fakeMouseClick = new MouseEvent('click', {
       bubbles: true,
@@ -263,8 +263,8 @@ describe('Позволяет пользователю взаимодейство
 
     slider.dispatchEvent(fakeMouseClick);
 
-    expect(parseFloat(leftThumb.style.left))
-      .toEqual(slider.clientWidth - leftThumb.offsetWidth);
+    expect(parseFloat(thumbLeft.style.left))
+      .toEqual(slider.clientWidth - thumbLeft.offsetWidth);
 
     fakeMouseClick = new MouseEvent('click', {
       bubbles: true,
@@ -274,7 +274,7 @@ describe('Позволяет пользователю взаимодейство
     });
 
     slider.dispatchEvent(fakeMouseClick);
-    expect(parseFloat(leftThumb.style.left))
+    expect(parseFloat(thumbLeft.style.left))
       .toEqual(0);
   });
 });
@@ -282,8 +282,8 @@ describe('Позволяет пользователю взаимодейство
 describe('Также присутствует интерактивная шкала\n', () => {
   let view: View;
 
-  let leftThumb: Element;
-  let rightThumb: Element;
+  let thumbLeft: Element;
+  let thumbRight: Element;
 
   afterEach(() => {
     div.innerHTML = '';
@@ -346,33 +346,33 @@ describe('Также присутствует интерактивная шка�
       bubbles: true, cancelable: true,
     });
 
-    leftThumb = thumbs[0];
-    if (!(leftThumb instanceof HTMLDivElement)) throw new Error();
+    thumbLeft = thumbs[0];
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
 
-    rightThumb = thumbs[1];
-    if (!(rightThumb instanceof HTMLDivElement)) throw new Error();
+    thumbRight = thumbs[1];
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
     for (let i = 3; i < 8; i += 1) {
-      moveThumb(rightThumb, -scale.width / i);
-      moveThumb(leftThumb, scale.width / i);
+      moveThumb(thumbRight, -scale.width / i);
+      moveThumb(thumbLeft, scale.width / i);
 
       anchors[0].dispatchEvent(fakeMouseClick);
-      expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(0);
+      expect(parseFloat(getComputedStyle(thumbLeft).left)).toEqual(0);
 
       anchors[3].dispatchEvent(fakeMouseClick);
-      expect(parseFloat(getComputedStyle(rightThumb).left))
+      expect(parseFloat(getComputedStyle(thumbRight).left))
         .toEqual(scale.width);
 
       anchors[1].dispatchEvent(fakeMouseClick);
       let expectingLeft = Math.round(scale.parts[1] * scale.width);
-      let currentLeft = Math.round(parseFloat(getComputedStyle(leftThumb).left));
+      let currentLeft = Math.round(parseFloat(getComputedStyle(thumbLeft).left));
       expect(currentLeft).toEqual(expectingLeft);
 
       anchors[0].dispatchEvent(fakeMouseClick);
 
       anchors[2].dispatchEvent(fakeMouseClick);
       expectingLeft = Math.round(scale.parts[2] * scale.width);
-      currentLeft = Math.round(parseFloat(getComputedStyle(rightThumb).left));
+      currentLeft = Math.round(parseFloat(getComputedStyle(thumbRight).left));
       expect(currentLeft).toEqual(expectingLeft);
 
       anchors[3].dispatchEvent(fakeMouseClick);
@@ -380,12 +380,12 @@ describe('Также присутствует интерактивная шка�
 
     view.setOptions({ range: false });
     for (let i = 1; i < 8; i += 1) {
-      moveThumb(leftThumb, scale.width / i);
+      moveThumb(thumbLeft, scale.width / i);
       anchors[0].dispatchEvent(fakeMouseClick);
-      expect(parseFloat(getComputedStyle(leftThumb).left)).toEqual(0);
+      expect(parseFloat(getComputedStyle(thumbLeft).left)).toEqual(0);
 
       anchors[3].dispatchEvent(fakeMouseClick);
-      expect(parseFloat(getComputedStyle(leftThumb).left))
+      expect(parseFloat(getComputedStyle(thumbLeft).left))
         .toEqual(scale.width);
       anchors[0].dispatchEvent(fakeMouseClick);
     }
@@ -477,7 +477,7 @@ describe('Может отображать подсказку\n', () => {
   let view: View;
 
   let sliderDiv: Element;
-  let leftThumb: Element;
+  let thumbLeft: Element;
 
   const options = {
     range: true,
@@ -501,8 +501,8 @@ describe('Может отображать подсказку\n', () => {
   });
 
   it('При нажатии на левом кругляше отображается подсказка', () => {
-    leftThumb = thumbs[0];
-    leftThumb.dispatchEvent(fakeMouseDown);
+    thumbLeft = thumbs[0];
+    thumbLeft.dispatchEvent(fakeMouseDown);
 
     const hint = hints[0];
     if (!(hint instanceof HTMLDivElement)) throw new Error();
@@ -512,8 +512,8 @@ describe('Может отображать подсказку\n', () => {
   });
 
   it('При нажатии на правом кругляше отображается подсказка', () => {
-    const rightThumb = thumbs[1];
-    rightThumb.dispatchEvent(fakeMouseDown);
+    const thumbRight = thumbs[1];
+    thumbRight.dispatchEvent(fakeMouseDown);
 
     const hint = hints[0];
     if (!(hint instanceof HTMLDivElement)) throw new Error();
@@ -543,14 +543,14 @@ describe('Может отображать подсказку\n', () => {
     view = new View(options);
     view.setOptions({ hintAlwaysShow: true });
 
-    const leftHint = hints[0];
-    if (!(leftHint instanceof HTMLDivElement)) throw new Error();
+    const hintLeft = hints[0];
+    if (!(hintLeft instanceof HTMLDivElement)) throw new Error();
 
-    const rightHint = hints[1];
-    if (!(rightHint instanceof HTMLDivElement)) throw new Error();
+    const hintRight = hints[1];
+    if (!(hintRight instanceof HTMLDivElement)) throw new Error();
 
-    expect(leftHint.textContent).toEqual('hint');
-    expect(rightHint.textContent).toEqual('hint');
+    expect(hintLeft.textContent).toEqual('hint');
+    expect(hintRight.textContent).toEqual('hint');
 
     view.setOptions({ hintAlwaysShow: false });
 
