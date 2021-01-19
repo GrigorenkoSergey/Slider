@@ -222,7 +222,7 @@ describe('Меняет значения подсказки над бегунко
     const thumbLeft = thumbs[0];
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
 
-    const thumbRight = document.querySelector('[class*=right]');
+    const thumbRight = thumbs[1];
     if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
     thumbLeft.dispatchEvent(fakeMouseDown);

@@ -583,7 +583,7 @@ describe('Реагирует на ручное изменение положен
   });
 
   it('При перетаскивании бегунков мышкой значение соответствующего поля меняется', () => {
-    const scale = div.querySelector('.slider__scale');
+    const scale = div.getElementsByClassName('slider__scale')[0];
     if (!(scale instanceof HTMLDivElement)) throw new Error();
 
     const thumbLeft = thumbs[0];
