@@ -2,23 +2,8 @@ import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe('Model\n', () => {
   describe('Первоначальная минимальная инициализация\n', () => {
-    it('Можно инициализировать с необходимым минимумом аргументов: min, max', () => {
-      const model = new Model({ min: 0, max: 100 });
-
-      const modelOptions = model.getOptions();
-      expect(modelOptions.alternativeRange).toBeDefined();
-      expect(modelOptions.max).toBeDefined();
-      expect(modelOptions.min).toBeDefined();
-      expect(modelOptions.partsAmount).toBeDefined();
-      expect(modelOptions.precision).toBeDefined();
-      expect(modelOptions.range).toBeDefined();
-      expect(modelOptions.step).toBeDefined();
-      expect(modelOptions.thumbLeftValue).toBeDefined();
-      expect(modelOptions.thumbRightValue).toBeDefined();
-    });
-
-    it('Альтернативно можно инициализировать с помощью опции "alternativeRange"', () => {
-      const model = new Model({ alternativeRange: ['start', 'end'] });
+    it('Можно инициализировать пустым объектом', () => {
+      const model = new Model({});
 
       const modelOptions = model.getOptions();
       expect(modelOptions.alternativeRange).toBeDefined();
@@ -33,7 +18,7 @@ describe('Model\n', () => {
     });
 
     it(`В качестве значений опции "alternativeRange" принимается массив,
-        состоящий из по-крайнеме мере двух значений`, () => {
+        состоящий из, по-крайней мере, двух значений`, () => {
       expect(() => new Model({ alternativeRange: [] })).toThrowError();
     });
 
@@ -62,7 +47,7 @@ describe('Model\n', () => {
     });
 
     it(`Если не задано положение левого бегунка, 
-    он становится равными минимуму`, () => {
+    он становится равным "min"`, () => {
       const model = new Model({ min: -200, max: 100 });
       expect(model.getOptions().thumbLeftValue).toEqual(-200);
     });
@@ -97,7 +82,7 @@ describe('Model\n', () => {
     });
 
     it(`При некратном шаге достижимые значения слайдера не могут 
-    быть меньше min и больше max`, () => {
+    быть меньше "min" и больше "max"`, () => {
       const model = new Model({
         min: 10, max: 299, step: 3, range: true,
       });
@@ -148,8 +133,8 @@ describe('Model\n', () => {
       expect(model.getOptions().partsAmount).toEqual(1);
     });
 
-    it(`Когда задано свойство "alternativeRange", потом устанавливается "min" или "max",
-      свойство "alternativeRange" обнуляется (становится равным [])`, () => {
+    it(`Когда сначала задано свойство "alternativeRange", а потом устанавливается "min" 
+      или "max", свойство "alternativeRange" сбрасывается и становится равным []`, () => {
       model.setOptions({ alternativeRange: ['start', 'end'] });
       expect(model.getOptions().alternativeRange).toEqual(['start', 'end']);
       model.setOptions({ min: -10 });
@@ -178,7 +163,7 @@ describe('Model\n', () => {
     });
 
     it(`Если "max" задан меньше, чем текущее значение "thumbLeftValue", то последнее
-    либо становится минимумом, если опция "range" == true, иначе максимумом`, () => {
+    либо становится минимумом, если опция "range" == true, либо максимумом`, () => {
       model.setOptions({ thumbLeftValue: 50, range: true, thumbRightValue: 100 });
       model.setOptions({ max: 40 });
       expect(model.getOptions().thumbLeftValue).toEqual(model.getOptions().min);
@@ -207,7 +192,7 @@ describe('Model\n', () => {
       expect(model.getOptions().partsAmount).toEqual(1);
     });
 
-    it('Нельзя задать "thumbRightValue" больше максимума и минимума', () => {
+    it('Нельзя задать "thumbRightValue" больше максимума и меньше минимума', () => {
       model.setOptions({ thumbRightValue: 1000, range: true });
       expect(model.getOptions().thumbRightValue).toEqual(100);
       expect(() => { model.setOptions({ thumbRightValue: 10, min: 20 }); }).toThrowError();
@@ -232,8 +217,8 @@ describe('Model\n', () => {
       expect(() => model.setOptions({ thumbRightValue: 49 })).toThrowError();
     });
 
-    it(`При задании свойств "min"/"max" если бегунки оказываются за пределами, \n
-          то они разбегаются по краям слайдера`, () => {
+    it(`При задании свойств "min"/"max" если бегунки оказываются за пределами
+      новых значений шкалы, то они устанавливаются по краям слайдера`, () => {
       model.setOptions({ range: true, min: 200, max: 300 });
 
       expect(model.getOptions().thumbLeftValue).toEqual(200);
@@ -272,14 +257,14 @@ describe('Model\n', () => {
       expect(model.getOptions().max).toEqual(100);
     });
 
-    it(`Минимальное значение левого бегунка равно значению свойства 
-    "min", ставится автоматически`, () => {
+    it(`Минимальное значение положения левого бегунка равно значению свойства
+     "min", при необходимости ставится автоматически`, () => {
       model.setThumbsPos({ left: -10 });
       expect(model.getOptions().thumbLeftValue).toEqual(model.getOptions().min);
     });
 
-    it(`Максимальное значение правого диапазона равно значению свойства 
-    "max", ставится автоматически`, () => {
+    it(`Максимальное значение положения правого бегунка равно значению свойства 
+    "max", при необходимости ставится автоматически`, () => {
       model.setThumbsPos({ left: model.getOptions().thumbLeftValue, right: 101 });
       expect(model.getOptions().thumbRightValue).toEqual(100);
     });
@@ -293,8 +278,9 @@ describe('Model\n', () => {
 
   describe(`Model - это всего лишь функция интерполяции, поэтому она просто 
     высчитывает значения в зависимости от аргумента, который представляет 
-    собой координату смещения от начала отсчета`, () => {
+    собой координату смещения от начала отсчета\n`, () => {
     let model: Model;
+
     beforeEach(() => {
       model = new Model({
         min: 0,
