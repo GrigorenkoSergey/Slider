@@ -1,3 +1,5 @@
+import { MODEL_OPTIONS_DEFAULT } from
+  '../src/assets/blocks/slider/components/model/components/model-options-default';
 import Model from '../src/assets/blocks/slider/components/model/model';
 
 describe('Model\n', () => {
@@ -122,7 +124,7 @@ describe('Model\n', () => {
       expect(() => model.setOptions({ partsAmount: 3, step: 50 })).toThrowError();
     });
 
-    it('min + step * partsAmount should be > max + step', () => {
+    it('Результат min + step * partsAmount должен быть > max + step', () => {
       expect(() => model.setOptions({ step: 50, partsAmount: 3 })).toThrowError();
       model.setOptions({ partsAmount: 3 });
       model.setOptions({ step: 50 });
@@ -230,10 +232,8 @@ describe('Model\n', () => {
 
     it('В любой момент можно узнать значения свойств модели', () => {
       const options = model.getOptions();
-      expect(options.min).toEqual(0);
-      expect(options.max).toEqual(100);
-      expect(options.step).toEqual(1);
-      expect(options.thumbLeftValue).toEqual(0);
+      expect(Object.keys(options).every((key) => key in MODEL_OPTIONS_DEFAULT))
+        .toBeTrue();
     });
   });
 
