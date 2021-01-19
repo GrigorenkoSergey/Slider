@@ -114,7 +114,10 @@ export default class Thumbs extends EventObserver {
     if (thumb === thumbLeft && range) {
       closure.rightLimit = parseFloat(getComputedStyle(thumbRight).left);
     } else {
-      closure.rightLimit = Math.floor(scaleInnerWidth / pixelStep) * pixelStep;
+      closure.rightLimit = Math.max(
+        parseFloat(getComputedStyle(thumbLeft).left),
+        Math.floor(scaleInnerWidth / pixelStep) * pixelStep,
+      );
     }
 
     closure.shiftX = e.clientX - thumbCoords.left;
