@@ -247,14 +247,10 @@ describe('Model\n', () => {
       model.setThumbsPos({ left: 20, right: 80 });
       expect(model.getOptions().thumbLeftValue).toEqual(20);
       expect(model.getOptions().thumbRightValue).toEqual(80);
-      expect(model.getOptions().min).toEqual(0);
-      expect(model.getOptions().max).toEqual(100);
 
       model.setThumbsPos({ left: 30, right: 95 });
       expect(model.getOptions().thumbLeftValue).toEqual(30);
       expect(model.getOptions().thumbRightValue).toEqual(95);
-      expect(model.getOptions().min).toEqual(0);
-      expect(model.getOptions().max).toEqual(100);
     });
 
     it(`Минимальное значение положения левого бегунка равно значению свойства
