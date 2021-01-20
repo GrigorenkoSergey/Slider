@@ -36,38 +36,35 @@ export default class View extends EventObserver implements ISubscriber {
   }
 
   private init(opts: ViewOptions): this {
-    if (opts.selector === undefined) {
+    const { selector } = opts;
+
+    if (selector === undefined) {
       throw new Error('You should pass options "selector" in options!');
     }
 
-    this.setOptions(opts);
-
-    const { options, el } = this;
-    const { selector } = options;
     const wrapper = document.querySelector(selector);
-
     if (wrapper === null) {
       throw new Error(`There is no element with selector "${selector}"`);
     }
-
-    wrapper.append(el);
-
-    el.style.transform = `rotate(${options.angle}deg)`;
-    el.classList.add(options.className);
 
     const { thumbs } = this;
     thumbs.addSubscriber('thumbMouseMove', this);
     thumbs.addSubscriber('thumbMouseDown', this);
     thumbs.addSubscriber('thumbMouseUp', this);
 
-    el.addEventListener('click', this.handleSliderClick);
-
-    this.scale = new Scale({ view: this });
-    this.scale.addSubscriber('anchorClick', this);
-
     this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);
     this.addSubscriber('range', this);
+
+    this.setOptions(opts);
+
+    const { options, el } = this;
+    el.classList.add(options.className);
+    el.addEventListener('click', this.handleSliderClick);
+    wrapper.append(el);
+
+    this.scale = new Scale({ view: this });
+    this.scale.addSubscriber('anchorClick', this);
 
     return this;
   }

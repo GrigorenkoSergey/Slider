@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 /* eslint-disable no-new */
 import View from '../src/assets/blocks/slider/components/view/view';
 import '../src/assets/blocks/slider/slider.scss';
@@ -29,8 +28,7 @@ function moveThumb(thumb: HTMLDivElement,
   thumb.dispatchEvent(fakeMouseUp);
 }
 
-const body = document.getElementsByTagName('body')[0];
-body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
+document.body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
@@ -41,14 +39,7 @@ document.body.append(div);
 const fakeMouseUp = new MouseEvent('mouseup',
   { bubbles: true, cancelable: true });
 
-const thumbs = div.getElementsByClassName('slider__thumb');
-const sliderCollection = div.getElementsByClassName('slider');
-const anchors = div.getElementsByClassName('slider__scale-points');
-const hints = div.getElementsByClassName('slider__hint');
-
 describe('Первоначальная минимальная инициализация\n', () => {
-  let view: View;
-
   afterEach(() => {
     div.innerHTML = '';
   });
@@ -62,7 +53,7 @@ describe('Первоначальная минимальная инициализ
 
   it(`В любой момент времени можно получить значения 
   всех публичных свойств`, () => {
-    view = new View({ selector: '.divViewSpec' });
+    const view = new View({ selector: '.divViewSpec' });
     const options = view.getOptions();
     expect(options.selector).toEqual('.divViewSpec');
     expect(options.angle).toEqual(0);
@@ -70,7 +61,7 @@ describe('Первоначальная минимальная инициализ
   });
 
   it('Если неправильно задан угол, выдаст ошибку', () => {
-    view = new View({
+    const view = new View({
       selector: '.divViewSpec',
     });
 
@@ -86,13 +77,8 @@ describe('Первоначальная минимальная инициализ
 describe('Позволяет пользователю взаимодействовать с бегунком\n', () => {
   let view: View;
 
-  let sliderDiv: Element;
-  let thumbLeft: Element;
-
   beforeEach(() => {
     view = new View({ selector: '.divViewSpec' });
-    thumbLeft = thumbs[0];
-    sliderDiv = sliderCollection[0];
   });
 
   afterEach(() => {
@@ -100,7 +86,12 @@ describe('Позволяет пользователю взаимодейство
   });
 
   it('Можно двигать левый бегунок мышкой', () => {
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
+    const sliderDiv = div.querySelector('.slider');
+    if (!(sliderDiv instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = sliderDiv.clientWidth - thumbLeft.offsetWidth;
 
     const { step } = view.getOptions();
@@ -122,8 +113,11 @@ describe('Позволяет пользователю взаимодейство
   it('Можно двигать правый бегунок мышкой', () => {
     view.setOptions({ range: true });
 
-    const thumbRight = thumbs[1];
+    const thumbRight = div.querySelector('.slider__thumb_side_right');
     if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
+
+    const sliderDiv = div.querySelector('.slider');
+    if (!(sliderDiv instanceof HTMLDivElement)) throw new Error();
 
     const scaleWidth = sliderDiv.clientWidth - thumbRight.offsetWidth;
 
@@ -144,10 +138,14 @@ describe('Позволяет пользователю взаимодейство
 
   it('Бегунки не могут выходить за пределы блока', () => {
     view.setOptions({ range: true });
-    const thumbRight = thumbs[1];
-
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
+    const thumbRight = div.querySelector('.slider__thumb_side_right');
     if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
+
+    const sliderDiv = div.querySelector('.slider');
+    if (!(sliderDiv instanceof HTMLDivElement)) throw new Error();
 
     const scaleWidth = sliderDiv.clientWidth - thumbRight.offsetWidth;
 
@@ -180,10 +178,15 @@ describe('Позволяет пользователю взаимодейство
 
   it('Слайдер может работать в вертикальном положении', () => {
     view.setOptions({ range: true, angle: 90 });
-    const thumbRight = thumbs[1];
 
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
+    const thumbRight = div.querySelector('.slider__thumb_side_right');
     if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
+
+    const sliderDiv = div.querySelector('.slider');
+    if (!(sliderDiv instanceof HTMLDivElement)) throw new Error();
 
     const scaleWidth = sliderDiv.clientWidth - thumbRight.offsetWidth;
 
@@ -214,7 +217,9 @@ describe('Позволяет пользователю взаимодейство
 
   it('Бегунки располагаются согласно шагу и могут совпадать', () => {
     view.setOptions({ angle: 0, step: 0.5, range: true });
-    const thumbRight = thumbs[1];
+
+    const thumbRight = div.querySelector('.slider__thumb_side_right');
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
 
     const { scale } = view;
     if (scale === null) throw new Error();
@@ -239,14 +244,20 @@ describe('Позволяет пользователю взаимодейство
 
     thumbRight.dispatchEvent(fakeMouseDown);
     thumbRight.dispatchEvent(fakeMouseMove);
-    const posthumbLeft = thumbLeft.getBoundingClientRect();
-    const posthumbRight = thumbRight.getBoundingClientRect();
+
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
+    const posThumbLeft = thumbLeft.getBoundingClientRect();
+    const posThumbRight = thumbRight.getBoundingClientRect();
+
     thumbRight.dispatchEvent(fakeMouseUp);
 
-    expect(posthumbLeft.left).toEqual(posthumbRight.left);
+    expect(posThumbLeft.left).toEqual(posThumbRight.left);
   });
 
   it('При клике на слайдере, бегунок бежит к точке клика', () => {
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
 
     const slider = view.el;
@@ -278,11 +289,6 @@ describe('Позволяет пользователю взаимодейство
 });
 
 describe('Проверка поведения интерактивной шкалы\n', () => {
-  let view: View;
-
-  let thumbLeft: Element;
-  let thumbRight: Element;
-
   afterEach(() => {
     div.innerHTML = '';
   });
@@ -297,11 +303,13 @@ describe('Проверка поведения интерактивной шка�
       partsAmount: 2,
     };
 
-    view = new View(options);
+    const view = new View(options);
     const { scale } = view;
     if (scale === null) {
       throw new Error();
     }
+
+    const anchors = div.getElementsByClassName('slider__scale-points');
 
     expect(anchors[0].textContent).toEqual('0');
     expect(anchors[1].textContent).toEqual('0.75');
@@ -336,7 +344,7 @@ describe('Проверка поведения интерактивной шка�
       partsAmount: 3,
     };
 
-    view = new View(options);
+    const view = new View(options);
     const { scale } = view;
     if (scale === null) throw new Error();
 
@@ -344,11 +352,13 @@ describe('Проверка поведения интерактивной шка�
       bubbles: true, cancelable: true,
     });
 
-    thumbLeft = thumbs[0];
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
 
-    thumbRight = thumbs[1];
+    const thumbRight = div.querySelector('.slider__thumb_side_right');
     if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
+
+    const anchors = div.querySelectorAll('.slider__scale-points');
 
     for (let i = 3; i < 8; i += 1) {
       moveThumb(thumbRight, -scale.width / i);
@@ -356,7 +366,6 @@ describe('Проверка поведения интерактивной шка�
 
       anchors[0].dispatchEvent(fakeMouseClick);
       expect(parseFloat(getComputedStyle(thumbLeft).left)).toEqual(0);
-
       anchors[3].dispatchEvent(fakeMouseClick);
       expect(parseFloat(getComputedStyle(thumbRight).left))
         .toEqual(scale.width);
@@ -398,10 +407,11 @@ describe('Проверка поведения интерактивной шка�
       partsAmount: 1,
     };
 
-    view = new View(options);
+    const view = new View(options);
     const { scale } = view;
     if (scale === null) throw new Error();
 
+    const anchors = div.querySelectorAll('.slider__scale-points');
     const labelLeft = anchors[0];
     if (!(labelLeft instanceof HTMLDivElement)) throw new Error();
 
@@ -425,13 +435,14 @@ describe('Проверка поведения интерактивной шка�
       partsAmount: 4,
     };
 
-    view = new View(options);
+    const view = new View(options);
     const { scale } = view;
     if (scale === null) throw new Error();
 
     let values: number[] | string[] = [50, 75, 100, 125, 150];
 
     scale.setAnchorValues(values);
+    const anchors = div.getElementsByClassName('slider__scale-points');
 
     for (let i = 0; i < anchors.length; i += 1) {
       expect(anchors[i].textContent).toEqual(String(values[i]));
@@ -455,7 +466,7 @@ describe('Проверка поведения интерактивной шка�
       partsAmount: 4,
     };
 
-    view = new View(options);
+    const view = new View(options);
     const { scale } = view;
     if (scale === null) throw new Error();
 
@@ -465,6 +476,7 @@ describe('Проверка поведения интерактивной шка�
 
     scale.setMilestones([0, 0.25, 0.7, 1]);
 
+    const anchors = div.querySelectorAll('.slider__scale-points');
     expect(anchors[0].textContent).toEqual('0');
     expect(anchors[1].textContent).toEqual('0.25');
     expect(anchors[2].textContent).toEqual('0.7');
@@ -474,9 +486,6 @@ describe('Проверка поведения интерактивной шка�
 
 describe('Может отображать подсказку\n', () => {
   let view: View;
-
-  let sliderDiv: Element;
-  let thumbLeft: Element;
 
   const options = {
     range: true,
@@ -500,20 +509,24 @@ describe('Может отображать подсказку\n', () => {
   });
 
   it('При нажатии на левом кругляше отображается подсказка', () => {
-    thumbLeft = thumbs[0];
+    const thumbLeft = div.querySelector('.slider__thumb_side_left');
+    if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
+
     thumbLeft.dispatchEvent(fakeMouseDown);
 
-    const hint = hints[0];
+    const hint = thumbLeft.querySelector('.slider__hint');
     if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.textContent).toEqual('hint');
   });
 
   it('При нажатии на правом кругляше отображается подсказка', () => {
-    const thumbRight = thumbs[1];
+    const thumbRight = div.querySelector('.slider__thumb_side_right');
+    if (!(thumbRight instanceof HTMLDivElement)) throw new Error();
+
     thumbRight.dispatchEvent(fakeMouseDown);
 
-    const hint = hints[0];
+    const hint = thumbRight.querySelector('.slider__hint');
     if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.textContent).toEqual('hint');
@@ -525,25 +538,41 @@ describe('Может отображать подсказку\n', () => {
 
     thumb.dispatchEvent(fakeMouseDown);
 
-    expect(hints.length).toEqual(0);
+    const hint = thumb.querySelector('.slider__hint');
+    expect(hint).toEqual(null);
 
-    sliderDiv = sliderCollection[0];
+    const sliderDiv = div.querySelector('.slider');
+    if (!(sliderDiv instanceof HTMLDivElement)) throw new Error();
+
     const scaleWidth = sliderDiv.clientWidth - thumb.offsetWidth;
     const deltaPx = scaleWidth / 8;
 
     moveThumb(thumb, deltaPx);
-    expect(hints.length).toEqual(0);
+    expect(hint).toEqual(null);
+    thumb.dispatchEvent(fakeMouseUp);
+  });
+
+  it('Подсказке можно установить любое значение', () => {
+    const thumb = view.thumbs.thumbLeft;
+
+    view.setHintValue(thumb, '0');
+    thumb.dispatchEvent(fakeMouseDown);
+
+    const hint = thumb.querySelector('.slider__hint');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
+
+    expect(hint.textContent).toEqual('0');
     thumb.dispatchEvent(fakeMouseUp);
   });
 
   it('Существует опция "hintAlwaysShow", при которой подсказка отображается всегда', () => {
-    view = new View(options);
-    view.setOptions({ hintAlwaysShow: true });
+    div.innerHTML = '';
+    view = new View({ ...options, hintAlwaysShow: true });
 
-    const hintLeft = hints[0];
+    let hints = Array.from(div.querySelectorAll('.slider__hint'));
+    const [hintLeft, hintRight] = hints;
+
     if (!(hintLeft instanceof HTMLDivElement)) throw new Error();
-
-    const hintRight = hints[1];
     if (!(hintRight instanceof HTMLDivElement)) throw new Error();
 
     expect(hintLeft.textContent).toEqual('hint');
@@ -551,7 +580,38 @@ describe('Может отображать подсказку\n', () => {
 
     view.setOptions({ hintAlwaysShow: false });
 
-    expect(hints[0]).toBeFalsy();
-    expect(hints[1]).toBeFalsy();
+    hints = Array.from(div.querySelectorAll('.slider__hint'));
+    expect(hints.length).toEqual(0);
+  });
+
+  it('При клике на подсказке и движении мыши, ни подсказка, ни бегунок не двигаются', () => {
+    view.setOptions({ hintAlwaysShow: true });
+    const thumb = div.querySelector('.slider__thumb_side_left');
+    if (!(thumb instanceof HTMLDivElement)) throw new Error();
+
+    const hint = thumb.querySelector('.slider__hint');
+    if (!(hint instanceof HTMLDivElement)) throw new Error();
+
+    const thumbPosStart = thumb.getBoundingClientRect();
+    const hintPosStart = hint.getBoundingClientRect();
+
+    hint.dispatchEvent(fakeMouseDown);
+
+    const fakeMouseMove = new MouseEvent('mousemove',
+      {
+        bubbles: true,
+        cancelable: true,
+        clientX: 1000,
+        clientY: 0,
+      });
+    hint.dispatchEvent(fakeMouseMove);
+
+    const thumbPosEnd = thumb.getBoundingClientRect();
+    const hintPosEnd = hint.getBoundingClientRect();
+
+    expect(hintPosStart.left).toEqual(hintPosEnd.left);
+    expect(thumbPosStart.left).toEqual(thumbPosEnd.left);
+
+    hint.dispatchEvent(fakeMouseDown);
   });
 });

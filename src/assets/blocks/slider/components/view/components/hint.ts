@@ -23,11 +23,6 @@ export default class Hint extends EventObserver {
     el.classList.add(`${view.getOptions().className}__hint`);
 
     el.addEventListener('mousedown', this.handleMouseDown);
-
-    if (view.getOptions().hintAlwaysShow) {
-      this.appendHint();
-    }
-
     view.addSubscriber('angle', this);
   }
 

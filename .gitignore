@@ -8,3 +8,5 @@ package-lock.json
 coverage/
 dist/
 **/debugger-point.ts
+**/intergation-spec.ts
+**/slider-options-palette-spec.ts
