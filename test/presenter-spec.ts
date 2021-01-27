@@ -6,7 +6,6 @@ import '../src/assets/blocks/slider/slider.scss';
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.classList.add('divPresenterSpec');
-div.style.marginTop = '70px';
 document.body.append(div);
 
 describe('Первоначальная минимальная реализация\n', () => {
@@ -211,8 +210,6 @@ describe('В любой момент времени можно узнать и �
     expect(opts.step).toEqual(10);
     expect(opts.thumbLeftValue).toEqual(50);
     expect(opts.angle).toEqual(45);
-
-    div.style.marginTop = '70px';
   });
 });
 

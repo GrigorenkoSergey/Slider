@@ -33,7 +33,6 @@ document.body.style.width = `${document.documentElement.clientWidth * 0.9}px`;
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.
 div.classList.add('divViewSpec');
-div.style.marginTop = '70px';
 document.body.append(div);
 
 const fakeMouseUp = new MouseEvent('mouseup',

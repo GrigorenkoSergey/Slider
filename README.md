@@ -86,7 +86,6 @@
 │   ├── helpers-spec.ts
 │   ├── model-spec.ts
 │   ├── presenter-spec.ts
-│   ├── slider-options-palette-spec.ts
 │   └── view-spec.ts
 |
 ├── .eslint.js
