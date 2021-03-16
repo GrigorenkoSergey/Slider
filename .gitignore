@@ -1,12 +1,3 @@
-cribs/
-toDo
-vim_keys
 node_modules
-.vscode
-трудозатраты
-package-lock.json
 coverage/
 dist/
-**/debugger-point.ts
-**/integration-spec.ts
-**/slider-options-palette-spec.ts
