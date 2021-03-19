@@ -187,7 +187,7 @@ export default class View extends EventObserver implements ISubscriber {
 
     const { options, el } = this;
     el.classList.add(options.className);
-    el.addEventListener('click', this.handleSliderClick);
+    el.addEventListener('mousedown', this.handleTrackMouseDown);
     wrapper.append(el);
 
     this.scale = new Scale({ view: this });
@@ -219,7 +219,14 @@ export default class View extends EventObserver implements ISubscriber {
     }
   }
 
-  private handleSliderClick = (e: MouseEvent): void => {
+  private handleTrackMouseDown = (e: MouseEvent): void => {
+    const { el } = this;
+    if (e.target === el) {
+      el.addEventListener('mouseup', this.handleTrackMouseUp);
+    }
+  }
+
+  private handleTrackMouseUp = (e: MouseEvent): void => {
     const { target } = e;
     const {
       options, el: slider, stretcher, scale,
@@ -256,6 +263,7 @@ export default class View extends EventObserver implements ISubscriber {
     offset = Math.round(offset / options.step) * options.step;
 
     this.moveThumbToPos(closestThumb, offset);
+    this.el.removeEventListener('mouseup', this.handleTrackMouseUp);
   }
 
   private validateOptions(key: string, value: number | string | boolean | undefined): void {

@@ -35,9 +35,6 @@ const div = document.createElement('div');
 div.classList.add('divViewSpec');
 document.body.append(div);
 
-const fakeMouseUp = new MouseEvent('mouseup',
-  { bubbles: true, cancelable: true });
-
 describe('Первоначальная минимальная инициализация\n', () => {
   afterEach(() => {
     div.innerHTML = '';
@@ -250,6 +247,8 @@ describe('Позволяет пользователю взаимодейство
     const posThumbLeft = thumbLeft.getBoundingClientRect();
     const posThumbRight = thumbRight.getBoundingClientRect();
 
+    const fakeMouseUp = new MouseEvent('mouseup',
+      { bubbles: true, cancelable: true });
     thumbRight.dispatchEvent(fakeMouseUp);
 
     expect(posThumbLeft.left).toEqual(posThumbRight.left);
@@ -269,19 +268,46 @@ describe('Позволяет пользователю взаимодейство
       clientY: 0,
     });
 
-    slider.dispatchEvent(fakeMouseClick);
+    let clientX = thumbStartX + slider.clientWidth;
+    let fakeMouseDown = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+      clientX,
+      clientY: 0,
+    });
+
+    let fakeMouseUp = new MouseEvent('mouseup', {
+      bubbles: true,
+      cancelable: true,
+      clientX,
+      clientY: 0,
+    });
+
+    slider.dispatchEvent(fakeMouseDown);
+    slider.dispatchEvent(fakeMouseUp);
 
     expect(parseFloat(thumbLeft.style.left))
       .toEqual(slider.clientWidth - thumbLeft.offsetWidth);
 
-    fakeMouseClick = new MouseEvent('click', {
+    clientX = -thumbStartX - slider.clientWidth;
+
+    fakeMouseDown = new MouseEvent('mousedown', {
       bubbles: true,
       cancelable: true,
-      clientX: -thumbStartX - slider.clientWidth,
+      clientX,
       clientY: 0,
     });
 
-    slider.dispatchEvent(fakeMouseClick);
+    fakeMouseUp = new MouseEvent('mouseup', {
+      bubbles: true,
+      cancelable: true,
+      clientX,
+      clientY: 0,
+    });
+
+    slider.dispatchEvent(fakeMouseDown);
+    slider.dispatchEvent(fakeMouseUp);
+
     expect(parseFloat(thumbLeft.style.left))
       .toEqual(0);
   });
@@ -548,6 +574,9 @@ describe('Может отображать подсказку\n', () => {
 
     moveThumb(thumb, deltaPx);
     expect(hint).toEqual(null);
+
+    const fakeMouseUp = new MouseEvent('mouseup',
+      { bubbles: true, cancelable: true });
     thumb.dispatchEvent(fakeMouseUp);
   });
 
@@ -561,6 +590,9 @@ describe('Может отображать подсказку\n', () => {
     if (!(hint instanceof HTMLDivElement)) throw new Error();
 
     expect(hint.textContent).toEqual('0');
+
+    const fakeMouseUp = new MouseEvent('mouseup',
+      { bubbles: true, cancelable: true });
     thumb.dispatchEvent(fakeMouseUp);
   });
 
