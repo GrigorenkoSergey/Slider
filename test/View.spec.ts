@@ -1,6 +1,6 @@
 /* eslint-disable no-new */
-import View from '../src/assets/blocks/slider/components/view/view';
-import '../src/assets/blocks/slider/slider.scss';
+import View from '../src/assets/blocks/Slider/components/View/View';
+import '../src/assets/blocks/Slider/slider.scss';
 
 function moveThumb(thumb: HTMLDivElement,
   deltaXPx: number, deltaYPx: number = 0): void {

@@ -1,4 +1,4 @@
-import Model from '../model';
+import Model from '../Model';
 import { ModelOptions } from './model-types';
 
 export class ModelValidator {

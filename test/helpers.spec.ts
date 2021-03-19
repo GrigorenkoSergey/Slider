@@ -1,4 +1,4 @@
-import EventObserver from '../src/assets/blocks/helpers/event-observer';
+import EventObserver from '../src/assets/blocks/helpers/EventObserver';
 import { SliderEvents } from '../src/assets/blocks/helpers/slider-events';
 import { ISubscriber } from '../src/assets/blocks/helpers/interfaces';
 

@@ -1,5 +1,5 @@
-import EventObserver from '../../../helpers/event-observer';
-import { ModelValidator } from './components/model-validator';
+import EventObserver from '../../../helpers/EventObserver';
+import { ModelValidator } from './components/ModelValidator';
 import { ModelOptions } from './components/model-types';
 import { MODEL_OPTIONS_DEFAULT } from './components/model-options-default';
 

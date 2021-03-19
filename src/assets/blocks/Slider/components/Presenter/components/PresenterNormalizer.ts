@@ -1,5 +1,5 @@
-import { ModelOptions } from '../../model/components/model-types';
-import { ViewOptions } from '../../view/components/view-types';
+import { ModelOptions } from '../../Model/components/model-types';
+import { ViewOptions } from '../../View/components/view-types';
 
 type NumberProps = 'max' | 'min' | 'step' | 'partsAmount' | 'thumbLeftValue' |
   'thumbRightValue' | 'precision' | 'angle';

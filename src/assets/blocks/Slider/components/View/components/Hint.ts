@@ -1,6 +1,6 @@
-import EventObserver from '../../../../helpers/event-observer';
+import EventObserver from '../../../../helpers/EventObserver';
 import { SliderEvents } from '../../../../helpers/slider-events';
-import View from '../view';
+import View from '../View';
 
 export default class Hint extends EventObserver {
   readonly el: HTMLDivElement = document.createElement('div');

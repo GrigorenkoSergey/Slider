@@ -1,8 +1,8 @@
-import EventObserver from '../../../helpers/event-observer';
+import EventObserver from '../../../helpers/EventObserver';
 import { SliderEvents } from '../../../helpers/slider-events';
-import { Slider } from '../../../slider/slider';
+import { Slider } from '../../../Slider/Slider';
 
-import BindedInput from '../binded-input/binded-input';
+import BindedInput from '../BoundedInput/BoundedInput';
 import './slider-options-palette.scss';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;

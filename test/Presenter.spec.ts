@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-new */
-import { Presenter } from '../src/assets/blocks/slider/components/presenter/presenter';
-import '../src/assets/blocks/slider/slider.scss';
+import { Presenter } from '../src/assets/blocks/Slider/components/Presenter/Presenter';
+import '../src/assets/blocks/Slider/slider.scss';
 
 const div = document.createElement('div');
 // Должен быть уникальный класс для каждого спека.

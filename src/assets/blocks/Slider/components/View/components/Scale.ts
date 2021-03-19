@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { isIncreasingSequence } from '../../../../helpers/functions/is-increasing-sequence';
 
-import EventObserver from '../../../../helpers/event-observer';
+import EventObserver from '../../../../helpers/EventObserver';
 
-import View from '../view';
+import View from '../View';
 import { SliderEvents } from '../../../../helpers/slider-events';
 
 export default class Scale extends EventObserver {

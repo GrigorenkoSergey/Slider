@@ -1,5 +1,5 @@
-import { Example } from '../example/example';
-import { SliderOptions } from '../../../slider/slider';
+import { Example } from '../Example/Example';
+import { SliderOptions } from '../../../Slider/Slider';
 import '../template/template';
 import './examples.scss';
 

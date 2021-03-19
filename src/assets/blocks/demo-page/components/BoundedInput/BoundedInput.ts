@@ -1,5 +1,5 @@
-import EventObserver from '../../../helpers/event-observer';
-import { Slider } from '../../../slider/slider';
+import EventObserver from '../../../helpers/EventObserver';
+import { Slider } from '../../../Slider/Slider';
 
 type propertyKey = keyof ReturnType<Slider['getOptions']>;
 

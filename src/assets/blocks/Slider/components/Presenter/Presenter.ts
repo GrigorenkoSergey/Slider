@@ -1,18 +1,18 @@
 import '../../slider.scss';
 
-import EventObserver from '../../../helpers/event-observer';
+import EventObserver from '../../../helpers/EventObserver';
 import { SliderEvents, ThumbProgramMove } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
 
-import { ModelOptions } from '../model/components/model-types';
-import { isModelOptions } from '../model/components/model-type-guards';
-import Model from '../model/model';
+import { ModelOptions } from '../Model/components/model-types';
+import { isModelOptions } from '../Model/components/model-type-guards';
+import Model from '../Model/Model';
 
-import { ViewOptions } from '../view/components/view-types';
-import { isViewOptions } from '../view/components/view-type-guards';
-import View from '../view/view';
+import { ViewOptions } from '../View/components/view-types';
+import { isViewOptions } from '../View/components/view-type-guards';
+import View from '../View/View';
 
-import { PresenterNormalizer } from './components/presenter-normalizer';
+import { PresenterNormalizer } from './components/PresenterNormalizer';
 
 type SummaryOptions = Required<ModelOptions & ViewOptions>
 

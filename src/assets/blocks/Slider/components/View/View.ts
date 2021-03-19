@@ -1,14 +1,14 @@
-import EventObserver from '../../../helpers/event-observer';
+import EventObserver from '../../../helpers/EventObserver';
 import { SliderEvents } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
 
 import { ViewOptions } from './components/view-types';
 import { VIEW_OPTIONS_DEFAULT } from './components/view-options-default';
 
-import Stretcher from './components/stretcher';
-import Scale from './components/scale';
-import Thumbs from './components/thumbs';
-import Hint from './components/hint';
+import Stretcher from './components/Stretcher';
+import Scale from './components/Scale';
+import Thumbs from './components/Thumbs';
+import Hint from './components/Hint';
 
 export default class View extends EventObserver implements ISubscriber {
   readonly el: HTMLDivElement = document.createElement('div');

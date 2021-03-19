@@ -1,5 +1,5 @@
-import EventObserver from '../../../../helpers/event-observer';
-import View from '../view';
+import EventObserver from '../../../../helpers/EventObserver';
+import View from '../View';
 
 export default class Stretcher extends EventObserver {
   readonly el: HTMLDivElement = document.createElement('div');

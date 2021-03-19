@@ -1,6 +1,6 @@
 import { MODEL_OPTIONS_DEFAULT } from
-  '../src/assets/blocks/slider/components/model/components/model-options-default';
-import Model from '../src/assets/blocks/slider/components/model/model';
+  '../src/assets/blocks/Slider/components/Model/components/model-options-default';
+import Model from '../src/assets/blocks/Slider/components/Model/Model';
 
 describe('Model\n', () => {
   describe('Первоначальная минимальная инициализация\n', () => {

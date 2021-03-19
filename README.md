@@ -31,17 +31,17 @@
 |   |   |   ├── helpers
 |   |   |   │   ├── functions
 |   |   |   │   │   └── is-increasing-sequence.ts
-|   |   |   │   ├── event-observer.ts
+|   |   |   │   ├── EventObserver.ts
 |   |   |   │   ├── interfaces.ts
 |   |   |   │   └── slider-events.ts
 |   |   |   |
 |   |   |   ├── demo-page
 |   |   |   │   ├── components
-|   |   |   |   │   ├── binded-input
-|   |   |   |   │   ├── example
+|   |   |   |   │   ├── BoundedInput
+|   |   |   |   │   ├── Example
 |   |   |   |   │   ├── examples
 |   |   |   |   │   ├── js-slider
-|   |   |   |   │   ├── slider-options-palette
+|   |   |   |   │   ├── SliderOptionsPalette
 |   |   |   |   │   ├── template
 |   |   |   │   │   └── usage-examples
 |   |   |   │   │ 
@@ -49,32 +49,35 @@
 |   |   |   │   ├── demo-page.scss
 |   |   |   │   └── demo-page.ts
 |   |   |   |
-|   |   │   └── slider
+|   |   │   └── Slider
 |   |   |       ├── components
-|   |   |       │   ├── model
+|   |   |       │   ├── Model
 |   |   │       |   |   ├── components
+|   |   |       │   |   |   ├── model-options-default.ts
+|   |   |       │   |   |   ├── model-type-guards.ts
 |   |   |       │   |   |   ├── model-types.ts
-|   |   |       │   |   |   └── model-validator.ts
-|   |   │       |   |   └── model.ts
+|   |   |       │   |   |   └── ModelValidator.ts
+|   |   │       |   |   └── Model.ts
 |   |   │       |   |   
-|   |   |       │   ├── presenter
+|   |   |       │   ├── Presenter
 |   |   │       |   |   ├── components
-|   |   |       │   |   |   ├── presenter-normalizer.ts
-|   |   |       │   |   |   └── presenter-types.ts
-|   |   |       │   │   └── presenter.ts
+|   |   |       │   |   |   └── PresenterNormalizer.ts
+|   |   |       │   │   └── Presenter.ts
 |   |   |       │   │   
-|   |   |       │   └── view
+|   |   |       │   └── View
 |   |   |       │       ├── components
-|   |   |       │       │   ├── hint.ts
-|   |   |       │       │   ├── scale.ts
-|   |   |       │       │   ├── stretcher.ts
-|   |   |       │       │   ├── thumbs.ts
+|   |   |       │       │   ├── Hint.ts
+|   |   |       │       │   ├── Scale.ts
+|   |   |       │       │   ├── Stretcher.ts
+|   |   |       │       │   ├── Thumbs.ts
+|   |   |       │       │   ├── view-options-default.ts
+|   |   |       │       │   ├── view-type-guards.ts
 |   |   |       │       │   └── view-types.ts
-|   |   |       │       └── view.ts
+|   |   |       │       └── View.ts
 |   |   |       │      
 |   |   |       ├── jquery.slider.d.ts
 |   |   |       ├── slider.scss
-|   |   |       └── slider.ts
+|   |   |       └── Slider.ts
 |   |   |    
 |   │   ├── fonts
 |   │   └── images
@@ -83,10 +86,10 @@
 │   └── index.ts 
 |
 ├── test
-│   ├── helpers-spec.ts
-│   ├── model-spec.ts
-│   ├── presenter-spec.ts
-│   └── view-spec.ts
+│   ├── helpers.spec.ts
+│   ├── Model.spec.ts
+│   ├── Presenter.spec.ts
+│   └── View.spec.ts
 |
 ├── .eslint.js
 ├── karma.conf.js
