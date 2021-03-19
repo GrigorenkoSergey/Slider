@@ -15,14 +15,6 @@ export default class Stretcher extends EventObserver {
     view.addSubscriber('range', this);
   }
 
-  private render(): void {
-    const { view, el } = this;
-
-    el.classList.add(`${view.getOptions().className}__stretcher`);
-    view.el.append(el);
-    this.update();
-  }
-
   update(): void {
     const { el, view } = this;
 
@@ -41,5 +33,13 @@ export default class Stretcher extends EventObserver {
       style.right = `${view.el.clientWidth
         - parseFloat(getComputedStyle(thumbs.thumbLeft).left)}px`;
     }
+  }
+
+  private render(): void {
+    const { view, el } = this;
+
+    el.classList.add(`${view.getOptions().className}__stretcher`);
+    view.el.append(el);
+    this.update();
   }
 }

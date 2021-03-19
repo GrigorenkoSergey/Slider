@@ -11,6 +11,7 @@
   "author": "Grigorenko Sergey",
   "license": "ISC",
   "devDependencies": {
+    "@jsdevtools/coverage-istanbul-loader": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "eslint": "^7.2.0",
@@ -21,9 +22,8 @@
     "eslint-plugin-import": "^2.22.1",
     "karma": "^5.0.4",
     "karma-chrome-launcher": "^3.1.0",
-    "@jsdevtools/coverage-istanbul-loader": "^3.0.3",
-    "webpack-dev-server": "^3.11.0",
-    "karma-coverage-istanbul-reporter": "^3.0.0"
+    "karma-coverage-istanbul-reporter": "^3.0.0",
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@babel/core": "^7.9.6",

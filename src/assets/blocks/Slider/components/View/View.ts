@@ -1,10 +1,8 @@
 import EventObserver from '../../../helpers/EventObserver';
 import { SliderEvents } from '../../../helpers/slider-events';
 import { ISubscriber } from '../../../helpers/interfaces';
-
 import { ViewOptions } from './components/view-types';
 import { VIEW_OPTIONS_DEFAULT } from './components/view-options-default';
-
 import Stretcher from './components/Stretcher';
 import Scale from './components/Scale';
 import Thumbs from './components/Thumbs';
@@ -33,40 +31,6 @@ export default class View extends EventObserver implements ISubscriber {
 
     this.stretcher = new Stretcher(this);
     this.init(options);
-  }
-
-  private init(opts: ViewOptions): this {
-    const { selector } = opts;
-
-    if (selector === undefined) {
-      throw new Error('You should pass options "selector" in options!');
-    }
-
-    const wrapper = document.querySelector(selector);
-    if (wrapper === null) {
-      throw new Error(`There is no element with selector "${selector}"`);
-    }
-
-    const { thumbs } = this;
-    thumbs.addSubscriber('thumbMouseMove', this);
-    thumbs.addSubscriber('thumbMouseDown', this);
-    thumbs.addSubscriber('thumbMouseUp', this);
-
-    this.addSubscriber('hintAlwaysShow', this);
-    this.addSubscriber('angle', this);
-    this.addSubscriber('range', this);
-
-    this.setOptions(opts);
-
-    const { options, el } = this;
-    el.classList.add(options.className);
-    el.addEventListener('click', this.handleSliderClick);
-    wrapper.append(el);
-
-    this.scale = new Scale({ view: this });
-    this.scale.addSubscriber('anchorClick', this);
-
-    return this;
   }
 
   setOptions(options: ViewOptions): this {
@@ -196,6 +160,40 @@ export default class View extends EventObserver implements ISubscriber {
     const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
     hint.setHintValue(value);
     this.handleHintsIntersection();
+  }
+
+  private init(opts: ViewOptions): this {
+    const { selector } = opts;
+
+    if (selector === undefined) {
+      throw new Error('You should pass options "selector" in options!');
+    }
+
+    const wrapper = document.querySelector(selector);
+    if (wrapper === null) {
+      throw new Error(`There is no element with selector "${selector}"`);
+    }
+
+    const { thumbs } = this;
+    thumbs.addSubscriber('thumbMouseMove', this);
+    thumbs.addSubscriber('thumbMouseDown', this);
+    thumbs.addSubscriber('thumbMouseUp', this);
+
+    this.addSubscriber('hintAlwaysShow', this);
+    this.addSubscriber('angle', this);
+    this.addSubscriber('range', this);
+
+    this.setOptions(opts);
+
+    const { options, el } = this;
+    el.classList.add(options.className);
+    el.addEventListener('click', this.handleSliderClick);
+    wrapper.append(el);
+
+    this.scale = new Scale({ view: this });
+    this.scale.addSubscriber('anchorClick', this);
+
+    return this;
   }
 
   private handleAnchorClick(offset: number): void {

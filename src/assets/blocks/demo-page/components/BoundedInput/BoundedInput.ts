@@ -3,7 +3,7 @@ import { Slider } from '../../../Slider/Slider';
 
 type propertyKey = keyof ReturnType<Slider['getOptions']>;
 
-export default class BindedInput extends EventObserver {
+export default class BoundedInput extends EventObserver {
   el: HTMLInputElement;
 
   prop: propertyKey;

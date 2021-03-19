@@ -1,13 +1,12 @@
 import EventObserver from '../../../helpers/EventObserver';
 import { SliderEvents } from '../../../helpers/slider-events';
 import { Slider } from '../../../Slider/Slider';
-
-import BindedInput from '../BoundedInput/BoundedInput';
+import BoundedInput from '../BoundedInput/BoundedInput';
 import './slider-options-palette.scss';
 
 type SliderOptions = ReturnType<Slider['getOptions']>;
 type OptionsKeys = Exclude<keyof SliderOptions, 'alternativeRange' | 'className' | 'selector'>;
-export type Inputs = Record<OptionsKeys, (BindedInput | null)>;
+export type Inputs = Record<OptionsKeys, (BoundedInput | null)>;
 
 export class SliderOptionsPalette extends EventObserver {
   el: HTMLDivElement;
@@ -111,7 +110,7 @@ export class SliderOptionsPalette extends EventObserver {
         throw new Error(`There is no input with name "${prop}" in current palette!`);
       }
 
-      this.inputs[prop] = new BindedInput(input, slider, prop);
+      this.inputs[prop] = new BoundedInput(input, slider, prop);
       const bindedInput = this.inputs[prop];
       if (bindedInput !== null) {
         bindedInput.update();

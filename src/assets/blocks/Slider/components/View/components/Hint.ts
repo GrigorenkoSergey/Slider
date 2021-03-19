@@ -18,14 +18,6 @@ export default class Hint extends EventObserver {
     this.init();
   }
 
-  private init(): void {
-    const { view, el } = this;
-    el.classList.add(`${view.getOptions().className}__hint`);
-
-    el.addEventListener('mousedown', this.handleMouseDown);
-    view.addSubscriber('angle', this);
-  }
-
   update(data: SliderEvents): void {
     if (data.event === 'angle') {
       this.rotateHint();
@@ -46,6 +38,14 @@ export default class Hint extends EventObserver {
 
   removeHint(): void {
     this.el.remove();
+  }
+
+  private init(): void {
+    const { view, el } = this;
+    el.classList.add(`${view.getOptions().className}__hint`);
+
+    el.addEventListener('mousedown', this.handleMouseDown);
+    view.addSubscriber('angle', this);
   }
 
   private rotateHint(): void {

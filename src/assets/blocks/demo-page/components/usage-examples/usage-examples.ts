@@ -1,4 +1,5 @@
 import $ from 'jquery';
+
 import { Slider, SliderOptions } from '../../../Slider/Slider';
 import '../js-slider/js-slider';
 import './usage-examples.scss';

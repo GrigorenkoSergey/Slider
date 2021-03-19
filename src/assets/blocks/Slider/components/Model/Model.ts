@@ -14,37 +14,6 @@ export default class Model extends EventObserver {
     this.init(options);
   }
 
-  private init(options: ModelOptions): void {
-    const optionsCopy = { ...options };
-
-    const defaultDependentOptions = {
-      step: () => {
-        if (!('alternativeRange' in optionsCopy)) {
-          if (optionsCopy.max !== undefined && optionsCopy.min !== undefined) {
-            return Math.round((optionsCopy.max - optionsCopy.min) / 100);
-          }
-        }
-        return 1;
-      },
-      thumbLeftValue: () => {
-        let result = 0;
-        if (optionsCopy.min !== undefined) {
-          result = optionsCopy.min;
-        }
-        return result;
-      },
-    };
-
-    if (!('step' in optionsCopy)) {
-      optionsCopy.step = defaultDependentOptions.step();
-    }
-    if (!('thumbLeftValue' in optionsCopy)) {
-      optionsCopy.thumbLeftValue = defaultDependentOptions.thumbLeftValue();
-    }
-
-    this.setOptions(optionsCopy);
-  }
-
   getOptions(): Required<ModelOptions> {
     const obj = { ...this.options };
     return obj;
@@ -133,6 +102,37 @@ export default class Model extends EventObserver {
   findArgument(y: number): number { // y = f(x), here we find 'x'
     const { min, max } = this.options;
     return (y - min) / (max - min);
+  }
+
+  private init(options: ModelOptions): void {
+    const optionsCopy = { ...options };
+
+    const defaultDependentOptions = {
+      step: () => {
+        if (!('alternativeRange' in optionsCopy)) {
+          if (optionsCopy.max !== undefined && optionsCopy.min !== undefined) {
+            return Math.round((optionsCopy.max - optionsCopy.min) / 100);
+          }
+        }
+        return 1;
+      },
+      thumbLeftValue: () => {
+        let result = 0;
+        if (optionsCopy.min !== undefined) {
+          result = optionsCopy.min;
+        }
+        return result;
+      },
+    };
+
+    if (!('step' in optionsCopy)) {
+      optionsCopy.step = defaultDependentOptions.step();
+    }
+    if (!('thumbLeftValue' in optionsCopy)) {
+      optionsCopy.thumbLeftValue = defaultDependentOptions.thumbLeftValue();
+    }
+
+    this.setOptions(optionsCopy);
   }
 
   private broadcastChanges(options: ModelOptions): void {

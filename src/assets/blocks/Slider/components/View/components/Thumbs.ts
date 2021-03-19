@@ -34,24 +34,6 @@ export default class Thumbs extends EventObserver {
     this.render();
   }
 
-  private render(): void {
-    const { view, thumbLeft, thumbRight } = this;
-    const { className } = view.getOptions();
-
-    thumbLeft.classList.add(`${className}__thumb`);
-    thumbLeft.classList.add(`${className}__thumb_side_left`);
-    thumbRight.classList.add(`${className}__thumb`);
-    thumbRight.classList.add(`${className}__thumb_side_right`);
-
-    view.el.append(thumbLeft);
-    this.displayThumbRight();
-
-    thumbLeft.addEventListener('mousedown', this.handleThumbMouseDown);
-    thumbRight.addEventListener('mousedown', this.handleThumbMouseDown);
-
-    view.addSubscriber('range', this);
-  }
-
   update(data: SliderEvents): this {
     if (data.event === 'range') {
       this.displayThumbRight();
@@ -76,6 +58,24 @@ export default class Thumbs extends EventObserver {
       thumb,
       offset,
     });
+  }
+
+  private render(): void {
+    const { view, thumbLeft, thumbRight } = this;
+    const { className } = view.getOptions();
+
+    thumbLeft.classList.add(`${className}__thumb`);
+    thumbLeft.classList.add(`${className}__thumb_side_left`);
+    thumbRight.classList.add(`${className}__thumb`);
+    thumbRight.classList.add(`${className}__thumb_side_right`);
+
+    view.el.append(thumbLeft);
+    this.displayThumbRight();
+
+    thumbLeft.addEventListener('mousedown', this.handleThumbMouseDown);
+    thumbRight.addEventListener('mousedown', this.handleThumbMouseDown);
+
+    view.addSubscriber('range', this);
   }
 
   private handleThumbMouseDown = (e: MouseEvent): void => {

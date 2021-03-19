@@ -1,10 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { isIncreasingSequence } from '../../../../helpers/functions/is-increasing-sequence';
-
 import EventObserver from '../../../../helpers/EventObserver';
-
-import View from '../View';
 import { SliderEvents } from '../../../../helpers/slider-events';
+import View from '../View';
 
 export default class Scale extends EventObserver {
   private view: View;
@@ -24,15 +22,6 @@ export default class Scale extends EventObserver {
     return this;
   }
 
-  private init(): void {
-    const { view } = this;
-    const propsToSubscribe = ['showScale', 'step', 'partsAmount', 'angle'];
-    propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
-
-    this.width = view.el.clientWidth - view.thumbs.thumbLeft.offsetWidth;
-    this.render();
-  }
-
   update(data: SliderEvents): void {
     if (data.event === 'showScale') {
       this.handleShowScaleChange();
@@ -42,16 +31,6 @@ export default class Scale extends EventObserver {
       this.setMilestones();
     } else if (data.event === 'angle') {
       this.rotateScale();
-    }
-  }
-
-  private render(): void {
-    const { view, el } = this;
-    el.classList.add(`${view.el.className}__scale`);
-
-    if (view.getOptions().showScale) {
-      view.el.append(el);
-      this.setMilestones();
     }
   }
 
@@ -104,6 +83,25 @@ export default class Scale extends EventObserver {
 
     this.rotateScale();
     this.broadcast({ event: 'rerenderScale', anchors });
+  }
+
+  private init(): void {
+    const { view } = this;
+    const propsToSubscribe = ['showScale', 'step', 'partsAmount', 'angle'];
+    propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
+
+    this.width = view.el.clientWidth - view.thumbs.thumbLeft.offsetWidth;
+    this.render();
+  }
+
+  private render(): void {
+    const { view, el } = this;
+    el.classList.add(`${view.el.className}__scale`);
+
+    if (view.getOptions().showScale) {
+      view.el.append(el);
+      this.setMilestones();
+    }
   }
 
   private handleMouseClick(e: MouseEvent): void {
