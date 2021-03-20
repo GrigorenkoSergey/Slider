@@ -3,9 +3,9 @@ import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../View';
 
 export default class Thumbs extends EventObserver {
-  readonly thumbLeft = document.createElement('div');
+  thumbLeft = document.createElement('div');
 
-  readonly thumbRight = document.createElement('div');
+  thumbRight = document.createElement('div');
 
   thumbLeftOffset: number = 0;
 
@@ -24,6 +24,9 @@ export default class Thumbs extends EventObserver {
     shiftY: 0,
     scaleInnerWidth: 0,
     pixelStep: 0,
+    wasOverlap: false,
+    startLeft: 0,
+    maxLeft: 0,
   };
 
   private currentThumb: HTMLDivElement | null = null;
@@ -80,13 +83,21 @@ export default class Thumbs extends EventObserver {
 
   private handleThumbMouseDown = (e: MouseEvent): void => {
     e.preventDefault();
-    const { closure, view } = this;
+
+    const {
+      closure, view,
+      thumbLeftOffset,
+      thumbRightOffset,
+    } = this;
+
+    closure.wasOverlap = thumbLeftOffset === thumbRightOffset;
 
     const thumb = e.target;
     if (!(thumb instanceof HTMLDivElement)) {
       throw new Error();
     }
 
+    closure.startLeft = parseFloat(thumb.style.left);
     this.currentThumb = thumb;
 
     const slider = view.el;
@@ -111,13 +122,16 @@ export default class Thumbs extends EventObserver {
       closure.leftLimit = parseFloat(getComputedStyle(thumbLeft).left);
     }
 
+    const maxLeft = Math.max(
+      parseFloat(getComputedStyle(thumbLeft).left),
+      Math.floor(scaleInnerWidth / pixelStep) * pixelStep,
+    );
+    closure.maxLeft = maxLeft;
+
     if (thumb === thumbLeft && range) {
       closure.rightLimit = parseFloat(getComputedStyle(thumbRight).left);
     } else {
-      closure.rightLimit = Math.max(
-        parseFloat(getComputedStyle(thumbLeft).left),
-        Math.floor(scaleInnerWidth / pixelStep) * pixelStep,
-      );
+      closure.rightLimit = maxLeft;
     }
 
     closure.shiftX = e.clientX - thumbCoords.left;
@@ -144,17 +158,40 @@ export default class Thumbs extends EventObserver {
     const {
       startX, shiftX, startY,
       shiftY, cosA, sinA, pixelStep,
-      leftLimit, rightLimit, scaleInnerWidth,
+      scaleInnerWidth,
+      startLeft, wasOverlap,
     } = this.closure;
-
-    const { currentThumb: thumb } = this;
-    if (thumb === null) throw new Error('No thumb in closure');
-    thumb.style.zIndex = `${1000}`;
 
     const newLeftX = e.clientX - startX - shiftX;
     const newLeftY = e.clientY - startY - shiftY;
     let newLeft = newLeftX * cosA + newLeftY * sinA;
 
+    const { currentThumb: thumb } = this;
+    if (thumb === null) throw new Error('No thumb in closure');
+
+    thumb.style.zIndex = `${1000}`;
+
+    if (wasOverlap) {
+      // засунуть все в функцию
+      const minDistanceToDeside = 5;
+      if (Math.abs(newLeft - startLeft) < minDistanceToDeside) return;
+
+      const {
+        currentThumb, thumbLeft, thumbRight, closure,
+      } = this;
+      if (newLeft < startLeft && currentThumb !== thumbLeft) {
+        this.swapMovingThumbs();
+        closure.rightLimit = this.closure.leftLimit;
+        closure.leftLimit = 0;
+      } else if (newLeft > startLeft && currentThumb !== thumbRight) {
+        this.swapMovingThumbs();
+        closure.leftLimit = this.closure.rightLimit;
+        closure.rightLimit = this.closure.maxLeft;
+      }
+      closure.wasOverlap = false;
+    }
+
+    const { leftLimit, rightLimit } = this.closure;
     newLeft = this.takeStepIntoAccount(newLeft, pixelStep);
     newLeft = Math.max(leftLimit, newLeft);
     newLeft = Math.min(newLeft, rightLimit);
@@ -165,7 +202,7 @@ export default class Thumbs extends EventObserver {
     /*
         Вот здесь может возникнуть ошибка из-за механики округления значений left
         браузером. Он округляет до 1/1000, а наши вычисления гораздо точнее,
-        поэтому на границах может возникнуть ошибка, например, когда
+        поэтому на может возникнуть ошибка, например, когда
         наши значения left бегунков совпадают, а вычисленные значения offset отличаются.
         Соответственно не совпадают и значения подсказок над бегунками.
         Поэтому удостоверимся, что не будет никаких неприятных сюрпризов.
@@ -173,12 +210,11 @@ export default class Thumbs extends EventObserver {
     const {
       thumbLeft, thumbLeftOffset, thumbRight, thumbRightOffset, view,
     } = this;
-    if (thumb === thumbRight) {
-      if (newLeft === leftLimit) {
-        offset = thumbLeftOffset;
-      }
-    } else if (newLeft === rightLimit && view.getOptions().range) {
-      offset = thumbRightOffset;
+
+    if (thumb === thumbRight && newLeft === leftLimit) {
+      offset = thumbLeftOffset;
+    } else if (thumb === thumbLeft && view.getOptions().range) {
+      if (newLeft === rightLimit) offset = thumbRightOffset;
     }
 
     if (thumb === thumbLeft) {
@@ -219,5 +255,19 @@ export default class Thumbs extends EventObserver {
 
   private takeStepIntoAccount(x: number, step: number): number {
     return Math.round(x / step) * step;
+  }
+
+  private swapMovingThumbs(): void {
+    [this.thumbLeft, this.thumbRight] = [this.thumbRight, this.thumbLeft];
+
+    const { thumbLeft, thumbRight } = this;
+    const { className } = this.view.getOptions();
+    const tempClassName = thumbLeft.className;
+
+    thumbLeft.className = thumbRight.className;
+    thumbLeft.classList.toggle(`${className}__thumb_moving`);
+
+    thumbRight.className = tempClassName;
+    thumbRight.classList.toggle(`${className}__thumb_moving`);
   }
 }

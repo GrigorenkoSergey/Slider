@@ -8,7 +8,7 @@ const sliderOptions: SliderOptions[] = [
     min: 1000000,
     max: 6000000,
     step: 1,
-    thumbLeftValue: 3322695,
+    thumbLeftValue: 2914617,
     thumbRightValue: 4865248,
     selector: '.js-slider_test_A',
     range: true,
