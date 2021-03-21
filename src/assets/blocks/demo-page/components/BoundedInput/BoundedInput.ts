@@ -26,8 +26,8 @@ export default class BoundedInput extends EventObserver {
 
   update(): void {
     const { slider, prop } = this;
-    const sliderOptions = slider.getOptions();
     const key = prop;
+    const sliderOptions = slider.getOptions();
     const propValue = sliderOptions[key];
 
     if (typeof propValue === 'number') {

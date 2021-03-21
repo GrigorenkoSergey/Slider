@@ -42,13 +42,14 @@ export default class Scale extends EventObserver {
 
   setMilestones(values?: number[]): void {
     const { view, anchors, el } = this;
-    const { step, partsAmount } = view.getOptions();
 
     anchors.forEach((item) => item.remove());
     anchors.length = 0;
 
     if (!values) {
       this.parts.length = 0;
+
+      const { step, partsAmount } = view.getOptions();
 
       for (let i = 1; i < view.getOptions().partsAmount; i += 1) {
         let value = Math.round(i / partsAmount / step) * step;
@@ -83,7 +84,7 @@ export default class Scale extends EventObserver {
     });
 
     this.rotateScale();
-    this.broadcast({ event: 'rerenderScale', anchors });
+    this.broadcast({ event: 'redrawScale', anchors });
   }
 
   private init(): void {

@@ -74,16 +74,15 @@ export default class Thumbs extends EventObserver {
 
     thumbLeft.classList.add(`${className}__thumb`);
     thumbLeft.classList.add(`${className}__thumb_side_left`);
+    thumbLeft.addEventListener('mousedown', this.handleThumbMouseDown);
+
     thumbRight.classList.add(`${className}__thumb`);
     thumbRight.classList.add(`${className}__thumb_side_right`);
-
-    view.el.append(thumbLeft);
-    this.displayThumbRight();
-
-    thumbLeft.addEventListener('mousedown', this.handleThumbMouseDown);
     thumbRight.addEventListener('mousedown', this.handleThumbMouseDown);
 
+    view.el.append(thumbLeft);
     view.addSubscriber('range', this);
+    this.displayThumbRight();
   }
 
   private handleThumbMouseDown = (e: MouseEvent): void => {
@@ -228,6 +227,7 @@ export default class Thumbs extends EventObserver {
       event: 'thumbMouseUp',
       thumb,
     });
+
     document.removeEventListener('mousemove', this.handleDocumentMouseMove);
     document.removeEventListener('mouseup', this.handleDocumentMouseUp);
   }
@@ -247,8 +247,8 @@ export default class Thumbs extends EventObserver {
 
   private swapMovingThumbs(): void {
     [this.thumbLeft, this.thumbRight] = [this.thumbRight, this.thumbLeft];
-
     const { thumbLeft, thumbRight } = this;
+
     const { className } = this.view.getOptions();
     const tempClassName = thumbLeft.className;
 
@@ -269,8 +269,8 @@ export default class Thumbs extends EventObserver {
     const { closure } = this;
     if (startLeft === closure.maxLeft && newLeft > startLeft) return false;
 
-    const minDistanceToDeside = 5;
-    if (Math.abs(newLeft - startLeft) < minDistanceToDeside) return false;
+    const minDistanceToDecide = 5;
+    if (Math.abs(newLeft - startLeft) < minDistanceToDecide) return false;
 
     const { currentThumb, thumbLeft, thumbRight } = this;
 

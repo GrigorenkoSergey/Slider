@@ -71,8 +71,8 @@ export type ThumbProgramMove = {
   offset?: number,
 }
 
-type RerenderScale = {
-  event: 'rerenderScale',
+type RedrawScale = {
+  event: 'redrawScale',
   anchors: HTMLDivElement[],
 }
 
@@ -121,7 +121,7 @@ type OnChangeInitType = {
 
 export type SliderEvents = AngleChange | partsAmountChange | HintAboveThumbChange |
  RangeChange | HintAlwaysShowChange | ThumbMouseDown | ThumbMouseMove |
- ThumbMouseUp | ThumbProgramMove | RerenderScale | AnchorClick | StepChange |
+ ThumbMouseUp | ThumbProgramMove | RedrawScale | AnchorClick | StepChange |
   SelectorChange | ClassNameChange | ShowScaleChange | thumbLeftValueChange |
   thumbRightValueChange | AlternativeRangeChange | MinChange | MaxChange |
   PrecisionChange | OnChangeInitType | SwapThumbs

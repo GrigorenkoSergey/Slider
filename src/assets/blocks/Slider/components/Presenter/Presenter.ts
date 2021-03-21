@@ -63,9 +63,9 @@ export class Presenter extends EventObserver implements ISubscriber {
 
     const { scale } = view;
     if (scale === null) throw new Error('Scale was not initialized');
-    scale.addSubscriber('rerenderScale', this);
+    scale.addSubscriber('redrawScale', this);
 
-    this.addSubscriber('rerenderScale', this.view);
+    this.addSubscriber('redrawScale', this.view);
 
     model.addSubscriber('partsAmount', this);
     // model.addSubscriber('alternativeRange', this);

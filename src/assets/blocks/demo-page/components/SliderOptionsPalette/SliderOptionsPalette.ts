@@ -37,7 +37,7 @@ export class SliderOptionsPalette extends EventObserver {
   }
 
   private render() {
-    const inputTextes = [
+    const inputTexts = [
       'min',
       'max',
       'step',
@@ -48,17 +48,10 @@ export class SliderOptionsPalette extends EventObserver {
       'precision',
     ];
 
-    const inputCheckboxes = [
-      ['range', 'Диапазон'],
-      ['hintAboveThumb', 'Подсказка'],
-      ['showScale', 'Покaзать шкалу'],
-      ['hintAlwaysShow', 'Всегда показывать подсказку'],
-    ];
-
     const ul = document.createElement('ul');
     ul.classList.add('slider-options-palette');
 
-    inputTextes.forEach((inputName) => {
+    inputTexts.forEach((inputName) => {
       const li = document.createElement('li');
       li.classList.add('slider-options-palette__li');
       li.textContent = inputName;
@@ -75,6 +68,13 @@ export class SliderOptionsPalette extends EventObserver {
     const liCheckbox = document.createElement('li');
     liCheckbox.classList.add('slider-options-palette__li');
     liCheckbox.classList.add('slider-options-palette__li_checkbox');
+
+    const inputCheckboxes = [
+      ['range', 'Диапазон'],
+      ['hintAboveThumb', 'Подсказка'],
+      ['showScale', 'Покaзать шкалу'],
+      ['hintAlwaysShow', 'Всегда показывать подсказку'],
+    ];
 
     inputCheckboxes.forEach(([name, alias]) => {
       const label = document.createElement('label');
@@ -111,9 +111,9 @@ export class SliderOptionsPalette extends EventObserver {
       }
 
       this.inputs[prop] = new BoundedInput(input, slider, prop);
-      const bindedInput = this.inputs[prop];
-      if (bindedInput !== null) {
-        bindedInput.update();
+      const boundedInput = this.inputs[prop];
+      if (boundedInput !== null) {
+        boundedInput.update();
       }
     });
 

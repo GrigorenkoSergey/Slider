@@ -49,8 +49,8 @@ export default class Hint extends EventObserver {
   }
 
   private rotateHint(): void {
-    const { angle } = this.view.getOptions();
     const { style } = this.el;
+    const { angle } = this.view.getOptions();
 
     const transformation = `rotate(-${angle}deg)`;
     style.transform = transformation;

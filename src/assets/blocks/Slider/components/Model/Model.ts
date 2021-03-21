@@ -21,7 +21,6 @@ export default class Model extends EventObserver {
 
   setOptions(expectant: ModelOptions): Model {
     let tempObj: ModelOptions = {};
-    const { options } = this;
 
     Object.keys(expectant).forEach((key) => {
       switch (key) {
@@ -52,6 +51,7 @@ export default class Model extends EventObserver {
       }
     });
 
+    const { options } = this;
     tempObj = this.validator.validate(tempObj);
     this.options = { ...options, ...tempObj };
     this.broadcastChanges(tempObj);
