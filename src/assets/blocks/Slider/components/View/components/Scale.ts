@@ -70,7 +70,8 @@ export default class Scale extends EventObserver {
       const div = document.createElement('div');
       div.classList.add(`${view.el.className}__scale-points`);
 
-      const right = this.width * (1 - value) + view.thumbs.thumbLeft.offsetWidth / 2;
+      const { thumbLeft } = view.thumbs.getThumbs();
+      const right = this.width * (1 - value) + thumbLeft.offsetWidth / 2;
       div.style.right = `${right}px`;
 
       div.textContent = String(value);
@@ -90,7 +91,8 @@ export default class Scale extends EventObserver {
     const propsToSubscribe = ['showScale', 'step', 'partsAmount', 'angle'];
     propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
 
-    this.width = view.el.clientWidth - view.thumbs.thumbLeft.offsetWidth;
+    const { thumbLeft } = view.thumbs.getThumbs();
+    this.width = view.el.clientWidth - thumbLeft.offsetWidth;
     this.render();
   }
 

@@ -23,10 +23,12 @@ export default class View extends EventObserver implements ISubscriber {
 
   constructor(options: ViewOptions) {
     super();
+
     this.thumbs = new Thumbs(this);
+    const { thumbLeft, thumbRight } = this.thumbs.getThumbs();
     this.hints = [
-      new Hint(this, this.thumbs.thumbLeft),
-      new Hint(this, this.thumbs.thumbRight),
+      new Hint(this, thumbLeft),
+      new Hint(this, thumbRight),
     ];
 
     this.stretcher = new Stretcher(this);
@@ -123,8 +125,7 @@ export default class View extends EventObserver implements ISubscriber {
       this.handleHintsIntersection();
       return this;
     } else if (data.event === 'swapThumbs') {
-      const [leftHint, rightHint] = this.hints;
-      this.hints = [rightHint, leftHint];
+      this.hints.reverse();
     }
 
     this.broadcast(data);
@@ -136,8 +137,8 @@ export default class View extends EventObserver implements ISubscriber {
     thumbs.moveThumbToPos.call(thumbs, thumb, offset);
 
     let data: SliderEvents;
-
-    if (thumb === thumbs.thumbLeft) {
+    const { thumbLeft } = thumbs.getThumbs();
+    if (thumb === thumbLeft) {
       data = { event: 'thumbProgramMove', left: offset };
     } else {
       data = { event: 'thumbProgramMove', right: offset };
@@ -160,7 +161,8 @@ export default class View extends EventObserver implements ISubscriber {
 
   setHintValue(thumb: HTMLDivElement, value: string): void {
     const { thumbs, hints } = this;
-    const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
+    const { thumbLeft } = thumbs.getThumbs();
+    const hint = (thumb === thumbLeft) ? hints[0] : hints[1];
     hint.setHintValue(value);
     this.handleHintsIntersection();
   }
@@ -210,13 +212,15 @@ export default class View extends EventObserver implements ISubscriber {
     const { thumbs, hints, options } = this;
     if (!options.hintAboveThumb) return;
 
-    const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
+    const { thumbLeft } = thumbs.getThumbs();
+    const hint = (thumb === thumbLeft) ? hints[0] : hints[1];
     hint.appendHint();
   }
 
   private handleThumbMouseUp(thumb: HTMLElement): void {
     const { thumbs, hints, options } = this;
-    const hint = (thumb === thumbs.thumbLeft) ? hints[0] : hints[1];
+    const { thumbLeft } = thumbs.getThumbs();
+    const hint = (thumb === thumbLeft) ? hints[0] : hints[1];
 
     if (!options.hintAlwaysShow) {
       hint.removeHint();
@@ -286,7 +290,7 @@ export default class View extends EventObserver implements ISubscriber {
 
   private findClosestThumb(offset: number): HTMLDivElement {
     const { thumbs, options } = this;
-    const { thumbLeft, thumbRight } = thumbs;
+    const { thumbLeft, thumbRight } = thumbs.getThumbs();
 
     let closestThumb;
 

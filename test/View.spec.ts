@@ -261,13 +261,6 @@ describe('Позволяет пользователю взаимодейство
     const slider = view.el;
     const thumbStartX = thumbLeft.getBoundingClientRect().left;
 
-    let fakeMouseClick = new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      clientX: thumbStartX + slider.clientWidth,
-      clientY: 0,
-    });
-
     let clientX = thumbStartX + slider.clientWidth;
     let fakeMouseDown = new MouseEvent('mousedown', {
       bubbles: true,
@@ -559,7 +552,8 @@ describe('Может отображать подсказку\n', () => {
 
   it('Подсказку можно прятать', () => {
     view.setOptions({ hintAboveThumb: false });
-    const thumb = view.thumbs.thumbLeft;
+
+    const { thumbLeft: thumb } = view.thumbs.getThumbs();
 
     thumb.dispatchEvent(fakeMouseDown);
 
@@ -581,7 +575,7 @@ describe('Может отображать подсказку\n', () => {
   });
 
   it('Подсказке можно установить любое значение', () => {
-    const thumb = view.thumbs.thumbLeft;
+    const { thumbLeft: thumb } = view.thumbs.getThumbs();
 
     view.setHintValue(thumb, '0');
     thumb.dispatchEvent(fakeMouseDown);

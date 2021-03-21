@@ -137,20 +137,21 @@ export class Presenter extends EventObserver implements ISubscriber {
       const offset = model.findValue(data.offset);
       view.setHintValue(thumb, this.recountValue(offset));
 
-      if (thumb === view.thumbs.thumbLeft) {
+      const { thumbLeft } = view.thumbs.getThumbs();
+      if (thumb === thumbLeft) {
         model.setThumbsPos({ left: offset });
       } else {
         model.setThumbsPos({ right: offset });
       }
     } else if (data.event === 'min' || data.event === 'max') {
-      const { thumbLeft } = view.thumbs;
+      const { thumbLeft } = view.thumbs.getThumbs();
       view.moveThumbToPos(
         thumbLeft,
         model.findArgument(modelOptions.thumbLeftValue),
       );
 
       if (model.getOptions().range) {
-        const { thumbRight } = view.thumbs;
+        const { thumbRight } = view.thumbs.getThumbs();
         if (modelOptions.thumbRightValue !== null) {
           view.moveThumbToPos(thumbRight, model.findArgument(modelOptions.thumbRightValue));
         }
@@ -166,14 +167,14 @@ export class Presenter extends EventObserver implements ISubscriber {
         return this.broadcast(data);
       }
 
-      const { thumbLeft } = view.thumbs;
+      const { thumbLeft } = view.thumbs.getThumbs();
       view.moveThumbToPos(thumbLeft, model.findArgument(data.value));
     } else if (data.event === 'thumbRightValue') {
       if (data.method === 'setThumbsPos') {
         return this.broadcast(data);
       }
 
-      const { thumbRight } = view.thumbs;
+      const { thumbRight } = view.thumbs.getThumbs();
       if (modelOptions.thumbRightValue === null || data.value === null) return;
       view.moveThumbToPos(thumbRight, model.findArgument(data.value));
     } else if (data.event === 'range') {
@@ -222,14 +223,15 @@ export class Presenter extends EventObserver implements ISubscriber {
     const { view, model } = this;
     const modelOptions = model.getOptions();
 
+    const { thumbLeft, thumbRight } = view.thumbs.getThumbs();
     view.setHintValue(
-      view.thumbs.thumbLeft,
+      thumbLeft,
       this.recountValue(modelOptions.thumbLeftValue),
     );
 
     if (modelOptions.thumbRightValue !== null) {
       view.setHintValue(
-        view.thumbs.thumbRight,
+        thumbRight,
         this.recountValue(modelOptions.thumbRightValue),
       );
     }

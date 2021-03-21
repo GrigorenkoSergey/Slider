@@ -21,17 +21,18 @@ export default class Stretcher extends EventObserver {
     const { range } = view.getOptions();
     const { thumbs } = view;
     const { style } = el;
+    const { thumbLeft, thumbRight } = thumbs.getThumbs();
 
     if (range) {
-      style.left = `${parseFloat(getComputedStyle(thumbs.thumbLeft).left)
-        + thumbs.thumbLeft.offsetWidth / 2}px`;
+      style.left = `${parseFloat(getComputedStyle(thumbLeft).left)
+        + thumbLeft.offsetWidth / 2}px`;
 
       style.right = `${view.el.clientWidth
-        - parseFloat(getComputedStyle(thumbs.thumbRight).left)}px`;
+        - parseFloat(getComputedStyle(thumbRight).left)}px`;
     } else {
       style.left = '0';
       style.right = `${view.el.clientWidth
-        - parseFloat(getComputedStyle(thumbs.thumbLeft).left)}px`;
+        - parseFloat(getComputedStyle(thumbLeft).left)}px`;
     }
   }
 

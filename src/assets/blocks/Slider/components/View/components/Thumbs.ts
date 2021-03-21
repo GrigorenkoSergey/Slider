@@ -3,9 +3,9 @@ import { SliderEvents } from '../../../../helpers/slider-events';
 import View from '../View';
 
 export default class Thumbs extends EventObserver {
-  thumbLeft = document.createElement('div');
+  private thumbLeft = document.createElement('div');
 
-  thumbRight = document.createElement('div');
+  private thumbRight = document.createElement('div');
 
   thumbLeftOffset: number = 0;
 
@@ -42,6 +42,11 @@ export default class Thumbs extends EventObserver {
       this.displayThumbRight();
     }
     return this;
+  }
+
+  getThumbs(): { thumbLeft: HTMLDivElement, thumbRight: HTMLDivElement } {
+    const { thumbLeft, thumbRight } = this;
+    return { thumbLeft, thumbRight };
   }
 
   moveThumbToPos(thumb: HTMLDivElement, offset: number): void {
