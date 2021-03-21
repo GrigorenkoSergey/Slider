@@ -171,25 +171,8 @@ export default class Thumbs extends EventObserver {
 
     thumb.style.zIndex = `${1000}`;
 
-    if (wasOverlap) {
-      // засунуть все в функцию
-      const minDistanceToDeside = 5;
-      if (Math.abs(newLeft - startLeft) < minDistanceToDeside) return;
-
-      const {
-        currentThumb, thumbLeft, thumbRight, closure,
-      } = this;
-      if (newLeft < startLeft && currentThumb !== thumbLeft) {
-        this.swapMovingThumbs();
-        closure.rightLimit = this.closure.leftLimit;
-        closure.leftLimit = 0;
-      } else if (newLeft > startLeft && currentThumb !== thumbRight) {
-        this.swapMovingThumbs();
-        closure.leftLimit = this.closure.rightLimit;
-        closure.rightLimit = this.closure.maxLeft;
-      }
-      closure.wasOverlap = false;
-    }
+    if (wasOverlap
+       && !this.handleStartMoveWithOverlap(newLeft, startLeft)) return;
 
     const { leftLimit, rightLimit } = this.closure;
     newLeft = this.takeStepIntoAccount(newLeft, pixelStep);
@@ -269,5 +252,34 @@ export default class Thumbs extends EventObserver {
 
     thumbRight.className = tempClassName;
     thumbRight.classList.toggle(`${className}__thumb_moving`);
+
+    this.broadcast({
+      event: 'swapThumbs',
+    });
+  }
+
+  private handleStartMoveWithOverlap(newLeft: number, startLeft: number): boolean {
+    if (startLeft === 0 && newLeft < startLeft) return false;
+
+    const { closure } = this;
+    if (startLeft === closure.maxLeft && newLeft > startLeft) return false;
+
+    const minDistanceToDeside = 5;
+    if (Math.abs(newLeft - startLeft) < minDistanceToDeside) return false;
+
+    const { currentThumb, thumbLeft, thumbRight } = this;
+
+    if (newLeft < startLeft && currentThumb !== thumbLeft) {
+      this.swapMovingThumbs();
+      closure.rightLimit = closure.leftLimit;
+      closure.leftLimit = 0;
+    } else if (newLeft > startLeft && currentThumb !== thumbRight) {
+      this.swapMovingThumbs();
+      closure.leftLimit = closure.rightLimit;
+      closure.rightLimit = closure.maxLeft;
+    }
+
+    closure.wasOverlap = false;
+    return true;
   }
 }

@@ -59,6 +59,10 @@ type ThumbMouseUp = {
   thumb: HTMLDivElement,
 }
 
+type SwapThumbs = {
+  event: 'swapThumbs',
+}
+
 export type ThumbProgramMove = {
   event: 'thumbProgramMove',
   left?: number,
@@ -120,4 +124,4 @@ export type SliderEvents = AngleChange | partsAmountChange | HintAboveThumbChang
  ThumbMouseUp | ThumbProgramMove | RerenderScale | AnchorClick | StepChange |
   SelectorChange | ClassNameChange | ShowScaleChange | thumbLeftValueChange |
   thumbRightValueChange | AlternativeRangeChange | MinChange | MaxChange |
-  PrecisionChange | OnChangeInitType
+  PrecisionChange | OnChangeInitType | SwapThumbs

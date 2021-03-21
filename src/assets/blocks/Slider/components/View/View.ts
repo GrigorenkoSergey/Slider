@@ -122,6 +122,9 @@ export default class View extends EventObserver implements ISubscriber {
     } else if (data.event === 'range') {
       this.handleHintsIntersection();
       return this;
+    } else if (data.event === 'swapThumbs') {
+      const [leftHint, rightHint] = this.hints;
+      this.hints = [rightHint, leftHint];
     }
 
     this.broadcast(data);
@@ -178,6 +181,7 @@ export default class View extends EventObserver implements ISubscriber {
     thumbs.addSubscriber('thumbMouseMove', this);
     thumbs.addSubscriber('thumbMouseDown', this);
     thumbs.addSubscriber('thumbMouseUp', this);
+    thumbs.addSubscriber('swapThumbs', this);
 
     this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);

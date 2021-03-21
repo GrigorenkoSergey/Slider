@@ -285,7 +285,9 @@ export class ModelValidator {
     const { thumbLeftValue, precision } = { ...this.model.getOptions(), ...modifiedObj };
 
     if (val < thumbLeftValue) {
-      throw new Error('"thumbRightValue should be greater than "thumbLeftValue"');
+      throw new Error(`"thumbRightValue should be greater than "thumbLeftValue"
+      thumbLeftValue = ${thumbLeftValue}
+      thumbRightValue = ${val}`);
     }
 
     const maxValue = Math.floor((max - min) / step) * step + min;
