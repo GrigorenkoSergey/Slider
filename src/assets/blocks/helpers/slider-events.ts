@@ -81,6 +81,10 @@ type AnchorClick = {
   offset: number,
 }
 
+type Resize = {
+  event: 'resize',
+}
+
 // Only Model
 type thumbLeftValueChange = {
   event: 'thumbLeftValue',
@@ -124,4 +128,4 @@ export type SliderEvents = AngleChange | partsAmountChange | HintAboveThumbChang
  ThumbMouseUp | ThumbProgramMove | RedrawScale | AnchorClick | StepChange |
   SelectorChange | ClassNameChange | ShowScaleChange | thumbLeftValueChange |
   thumbRightValueChange | AlternativeRangeChange | MinChange | MaxChange |
-  PrecisionChange | OnChangeInitType | SwapThumbs
+  PrecisionChange | OnChangeInitType | SwapThumbs | Resize

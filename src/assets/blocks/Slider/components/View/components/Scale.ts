@@ -31,6 +31,8 @@ export default class Scale extends EventObserver {
       this.setMilestones();
     } else if (data.event === 'angle') {
       this.rotateScale();
+    } else if (data.event === 'resize') {
+      this.handleResize();
     }
   }
 
@@ -89,7 +91,7 @@ export default class Scale extends EventObserver {
 
   private init(): void {
     const { view } = this;
-    const propsToSubscribe = ['showScale', 'step', 'partsAmount', 'angle'];
+    const propsToSubscribe = ['showScale', 'step', 'partsAmount', 'angle', 'resize'];
     propsToSubscribe.forEach((prop) => view.addSubscriber(prop, this));
 
     const { thumbLeft } = view.thumbs.getThumbs();
@@ -164,5 +166,13 @@ export default class Scale extends EventObserver {
     } else if (!isIncreasingSequence(values)) {
       throw new Error('Scale points should be increasing sequence');
     }
+  }
+
+  private handleResize(): void {
+    const { view } = this;
+    const { thumbLeft } = view.thumbs.getThumbs();
+    this.width = this.view.el.clientWidth - thumbLeft.offsetWidth;
+
+    this.setMilestones();
   }
 }

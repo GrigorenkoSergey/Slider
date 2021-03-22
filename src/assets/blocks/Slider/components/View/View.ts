@@ -126,6 +126,9 @@ export default class View extends EventObserver implements ISubscriber {
       return this;
     } else if (data.event === 'swapThumbs') {
       this.hints.reverse();
+    } else if (data.event === 'resize') {
+      this.handleResize();
+      return this;
     }
 
     this.broadcast(data);
@@ -188,6 +191,7 @@ export default class View extends EventObserver implements ISubscriber {
     this.addSubscriber('hintAlwaysShow', this);
     this.addSubscriber('angle', this);
     this.addSubscriber('range', this);
+    this.addSubscriber('resize', this);
 
     this.setOptions(opts);
 
@@ -196,8 +200,14 @@ export default class View extends EventObserver implements ISubscriber {
     el.addEventListener('mousedown', this.handleTrackMouseDown);
     wrapper.append(el);
 
+    const resizeObserver = new ResizeObserver(() => {
+      this.broadcast({ event: 'resize' });
+    });
+    resizeObserver.observe(el);
+
     this.scale = new Scale({ view: this });
     this.scale.addSubscriber('anchorClick', this);
+    this.addSubscriber('resize', this.scale);
 
     return this;
   }
@@ -369,5 +379,12 @@ export default class View extends EventObserver implements ISubscriber {
     } else {
       hints[0].el.classList.remove(`${options.className}__hint_summary`);
     }
+  }
+
+  private handleResize(): void {
+    const { thumbs } = this;
+    const { thumbLeft, thumbRight } = thumbs.getThumbs();
+    this.moveThumbToPos(thumbLeft, thumbs.thumbLeftOffset);
+    this.moveThumbToPos(thumbRight, thumbs.thumbRightOffset);
   }
 }

@@ -13,6 +13,7 @@ export default class Stretcher extends EventObserver {
     view.addSubscriber('thumbMouseMove', this);
     view.addSubscriber('thumbProgramMove', this);
     view.addSubscriber('range', this);
+    view.addSubscriber('resize', this);
   }
 
   update(): void {
