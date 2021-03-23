@@ -640,3 +640,138 @@ describe('Может отображать подсказку\n', () => {
     hint.dispatchEvent(fakeMouseDown);
   });
 });
+
+describe('Если бегунки совпали, то их по-прежнему можно двигать в любую сторону', () => {
+  let view: View;
+
+  const options = {
+    range: true,
+    selector: '.divViewSpec',
+    className: 'slider',
+    showScale: true,
+    partsAmount: 4,
+  };
+
+  beforeEach(() => {
+    view = new View(options);
+  });
+
+  afterEach(() => {
+    div.innerHTML = '';
+  });
+
+  it('Если бегунки находятся в левом краю, их всегда можно сдвинуть вправо', () => {
+    const { thumbLeft, thumbRight } = view.thumbs.getThumbs();
+    view.moveThumbToPos(thumbLeft, 0);
+    view.moveThumbToPos(thumbRight, 0);
+
+    let startLeft = thumbLeft.getBoundingClientRect().left;
+    moveThumb(thumbLeft, 50, 0);
+    let endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    view.moveThumbToPos(thumbLeft, 0);
+    startLeft = thumbLeft.getBoundingClientRect().left;
+    moveThumb(thumbLeft, -50, 0);
+    endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    moveThumb(thumbLeft, 50, 0);
+    startLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    startLeft = thumbRight.getBoundingClientRect().left;
+    moveThumb(thumbRight, 50, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    view.moveThumbToPos(thumbRight, 0);
+    startLeft = thumbRight.getBoundingClientRect().left;
+    moveThumb(thumbRight, -50, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    moveThumb(thumbRight, 50, 0);
+    startLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+  });
+
+  it('Если бегунки находятся в правом краю, их всегда можно сдвинуть влево', () => {
+    const { thumbLeft, thumbRight } = view.thumbs.getThumbs();
+    view.moveThumbToPos(thumbLeft, 1);
+    view.moveThumbToPos(thumbRight, 1);
+
+    let startLeft = thumbLeft.getBoundingClientRect().left;
+    moveThumb(thumbLeft, -50, 0);
+    let endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    view.moveThumbToPos(thumbLeft, 1);
+    startLeft = thumbLeft.getBoundingClientRect().left;
+    moveThumb(thumbLeft, 50, 0);
+    endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    moveThumb(thumbLeft, -50, 0);
+    startLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    view.moveThumbToPos(thumbLeft, 1);
+    startLeft = thumbRight.getBoundingClientRect().left;
+    moveThumb(thumbRight, -50, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    view.moveThumbToPos(thumbRight, 1);
+    startLeft = thumbRight.getBoundingClientRect().left;
+    moveThumb(thumbRight, 50, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    moveThumb(thumbRight, -50, 0);
+    startLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+  });
+
+  it(`Если бегунки совпали не на краях, то бегунок можно сдвинуть в ту сторону,
+  в которую двинули мышь сразу после нажатия, при этом оставшийся бегунок
+  ограничивает передвижение другого.`, () => {
+    const { thumbLeft, thumbRight } = view.thumbs.getThumbs();
+    view.moveThumbToPos(thumbLeft, 0.5);
+    view.moveThumbToPos(thumbRight, 0.5);
+
+    let startLeft = thumbLeft.getBoundingClientRect().left;
+    moveThumb(thumbLeft, -50, 0);
+    let endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    moveThumb(thumbLeft, 100, 0);
+    endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    moveThumb(thumbLeft, 50, 0);
+    endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    moveThumb(thumbLeft, -100, 0);
+    endLeft = thumbLeft.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    startLeft = thumbRight.getBoundingClientRect().left;
+    moveThumb(thumbRight, -50, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    moveThumb(thumbRight, 100, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+
+    moveThumb(thumbRight, 50, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).not.toEqual(endLeft);
+
+    moveThumb(thumbRight, -100, 0);
+    endLeft = thumbRight.getBoundingClientRect().left;
+    expect(startLeft).toEqual(endLeft);
+  });
+});
