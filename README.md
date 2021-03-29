@@ -1,5 +1,7 @@
 # Slider
 ## [Демо-страница слайдера: ](https://grigorenkosergey.github.io/sliderDemo/index.html)
+Разработка велась на платформе Node.js v13.14.0.  
+Используемая версия jquery - 3.5.1.
 
 ## Подключение 
 Клонируй одним из возможных способов:  
@@ -85,26 +87,18 @@
 │   ├── index.pug
 │   └── index.ts 
 |
-├── test
-│   ├── helpers.spec.ts
-│   ├── Model.spec.ts
-│   ├── Presenter.spec.ts
-│   └── View.spec.ts
-|
-├── .eslint.js
-├── karma.conf.js
-├── package.json
-├── postcss.config.js
-├── README.md
-├── tsconfig.json
-└── webpack.config.js
+└─ test
+   ├── helpers.spec.ts
+   ├── Model.spec.ts
+   ├── Presenter.spec.ts
+   └── View.spec.ts
 ```
 
 ## Использование
 Сам слайдер должен находиться в каком-либо блоке (*div*). Возможны 2 варианта вызова: 
 ```js 
-    let slider = new Slider(options); //только с webpack
-    let slider = $(selector).slider(options); //c jquery, значение selector будет проигнорировано
+    const slider = new Slider(options); //только с webpack
+    const slider = $(selector).slider(options); //c jquery, значение selector будет проигнорировано
 ```
 В объекте настроек, передаваемых параметром **options** есть поле **selector**, в которое необходимо записать селектор выбора, аналогичный тому, что мы передаем через ```document.body.querySelector(selector)``` или через ```$(selector)```.
 
@@ -153,7 +147,7 @@ slider.setOptions({ range: true, max: -100 });
 Упрощенно можно рассмотреть спрайт как двумерную матрицу 3x5, где каждая ячейка - картинка.  
 Тогда в js-файле указываем:
 ```js
-let optionsF = {
+const optionsF = {
   max: 1000,
   min: 0,
   step: 10,
@@ -173,19 +167,19 @@ const birdImg = document.querySelector(selector);
 
 sliderF.onChange({
   callback: () => {
-    let imgWidth = 918 / 5;
-    let imgHeight = 506 / 3;
+    const imgWidth = 918 / 5;
+    const imgHeight = 506 / 3;
 
     // т.к. нам неинтересны абсолютные значения положения бегунка,
     // то мы будем использовать относительные
-    let offset = sliderF.getOffsets().left;
+    const offset = sliderF.getOffsets().left;
     
     // offset == 0 -> 0
     // offset == 1 -> 13
-    let resLeft = Math.round(offset * 13);
+    const resLeft = Math.round(offset * 13);
 
-    let offsetLeft = imgWidth * (resLeft % 5);
-    let offsetTop = imgHeight * Math.floor(resLeft / 5);
+    const offsetLeft = imgWidth * (resLeft % 5);
+    const offsetTop = imgHeight * Math.floor(resLeft / 5);
 
     birdImg.style.backgroundPositionX = -offsetLeft + 'px';
     birdImg.style.backgroundPositionY = -offsetTop + 'px';
