@@ -99,6 +99,10 @@ export class ModelValidator {
       throw new Error('"partsAmount" is to large!');
     }
 
+    if (val > 100) {
+      throw new Error('"partsAmout" must be less than 101');
+    }
+
     modifiedObj.partsAmount = val;
   }
 

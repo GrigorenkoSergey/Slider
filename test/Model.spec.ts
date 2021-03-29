@@ -124,6 +124,11 @@ describe('Model\n', () => {
       expect(() => model.setOptions({ partsAmount: 3, step: 50 })).toThrowError();
     });
 
+    it('Значение свойства "partsAmount" должно быть меньше 101', () => {
+      expect(() => model.setOptions({ partsAmount: 101 })).toThrowError();
+      expect(() => model.setOptions({ partsAmount: 300 })).toThrowError();
+    });
+
     it('Результат min + step * partsAmount должен быть > max + step', () => {
       expect(() => model.setOptions({ step: 50, partsAmount: 3 })).toThrowError();
       model.setOptions({ partsAmount: 3 });
