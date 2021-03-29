@@ -116,6 +116,10 @@ $.fn.slider = function (props) {
   return new Slider(props);
 };
 
+const options = {
+  selector: '.your_selector',
+}
+
 const slider = $(selector).slider(options); // значение selector будет проигнорировано
 ```
 В объекте настроек, передаваемых параметром **options** есть поле **selector**, в которое необходимо записать селектор выбора, аналогичный тому, что мы передаем через ```document.body.querySelector(selector)``` или через ```$(selector)```.
