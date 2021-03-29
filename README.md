@@ -99,15 +99,19 @@
 ```
 
 ## Использование
-Минифицированный код слайдера находится в папке *dist/plugin/*. Оттуда можно скопировать лежащие там файлы *slider.css* и *slider.js*.
+Минифицированный код слайдера находится в папке *dist/plugin/*. Оттуда можно скопировать лежащие там файлы *slider.[hash].css* и *slider.[hash].js*. Он прекрасно работает и без *jquery*.
+
 Сам слайдер должен находиться в каком-либо блоке (*div*). Возможны 2 варианта вызова: 
 ```js 
-import { Slider } from './plugin/slider/slider.js';
-
 // только с webpack
+import { Slider } from './plugin/slider/slider';
+
 const slider = new Slider(options);
 
 // c использованием jquery
+import $ from 'jquery';
+import { Slider } from './plugin/slider/slider';
+
 $.fn.slider = function (props) {
   return new Slider(props);
 };

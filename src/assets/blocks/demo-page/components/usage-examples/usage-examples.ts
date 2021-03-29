@@ -4,6 +4,10 @@ import { Slider, SliderOptions } from '../../../Slider/Slider';
 import '../js-slider/js-slider';
 import './usage-examples.scss';
 
+$.fn.slider = function (props: unknown) {
+  return new Slider(props);
+};
+
 const optionsD: SliderOptions = {
   max: 100,
   min: 0,
