@@ -239,7 +239,8 @@ export default class View extends EventObserver implements ISubscriber {
 
   private handleTrackMouseDown = (e: MouseEvent): void => {
     const { el } = this;
-    if (e.target === el) {
+    const { target } = e;
+    if (target === el || target === this.stretcher.el) {
       el.addEventListener('mouseup', this.handleTrackMouseUp);
     }
   }
