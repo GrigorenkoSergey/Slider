@@ -26,7 +26,7 @@ module.exports = function (config) {
             exclude: /node_modules/,
             use: [
               // раскомментируй, если нужно посмотреть покрытие
-              '@jsdevtools/coverage-istanbul-loader',
+              // '@jsdevtools/coverage-istanbul-loader',
               'ts-loader',
             ],
           },

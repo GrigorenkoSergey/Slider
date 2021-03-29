@@ -254,7 +254,7 @@ describe('Позволяет пользователю взаимодейство
     expect(posThumbLeft.left).toEqual(posThumbRight.left);
   });
 
-  it('При клике на слайдере, бегунок бежит к точке клика', () => {
+  it('При клике на слайдере или треке, бегунок бежит к точке клика', () => {
     const thumbLeft = div.querySelector('.slider__thumb_side_left');
     if (!(thumbLeft instanceof HTMLDivElement)) throw new Error();
 
@@ -262,47 +262,47 @@ describe('Позволяет пользователю взаимодейство
     const thumbStartX = thumbLeft.getBoundingClientRect().left;
 
     let clientX = thumbStartX + slider.clientWidth;
-    let fakeMouseDown = new MouseEvent('mousedown', {
-      bubbles: true,
-      cancelable: true,
-      clientX,
-      clientY: 0,
-    });
 
-    let fakeMouseUp = new MouseEvent('mouseup', {
-      bubbles: true,
-      cancelable: true,
-      clientX,
-      clientY: 0,
-    });
+    const fakeMouseDown = (clientX: number) => (
+      new MouseEvent('mousedown', {
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY: 0,
+      })
+    );
 
-    slider.dispatchEvent(fakeMouseDown);
-    slider.dispatchEvent(fakeMouseUp);
+    const fakeMouseUp = (clientX: number) => (
+      new MouseEvent('mouseup', {
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY: 0,
+      })
+    )
 
-    expect(parseFloat(thumbLeft.style.left))
-      .toEqual(slider.clientWidth - thumbLeft.offsetWidth);
+    slider.dispatchEvent(fakeMouseDown(clientX));
+    slider.dispatchEvent(fakeMouseUp(clientX));
 
-    clientX = -thumbStartX - slider.clientWidth;
+    let left = parseFloat(thumbLeft.style.left);
+    expect(left).toEqual(slider.clientWidth - thumbLeft.offsetWidth);
 
-    fakeMouseDown = new MouseEvent('mousedown', {
-      bubbles: true,
-      cancelable: true,
-      clientX,
-      clientY: 0,
-    });
+    const track = document.querySelector('.slider__stretcher');
+    if (!(track instanceof HTMLDivElement)) throw new Error();
 
-    fakeMouseUp = new MouseEvent('mouseup', {
-      bubbles: true,
-      cancelable: true,
-      clientX,
-      clientY: 0,
-    });
+    clientX = thumbStartX + slider.clientWidth / 4;
+    track.dispatchEvent(fakeMouseDown(clientX));
+    track.dispatchEvent(fakeMouseUp(clientX));
 
-    slider.dispatchEvent(fakeMouseDown);
-    slider.dispatchEvent(fakeMouseUp);
+    left = parseFloat(thumbLeft.style.left);
+    expect(left > 0 && left < slider.clientWidth / 3).toBeTrue();
 
-    expect(parseFloat(thumbLeft.style.left))
-      .toEqual(0);
+    clientX = 0;
+    slider.dispatchEvent(fakeMouseDown(clientX));
+    slider.dispatchEvent(fakeMouseUp(clientX));
+
+    left = parseFloat(thumbLeft.style.left);
+    expect(left).toEqual(0);
   });
 });
 
