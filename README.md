@@ -83,6 +83,10 @@
 |   |   |    
 |   │   ├── fonts
 |   │   └── images
+|   |
+│   ├── plugin
+|   │   ├── slider.pug
+|   │   └── slider.ts
 |   |   
 │   ├── index.pug
 │   └── index.ts 
@@ -95,10 +99,20 @@
 ```
 
 ## Использование
+Минифицированный код слайдера находится в папке *dist/plugin/*. Оттуда можно скопировать лежащие там файлы *slider.css* и *slider.js*.
 Сам слайдер должен находиться в каком-либо блоке (*div*). Возможны 2 варианта вызова: 
 ```js 
-    const slider = new Slider(options); //только с webpack
-    const slider = $(selector).slider(options); //c jquery, значение selector будет проигнорировано
+import { Slider } from './plugin/slider/slider.js';
+
+// только с webpack
+const slider = new Slider(options);
+
+// c использованием jquery
+$.fn.slider = function (props) {
+  return new Slider(props);
+};
+
+const slider = $(selector).slider(options); // значение selector будет проигнорировано
 ```
 В объекте настроек, передаваемых параметром **options** есть поле **selector**, в которое необходимо записать селектор выбора, аналогичный тому, что мы передаем через ```document.body.querySelector(selector)``` или через ```$(selector)```.
 

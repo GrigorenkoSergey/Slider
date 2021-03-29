@@ -5,8 +5,10 @@ import './slider.scss';
 
 export type SliderOptions = ModelOptions & ViewOptions;
 
-$.fn.slider = function (props: unknown) {
-  return new Slider(props);
-};
+declare global {
+  interface JQuery {
+    slider(options: unknown): Slider;
+  }
+}
 
 export { Slider };
