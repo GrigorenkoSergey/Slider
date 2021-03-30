@@ -212,5 +212,5 @@ sliderF.onChange({
 
 
 ## uml-диаграмма
-![](./src/assets/images/uml.png)
+![](./src/assets/images/uml.jpg)
 
