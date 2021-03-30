@@ -6,7 +6,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const entries = {
   index: './index',
-  slider: './plugin/slider',
+  slider: './assets/blocks/Slider/Slider',
 };
 
 const outputPaths = {
@@ -113,11 +113,11 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
 
-    ...Object.keys(entries).map((key) => new HtmlWebpackPlugin({
-      template: `${entries[key]}.pug`,
-      filename: `${outputPaths[key]}.html`,
-      chunks: [`${key}`],
-    })),
+    new HtmlWebpackPlugin({
+      template: './index.pug',
+      filename: './index.html',
+      chunks: ['index'],
+    }),
 
     new MiniCssExtractPlugin({
       moduleFilename: ({ name }) => `${outputPaths[name]}.[contenthash].css`,
