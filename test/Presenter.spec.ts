@@ -213,6 +213,81 @@ describe('В любой момент времени можно узнать и �
   });
 });
 
+describe('Существует метод \'slider\'. Это альтернативный способ вызова остальных методов', () => {
+  afterEach(() => {
+    div.innerHTML = '';
+  });
+
+  const options = {
+    range: true,
+    selector: '.divPresenterSpec',
+    className: 'slider',
+    showScale: true,
+    min: 20,
+    max: 200,
+  };
+
+  it(`Метод presenter.getOptions() вернет то же, 
+      что и presenter.slider('getOptions')`, () => {
+    const presenter = new Presenter(options);
+
+    const optsFromMainMethod = presenter.getOptions();
+    const optsFromSliderMethod = presenter.slider('getOptions');
+    expect(JSON.stringify(optsFromMainMethod))
+      .toEqual(JSON.stringify(optsFromSliderMethod));
+  });
+
+  it(`Метод presenter.getOffsets() вернет то же, 
+      что и presenter.slider('getOffsets')`, () => {
+    const presenter = new Presenter(options);
+
+    const optsFromMainMethod = presenter.getOffsets();
+    const optsFromSliderMethod = presenter.slider('getOffsets');
+    expect(JSON.stringify(optsFromMainMethod))
+      .toEqual(JSON.stringify(optsFromSliderMethod));
+  });
+
+  it(`Метод presenter.getOffsets() вернет то же, 
+      что и presenter.slider('getOffsets')`, () => {
+    const presenter = new Presenter(options);
+
+    const optsFromMainMethod = presenter.getOffsets();
+    const optsFromSliderMethod = presenter.slider('getOffsets');
+    expect(JSON.stringify(optsFromMainMethod))
+      .toEqual(JSON.stringify(optsFromSliderMethod));
+  });
+
+  it(`Метод presenter.setOptions(opts) сделает то же, 
+      что и presenter.slider('setOptions', opts)`, () => {
+    const presenter = new Presenter(options);
+
+    presenter.slider('setOptions', ({
+      range: false,
+      showScale: false,
+      min: 0,
+      max: 100,
+      step: 10,
+      angle: 45,
+      thumbLeftValue: 50,
+    }));
+
+    const opts = presenter.getOptions();
+    expect(opts.range).toEqual(false);
+    expect(opts.showScale).toEqual(false);
+    expect(opts.min).toEqual(0);
+    expect(opts.max).toEqual(100);
+    expect(opts.step).toEqual(10);
+    expect(opts.thumbLeftValue).toEqual(50);
+    expect(opts.angle).toEqual(45);
+  });
+
+  it('Если поддерживаемого метода не существует, выбросит ошибку', () => {
+    const presenter = new Presenter(options);
+    // @ts-ignore
+    expect(() => presenter.slider('seizeWorldDomination!')).toThrowError();
+  });
+});
+
 describe('Проверка опции "onChange\n', () => {
   afterEach(() => {
     div.innerHTML = '';
@@ -232,6 +307,24 @@ describe('Проверка опции "onChange\n', () => {
     let num = 3;
 
     const miniObserver = presenter.onChange({});
+    miniObserver.update = () => { num = presenter.getOptions().thumbLeftValue; };
+
+    presenter.setOptions({ thumbLeftValue: 10 });
+    expect(num).toEqual(10);
+
+    presenter.setOptions({ thumbLeftValue: 100 });
+    expect(num).toEqual(100);
+  });
+
+  it(`Альтернативная подписка на изменение нашего слайдера 
+     с помощью метода 'slider'`, () => {
+    const presenter = new Presenter(options);
+    let num = 3;
+
+    const miniObserver = presenter.slider('onChange');
+
+    if (!('update' in miniObserver)) throw new Error();
+
     miniObserver.update = () => { num = presenter.getOptions().thumbLeftValue; };
 
     presenter.setOptions({ thumbLeftValue: 10 });

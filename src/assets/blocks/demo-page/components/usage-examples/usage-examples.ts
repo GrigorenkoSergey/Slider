@@ -90,8 +90,6 @@ const optionsF: SliderOptions = {
   showScale: false,
 };
 
-const sliderF = $('.js-slider_test_F').slider(optionsF);
-
 selector = '.usage-examples__img';
 const birdImg: HTMLDivElement | null = document.querySelector(selector);
 
@@ -99,7 +97,9 @@ if (birdImg === null) {
   throw new Error(`No element with selector "${selector}" in document`);
 }
 
-sliderF.onChange({
+const sliderF = $('.js-slider_test_F').slider(optionsF);
+
+sliderF.slider('onChange', {
   callback: () => {
     const imgWidth = 918 / 5;
     const imgHeight = 506 / 3;

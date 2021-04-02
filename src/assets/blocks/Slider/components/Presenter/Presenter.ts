@@ -20,6 +20,9 @@ type OnChangeResult = {
   update: (data: SliderEvents) => void;
 };
 
+type PublicMethods = 'setOptions' | 'getOptions' | 'getOffsets' | 'onChange';
+type PossibleSliderMethodOpts = OnChangeOpts & ModelOptions & ViewOptions;
+
 export class Presenter extends EventObserver implements ISubscriber {
   private view: View;
 
@@ -32,6 +35,16 @@ export class Presenter extends EventObserver implements ISubscriber {
     const initObj = this.init(options);
     this.view = initObj.view;
     this.model = initObj.model;
+  }
+
+  slider(method: PublicMethods, options: PossibleSliderMethodOpts = {}) {
+    const publicMethods: PublicMethods[] = [
+      'setOptions', 'getOptions', 'getOffsets', 'onChange',
+    ];
+
+    if (!publicMethods.includes(method)) throw new Error('No such method!');
+
+    return this[method](options);
   }
 
   setOptions(options: unknown): this {
