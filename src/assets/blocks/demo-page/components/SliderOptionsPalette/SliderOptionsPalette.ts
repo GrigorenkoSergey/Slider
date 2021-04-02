@@ -36,6 +36,18 @@ export class SliderOptionsPalette extends EventObserver {
     this.init();
   }
 
+  update(data: SliderEvents) {
+    if (typeof data.event !== 'string') return;
+
+    if (!('cause' in data)) return;
+
+    if (data.cause === 'range') {
+      this.handleRangeChange();
+    } else if (data.cause === 'hintAlwaysShow') {
+      this.handleHintAlwaysShowChange();
+    }
+  }
+
   private render() {
     const inputTexts = [
       'min',
@@ -120,18 +132,6 @@ export class SliderOptionsPalette extends EventObserver {
     slider.addSubscriber('changeSlider', this);
     this.handleRangeChange();
     this.handleHintAlwaysShowChange();
-  }
-
-  update(data: SliderEvents) {
-    if (typeof data.event !== 'string') return;
-
-    if (!('cause' in data)) return;
-
-    if (data.cause === 'range') {
-      this.handleRangeChange();
-    } else if (data.cause === 'hintAlwaysShow') {
-      this.handleHintAlwaysShowChange();
-    }
   }
 
   private handleRangeChange() {

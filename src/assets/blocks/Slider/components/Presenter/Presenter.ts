@@ -34,57 +34,6 @@ export class Presenter extends EventObserver implements ISubscriber {
     this.model = initObj.model;
   }
 
-  private init(options: unknown): { model: Model, view: View } {
-    if (!isModelOptions(options) && !isViewOptions(options)) {
-      throw new Error('No slider options in options');
-    }
-
-    const normalizedToModel = this.normalizer.normalizeModelOptions(options);
-
-    this.model = new Model(normalizedToModel);
-    const { model } = this;
-
-    // step у View относительный, поэтому переделаем его
-    const { step, max, min } = model.getOptions();
-    const viewStep = step / (max - min);
-    const normalizedToView = this.normalizer.normalizeViewOptions({ ...options, step: viewStep });
-
-    this.view = new View(normalizedToView);
-    const { view } = this;
-
-    view.addSubscriber('angle', this);
-    view.addSubscriber('thumbMouseDown', this);
-    view.addSubscriber('thumbMouseMove', this);
-    view.addSubscriber('thumbMouseUp', this);
-    view.addSubscriber('thumbProgramMove', this);
-    view.addSubscriber('showScale', this);
-    view.addSubscriber('hintAlwaysShow', this);
-    view.addSubscriber('hintAboveThumb', this);
-
-    const { scale } = view;
-    if (scale === null) throw new Error('Scale was not initialized');
-    scale.addSubscriber('redrawScale', this);
-
-    this.addSubscriber('redrawScale', this.view);
-
-    model.addSubscriber('partsAmount', this);
-    // model.addSubscriber('alternativeRange', this);
-    // не требуется, т.к. автоматически меняются min, max
-    model.addSubscriber('min', this);
-    model.addSubscriber('max', this);
-    model.addSubscriber('step', this);
-    model.addSubscriber('thumbLeftValue', this);
-    model.addSubscriber('thumbRightValue', this);
-    model.addSubscriber('range', this);
-    model.addSubscriber('precision', this);
-
-    this.setOptions(options);
-    return {
-      model,
-      view,
-    };
-  }
-
   setOptions(options: unknown): this {
     if (!isModelOptions(options) && !isViewOptions(options)) {
       throw new Error('No slider options in options');
@@ -217,6 +166,57 @@ export class Presenter extends EventObserver implements ISubscriber {
     this.addSubscriber('changeSlider', elemSubscriber);
     this.broadcast({ event: 'changeSlider', cause: 'onChangeInit' });
     return elemSubscriber;
+  }
+
+  private init(options: unknown): { model: Model, view: View } {
+    if (!isModelOptions(options) && !isViewOptions(options)) {
+      throw new Error('No slider options in options');
+    }
+
+    const normalizedToModel = this.normalizer.normalizeModelOptions(options);
+
+    this.model = new Model(normalizedToModel);
+    const { model } = this;
+
+    // step у View относительный, поэтому переделаем его
+    const { step, max, min } = model.getOptions();
+    const viewStep = step / (max - min);
+    const normalizedToView = this.normalizer.normalizeViewOptions({ ...options, step: viewStep });
+
+    this.view = new View(normalizedToView);
+    const { view } = this;
+
+    view.addSubscriber('angle', this);
+    view.addSubscriber('thumbMouseDown', this);
+    view.addSubscriber('thumbMouseMove', this);
+    view.addSubscriber('thumbMouseUp', this);
+    view.addSubscriber('thumbProgramMove', this);
+    view.addSubscriber('showScale', this);
+    view.addSubscriber('hintAlwaysShow', this);
+    view.addSubscriber('hintAboveThumb', this);
+
+    const { scale } = view;
+    if (scale === null) throw new Error('Scale was not initialized');
+    scale.addSubscriber('redrawScale', this);
+
+    this.addSubscriber('redrawScale', this.view);
+
+    model.addSubscriber('partsAmount', this);
+    // model.addSubscriber('alternativeRange', this);
+    // не требуется, т.к. автоматически меняются min, max
+    model.addSubscriber('min', this);
+    model.addSubscriber('max', this);
+    model.addSubscriber('step', this);
+    model.addSubscriber('thumbLeftValue', this);
+    model.addSubscriber('thumbRightValue', this);
+    model.addSubscriber('range', this);
+    model.addSubscriber('precision', this);
+
+    this.setOptions(options);
+    return {
+      model,
+      view,
+    };
   }
 
   private scaleValues(): void {
