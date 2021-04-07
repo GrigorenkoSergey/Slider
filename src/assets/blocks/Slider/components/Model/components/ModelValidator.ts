@@ -153,17 +153,17 @@ export class ModelValidator {
       if ('thumbLeftValue' in originObj) {
         throw new Error('"thumbLeftValue" should be >= "min"!');
       }
-      modifiedObj.thumbLeftValue = Number(Number(val).toFixed(precision));
+      modifiedObj.thumbLeftValue = Number(val.toFixed(precision));
     }
 
     if (thumbRightValue !== null && val > thumbRightValue) {
       if ('thumbRightValue' in originObj) {
         throw new Error('"thumbRightValue" should be > "min"!');
       }
-      modifiedObj.thumbRightValue = Number(Number(max).toFixed(precision));
+      modifiedObj.thumbRightValue = Number(max.toFixed(precision));
     }
 
-    modifiedObj.min = Number(Number(val).toFixed(precision));
+    modifiedObj.min = Number(val.toFixed(precision));
   }
 
   private max(val: number): void {
@@ -198,9 +198,9 @@ export class ModelValidator {
       }
       if (thumbRightValue !== null) {
         modifiedObj.thumbLeftValue = min;
-        modifiedObj.thumbRightValue = Number(Number(val).toFixed(precision));
+        modifiedObj.thumbRightValue = Number(val.toFixed(precision));
       } else {
-        modifiedObj.thumbLeftValue = Number(Number(val).toFixed(precision));
+        modifiedObj.thumbLeftValue = Number(val.toFixed(precision));
       }
     }
 
@@ -208,10 +208,10 @@ export class ModelValidator {
       if ('thumbRightValue' in originObj) {
         throw new Error('"thumbRightValue should be <= "max"!');
       }
-      modifiedObj.thumbRightValue = Number(Number(val).toFixed(precision));
+      modifiedObj.thumbRightValue = Number(val.toFixed(precision));
     }
 
-    modifiedObj.max = Number(Number(val).toFixed(precision));
+    modifiedObj.max = Number(val.toFixed(precision));
   }
 
   private step(val: number): void {
@@ -236,7 +236,7 @@ export class ModelValidator {
       modifiedObj.partsAmount = 1;
     }
 
-    modifiedObj.step = Number(Number(val).toFixed(precision));
+    modifiedObj.step = Number(val.toFixed(precision));
     modifiedObj.thumbLeftValue = thumbLeftValue;
     modifiedObj.thumbRightValue = thumbRightValue;
   }
