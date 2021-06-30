@@ -225,18 +225,20 @@ export class ModelValidator {
       thumbRightValue,
     } = { ...this.model.getOptions(), ...modifiedObj };
 
-    if (val > max - min) {
+    const newStep = Number(val.toFixed(precision));
+
+    if (newStep > max - min) {
       throw new Error('"step" is too big!');
-    } else if (val < 0) {
+    } else if (newStep < 0) {
       throw new Error('"step" is negative!');
-    } else if (val === 0) {
-      throw new Error('"step" is equal to zero!');
-    } else if (min + val * partsAmount >= max + val) {
+    } else if (newStep === 0) {
+      throw new Error('"step" is equal or rounds to zero!');
+    } else if (min + newStep * partsAmount >= max + newStep) {
       console.log('min + step * partsAmount should be < max + step\nSet partsAmount = 1');
       modifiedObj.partsAmount = 1;
     }
 
-    modifiedObj.step = Number(val.toFixed(precision));
+    modifiedObj.step = newStep;
     modifiedObj.thumbLeftValue = thumbLeftValue;
     modifiedObj.thumbRightValue = thumbRightValue;
   }
