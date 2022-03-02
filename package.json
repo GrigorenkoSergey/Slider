@@ -20,7 +20,7 @@
     "eslint-loader": "^4.0.2",
     "eslint-plugin-fsd": "^1.0.1",
     "eslint-plugin-import": "^2.22.1",
-    "karma": "^5.0.4",
+    "karma": "^6.3.16",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage-istanbul-reporter": "^3.0.0",
     "webpack-dev-server": "^3.11.0"
